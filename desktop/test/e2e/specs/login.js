@@ -83,8 +83,6 @@ async function assertLoadedExpectedPage( window ) {
 }
 
 describe( 'User Can log in', () => {
-	jest.setTimeout( 60000 );
-
 	let mainWindow;
 	let electronApp;
 	let consoleStream;

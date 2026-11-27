@@ -30,7 +30,6 @@ import {
 	requestPluginsError,
 	getPluginsWithUpdateStatuses,
 } from 'calypso/state/plugins/installed/selectors';
-import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-user-manage-plugins';
@@ -344,7 +343,6 @@ export default flow(
 			};
 		},
 		{
-			wporgFetchPluginData,
 			recordTracksEvent,
 			recordGoogleEvent,
 			appendBreadcrumb,

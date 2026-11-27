@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { vi } from 'vitest';
 import { getAttributePlainText, getSelectedTextContext } from '../get-selected-text';
 

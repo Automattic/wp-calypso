@@ -5,7 +5,11 @@ import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { Icon, __experimentalVStack as VStack, ToggleControl } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { seen, pencil, notAllowed, globe } from '@wordpress/icons';
-import { getOverridesToMatch, groupIntentKey } from '../../../me/mcp/group-intents';
+import {
+	getOrdinaryTools,
+	getOverridesToMatch,
+	groupIntentKey,
+} from '../../../me/mcp/group-intents';
 import { useMcpTracksAudienceProps } from '../../../me/mcp/tracks';
 import {
 	getAccountMcpAbilities,
@@ -49,7 +53,7 @@ function getReadBadge( tools: Array< [ string, McpAbility ] > ) {
 		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
 	if ( enabledCount === 0 ) {
-		return { text: __( 'None enabled' ), intent: 'draft' as const };
+		return { text: __( 'None enabled' ), intent: 'none' as const };
 	}
 	return {
 		/* translators: %1$d is the number of enabled tools, %2$d is the total number of tools */
@@ -67,7 +71,7 @@ function getWriteBadge( tools: Array< [ string, McpAbility ] > ) {
 		return { text: __( 'All enabled' ), intent: 'stable' as const };
 	}
 	if ( enabledCount === 0 ) {
-		return { text: __( 'Disabled' ), intent: 'draft' as const };
+		return { text: __( 'Disabled' ), intent: 'none' as const };
 	}
 	return {
 		/* translators: %1$d is the number of enabled tools, %2$d is the total number of tools */
@@ -104,7 +108,7 @@ function McpComponent() {
 					),
 					intent: 'low' as const,
 				}
-			: { text: __( 'No exceptions' ), intent: 'draft' as const };
+			: { text: __( 'No exceptions' ), intent: 'none' as const };
 
 	const addSiteBadge =
 		enabledSiteIds.length > 0
@@ -116,7 +120,7 @@ function McpComponent() {
 					),
 					intent: 'stable' as const,
 				}
-			: { text: __( 'No sites added' ), intent: 'draft' as const };
+			: { text: __( 'No sites added' ), intent: 'none' as const };
 
 	const readBadge = getReadBadge( readTools );
 	const writeBadge = getWriteBadge( writeTools );
@@ -129,8 +133,13 @@ function McpComponent() {
 	);
 
 	const handleMcpToggle = ( enabled: boolean, source: 'toggle' | 'connect_notice' = 'toggle' ) => {
-		const overrides = getOverridesToMatch( Object.entries( mcpAbilities ), enabled ) as
-			Record< string, boolean > | undefined;
+		// Turning access on leaves opt-in tools alone. Turning it off includes them:
+		// the server keeps an explicit per-tool choice until it's overwritten.
+		const tools = Object.entries( mcpAbilities );
+		const overrides = getOverridesToMatch(
+			enabled ? getOrdinaryTools( tools ) : tools,
+			enabled
+		) as Record< string, boolean > | undefined;
 
 		const groupIntents: Record< string, boolean > = { read: enabled, write: enabled };
 		if ( ! enabled ) {

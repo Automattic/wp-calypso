@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import { PostCardEmbedQuoteWithMedia } from '../post-card-embed-quote-with-media';

@@ -1,9 +1,12 @@
 import { isThisASupportArticleLink } from '@automattic/urls';
+import { VisuallyHidden } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { Children, isValidElement, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
 import { uriTransformer } from './uri-transformer';
+import { isOnWooCommerceCom } from './utils/is-woocommerce-com-link';
 
 // This component will be extended in the future to support other types of links.
 // For now, it only supports prompt:// links. But in the future might be more protocols like:
@@ -30,7 +33,12 @@ const CustomALink = ( {
 	const wrapsImage = Children.toArray( children ).some(
 		( child ) => isValidElement( child ) && child.type === 'img'
 	);
-	const effectiveTarget = wrapsImage ? '_blank' : target;
+	const isSupportArticleLink = isThisASupportArticleLink( transformedHref );
+	// On WooCommerce.com, a link that opens in the same tab replaces the page the chat is on, so web
+	// links open in a new tab there. Support articles keep the article view.
+	const opensInNewTab =
+		isOnWooCommerceCom() && /^https?:\/\//.test( transformedHref ) && ! isSupportArticleLink;
+	const effectiveTarget = wrapsImage || opensInNewTab ? '_blank' : target;
 
 	// A `blob:` link is a file the user just sent, held by the browser. Save it under its name
 	// rather than open it in place of the page.
@@ -55,7 +63,7 @@ const CustomALink = ( {
 				download={ downloadName }
 				onClick={ ( e ) => {
 					// Open support article links in the Help Center.
-					if ( isThisASupportArticleLink( transformedHref ) ) {
+					if ( isSupportArticleLink ) {
 						navigate( `/post?link=${ transformedHref }` );
 						e.preventDefault();
 					}
@@ -67,6 +75,14 @@ const CustomALink = ( {
 				} }
 			>
 				{ children }
+				{ opensInNewTab && ! wrapsImage && (
+					<VisuallyHidden as="span">
+						{
+							/* translators: accessibility text */
+							__( '(opens in a new tab)', __i18n_text_domain__ )
+						}
+					</VisuallyHidden>
+				) }
 			</a>
 		</span>
 	);

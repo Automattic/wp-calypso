@@ -15,8 +15,9 @@ import {
 	isPressableLicense,
 	isRecentlyTransferred,
 	isWpcomHostingLicense,
+	withWooCommerceSites,
 } from '../license-status';
-import type { JetpackLicense } from '@automattic/api-core';
+import type { JetpackLicense, WooCommerceLicenseSites } from '@automattic/api-core';
 
 const baseLicense: JetpackLicense = {
 	license_id: 1,
@@ -164,9 +165,11 @@ describe( 'getLicenseProductName', () => {
 } );
 
 describe( 'subscription and bundle helpers', () => {
-	test( 'detects Jetpack CRM products, including Complete', () => {
+	test( 'detects Jetpack CRM products, including Complete and Pro', () => {
 		expect( isJetpackCrmLicense( license( { license_key: 'jetpack-crm_x' } ) ) ).toBe( true );
 		expect( isJetpackCrmLicense( license( { license_key: 'jetpack-complete_x' } ) ) ).toBe( true );
+		expect( isJetpackCrmLicense( license( { license_key: 'jetpack-pro_x' } ) ) ).toBe( true );
+		expect( isJetpackCrmLicense( license( { license_key: 'jetpack-product_x' } ) ) ).toBe( false );
 		expect( isJetpackCrmLicense( license() ) ).toBe( false );
 	} );
 
@@ -299,5 +302,50 @@ describe( 'isRecentlyTransferred', () => {
 			)
 		).toBe( false );
 		expect( isRecentlyTransferred( license() ) ).toBe( false );
+	} );
+} );
+
+describe( 'withWooCommerceSites', () => {
+	const wooLicense: JetpackLicense = {
+		...baseLicense,
+		license_id: 7,
+		license_key: 'woocommerce-subscriptions_abc',
+		siteurl: 'https://old-store.example',
+		attached_at: '2026-01-02 00:00:00',
+	};
+
+	test( 'uses the store WooCommerce.com has the license on', () => {
+		const [ license ] = withWooCommerceSites(
+			[ wooLicense ],
+			{ 7: { site_url: 'https://new-store.example' } },
+			false
+		);
+		expect( license.siteurl ).toBe( 'https://new-store.example' );
+	} );
+
+	test( 'hides the site while the lookup is in flight', () => {
+		const [ license ] = withWooCommerceSites( [ wooLicense ], undefined, true );
+		expect( license.siteurl ).toBeNull();
+	} );
+
+	test( 'falls back to the license’s own site when WooCommerce.com can’t tell', () => {
+		const unhelpfulAnswers: Array< WooCommerceLicenseSites | undefined > = [
+			undefined,
+			{},
+			{ 7: { site_url: null } },
+		];
+		for ( const sites of unhelpfulAnswers ) {
+			const [ license ] = withWooCommerceSites( [ wooLicense ], sites, false );
+			expect( license.siteurl ).toBe( 'https://old-store.example' );
+		}
+	} );
+
+	test( 'leaves other licenses, and detached or revoked Woo licenses, alone', () => {
+		const others = [
+			{ ...baseLicense, siteurl: 'https://jetpack.example', attached_at: '2026-01-02 00:00:00' },
+			{ ...wooLicense, attached_at: null },
+			{ ...wooLicense, revoked_at: '2026-01-03 00:00:00' },
+		];
+		expect( withWooCommerceSites( others, undefined, true ) ).toEqual( others );
 	} );
 } );

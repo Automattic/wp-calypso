@@ -1,13 +1,14 @@
+import { vi } from 'vitest';
 import getNetworkSites from 'calypso/state/selectors/get-network-sites';
 import isConnectedSecondaryNetworkSite from 'calypso/state/selectors/is-connected-secondary-network-site';
 import { getSitesWithSecondarySites } from '../get-sites-with-secondary-sites';
 
-jest.mock( 'calypso/state/selectors/get-network-sites' );
-jest.mock( 'calypso/state/selectors/is-connected-secondary-network-site' );
+vi.mock( 'calypso/state/selectors/get-network-sites' );
+vi.mock( 'calypso/state/selectors/is-connected-secondary-network-site' );
 
 describe( 'getSitesWithSecondarySites', () => {
 	beforeEach( () => {
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 	} );
 
 	it( 'does not return sites that are themselves secondary sites', () => {

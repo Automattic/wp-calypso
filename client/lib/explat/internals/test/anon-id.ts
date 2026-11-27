@@ -1,17 +1,18 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
+import { vi } from 'vitest';
 import * as AnonId from '../anon-id';
 
-const mockLogInfo = jest.fn();
-jest.mock( '../log-error', () => ( {
+const mockLogInfo = vi.fn();
+vi.mock( '../log-error', () => ( {
 	logInfo: ( ...args ) => mockLogInfo( ...args ),
 } ) );
 
-jest.mock( 'calypso/lib/wp' );
-const mockedRecordTracksEvent = jest.fn();
-const mockedGetTracksAnonymousUserId = jest.fn();
-const mockedGetTracksLoadPromise = jest.fn();
-const mockedGetCurrentUser = jest.fn();
-jest.mock( '@automattic/calypso-analytics', () => ( {
+vi.mock( 'calypso/lib/wp' );
+const mockedRecordTracksEvent = vi.fn();
+const mockedGetTracksAnonymousUserId = vi.fn();
+const mockedGetTracksLoadPromise = vi.fn();
+const mockedGetCurrentUser = vi.fn();
+vi.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: ( ...args ) => mockedRecordTracksEvent( ...args ),
 	getTracksAnonymousUserId: ( ...args ) => mockedGetTracksAnonymousUserId( ...args ),
 	getTracksLoadPromise: ( ...args ) => mockedGetTracksLoadPromise( ...args ),
@@ -31,9 +32,9 @@ function setBrowserContext() {
 }
 
 beforeEach( () => {
-	jest.resetAllMocks();
+	vi.resetAllMocks();
 	setBrowserContext();
-	jest.useRealTimers();
+	vi.useRealTimers();
 } );
 
 describe( 'initializeAnonId', () => {
@@ -60,45 +61,45 @@ describe( 'initializeAnonId', () => {
 	} );
 
 	it( 'should work as expected when the anonId is available after a few tries', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		mockedGetTracksLoadPromise.mockImplementationOnce( () => Promise.resolve() );
 		mockedGetTracksAnonymousUserId.mockImplementationOnce( () => null );
 		mockedGetTracksAnonymousUserId.mockImplementationOnce( () => undefined );
 		mockedGetTracksAnonymousUserId.mockImplementationOnce( () => '' );
 		mockedGetTracksAnonymousUserId.mockImplementationOnce( () => 'anon-id-123' );
 		const initializeAnonIdPromise = AnonId.initializeAnonId();
-		jest.runAllTimers();
+		vi.runAllTimers();
 		expect( await initializeAnonIdPromise ).toBe( 'anon-id-123' );
 		expect( mockedRecordTracksEvent.mock.calls.length ).toBe( 1 );
 		expect( mockedGetTracksAnonymousUserId.mock.calls.length ).toBe( 4 );
 	} );
 
 	it( 'should poll at intervals', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		mockedGetTracksLoadPromise.mockImplementationOnce( () => Promise.resolve() );
 		AnonId.initializeAnonId();
 		const intervalMs = 50;
-		jest.advanceTimersByTime( 0 );
+		vi.advanceTimersByTime( 0 );
 		expect( mockedGetTracksAnonymousUserId.mock.calls.length ).toBe( 1 );
-		jest.advanceTimersByTime( intervalMs - 1 );
+		vi.advanceTimersByTime( intervalMs - 1 );
 		expect( mockedGetTracksAnonymousUserId.mock.calls.length ).toBe( 1 );
-		jest.advanceTimersByTime( 1 );
+		vi.advanceTimersByTime( 1 );
 		expect( mockedGetTracksAnonymousUserId.mock.calls.length ).toBe( 2 );
-		jest.advanceTimersByTime( intervalMs - 1 );
+		vi.advanceTimersByTime( intervalMs - 1 );
 		expect( mockedGetTracksAnonymousUserId.mock.calls.length ).toBe( 2 );
-		jest.advanceTimersByTime( 1 );
+		vi.advanceTimersByTime( 1 );
 		expect( mockedGetTracksAnonymousUserId.mock.calls.length ).toBe( 3 );
-		jest.advanceTimersByTime( intervalMs - 1 );
+		vi.advanceTimersByTime( intervalMs - 1 );
 		expect( mockedGetTracksAnonymousUserId.mock.calls.length ).toBe( 3 );
-		jest.clearAllTimers();
+		vi.clearAllTimers();
 	} );
 
 	it( 'should give up after many polling attempts and return null', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		mockedGetTracksLoadPromise.mockImplementationOnce( () => Promise.resolve() );
 		mockedGetTracksAnonymousUserId.mockImplementation( () => null );
 		const initializeAnonIdPromise = AnonId.initializeAnonId();
-		jest.runAllTimers();
+		vi.runAllTimers();
 		expect( await initializeAnonIdPromise ).toBe( null );
 		expect( mockedRecordTracksEvent.mock.calls.length ).toBe( 1 );
 		expect( mockedGetTracksAnonymousUserId.mock.calls.length ).toBe( 100 );
@@ -115,7 +116,7 @@ describe( 'initializeAnonId', () => {
 	} );
 
 	it( 'should attempt before checking for being logged in', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		mockedGetTracksLoadPromise.mockImplementationOnce( () => Promise.resolve() );
 		mockedGetTracksAnonymousUserId.mockImplementationOnce( () => null );
 		mockedGetTracksAnonymousUserId.mockImplementationOnce( () => null );
@@ -124,20 +125,20 @@ describe( 'initializeAnonId', () => {
 		mockedGetCurrentUser.mockImplementationOnce( () => undefined );
 		mockedGetCurrentUser.mockImplementationOnce( () => ( {} ) );
 		const initializeAnonIdPromise = AnonId.initializeAnonId();
-		jest.runAllTimers();
+		vi.runAllTimers();
 		expect( await initializeAnonIdPromise ).toBe( 'the-anon-id' );
 		expect( mockedRecordTracksEvent.mock.calls.length ).toBe( 1 );
 		expect( mockedGetTracksAnonymousUserId.mock.calls.length ).toBe( 3 );
 	} );
 
 	it( "should give up and return null if tracks doesn't load", async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		mockedGetTracksLoadPromise.mockImplementationOnce( () => Promise.reject() );
 		mockedGetTracksAnonymousUserId.mockImplementationOnce( () => null );
 		mockedGetCurrentUser.mockImplementationOnce( () => undefined );
 		const initializeAnonIdPromise = AnonId.initializeAnonId();
 		expect( await initializeAnonIdPromise ).toBe( null );
-		jest.runAllTimers();
+		vi.runAllTimers();
 		expect( mockedRecordTracksEvent.mock.calls.length ).toBe( 1 );
 		expect( mockedGetTracksAnonymousUserId.mock.calls.length ).toBe( 1 );
 	} );

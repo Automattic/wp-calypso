@@ -1,15 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { type MockedFunction, vi } from 'vitest';
 import { useExperiment } from 'calypso/lib/explat';
 import { useAiToolExperiment } from '../ai-tool-experiment';
 
-jest.mock( 'calypso/lib/explat', () => ( {
-	useExperiment: jest.fn(),
+vi.mock( 'calypso/lib/explat', () => ( {
+	useExperiment: vi.fn(),
 } ) );
 
-const mockUseExperiment = useExperiment as jest.MockedFunction< typeof useExperiment >;
+const mockUseExperiment = useExperiment as MockedFunction< typeof useExperiment >;
 
 const assignedTo = ( variationName: string | null ) =>
 	mockUseExperiment.mockReturnValue( [

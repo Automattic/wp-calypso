@@ -91,11 +91,17 @@ export default function TeamAcceptInvite( { agencyId, inviteId, secret }: Props 
 		) {
 			const currentAgency = error.data.user_agencies[ 0 ]; // Let's check only on the first agency.
 			const targetAgency = error.data.target_agency;
-			return <NoMultiAgencyMessage currentAgency={ currentAgency } targetAgency={ targetAgency } />;
+			return (
+				<NoMultiAgencyMessage
+					currentAgency={ currentAgency }
+					targetAgency={ targetAgency }
+					isOwner={ agency?.id === currentAgency.id && agency.user?.role === 'a4a_administrator' }
+				/>
+			);
 		}
 
 		return <ErrorMessage error={ error.message } />;
-	}, [ error ] );
+	}, [ agency, error ] );
 
 	if ( ! error ) {
 		return <PagePlaceholder />;

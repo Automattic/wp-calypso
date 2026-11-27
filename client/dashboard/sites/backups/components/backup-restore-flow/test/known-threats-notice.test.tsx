@@ -1,0 +1,668 @@
+/**
+ * @vitest-environment jsdom
+ */
+
+import '@testing-library/jest-dom';
+import { HostingFeatures } from '@automattic/api-core';
+import { useRouterState } from '@tanstack/react-router';
+import { act, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { speak } from '@wordpress/a11y';
+import nock from 'nock';
+import { vi } from 'vitest';
+import { render } from '../../../../../test-utils';
+import SiteBackupRestoreForm from '../form';
+import SiteBackupGranularRestoreForm from '../granular-form';
+import type { Site } from '@automattic/api-core';
+
+const API_BASE = 'https://public-api.wordpress.com';
+const siteId = 123;
+const rewindId = '1792244435.274';
+
+vi.mock( '@wordpress/react-i18n', () => ( {
+	default: ( ( m ) => ( { ...m, default: m } ) )( {
+		useI18n: vi.fn(),
+	} ),
+} ) );
+
+vi.mock( '@wordpress/a11y', async () => ( {
+	...( await vi.importActual< typeof import( '@wordpress/a11y' ) >( '@wordpress/a11y' ) ),
+	speak: vi.fn(),
+} ) );
+
+const mockCreateErrorNotice = vi.fn();
+
+vi.mock( '@wordpress/data', () => ( {
+	useDispatch: () => ( {
+		createSuccessNotice: vi.fn(),
+		createErrorNotice: mockCreateErrorNotice,
+	} ),
+	useRegistry: () => ( {} ),
+	combineReducers: vi.fn(),
+	createReduxStore: vi.fn(),
+	register: vi.fn(),
+	createSelector: vi.fn( ( selector ) => selector ),
+	store: vi.fn(),
+	select: vi.fn(),
+	dispatch: vi.fn(),
+	keyedReducer: () => () => ( {} ),
+} ) );
+
+vi.mock(
+	'../../../../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context',
+	() => ( {
+		useFileBrowserContext: () => ( {
+			fileBrowserState: {
+				getCheckList: () => ( { includeList: [], excludeList: [], totalItems: 1 } ),
+				getSelectedList: () => [ { type: 'file', path: '/wp-content/a.php' } ],
+			},
+		} ),
+	} )
+);
+
+const site = {
+	ID: siteId,
+	slug: 'test-site',
+	name: 'Test Site',
+	plan: {
+		expired: false,
+		features: { active: [ HostingFeatures.BACKUPS_SELF_SERVE, HostingFeatures.SCAN_SELF_SERVE ] },
+	},
+} as Site;
+
+const knownThreats = ( flagged: number ) => ( {
+	malware: flagged,
+	database: 0,
+	vulnerable: 0,
+	ignored: 0,
+	flagged,
+	fixed: 0,
+} );
+
+function mockBackups(
+	backup: Record< string, unknown >,
+	latestWithout: number | null = 1792240000
+) {
+	nock( API_BASE )
+		.persist()
+		.get( `/wpcom/v3/sites/${ siteId }/rewind/backups` )
+		.query( true )
+		.reply( 200, {
+			ok: true,
+			totalPages: 1,
+			latest_without_known_threats: latestWithout,
+			backups: [ { object: { backup_period: '1792244301', ...backup } } ],
+		} );
+	nock( API_BASE )
+		.persist()
+		.get( new RegExp( `/wpcom/v2/sites/${ siteId }/rewind/backups/.*/threats` ) )
+		.reply( 503, {} );
+	nock( API_BASE )
+		.persist()
+		.get( new RegExp( `/rest/v1.1/sites/${ siteId }/rewind/backups/.*` ) )
+		.query( true )
+		.reply( 200, {} );
+	nock( API_BASE )
+		.persist()
+		.get( `/rest/v1.4/sites/${ siteId }/settings` )
+		.query( true )
+		.reply( 200, { settings: { timezone_string: 'UTC', gmt_offset: 0 } } );
+	// The clean backup's "Backup complete" entry, a few minutes after its period.
+	nock( API_BASE )
+		.persist()
+		.get( `/wpcom/v2/sites/${ siteId }/activity` )
+		.query( true )
+		.reply( 200, {
+			current: {
+				orderedItems: [
+					{
+						activity_id: 'backup-clean',
+						name: 'rewind__backup_complete_full',
+						rewind_id: '1792240135.5',
+						is_rewindable: true,
+						published: '2026-10-17T12:28:55.500+00:00',
+						summary: 'Backup and scan complete',
+						content: { text: '' },
+						actor: { name: 'Jetpack' },
+					},
+				],
+			},
+			totalItems: 1,
+			totalPages: 1,
+		} );
+}
+
+const renderForm = () =>
+	render(
+		<SiteBackupRestoreForm
+			site={ site }
+			restoreLinkTo="/sites/$siteSlug/backups/$rewindId/restore"
+			siteId={ siteId }
+			rewindId={ rewindId }
+			restorePointDate="Oct 16"
+			onRestoreInitiate={ vi.fn() }
+		/>
+	);
+
+const restoreButton = () => screen.getByRole( 'button', { name: 'Restore now' } );
+
+afterEach( () => {
+	nock.cleanAll();
+	vi.mocked( speak ).mockClear();
+	mockCreateErrorNotice.mockClear();
+} );
+
+const restorePath = `/rest/v1/activity-log/${ siteId }/rewind/to/${ rewindId }`;
+
+test( 'disables Restore now until the box is ticked', async () => {
+	const user = userEvent.setup();
+	mockBackups( { known_threats: knownThreats( 3 ) } );
+	renderForm();
+
+	const checkbox = await screen.findByRole( 'checkbox', {
+		name: 'I understand this backup contains known threats and want to restore it anyway.',
+	} );
+	expect(
+		screen.getByText(
+			'This backup contains 3 known security threats and may restore malware on your site.'
+		)
+	).toBeVisible();
+	expect( restoreButton() ).toHaveAttribute( 'aria-disabled', 'true' );
+	expect( restoreButton() ).toHaveAccessibleDescription(
+		'To restore this backup, confirm that you understand it contains known threats.'
+	);
+	// Shown as text, not in a tooltip.
+	expect(
+		screen.getByText(
+			'To restore this backup, confirm that you understand it contains known threats.'
+		)
+	).toBeVisible();
+
+	await user.click( checkbox );
+	expect( restoreButton() ).toBeEnabled();
+	expect( restoreButton() ).not.toHaveAttribute( 'aria-disabled' );
+	expect( restoreButton() ).not.toHaveAccessibleDescription();
+	await user.hover( restoreButton() );
+	expect( screen.queryByRole( 'tooltip' ) ).not.toBeInTheDocument();
+
+	await user.click( checkbox );
+	expect( restoreButton() ).toHaveAttribute( 'aria-disabled', 'true' );
+} );
+
+test( 'keeps the unacknowledged Restore now focusable but inert', async () => {
+	const user = userEvent.setup();
+	const onRestoreInitiate = vi.fn();
+	const restoreScope = nock( API_BASE )
+		.post( new RegExp( `/activity-log/${ siteId }/rewind/to/` ) )
+		.query( true )
+		.reply( 200, {} );
+	mockBackups( { known_threats: knownThreats( 3 ) } );
+	render(
+		<SiteBackupRestoreForm
+			site={ site }
+			siteId={ siteId }
+			rewindId={ rewindId }
+			restorePointDate="Oct 16"
+			onRestoreInitiate={ onRestoreInitiate }
+		/>
+	);
+
+	await screen.findByRole( 'checkbox', { name: /I understand/ } );
+	restoreButton().focus();
+	expect( restoreButton() ).toHaveFocus();
+	await user.click( restoreButton() );
+	await user.keyboard( '{Enter}' );
+
+	expect( restoreScope.isDone() ).toBe( false );
+	expect( onRestoreInitiate ).not.toHaveBeenCalled();
+
+	await user.click( screen.getByRole( 'checkbox', { name: /I understand/ } ) );
+	await user.click( restoreButton() );
+	await waitFor( () => expect( restoreScope.isDone() ).toBe( true ) );
+} );
+
+test( 'announces the warning once when it appears', async () => {
+	const user = userEvent.setup();
+	mockBackups( { known_threats: knownThreats( 3 ) } );
+	renderForm();
+
+	const sentence =
+		'This backup contains 3 known security threats and may restore malware on your site.';
+	await screen.findByText( sentence );
+	expect( speak ).toHaveBeenCalledTimes( 1 );
+	expect( speak ).toHaveBeenCalledWith( sentence );
+
+	// Ticking the box says the restore is open, without repeating the warning; unticking says nothing.
+	const checkbox = screen.getByRole( 'checkbox', { name: /I understand/ } );
+	await user.click( checkbox );
+	expect( speak ).toHaveBeenCalledTimes( 2 );
+	expect( speak ).toHaveBeenLastCalledWith( 'You can now restore this backup.' );
+	expect( checkbox ).toHaveFocus();
+
+	await user.click( checkbox );
+	expect( speak ).toHaveBeenCalledTimes( 2 );
+} );
+
+test( 'uses the singular for one threat', async () => {
+	mockBackups( { known_threats: knownThreats( 1 ) } );
+	renderForm();
+
+	expect(
+		await screen.findByText(
+			'This backup contains 1 known security threat and may restore malware on your site.'
+		)
+	).toBeVisible();
+} );
+
+test( 'renders the sentence without a raw paragraph so it lines up with the notice icon', async () => {
+	mockBackups( { known_threats: knownThreats( 3 ) } );
+	renderForm();
+
+	const sentence = await screen.findByText(
+		'This backup contains 3 known security threats and may restore malware on your site.'
+	);
+	expect( sentence.tagName ).not.toBe( 'P' );
+	expect( sentence.closest( 'p' ) ).toBeNull();
+	expect( sentence.closest( '.dashboard-notice' ) ).not.toBeNull();
+} );
+
+test( 'keeps other disabled reasons', async () => {
+	const user = userEvent.setup();
+	mockBackups( { known_threats: knownThreats( 3 ) } );
+	renderForm();
+
+	await user.click(
+		await screen.findByRole( 'checkbox', { name: /I understand this backup contains/ } )
+	);
+	expect( restoreButton() ).toBeEnabled();
+
+	for ( const name of [
+		'WordPress themes',
+		'WordPress plugins',
+		'WordPress root',
+		'WP-content directory',
+		'Site database',
+		'Media uploads',
+	] ) {
+		await user.click( screen.getByRole( 'checkbox', { name: new RegExp( `^${ name }` ) } ) );
+	}
+
+	expect( restoreButton() ).toBeDisabled();
+} );
+
+test( 'does nothing for backups without known threats', async () => {
+	mockBackups( { known_threats: knownThreats( 0 ) } );
+	const scope = nock( API_BASE );
+	renderForm();
+
+	await act( () => new Promise( ( resolve ) => setTimeout( resolve, 200 ) ) );
+	expect( screen.queryByText( /known security threat/ ) ).not.toBeInTheDocument();
+	expect( screen.queryByRole( 'checkbox', { name: /I understand/ } ) ).not.toBeInTheDocument();
+	expect( restoreButton() ).toBeEnabled();
+	scope.done();
+} );
+
+test( 'does nothing before VaultPress ships', async () => {
+	const consoleError = vi.spyOn( console, 'error' );
+	mockBackups( {}, null );
+	renderForm();
+
+	await act( () => new Promise( ( resolve ) => setTimeout( resolve, 200 ) ) );
+	expect( screen.queryByText( /known security threat/ ) ).not.toBeInTheDocument();
+	expect( restoreButton() ).toBeEnabled();
+	expect( consoleError ).not.toHaveBeenCalled();
+	consoleError.mockRestore();
+} );
+
+test( 'links to the latest backup without known threats', async () => {
+	mockBackups( { known_threats: knownThreats( 3 ) } );
+	renderForm();
+
+	const link = await screen.findByRole( 'link', { name: 'latest backup without known threats' } );
+	expect( link ).toHaveAttribute(
+		'href',
+		expect.stringContaining( '/backups/1792240000/restore' )
+	);
+	// The backup's date and time are in a tooltip, not the sentence, once the backup's time loads.
+	await userEvent.hover( link );
+	expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent(
+		'Backup from October 17, 2026 at 12:28 PM'
+	);
+	// One sentence with the warning: the link finishes it.
+	expect( link.parentElement ).toHaveTextContent(
+		'This backup contains 3 known security threats and may restore malware on your site. Instead, restore the latest backup without known threats.'
+	);
+} );
+
+test( 'moves focus to the restore point after opening the clean backup', async () => {
+	const user = userEvent.setup();
+	mockBackups( { known_threats: knownThreats( 3 ) } );
+	// Stands in for the restore route, whose rewind id comes from the URL.
+	function RoutedForm() {
+		const pathname = useRouterState( { select: ( state ) => state.location.pathname } );
+		const opened = pathname.match( /\/backups\/(\d+)\/restore/ )?.[ 1 ];
+		return (
+			<SiteBackupRestoreForm
+				site={ site }
+				restoreLinkTo="/sites/$siteSlug/backups/$rewindId/restore"
+				siteId={ siteId }
+				rewindId={ opened ?? rewindId }
+				restorePointDate={ opened ? 'Oct 17' : 'Oct 16' }
+				onRestoreInitiate={ vi.fn() }
+			/>
+		);
+	}
+	render( <RoutedForm /> );
+
+	const link = await screen.findByRole( 'link', { name: 'latest backup without known threats' } );
+	expect( screen.getByText( /Choose what to restore/ ) ).not.toHaveFocus();
+	await user.click( link );
+
+	await waitFor( () => expect( screen.getByText( /Choose what to restore/ ) ).toHaveFocus() );
+	expect( screen.getByText( /Choose what to restore/ ) ).toHaveTextContent( 'Oct 17' );
+	expect( link ).not.toBeInTheDocument();
+} );
+
+test( 'shows the restore link once when the threats are expanded', async () => {
+	const user = userEvent.setup();
+	const threatsScope = nock( API_BASE )
+		.get( `/wpcom/v2/sites/${ siteId }/rewind/backups/1792244301/threats` )
+		.reply( 200, {
+			backup_id: 1792244301,
+			cutoff: null,
+			summary: knownThreats( 3 ),
+			count: 0,
+			truncated: false,
+			threats: [],
+		} );
+	mockBackups( { known_threats: knownThreats( 3 ) } );
+	renderForm();
+
+	const summary = await screen.findByText( 'Threat details' );
+	expect( summary.tagName ).toBe( 'SUMMARY' );
+	expect( summary.closest( 'details' ) ).not.toHaveAttribute( 'open' );
+	await user.click( summary );
+
+	expect(
+		await screen.findByRole( 'list', { name: 'Known threats in this backup' } )
+	).toBeVisible();
+	expect( summary.closest( 'details' ) ).toHaveAttribute( 'open' );
+	expect(
+		await screen.findAllByRole( 'link', { name: 'latest backup without known threats' } )
+	).toHaveLength( 1 );
+	expect( threatsScope.isDone() ).toBe( true );
+} );
+
+test( 'shows no threat details without Scan', async () => {
+	mockBackups( { known_threats: knownThreats( 3 ) } );
+	render(
+		<SiteBackupRestoreForm
+			site={ { ...site, plan: { ...site.plan, features: { active: [] } } } as Site }
+			restoreLinkTo="/sites/$siteSlug/backups/$rewindId/restore"
+			siteId={ siteId }
+			rewindId={ rewindId }
+			restorePointDate="Oct 16"
+			onRestoreInitiate={ vi.fn() }
+		/>
+	);
+
+	expect( await screen.findByText( /contains 3 known/ ) ).toBeVisible();
+	expect( screen.queryByText( 'Threat details' ) ).not.toBeInTheDocument();
+	expect( screen.getByRole( 'checkbox', { name: /I understand/ } ) ).toBeVisible();
+} );
+
+test( 'granular form requires the acknowledgement before restoring selected files', async () => {
+	const user = userEvent.setup();
+	const onRestoreInitiate = vi.fn();
+	const restoreScope = nock( API_BASE )
+		.post( new RegExp( `/activity-log/${ siteId }/rewind/to/` ) )
+		.query( true )
+		.reply( 200, { restore_id: '42' } );
+	mockBackups( { known_threats: knownThreats( 3 ) } );
+	render(
+		<SiteBackupGranularRestoreForm
+			site={ site }
+			restoreLinkTo="/sites/$siteSlug/backups/$rewindId/restore"
+			siteId={ siteId }
+			rewindId={ rewindId }
+			restorePointDate="Oct 16"
+			onRestoreInitiate={ onRestoreInitiate }
+		/>
+	);
+
+	const checkbox = await screen.findByRole( 'checkbox', {
+		name: 'I understand this backup contains known threats and want to restore it anyway.',
+	} );
+	const restore = screen.getByRole( 'button', { name: 'Restore selected file' } );
+	expect( restore ).toHaveAttribute( 'aria-disabled', 'true' );
+	expect( restore ).toHaveAccessibleDescription(
+		'To restore this backup, confirm that you understand it contains known threats.'
+	);
+	// Shown as text, not in a tooltip.
+	expect(
+		screen.getByText(
+			'To restore this backup, confirm that you understand it contains known threats.'
+		)
+	).toBeVisible();
+
+	await user.click( restore );
+	expect( restoreScope.isDone() ).toBe( false );
+	expect( onRestoreInitiate ).not.toHaveBeenCalled();
+
+	await user.click( checkbox );
+	expect( speak ).toHaveBeenLastCalledWith( 'You can now restore this backup.' );
+	expect( restore ).toBeEnabled();
+	expect( restore ).not.toHaveAttribute( 'aria-disabled' );
+	expect( restore ).not.toHaveAccessibleDescription();
+
+	await user.click( restore );
+	await waitFor( () =>
+		expect( onRestoreInitiate ).toHaveBeenCalledWith( 42, {
+			known_threats_shown: true,
+			known_threats_acknowledged: true,
+		} )
+	);
+} );
+
+test( 'renders no link when the caller supplies no restore route', async () => {
+	mockBackups( { known_threats: knownThreats( 3 ) } );
+	render(
+		<SiteBackupRestoreForm
+			site={ site }
+			siteId={ siteId }
+			rewindId={ rewindId }
+			restorePointDate="Oct 16"
+			onRestoreInitiate={ vi.fn() }
+		/>
+	);
+
+	expect( await screen.findByText( /contains 3 known/ ) ).toBeVisible();
+	expect( screen.queryByRole( 'link', { name: /^Restore .+ instead$/ } ) ).not.toBeInTheDocument();
+} );
+
+describe( 'always sends acknowledge_threats, true only when acknowledged', () => {
+	test( 'sends it after the box is ticked', async () => {
+		const user = userEvent.setup();
+		mockBackups( { known_threats: knownThreats( 3 ) } );
+		const scope = nock( API_BASE )
+			.post( restorePath, ( body ) => {
+				expect( body ).toEqual( expect.objectContaining( { acknowledge_threats: true } ) );
+				return true;
+			} )
+			.reply( 200, { restore_id: '42' } );
+		renderForm();
+
+		await user.click( await screen.findByRole( 'checkbox', { name: /I understand/ } ) );
+		await user.click( restoreButton() );
+
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+	} );
+
+	test( 'sends false for backups without known threats', async () => {
+		const user = userEvent.setup();
+		mockBackups( { known_threats: knownThreats( 0 ) } );
+		const scope = nock( API_BASE )
+			.post( restorePath, ( body ) => {
+				expect( body.acknowledge_threats ).toBe( false );
+				return true;
+			} )
+			.reply( 200, { restore_id: '42' } );
+		renderForm();
+
+		await act( () => new Promise( ( resolve ) => setTimeout( resolve, 200 ) ) );
+		await user.click( restoreButton() );
+
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+	} );
+} );
+
+test( 'shows the known-threats message on threats_not_acknowledged', async () => {
+	const user = userEvent.setup();
+	mockBackups( { known_threats: knownThreats( 3 ) } );
+	nock( API_BASE ).post( restorePath ).reply( 409, {
+		error: 'threats_not_acknowledged',
+		message: 'This backup contains known threats.',
+	} );
+	renderForm();
+
+	const checkbox = await screen.findByRole( 'checkbox', { name: /I understand/ } );
+	await user.click( checkbox );
+	await user.click( restoreButton() );
+
+	await waitFor( () =>
+		expect( mockCreateErrorNotice ).toHaveBeenCalledWith(
+			'This backup is known to contain security threats. Acknowledge them to restore it.',
+			expect.anything()
+		)
+	);
+	expect( checkbox ).not.toBeChecked();
+	expect( restoreButton() ).toHaveAttribute( 'aria-disabled', 'true' );
+	await waitFor( () => expect( checkbox ).toHaveFocus() );
+} );
+
+test( 'keeps the generic message for other restore errors', async () => {
+	const user = userEvent.setup();
+	mockBackups( { known_threats: knownThreats( 3 ) } );
+	nock( API_BASE ).post( restorePath ).reply( 500, { error: 'server_error', message: 'Oops' } );
+	renderForm();
+
+	const checkbox = await screen.findByRole( 'checkbox', { name: /I understand/ } );
+	await user.click( checkbox );
+	await user.click( restoreButton() );
+
+	await waitFor( () =>
+		expect( mockCreateErrorNotice ).toHaveBeenCalledWith(
+			'Failed to initiate restore. Please try again.',
+			expect.anything()
+		)
+	);
+	expect( checkbox ).toBeChecked();
+} );
+
+const renderGranularForm = () =>
+	render(
+		<SiteBackupGranularRestoreForm
+			site={ site }
+			siteId={ siteId }
+			rewindId={ rewindId }
+			restorePointDate="Oct 16"
+			onRestoreInitiate={ vi.fn() }
+		/>
+	);
+
+const granularRestoreButton = () => screen.getByRole( 'button', { name: 'Restore selected file' } );
+
+test( 'granular form sends acknowledge_threats after the box is ticked', async () => {
+	const user = userEvent.setup();
+	mockBackups( { known_threats: knownThreats( 3 ) } );
+	const scope = nock( API_BASE )
+		.post( restorePath, ( body ) => {
+			expect( body ).toEqual(
+				expect.objectContaining( { types: 'paths', acknowledge_threats: true } )
+			);
+			return true;
+		} )
+		.reply( 200, { restore_id: '42' } );
+	renderGranularForm();
+
+	await user.click( await screen.findByRole( 'checkbox', { name: /I understand/ } ) );
+	await user.click( granularRestoreButton() );
+
+	await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+} );
+
+test( 'granular form sends acknowledge_threats false for backups without known threats', async () => {
+	const user = userEvent.setup();
+	mockBackups( { known_threats: knownThreats( 0 ) } );
+	const scope = nock( API_BASE )
+		.post( restorePath, ( body ) => {
+			expect( body.acknowledge_threats ).toBe( false );
+			return true;
+		} )
+		.reply( 200, { restore_id: '42' } );
+	renderGranularForm();
+
+	await act( () => new Promise( ( resolve ) => setTimeout( resolve, 200 ) ) );
+	await user.click( granularRestoreButton() );
+
+	await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+} );
+
+test( 'granular form shows the known-threats message on threats_not_acknowledged', async () => {
+	const user = userEvent.setup();
+	mockBackups( { known_threats: knownThreats( 3 ) } );
+	nock( API_BASE ).post( restorePath ).reply( 409, {
+		error: 'threats_not_acknowledged',
+		message: 'This backup contains known threats.',
+	} );
+	renderGranularForm();
+
+	const checkbox = await screen.findByRole( 'checkbox', { name: /I understand/ } );
+	await user.click( checkbox );
+	await user.click( granularRestoreButton() );
+
+	await waitFor( () =>
+		expect( mockCreateErrorNotice ).toHaveBeenCalledWith(
+			'This backup is known to contain security threats. Acknowledge them to restore it.',
+			expect.anything()
+		)
+	);
+	expect( checkbox ).not.toBeChecked();
+	expect( granularRestoreButton() ).toHaveAttribute( 'aria-disabled', 'true' );
+	await waitFor( () => expect( checkbox ).toHaveFocus() );
+} );
+
+test.each( [
+	[ 'form', renderForm, restoreButton ],
+	[ 'granular form', renderGranularForm, granularRestoreButton ],
+] )(
+	'%s asks for the acknowledgement when refused for threats its own lookup missed',
+	async ( _, renderRestoreForm, getRestoreButton ) => {
+		const user = userEvent.setup();
+		mockBackups( { known_threats: knownThreats( 0 ) } );
+		nock( API_BASE )
+			.post( restorePath, ( body ) => ! body.acknowledge_threats )
+			.reply( 409, {
+				error: 'threats_not_acknowledged',
+				message: 'This backup contains known threats.',
+				data: { known_threats: knownThreats( 3 ), backup_period: 1792244301 },
+			} );
+		const acknowledgedScope = nock( API_BASE )
+			.post( restorePath, ( body ) => body.acknowledge_threats === true )
+			.reply( 200, { restore_id: '42' } );
+		renderRestoreForm();
+
+		await act( () => new Promise( ( resolve ) => setTimeout( resolve, 200 ) ) );
+		expect( screen.queryByRole( 'checkbox', { name: /I understand/ } ) ).not.toBeInTheDocument();
+		await user.click( getRestoreButton() );
+
+		const checkbox = await screen.findByRole( 'checkbox', { name: /I understand/ } );
+		expect( screen.getByText( /contains 3 known security threats/ ) ).toBeVisible();
+		await waitFor( () => expect( checkbox ).toHaveFocus() );
+		expect( getRestoreButton() ).toHaveAttribute( 'aria-disabled', 'true' );
+
+		await user.click( checkbox );
+		await user.click( getRestoreButton() );
+		await waitFor( () => expect( acknowledgedScope.isDone() ).toBe( true ) );
+	}
+);

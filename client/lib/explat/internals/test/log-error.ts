@@ -1,12 +1,13 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
+import { vi } from 'vitest';
 import wpcom from 'calypso/lib/wp';
 import * as Logger from 'calypso/server/lib/logger';
 import { logError } from '../log-error';
 
-jest.mock( 'calypso/lib/wp' );
+vi.mock( 'calypso/lib/wp' );
 
-jest.mock( 'calypso/server/lib/logger', () => {
-	const logger = jest.fn();
+vi.mock( 'calypso/server/lib/logger', () => {
+	const logger = vi.fn();
 	return {
 		getLogger: () => ( { error: logger } ),
 	};
@@ -23,7 +24,7 @@ const mockWindow = {
 			this[ key ] = value;
 		}
 	},
-	fetch: jest.fn(),
+	fetch: vi.fn(),
 };
 function setBrowserContext() {
 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -32,7 +33,7 @@ function setBrowserContext() {
 }
 
 beforeEach( () => {
-	jest.resetAllMocks();
+	vi.resetAllMocks();
 	setBrowserContext();
 } );
 
@@ -40,7 +41,7 @@ describe( 'logError', () => {
 	it( 'should log to the server in SSR', () => {
 		setSsrContext();
 		logError( { message: 'asdf', foo: 'bar' } );
-		expect( jest.mocked( Logger.getLogger().error ).mock.calls ).toMatchInlineSnapshot( `
+		expect( vi.mocked( Logger.getLogger().error ).mock.calls ).toMatchInlineSnapshot( `
 		Array [
 		  Array [
 		    Object {
@@ -58,7 +59,7 @@ describe( 'logError', () => {
 	} );
 	it( 'should log to the server in the browser', () => {
 		logError( { message: 'asdf', foo: 'bar' } );
-		expect( jest.mocked( wpcom.req.post ).mock.calls ).toMatchInlineSnapshot( `
+		expect( vi.mocked( wpcom.req.post ).mock.calls ).toMatchInlineSnapshot( `
 		Array [
 		  Array [
 		    Object {

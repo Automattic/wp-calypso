@@ -127,10 +127,14 @@ function createHarness( initialAbilities: Ability[] = [ createAbility() ] ) {
 
 describe( 'WebMCP adapter', () => {
 	beforeEach( () => {
+		document.body.className = 'site-editor-php';
 		vi.mocked( blocks.parse ).mockReset().mockReturnValue( [] );
 	} );
 
-	afterEach( () => vi.restoreAllMocks() );
+	afterEach( () => {
+		delete window.pagenow;
+		vi.restoreAllMocks();
+	} );
 
 	it( 'normalizes missing and malformed input schemas', () => {
 		expect( normalizeInputSchema( undefined ) ).toEqual( { type: 'object', properties: {} } );
@@ -200,6 +204,34 @@ describe( 'WebMCP adapter', () => {
 		expect( shouldExposeWebMcpAbility( ability ) ).toBe( false );
 	} );
 
+	it( 'exposes a flagged ability only on the screens it lists', () => {
+		const ordersTool = createAbility( {
+			name: 'woocommerce/update-order',
+			meta: {
+				annotations: { clientRegistered: true },
+				webmcp: { public: true, screens: [ 'woocommerce_page_wc-orders' ] },
+			},
+		} );
+		document.body.className = 'wp-admin';
+		window.pagenow = 'woocommerce_page_wc-orders';
+
+		expect( shouldExposeWebMcpAbility( ordersTool ) ).toBe( true );
+
+		window.pagenow = 'edit-product';
+
+		expect( shouldExposeWebMcpAbility( ordersTool ) ).toBe( false );
+	} );
+
+	it( 'hides the tools that list no screens outside the editors', () => {
+		document.body.className = 'wp-admin';
+		window.pagenow = 'woocommerce_page_wc-orders';
+
+		expect( shouldExposeWebMcpAbility( createAbility() ) ).toBe( false );
+		expect(
+			shouldExposeWebMcpAbility( createServerAbility( WEBMCP_SERVER_ABILITY_NAMES[ 0 ] ) )
+		).toBe( false );
+	} );
+
 	it.each< [ string, Ability, string ] >( [
 		[
 			'server-registered',
@@ -223,6 +255,28 @@ describe( 'WebMCP adapter', () => {
 		expect( warn ).toHaveBeenCalledWith(
 			expect.stringContaining( `WebMCP doesn't expose big-sky/apply-block-edits: ${ reason }` )
 		);
+	} );
+
+	it( 'warns about a refused flagged ability only on the screens it lists', async () => {
+		// eslint-disable-next-line no-console
+		const warn = vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		const harness = createHarness( [
+			createAbility( {
+				callback: undefined,
+				meta: { webmcp: { public: true, screens: [ 'woocommerce_page_wc-orders' ] } },
+			} ),
+		] );
+		document.body.className = 'wp-admin';
+		window.pagenow = 'edit-product';
+
+		await harness.adapter.sync();
+
+		expect( warn ).not.toHaveBeenCalled();
+
+		window.pagenow = 'woocommerce_page_wc-orders';
+		await harness.adapter.sync();
+
+		expect( warn ).toHaveBeenCalledWith( expect.stringContaining( 'it has no client callback' ) );
 	} );
 
 	it( "doesn't warn about exposed or unflagged abilities", async () => {
@@ -253,7 +307,7 @@ describe( 'WebMCP adapter', () => {
 		expect( tool ).toMatchObject( {
 			description: expect.stringContaining( 'Instructions for wpcom/get-block-schemas' ),
 			inputSchema: ability.input_schema,
-			annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true },
+			annotations: { readOnlyHint: true, untrustedContentHint: true, consequentialHint: false },
 		} );
 
 		await tool?.execute( { fields: 'summary' } );
@@ -280,7 +334,7 @@ describe( 'WebMCP adapter', () => {
 		const tool = harness.tools.get( 'big_sky__show_template' );
 		expect( tool ).toMatchObject( {
 			inputSchema: { type: 'object', properties: {}, additionalProperties: false },
-			annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true },
+			annotations: { readOnlyHint: false, untrustedContentHint: true, consequentialHint: false },
 		} );
 
 		await expect( tool?.execute( {} ) ).resolves.toEqual( {
@@ -322,7 +376,7 @@ describe( 'WebMCP adapter', () => {
 				},
 				additionalProperties: false,
 			},
-			annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false },
+			annotations: { readOnlyHint: false, untrustedContentHint: true, consequentialHint: false },
 		} );
 
 		const input = {
@@ -342,6 +396,41 @@ describe( 'WebMCP adapter', () => {
 				reverseMap: {},
 			}
 		);
+	} );
+
+	it( 'sends only the hints the WebMCP draft defines', async () => {
+		const harness = createHarness( [ createBlockTreeAbility() ] );
+		await harness.adapter.sync();
+
+		expect( harness.tools.get( 'agents_manager__get_block_tree' )?.annotations ).toEqual( {
+			readOnlyHint: true,
+			untrustedContentHint: true,
+			consequentialHint: false,
+			debugging: false,
+		} );
+	} );
+
+	it.each< [ string, Ability[ 'meta' ] ] >( [
+		[ 'is annotated as destructive', { ...flaggedMeta, annotations: { destructive: true } } ],
+		[ 'sets `meta.webmcp.consequential`', { webmcp: { public: true, consequential: true } } ],
+	] )( 'marks the tool of an ability that %s as consequential', async ( _case, meta ) => {
+		const harness = createHarness( [ createAbility( { meta } ) ] );
+		await harness.adapter.sync();
+
+		expect( harness.tools.get( 'big_sky__apply_block_edits' )?.annotations ).toMatchObject( {
+			consequentialHint: true,
+		} );
+	} );
+
+	it( 'marks the tool of an ability that sets `meta.webmcp.debugging` as a debugging tool', async () => {
+		const harness = createHarness( [
+			createAbility( { meta: { webmcp: { public: true, debugging: true } } } ),
+		] );
+		await harness.adapter.sync();
+
+		expect( harness.tools.get( 'big_sky__apply_block_edits' )?.annotations ).toMatchObject( {
+			debugging: true,
+		} );
 	} );
 
 	it( 'pairs the block-tree IDs with the edit bridge', async () => {
@@ -372,7 +461,7 @@ describe( 'WebMCP adapter', () => {
 
 		const readTool = harness.tools.get( 'agents_manager__get_block_tree' );
 		expect( readTool ).toMatchObject( {
-			annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true },
+			annotations: { readOnlyHint: true, untrustedContentHint: true, consequentialHint: false },
 		} );
 
 		await readTool?.execute( {} );
@@ -455,6 +544,53 @@ describe( 'WebMCP adapter', () => {
 			}
 		);
 		expect( blocks.parse ).toHaveBeenCalledWith( expect.stringContaining( 'Pattern heading' ) );
+	} );
+
+	it( 'numbers pattern markup insertions from the start when no index is given', async () => {
+		vi.mocked( blocks.parse ).mockReturnValue( [
+			{
+				clientId: 'parsed-heading',
+				name: 'core/heading',
+				isValid: true,
+				attributes: { content: 'Pattern heading' },
+				innerBlocks: [],
+			},
+			{
+				clientId: 'parsed-paragraph',
+				name: 'core/paragraph',
+				isValid: true,
+				attributes: { content: 'Pattern copy' },
+				innerBlocks: [],
+			},
+		] );
+		const harness = createHarness();
+		await harness.adapter.sync();
+
+		await harness.tools.get( 'big_sky__apply_block_edits' )?.execute( {
+			inserts: [
+				{
+					blockMarkup:
+						'<!-- wp:heading --><h2 class="wp-block-heading">Pattern heading</h2><!-- /wp:heading --><!-- wp:paragraph --><p>Pattern copy</p><!-- /wp:paragraph -->',
+				},
+			],
+		} );
+
+		expect( harness.toolProvider.executeAbility ).toHaveBeenCalledWith(
+			'big-sky/apply-block-edits',
+			{
+				inserts: [
+					{
+						index: 0,
+						block: { name: 'core/heading', attributes: { content: 'Pattern heading' } },
+					},
+					{
+						index: 1,
+						block: { name: 'core/paragraph', attributes: { content: 'Pattern copy' } },
+					},
+				],
+				reverseMap: {},
+			}
+		);
 	} );
 
 	it( 'rejects empty pattern markup before dispatching the edit', async () => {
@@ -592,6 +728,15 @@ describe( 'WebMCP adapter', () => {
 			[ createAbility( { meta: { annotations: { clientRegistered: true } } } ) ],
 		],
 		[
+			'joined by an ability with the same tool name',
+			'demo__read__panel',
+			createAbility( { name: 'demo/read--panel' } ),
+			[
+				createAbility( { name: 'demo/read--panel' } ),
+				createAbility( { name: 'demo/read/panel' } ),
+			],
+		],
+		[
 			'no longer read-only on the server',
 			'wpcom__get_block_schemas',
 			createServerAbility( 'wpcom/get-block-schemas' ),
@@ -691,5 +836,68 @@ describe( 'WebMCP adapter', () => {
 			'agents_manager__get_block_tree',
 			'big_sky__apply_block_edits',
 		] );
+	} );
+
+	it( 'registers the other tools when one cannot be serialized', async () => {
+		const cyclicSchema: Record< string, unknown > = { type: 'object' };
+		cyclicSchema.properties = { self: cyclicSchema };
+		const harness = createHarness( [
+			createAbility( { name: 'demo/cyclic', input_schema: cyclicSchema } ),
+			createBlockTreeAbility(),
+		] );
+
+		await expect( harness.adapter.sync() ).rejects.toThrow( 'demo/cyclic cannot be serialized' );
+
+		expect( [ ...harness.tools.keys() ] ).toEqual( [ 'agents_manager__get_block_tree' ] );
+	} );
+
+	it( 'removes a tool whose ability can no longer be serialized', async () => {
+		const harness = createHarness( [ createAbility( { name: 'demo/panel' } ) ] );
+		await harness.adapter.sync();
+		const signal = harness.signals.get( 'demo__panel' );
+		const cyclicSchema: Record< string, unknown > = { type: 'object' };
+		cyclicSchema.properties = { self: cyclicSchema };
+		harness.setAbilities( [ createAbility( { name: 'demo/panel', input_schema: cyclicSchema } ) ] );
+
+		await expect( harness.adapter.sync() ).rejects.toThrow( 'cannot be serialized' );
+
+		expect( signal?.aborted ).toBe( true );
+	} );
+
+	it( 'exposes none of the abilities that share a tool name, and warns once', async () => {
+		// eslint-disable-next-line no-console
+		const warn = vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		const harness = createHarness( [
+			createAbility( { name: 'demo/read--panel' } ),
+			createAbility( { name: 'demo/read/panel' } ),
+			createBlockTreeAbility(),
+		] );
+
+		await harness.adapter.sync();
+		await harness.adapter.sync();
+
+		expect( [ ...harness.tools.keys() ] ).toEqual( [ 'agents_manager__get_block_tree' ] );
+		expect( warn ).toHaveBeenCalledTimes( 1 );
+		expect( warn ).toHaveBeenCalledWith(
+			expect.stringContaining(
+				"WebMCP doesn't expose demo/read--panel, demo/read/panel: they share the tool name demo__read__panel"
+			)
+		);
+	} );
+
+	it( 'removes a tool once another ability shares its tool name', async () => {
+		vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		const harness = createHarness( [ createAbility( { name: 'demo/read--panel' } ) ] );
+		await harness.adapter.sync();
+		const signal = harness.signals.get( 'demo__read__panel' );
+		harness.setAbilities( [
+			createAbility( { name: 'demo/read--panel' } ),
+			createAbility( { name: 'demo/read/panel' } ),
+		] );
+
+		await harness.adapter.sync();
+
+		expect( signal?.aborted ).toBe( true );
+		expect( harness.modelContext.registerTool ).toHaveBeenCalledTimes( 1 );
 	} );
 } );

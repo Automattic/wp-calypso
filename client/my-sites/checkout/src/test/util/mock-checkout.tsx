@@ -1,5 +1,5 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
-import { siteByIdQuery } from '@automattic/api-queries';
+import { siteByIdQuery, transactionSupportedCountriesQuery } from '@automattic/api-queries';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
 import { PropsOf } from '@emotion/react';
@@ -22,6 +22,11 @@ function seedTestSite( client: QueryClient, site?: Partial< Site > ) {
 	const { queryKey } = siteByIdQuery( siteId );
 	client.setQueryDefaults( queryKey, { staleTime: Infinity } );
 	client.setQueryData( queryKey, createTestSite( site ) );
+	// Each test mocks the countries endpoint once. Without this, a component mounting after the
+	// list loads refetches it, and that request can take the next test's mocked reply.
+	client.setQueryDefaults( transactionSupportedCountriesQuery().queryKey.slice( 0, 3 ), {
+		staleTime: Infinity,
+	} );
 	return client;
 }
 
@@ -41,7 +46,9 @@ export function MockCheckout( {
 	site?: Partial< Site >;
 } ) {
 	const reduxStore = createTestReduxStore();
-	const [ queryClient ] = useState( () => seedTestSite( new QueryClient(), site ) );
+	const [ queryClient ] = useState( () =>
+		seedTestSite( new QueryClient( { defaultOptions: { queries: { retry: false } } } ), site )
+	);
 
 	const mockSetCartEndpoint = mockSetCartEndpointWith( {
 		currency: initialCart.currency,

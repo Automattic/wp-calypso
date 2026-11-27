@@ -13,7 +13,7 @@ export default function PreferencesReader( { density }: { density?: Density } ) 
 	const badges = [
 		{
 			text: isSeenPostsEnabled ? __( 'Read status on' ) : __( 'Read status off' ),
-			intent: isSeenPostsEnabled ? ( 'stable' as const ) : ( 'draft' as const ),
+			intent: isSeenPostsEnabled ? ( 'stable' as const ) : ( 'none' as const ),
 		},
 	];
 

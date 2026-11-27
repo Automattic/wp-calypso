@@ -1,27 +1,28 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render as rtlRender, screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { ComponentProps } from 'react';
+import { vi } from 'vitest';
 import { ReaderSitesList } from 'calypso/reader/sites-list';
 import ListSites from '../sites';
 
 // ReaderSitesList has Redux dependencies (site data, follows, notices).
-jest.mock( 'calypso/reader/sites-list', () => ( {
-	ReaderSitesList: jest.fn( () => <ul data-testid="reader-sites-list" /> ),
+vi.mock( 'calypso/reader/sites-list', () => ( {
+	ReaderSitesList: vi.fn( () => <ul data-testid="reader-sites-list" /> ),
 } ) );
 
 // ListEmpty uses Redux selectors and data-layer query components.
-jest.mock( '../../components/empty', () => ( {
+vi.mock( '../../components/empty', () => ( {
 	__esModule: true,
 	default: () => <div data-testid="list-empty">No sites</div>,
 } ) );
 
 // useInView relies on IntersectionObserver; mock to control infinite scroll.
-const mockInView = jest.fn().mockReturnValue( { ref: jest.fn(), inView: false } );
-jest.mock( 'react-intersection-observer', () => ( {
+const mockInView = vi.fn().mockReturnValue( { ref: vi.fn(), inView: false } );
+vi.mock( 'react-intersection-observer', () => ( {
 	useInView: ( ...args: unknown[] ) => mockInView( ...args ),
 } ) );
 
@@ -85,7 +86,7 @@ describe( 'ListSites', () => {
 	afterEach( () => {
 		queryClient?.clear();
 		nock.cleanAll();
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'shows loading spinner while fetching', () => {
@@ -134,7 +135,7 @@ describe( 'ListSites', () => {
 			expect( ReaderSitesList ).toHaveBeenCalled();
 		} );
 
-		const lastCall = jest.mocked( ReaderSitesList ).mock.calls.at( -1 )![ 0 ];
+		const lastCall = vi.mocked( ReaderSitesList ).mock.calls.at( -1 )![ 0 ];
 		expect( lastCall.sites ).toEqual( [
 			{
 				siteId: '10',
@@ -175,7 +176,7 @@ describe( 'ListSites', () => {
 			expect( ReaderSitesList ).toHaveBeenCalled();
 		} );
 
-		const lastCall = jest.mocked( ReaderSitesList ).mock.calls.at( -1 )![ 0 ];
+		const lastCall = vi.mocked( ReaderSitesList ).mock.calls.at( -1 )![ 0 ];
 		expect( lastCall.sites ).toEqual( [
 			{
 				siteId: '300',

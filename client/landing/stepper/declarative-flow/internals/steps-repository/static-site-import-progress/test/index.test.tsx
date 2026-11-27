@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
+import { vi } from 'vitest';
 import { useStaticSiteImport } from 'calypso/dashboard/sites/static-site-import/use-static-site-import';
 import documentHeadReducer from 'calypso/state/document-head/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
@@ -11,9 +12,11 @@ import StaticSiteImportProgressStep from '..';
 import { mockStepProps } from '../../test/helpers';
 import type { StaticSiteImport } from 'calypso/dashboard/sites/static-site-import/use-static-site-import';
 
-jest.mock( 'calypso/dashboard/sites/static-site-import/use-static-site-import', () => ( {
-	...jest.requireActual( 'calypso/dashboard/sites/static-site-import/use-static-site-import' ),
-	useStaticSiteImport: jest.fn(),
+vi.mock( 'calypso/dashboard/sites/static-site-import/use-static-site-import', async () => ( {
+	...( await vi.importActual<
+		typeof import( 'calypso/dashboard/sites/static-site-import/use-static-site-import' )
+	>( 'calypso/dashboard/sites/static-site-import/use-static-site-import' ) ),
+	useStaticSiteImport: vi.fn(),
 } ) );
 
 const MOVE = {
@@ -23,8 +26,8 @@ const MOVE = {
 };
 
 const render = ( siteImport: StaticSiteImport | null, props: Partial< typeof MOVE > = MOVE ) => {
-	jest.mocked( useStaticSiteImport ).mockReturnValue( siteImport );
-	const submit = jest.fn();
+	vi.mocked( useStaticSiteImport ).mockReturnValue( siteImport );
+	const submit = vi.fn();
 	renderWithProvider(
 		<MemoryRouter>
 			<StaticSiteImportProgressStep
@@ -39,7 +42,7 @@ const render = ( siteImport: StaticSiteImport | null, props: Partial< typeof MOV
 
 describe( 'StaticSiteImportProgressStep', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'shows the move’s steps beside a window onto the site', () => {

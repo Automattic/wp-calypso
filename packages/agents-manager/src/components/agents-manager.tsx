@@ -207,7 +207,7 @@ function AgentSetup( {
 	}
 
 	useWebMcpTools( {
-		toolProvider: loadedProvidersRef.current?.toolProvider,
+		providers: loadedProvidersRef.current,
 		scope: `${ siteKey }:${ currentRoute ?? '' }:${ window.location.pathname }${
 			window.location.search
 		}`,

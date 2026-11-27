@@ -9,6 +9,7 @@ import { useAppContext } from '../../../app/context';
 import Notice from '../../../components/notice';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
+import { OWNER_ROLE } from '../constants';
 import NoMultiAgencyMessage from './no-multi-agency-message';
 import type { AgencyTeamInviteActivationError } from '@automattic/api-core';
 
@@ -119,7 +120,13 @@ export default function AcceptTeamInvite( {
 		if ( currentAgency && targetAgency ) {
 			return (
 				<AcceptInviteScreen>
-					<NoMultiAgencyMessage currentAgency={ currentAgency } targetAgency={ targetAgency } />
+					<NoMultiAgencyMessage
+						currentAgency={ currentAgency }
+						targetAgency={ targetAgency }
+						isOwner={
+							activeAgency?.id === currentAgency.id && activeAgency.user?.role === OWNER_ROLE
+						}
+					/>
 				</AcceptInviteScreen>
 			);
 		}

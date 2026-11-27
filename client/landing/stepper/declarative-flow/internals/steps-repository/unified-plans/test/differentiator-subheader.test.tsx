@@ -1,29 +1,29 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { act, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { renderStep } from '../../test/helpers';
 import UnifiedPlansStep, { type UnifiedPlansStepProps } from '../unified-plans-step';
 import type { PlansIntent } from '@automattic/plans-grid-next';
 
 let mockPlansFeaturesMainProps: Record< string, unknown > = {};
 
-jest.mock( 'calypso/my-sites/plans-features-main', () => ( {
+vi.mock( 'calypso/my-sites/plans-features-main', () => ( {
 	__esModule: true,
 	default: ( props: Record< string, unknown > ) => {
 		mockPlansFeaturesMainProps = props;
 		return null;
 	},
 } ) );
-jest.mock(
-	'calypso/signup/step-wrapper',
-	() =>
-		( { stepContent }: { stepContent: React.ReactNode } ) =>
-			stepContent
+vi.mock( 'calypso/signup/step-wrapper', () => ( {
+	default: ( { stepContent }: { stepContent: React.ReactNode } ) => stepContent,
+} ) );
+vi.mock( 'calypso/components/marketing-message', () => ( { default: () => null } ) );
+vi.mock( 'calypso/lib/wp', () =>
+	( ( m ) => ( { ...m, default: m } ) )( { req: { post: () => {} } } )
 );
-jest.mock( 'calypso/components/marketing-message', () => () => null );
-jest.mock( 'calypso/lib/wp', () => ( { req: { post: () => {} } } ) );
 
 const noop = () => {};
 const GENERIC_SUBHEADER = /Whatever site you/;

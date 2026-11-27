@@ -1,5 +1,6 @@
 import page from '@automattic/calypso-router';
 import { QueryClient } from '@tanstack/react-query';
+import { vi } from 'vitest';
 import { upsertPostCache } from 'calypso/reader/data/post/cache';
 import { FRESHLY_PRESSED_TAB } from '../discover/helper';
 import { DISCOVER_PREFIX } from '../discover/routes';
@@ -11,17 +12,17 @@ import {
 	getPostTitleFallback,
 } from '../utils';
 
-jest.mock( '@automattic/calypso-router', () => jest.fn() );
+vi.mock( '@automattic/calypso-router', () => ( { default: vi.fn() } ) );
 
 let mockQueryClient: QueryClient | null = null;
 
-jest.mock( 'calypso/state/query-client', () => ( {
+vi.mock( 'calypso/state/query-client', () => ( {
 	getCalypsoQueryClient: () => mockQueryClient,
 } ) );
 
 describe( 'reader utils', () => {
 	beforeEach( () => {
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 		mockQueryClient = null;
 	} );
 
@@ -73,7 +74,7 @@ describe( 'reader utils', () => {
 	} );
 
 	describe( '#showSelectedPost with a saved snapshot', () => {
-		const windowOpen = jest.fn();
+		const windowOpen = vi.fn();
 
 		beforeEach( () => {
 			Object.defineProperty( globalThis, 'window', {
@@ -108,7 +109,7 @@ describe( 'reader utils', () => {
 	} );
 
 	describe( '#showSelectedPost with a cross-post that only has a permalink', () => {
-		const windowOpen = jest.fn();
+		const windowOpen = vi.fn();
 
 		const cacheXPost = ( permalinkKey: string, permalink: string ) => {
 			mockQueryClient = new QueryClient();
@@ -161,7 +162,7 @@ describe( 'reader utils', () => {
 	} );
 
 	describe( '#showFullXPost', () => {
-		const windowOpen = jest.fn();
+		const windowOpen = vi.fn();
 
 		beforeEach( () => {
 			Object.defineProperty( globalThis, 'window', {

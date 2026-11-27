@@ -1,18 +1,19 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { vi } from 'vitest';
 import { usePromoteWidget } from 'calypso/lib/promote-post';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import PromoCards from '../';
 
-jest.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: jest.fn() } ) );
+vi.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: vi.fn() } ) );
 let mockValues = {};
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	// Like a development build, `config()` throws for a key the site did not print.
 	const mockConfig = ( key ) => {
 		if ( key in mockValues ) {
@@ -23,23 +24,25 @@ jest.mock( '@automattic/calypso-config', () => {
 	mockConfig.isEnabled = () => false;
 	return { __esModule: true, default: mockConfig, optionalConfig: ( key ) => mockValues[ key ] };
 } );
-jest.mock( '@automattic/calypso-router', () => ( { current: '' } ) );
-jest.mock( '@automattic/components', () => ( {
+vi.mock( '@automattic/calypso-router', () =>
+	( ( m ) => ( { ...m, default: m } ) )( { current: '' } )
+);
+vi.mock( '@automattic/components', () => ( {
 	DotPager: ( { children } ) => <div>{ children }</div>,
 } ) );
-jest.mock( 'calypso/blocks/promo-card-block', () => ( { productSlug } ) => (
-	<div>{ productSlug } promo</div>
-) );
-jest.mock( 'calypso/components/app-promo-card', () => ( {
+vi.mock( 'calypso/blocks/promo-card-block', () => ( {
+	default: ( { productSlug } ) => <div>{ productSlug } promo</div>,
+} ) );
+vi.mock( 'calypso/components/app-promo-card', () => ( {
 	AppPromoCard: () => <div>Jetpack app promo</div>,
 } ) );
-jest.mock( 'calypso/lib/promote-post', () => ( {
+vi.mock( 'calypso/lib/promote-post', () => ( {
 	PromoteWidgetStatus: { ENABLED: 'enabled' },
-	usePromoteWidget: jest.fn(),
+	usePromoteWidget: vi.fn(),
 } ) );
-jest.mock( 'calypso/state/selectors/is-site-automated-transfer', () => () => false );
-jest.mock( 'calypso/state/sites/selectors', () => ( { isJetpackSite: jest.fn() } ) );
-jest.mock( 'calypso/state/ui/selectors', () => ( { getSelectedSiteId: () => 1 } ) );
+vi.mock( 'calypso/state/selectors/is-site-automated-transfer', () => ( { default: () => false } ) );
+vi.mock( 'calypso/state/sites/selectors', () => ( { isJetpackSite: vi.fn() } ) );
+vi.mock( 'calypso/state/ui/selectors', () => ( { getSelectedSiteId: () => 1 } ) );
 
 const mockConfigValues = ( values ) => {
 	mockValues = values;
@@ -54,7 +57,7 @@ const renderPromoCards = ( { isOdysseyStats = true, pageSlug = 'traffic' } = {} 
 
 describe( 'PromoCards', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		page.current = '/stats/day/example.com';
 		usePromoteWidget.mockReturnValue( 'disabled' );
 		isJetpackSite.mockReturnValue( true );

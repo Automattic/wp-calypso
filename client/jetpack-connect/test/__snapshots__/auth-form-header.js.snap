@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`AuthFormHeader renders as expected 1`] = `
+exports[`AuthFormHeader > renders as expected 1`] = `
 <div>
   <div>
     <header

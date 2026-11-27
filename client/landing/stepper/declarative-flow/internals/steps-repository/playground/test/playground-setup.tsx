@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { act, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
+import { type Mock, vi } from 'vitest';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { appStates } from 'calypso/state/imports/constants';
 import { mockStepProps, renderStep } from '../../test/helpers';
@@ -18,51 +19,58 @@ import {
 import type { PlaygroundImportProgress } from '../lib/import-playground';
 import type { ImportJob } from 'calypso/blocks/importer/types';
 
-jest.mock( '../lib/import-playground', () => ( {
-	...jest.requireActual( '../lib/import-playground' ),
-	importPlaygroundSite: jest.fn(),
-	removeSandboxPlugins: jest.fn(),
+vi.mock( '../lib/import-playground', async () => ( {
+	...( await vi.importActual< typeof import( '../lib/import-playground' ) >(
+		'../lib/import-playground'
+	) ),
+	importPlaygroundSite: vi.fn(),
+	removeSandboxPlugins: vi.fn(),
 } ) );
 
-jest.mock( '../lib/import-blueprint', () => ( {
-	useImportBlueprint: jest.fn(),
+vi.mock( '../lib/import-blueprint', () => ( {
+	useImportBlueprint: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
 // Set to override what the fake iframe reports about the boot.
 const mockBoot: { isNewPlayground?: boolean } = {};
 
-jest.mock( '../components/playground-iframe', () => ( {
-	PlaygroundIframe: ( {
-		setPlaygroundClient,
-	}: {
-		setPlaygroundClient: ( c: object, details: { isNewPlayground: boolean } ) => void;
-	} ) => {
-		const [ params ] = jest.requireActual( 'react-router-dom' ).useSearchParams();
-		// Like the real iframe, hand over the client once after it boots, and say
-		// whether the boot created a blank Playground because none was requested.
-		jest.requireActual( 'react' ).useEffect( () => {
-			setPlaygroundClient(
-				{},
-				{ isNewPlayground: mockBoot.isNewPlayground ?? ! params.has( 'playground' ) }
-			);
-			// eslint-disable-next-line react-hooks/exhaustive-deps
-		}, [] );
-		return null;
-	},
-} ) );
+vi.mock( '../components/playground-iframe', async () => {
+	const { useSearchParams } =
+		await vi.importActual< typeof import( 'react-router-dom' ) >( 'react-router-dom' );
+	const { useEffect } = await vi.importActual< typeof import( 'react' ) >( 'react' );
+	return {
+		PlaygroundIframe: ( {
+			setPlaygroundClient,
+		}: {
+			setPlaygroundClient: ( c: object, details: { isNewPlayground: boolean } ) => void;
+		} ) => {
+			const [ params ] = useSearchParams();
+			// Like the real iframe, hand over the client once after it boots, and say
+			// whether the boot created a blank Playground because none was requested.
+			useEffect( () => {
+				setPlaygroundClient(
+					{},
+					{ isNewPlayground: mockBoot.isNewPlayground ?? ! params.has( 'playground' ) }
+				);
+				// eslint-disable-next-line react-hooks/exhaustive-deps
+			}, [] );
+			return null;
+		},
+	};
+} );
 
 const mockSiteData = { siteId: 123, siteSlug: 'example.wordpress.com' };
-jest.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
+vi.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
 	useSiteData: () => ( { ...mockSiteData } ),
 } ) );
 
-const importPlaygroundSiteMock = importPlaygroundSite as jest.Mock;
-const importBlueprintMock = jest.fn();
-( useImportBlueprint as jest.Mock ).mockReturnValue( { mutateAsync: importBlueprintMock } );
+const importPlaygroundSiteMock = importPlaygroundSite as Mock;
+const importBlueprintMock = vi.fn();
+( useImportBlueprint as Mock ).mockReturnValue( { mutateAsync: importBlueprintMock } );
 
 /**
  * Renders the step while the import reports the given phase and never finishes.
@@ -102,7 +110,7 @@ const STORE_SEARCH = 'playground=abc&intent=woocommerce&siteSlug=example.wordpre
 
 describe( 'PlaygroundSetupStep', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		delete mockBoot.isNewPlayground;
 		mockSiteData.siteSlug = 'example.wordpress.com';
 	} );
@@ -292,7 +300,7 @@ describe( 'PlaygroundSetupStep', () => {
 		importBlueprintMock.mockReturnValueOnce( new Promise( () => {} ) );
 		const props = await renderSetupStep( BLUEPRINT_SEARCH );
 
-		await props.rerender( { ...props, navigation: { ...props.navigation, submit: jest.fn() } } );
+		await props.rerender( { ...props, navigation: { ...props.navigation, submit: vi.fn() } } );
 
 		expect( importBlueprintMock ).toHaveBeenCalledTimes( 1 );
 	} );

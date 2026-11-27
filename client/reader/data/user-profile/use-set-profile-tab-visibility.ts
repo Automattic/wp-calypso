@@ -48,7 +48,7 @@ export function useSetProfileTabVisibility() {
 
 		mutation.mutate( next, {
 			onSuccess() {
-				let successMessage = '';
+				let successMessage;
 				if ( tab === 'posts' ) {
 					successMessage =
 						next === 'public'

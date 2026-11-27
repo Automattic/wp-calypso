@@ -1,35 +1,34 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import page from '@automattic/calypso-router';
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { type Mock, vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { AtmosphereAccountView } from '../atmosphere-account-view';
 import { NOTIFICATIONS_TAB, PROFILE_TAB, TIMELINE_TAB } from '../helper';
 import type React from 'react';
 
-jest.mock(
-	'calypso/reader/components/reader-main',
-	() =>
-		function ReaderMain( { children }: { children: React.ReactNode } ) {
-			return <div>{ children }</div>;
-		}
-);
+vi.mock( 'calypso/reader/components/reader-main', () => ( {
+	default: function ReaderMain( { children }: { children: React.ReactNode } ) {
+		return <div>{ children }</div>;
+	},
+} ) );
 
 // recordReaderTracksEvent is a thunk that reads the follows query cache. The test
 // store from renderWithProvider does not provide that slice. Replace it with a
 // no-op action creator so dispatch() does not throw.
-jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
+vi.mock( 'calypso/state/reader/analytics/actions', () => ( {
 	recordReaderTracksEvent: () => ( { type: '@@TEST/NOOP' } ),
 } ) );
 
-jest.mock( 'calypso/components/data/document-head', () => () => null );
+vi.mock( 'calypso/components/data/document-head', () => ( { default: () => null } ) );
 
-jest.mock( '@automattic/calypso-router', () => {
-	const replace = jest.fn();
-	const fn = jest.fn() as jest.Mock & { replace: jest.Mock };
+vi.mock( '@automattic/calypso-router', () => {
+	const replace = vi.fn();
+	const fn = vi.fn() as Mock & { replace: Mock };
 	fn.replace = replace;
 	return { __esModule: true, default: fn };
 } );
@@ -87,8 +86,8 @@ describe( 'AtmosphereAccountView', () => {
 	} );
 
 	beforeEach( () => {
-		( page as unknown as jest.Mock ).mockClear();
-		( page.replace as jest.Mock ).mockClear();
+		( page as unknown as Mock ).mockClear();
+		( page.replace as Mock ).mockClear();
 	} );
 	afterEach( () => nock.cleanAll() );
 

@@ -82,6 +82,7 @@ export const createTitanMailboxMutation = () => {
 			} ),
 		onSuccess: () => {
 			queryClient.resetQueries( userMailboxesQuery() );
+			queryClient.invalidateQueries( { queryKey: [ 'mailboxes' ] } );
 		},
 	} );
 };
@@ -98,13 +99,30 @@ export const titanControlPanelAutoLoginUrlMutation = () => {
 	} );
 };
 
+const MAILBOX_DELETION_REFETCH_DELAY = 5000;
+
 export const deleteTitanMailboxMutation = () => {
 	return mutationOptions( {
 		meta: { statId: 'titan-mailbox-delete' },
 		mutationFn: ( vars: { domainName: string; mailbox: string } ) =>
 			deleteTitanMailbox( vars.domainName, vars.mailbox ),
-		onSuccess: () => {
-			queryClient.resetQueries( userMailboxesQuery() );
+		onSuccess: ( _data, vars ) => {
+			// The mailbox is deleted in the background, so show it as pending deletion
+			// now and refetch once the deletion has had time to finish.
+			queryClient.setQueryData( userMailboxesQuery().queryKey, ( accounts ) =>
+				accounts?.map( ( account ) => ( {
+					...account,
+					emails: account.emails.map( ( box ) =>
+						box.domain === vars.domainName && box.mailbox === vars.mailbox
+							? { ...box, status: 'pending_deletion' as const }
+							: box
+					),
+				} ) )
+			);
+			setTimeout( () => {
+				queryClient.invalidateQueries( userMailboxesQuery() );
+			}, MAILBOX_DELETION_REFETCH_DELAY );
+			queryClient.invalidateQueries( { queryKey: [ 'mailboxes' ] } );
 		},
 	} );
 };

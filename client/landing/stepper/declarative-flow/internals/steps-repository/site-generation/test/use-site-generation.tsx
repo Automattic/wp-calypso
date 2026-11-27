@@ -1,31 +1,34 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { act, renderHook } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { logBuildWowEvent, requestBuildWowSite } from 'calypso/landing/stepper/utils/build-wow';
 import { pollForBuildWowStatus } from '../build-status-poller';
 import { getBuildWowApiOverride } from '../poller';
 import { useSiteGeneration } from '../use-site-generation';
 
-jest.mock( '../build-status-poller', () => ( {
-	...jest.requireActual( '../build-status-poller' ),
-	pollForBuildWowStatus: jest.fn( () => jest.fn() ),
+vi.mock( '../build-status-poller', async () => ( {
+	...( await vi.importActual< typeof import( '../build-status-poller' ) >(
+		'../build-status-poller'
+	) ),
+	pollForBuildWowStatus: vi.fn( () => vi.fn() ),
 } ) );
 
-jest.mock( '../poller', () => ( {
-	...jest.requireActual( '../poller' ),
-	getBuildWowApiOverride: jest.fn( () => null ),
+vi.mock( '../poller', async () => ( {
+	...( await vi.importActual< typeof import( '../poller' ) >( '../poller' ) ),
+	getBuildWowApiOverride: vi.fn( () => null ),
 } ) );
 
-jest.mock( 'calypso/landing/stepper/utils/build-wow', () => ( {
-	logBuildWowEvent: jest.fn(),
-	requestBuildWowSite: jest.fn(),
+vi.mock( 'calypso/landing/stepper/utils/build-wow', () => ( {
+	logBuildWowEvent: vi.fn(),
+	requestBuildWowSite: vi.fn(),
 } ) );
 
-const statusPollMock = pollForBuildWowStatus as jest.Mock;
-const logMock = logBuildWowEvent as jest.Mock;
-const requestBuildWowSiteMock = requestBuildWowSite as jest.Mock;
+const statusPollMock = pollForBuildWowStatus as Mock;
+const logMock = logBuildWowEvent as Mock;
+const requestBuildWowSiteMock = requestBuildWowSite as Mock;
 const originalLocation = window.location;
 
 const STEPS = [
@@ -58,9 +61,9 @@ const SERVER_STEPS = ( activeIndex: number ) =>
 
 describe( 'useSiteGeneration', () => {
 	beforeEach( () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		statusPollMock.mockClear();
-		statusPollMock.mockReturnValue( jest.fn() );
+		statusPollMock.mockReturnValue( vi.fn() );
 		logMock.mockClear();
 		requestBuildWowSiteMock.mockReset();
 		requestBuildWowSiteMock.mockResolvedValue( {} );
@@ -68,7 +71,7 @@ describe( 'useSiteGeneration', () => {
 	} );
 
 	afterEach( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	it( 'fails with missing-parameters when the site identifier is absent', () => {
@@ -85,7 +88,7 @@ describe( 'useSiteGeneration', () => {
 	} );
 
 	it.each( [ undefined, '', 'not a URL', 'data:text/html,untrusted' ] )(
-		'offers recovery when the API destination is %p',
+		'offers recovery when the API destination is %o',
 		( siteEditorUrl ) => {
 			const { result } = renderHook( () =>
 				useSiteGeneration( { siteIdentifier: '123', specId: 'spec-1', steps: STEPS } )
@@ -102,13 +105,13 @@ describe( 'useSiteGeneration', () => {
 			expect( result.current.failureReason ).toBe( 'editor-unavailable' );
 			expect( result.current.retryBuild ).toBeNull();
 			expect( requestBuildWowSiteMock ).not.toHaveBeenCalled();
-			act( () => jest.advanceTimersByTime( 30 * 60 * 1000 ) );
+			act( () => vi.advanceTimersByTime( 30 * 60 * 1000 ) );
 			expect( result.current.failureReason ).toBe( 'editor-unavailable' );
 		}
 	);
 
 	it( 'polls while working and fails with timed-out after the generation deadline', () => {
-		const stopStatusPolling = jest.fn();
+		const stopStatusPolling = vi.fn();
 		statusPollMock.mockReturnValue( stopStatusPolling );
 
 		const { result } = renderHook( () =>
@@ -122,7 +125,7 @@ describe( 'useSiteGeneration', () => {
 		expect( statusPollMock ).toHaveBeenCalledTimes( 1 );
 
 		act( () => {
-			jest.advanceTimersByTime( 30 * 60 * 1000 );
+			vi.advanceTimersByTime( 30 * 60 * 1000 );
 		} );
 
 		expect( result.current.status ).toBe( 'failed' );
@@ -140,12 +143,12 @@ describe( 'useSiteGeneration', () => {
 		);
 
 		act( () => {
-			jest.advanceTimersByTime( 5 * 60 * 1000 - 1 );
+			vi.advanceTimersByTime( 5 * 60 * 1000 - 1 );
 		} );
 		expect( result.current.status ).toBe( 'working' );
 
 		act( () => {
-			jest.advanceTimersByTime( 1 );
+			vi.advanceTimersByTime( 1 );
 		} );
 		expect( result.current.status ).toBe( 'failed' );
 		expect( result.current.failureReason ).toBe( 'timed-out' );
@@ -161,7 +164,7 @@ describe( 'useSiteGeneration', () => {
 		);
 
 		act( () => {
-			jest.advanceTimersByTime( 5 * 60 * 1000 );
+			vi.advanceTimersByTime( 5 * 60 * 1000 );
 		} );
 		expect( result.current.status ).toBe( 'working' );
 	} );
@@ -191,7 +194,7 @@ describe( 'useSiteGeneration', () => {
 		// The stub is scoped here because this is the only test that asserts on
 		// window.location.assign.
 		Object.defineProperty( window, 'location', {
-			value: { ...originalLocation, assign: jest.fn() },
+			value: { ...originalLocation, assign: vi.fn() },
 			configurable: true,
 		} );
 
@@ -224,7 +227,7 @@ describe( 'useSiteGeneration', () => {
 
 	it( 'redirects to the generated page with the separately supplied source', () => {
 		Object.defineProperty( window, 'location', {
-			value: { ...originalLocation, assign: jest.fn() },
+			value: { ...originalLocation, assign: vi.fn() },
 			configurable: true,
 		} );
 
@@ -258,12 +261,10 @@ describe( 'useSiteGeneration', () => {
 
 	it( 'stays on the wait screen when a local status server reports the build live', () => {
 		Object.defineProperty( window, 'location', {
-			value: { ...originalLocation, assign: jest.fn() },
+			value: { ...originalLocation, assign: vi.fn() },
 			configurable: true,
 		} );
-		( getBuildWowApiOverride as jest.Mock ).mockReturnValueOnce(
-			'http://127.0.0.1:4001/api/calypso'
-		);
+		( getBuildWowApiOverride as Mock ).mockReturnValueOnce( 'http://127.0.0.1:4001/api/calypso' );
 
 		try {
 			const { result } = renderHook( () =>
@@ -292,10 +293,8 @@ describe( 'useSiteGeneration', () => {
 	} );
 
 	it( 'does not time out after a local status server reports the build live', () => {
-		jest.useFakeTimers();
-		( getBuildWowApiOverride as jest.Mock ).mockReturnValueOnce(
-			'http://127.0.0.1:4001/api/calypso'
-		);
+		vi.useFakeTimers();
+		( getBuildWowApiOverride as Mock ).mockReturnValueOnce( 'http://127.0.0.1:4001/api/calypso' );
 
 		try {
 			const { result } = renderHook( () =>
@@ -311,7 +310,7 @@ describe( 'useSiteGeneration', () => {
 				onReady( { build_status: 'live' } );
 			} );
 			act( () => {
-				jest.advanceTimersByTime( 31 * 60 * 1000 );
+				vi.advanceTimersByTime( 31 * 60 * 1000 );
 			} );
 
 			expect( result.current.status ).toBe( 'working' );
@@ -319,12 +318,12 @@ describe( 'useSiteGeneration', () => {
 			expect( result.current.isLocalPreview ).toBe( true );
 			expect( result.current.failureReason ).toBeUndefined();
 		} finally {
-			jest.useRealTimers();
+			vi.useRealTimers();
 		}
 	} );
 
 	it( 'still times out a build that never reports ready', () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 
 		try {
 			const { result } = renderHook( () =>
@@ -336,20 +335,20 @@ describe( 'useSiteGeneration', () => {
 			);
 
 			act( () => {
-				jest.advanceTimersByTime( 5 * 60 * 1000 + 1 );
+				vi.advanceTimersByTime( 5 * 60 * 1000 + 1 );
 			} );
 
 			expect( result.current.status ).toBe( 'failed' );
 			expect( result.current.failureReason ).toBe( 'timed-out' );
 		} finally {
-			jest.useRealTimers();
+			vi.useRealTimers();
 		}
 	} );
 
 	describe( 'completion presentation', () => {
 		beforeEach( () => {
 			Object.defineProperty( window, 'location', {
-				value: { ...originalLocation, assign: jest.fn() },
+				value: { ...originalLocation, assign: vi.fn() },
 				configurable: true,
 			} );
 		} );
@@ -373,11 +372,11 @@ describe( 'useSiteGeneration', () => {
 			expect( result.current.isComplete ).toBe( true );
 			expect( result.current.hostState ).toBe( 'ready' );
 			expect( window.location.assign ).not.toHaveBeenCalled();
-			act( () => jest.advanceTimersByTime( 2599 ) );
+			act( () => vi.advanceTimersByTime( 2599 ) );
 			expect( window.location.assign ).not.toHaveBeenCalled();
-			act( () => jest.advanceTimersByTime( 1 ) );
+			act( () => vi.advanceTimersByTime( 1 ) );
 			expect( window.location.assign ).toHaveBeenCalledTimes( 1 );
-			act( () => jest.advanceTimersByTime( 30 * 60 * 1000 ) );
+			act( () => vi.advanceTimersByTime( 30 * 60 * 1000 ) );
 			expect( result.current.failureReason ).toBeUndefined();
 		} );
 
@@ -395,7 +394,7 @@ describe( 'useSiteGeneration', () => {
 			expect( statusPollMock ).toHaveBeenCalledTimes( 1 );
 			act( () => statusPollMock.mock.calls[ 0 ][ 0 ].onReady( response ) );
 			expect( window.location.assign ).not.toHaveBeenCalled();
-			act( () => jest.advanceTimersByTime( 2600 ) );
+			act( () => vi.advanceTimersByTime( 2600 ) );
 			expect( window.location.assign ).toHaveBeenCalledTimes( 1 );
 		} );
 
@@ -407,7 +406,7 @@ describe( 'useSiteGeneration', () => {
 		] )(
 			'keeps stream identity when terminal metadata is omitted: %s, local feed: %s',
 			( omitStream, isLocal ) => {
-				( getBuildWowApiOverride as jest.Mock ).mockReturnValueOnce(
+				( getBuildWowApiOverride as Mock ).mockReturnValueOnce(
 					isLocal ? 'http://calypso.localhost:4001/api/calypso' : null
 				);
 				const { result } = renderHook( () =>
@@ -435,13 +434,13 @@ describe( 'useSiteGeneration', () => {
 				} );
 				expect( result.current.streamInfo ).toBe( info );
 				expect( result.current.isComplete ).toBe( true );
-				act( () => jest.advanceTimersByTime( 3000 ) );
+				act( () => vi.advanceTimersByTime( 3000 ) );
 				expect( window.location.assign ).toHaveBeenCalledTimes( isLocal ? 0 : 1 );
 			}
 		);
 
 		it( 'skips completion motion when the document is hidden', () => {
-			const hidden = jest.spyOn( document, 'hidden', 'get' ).mockReturnValue( true );
+			const hidden = vi.spyOn( document, 'hidden', 'get' ).mockReturnValue( true );
 			try {
 				renderHook( () =>
 					useSiteGeneration( { siteIdentifier: '123', steps: STEPS, completionDelayMs: 2600 } )
@@ -463,7 +462,7 @@ describe( 'useSiteGeneration', () => {
 			);
 			act( () => statusPollMock.mock.calls[ 0 ][ 0 ].onReady( response ) );
 			unmount();
-			act( () => jest.advanceTimersByTime( 3000 ) );
+			act( () => vi.advanceTimersByTime( 3000 ) );
 			expect( window.location.assign ).not.toHaveBeenCalled();
 		} );
 	} );
@@ -519,7 +518,7 @@ describe( 'useSiteGeneration', () => {
 	} );
 
 	it( 'keeps the active step start time until the server advances', () => {
-		jest.setSystemTime( 1723032220000 );
+		vi.setSystemTime( 1723032220000 );
 		const { result } = renderHook( () =>
 			useSiteGeneration( {
 				siteIdentifier: '123',
@@ -532,7 +531,7 @@ describe( 'useSiteGeneration', () => {
 		expect( result.current.steps[ 2 ].startedAt ).toBe( 1723032220000 );
 
 		act( () => {
-			jest.advanceTimersByTime( 10000 );
+			vi.advanceTimersByTime( 10000 );
 			onUpdate( { state: 'generating', steps: SERVER_STEPS( 2 ) } );
 		} );
 		expect( result.current.steps[ 2 ].startedAt ).toBe( 1723032220000 );
@@ -542,7 +541,7 @@ describe( 'useSiteGeneration', () => {
 	} );
 
 	it( 'restores the active step timer after a reload', () => {
-		jest.setSystemTime( 1723032220000 );
+		vi.setSystemTime( 1723032220000 );
 		const firstRender = renderHook( () =>
 			useSiteGeneration( {
 				siteIdentifier: '123',
@@ -559,7 +558,7 @@ describe( 'useSiteGeneration', () => {
 		expect( firstRender.result.current.steps[ 2 ].startedAt ).toBe( 1723032220000 );
 
 		firstRender.unmount();
-		jest.advanceTimersByTime( 12000 );
+		vi.advanceTimersByTime( 12000 );
 
 		const secondRender = renderHook( () =>
 			useSiteGeneration( {
@@ -578,7 +577,7 @@ describe( 'useSiteGeneration', () => {
 	} );
 
 	it( 'starts the next observed step at zero', () => {
-		jest.setSystemTime( 1723032220000 );
+		vi.setSystemTime( 1723032220000 );
 		const { result } = renderHook( () =>
 			useSiteGeneration( {
 				siteIdentifier: '123',
@@ -594,7 +593,7 @@ describe( 'useSiteGeneration', () => {
 			} );
 		} );
 
-		jest.advanceTimersByTime( 12000 );
+		vi.advanceTimersByTime( 12000 );
 		act( () => {
 			onUpdate( {
 				state: 'generating',
@@ -813,7 +812,7 @@ describe( 'useSiteGeneration', () => {
 			} );
 		} );
 		act( () => {
-			jest.advanceTimersByTime( 30 * 60 * 1000 );
+			vi.advanceTimersByTime( 30 * 60 * 1000 );
 		} );
 
 		expect( result.current.failureReason ).toBe( 'build-failed' );

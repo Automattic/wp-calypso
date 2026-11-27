@@ -1,10 +1,11 @@
 import { type Request, type Response } from 'express';
+import { type Mock, vi } from 'vitest';
 import middlewareGeoipHeader from '../geoip-header';
 
-const mockInfo = jest.fn();
+const mockInfo = vi.fn();
 
-jest.mock( 'calypso/server/lib/logger', () => ( {
-	getLogger: jest.fn().mockImplementation( () => ( { info: mockInfo } ) ),
+vi.mock( 'calypso/server/lib/logger', () => ( {
+	getLogger: vi.fn().mockImplementation( () => ( { info: mockInfo } ) ),
 } ) );
 
 describe( 'geoip-header middleware', () => {
@@ -12,15 +13,15 @@ describe( 'geoip-header middleware', () => {
 	let response: Response;
 
 	beforeEach( () => {
-		jest.clearAllMocks();
-		jest.spyOn( global, 'fetch' );
+		vi.clearAllMocks();
+		vi.spyOn( global, 'fetch' );
 		request = { headers: {} } as Request;
 		response = {} as Response;
 	} );
 
 	it( 'should fetch country code on initialization', async () => {
 		const { promise, resolve } = Promise.withResolvers< void >();
-		( global.fetch as jest.Mock ).mockImplementation( () => {
+		( global.fetch as Mock ).mockImplementation( () => {
 			resolve();
 			return Promise.resolve( {
 				json: () => Promise.resolve( { country_short: 'US' } ),
@@ -35,10 +36,10 @@ describe( 'geoip-header middleware', () => {
 	} );
 
 	it( 'should add country code header to request when available', async () => {
-		( global.fetch as jest.Mock ).mockResolvedValueOnce( {
+		( global.fetch as Mock ).mockResolvedValueOnce( {
 			json: () => Promise.resolve( { country_short: 'US' } ),
 		} );
-		const next = jest.fn();
+		const next = vi.fn();
 
 		const middleware = middlewareGeoipHeader();
 
@@ -49,8 +50,8 @@ describe( 'geoip-header middleware', () => {
 	} );
 
 	it( 'should not add header when country code is not available', async () => {
-		( global.fetch as jest.Mock ).mockRejectedValueOnce( new Error( 'Network error' ) );
-		const next = jest.fn();
+		( global.fetch as Mock ).mockRejectedValueOnce( new Error( 'Network error' ) );
+		const next = vi.fn();
 
 		const middleware = middlewareGeoipHeader();
 
@@ -62,10 +63,10 @@ describe( 'geoip-header middleware', () => {
 	} );
 
 	it( 'should avoid duplicate requests when country code is available', async () => {
-		( global.fetch as jest.Mock ).mockResolvedValueOnce( {
+		( global.fetch as Mock ).mockResolvedValueOnce( {
 			json: () => Promise.resolve( { country_short: 'US' } ),
 		} );
-		const next = jest.fn();
+		const next = vi.fn();
 
 		const middleware = middlewareGeoipHeader();
 
@@ -77,8 +78,8 @@ describe( 'geoip-header middleware', () => {
 	} );
 
 	it( 'should not re-fetch on next request if previous fetch failed', async () => {
-		( global.fetch as jest.Mock ).mockRejectedValue( new Error( 'Network error' ) );
-		const next = jest.fn();
+		( global.fetch as Mock ).mockRejectedValue( new Error( 'Network error' ) );
+		const next = vi.fn();
 
 		const middleware = middlewareGeoipHeader();
 

@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { transformSite } from '../transientItems';
 
 describe( 'transientItems utils', () => {
@@ -28,14 +29,14 @@ describe( 'transientItems utils', () => {
 		} );
 
 		test( 'should map the state using the mapping fn', () => {
-			const map = jest.fn();
+			const map = vi.fn();
 			transformSite( state, 1, map );
 
 			expect( map ).toHaveBeenCalledWith( site1State );
 		} );
 
 		test( 'should handle non-existent site by passing safe defaults', () => {
-			const map = jest.fn( () => site1State );
+			const map = vi.fn( () => site1State );
 			const result = transformSite( { 2: site2State }, 1, map );
 
 			expect( map ).toHaveBeenCalledWith( {
@@ -53,7 +54,7 @@ describe( 'transientItems utils', () => {
 		} );
 
 		test( 'should handle empty site state by passing safe defaults', () => {
-			const map = jest.fn( () => site1State );
+			const map = vi.fn( () => site1State );
 			const result = transformSite(
 				{
 					1: {},

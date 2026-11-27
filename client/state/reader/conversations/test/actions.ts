@@ -1,3 +1,4 @@
+import { type Mock, vi } from 'vitest';
 import {
 	READER_CONVERSATION_FOLLOW,
 	READER_CONVERSATION_MUTE,
@@ -10,17 +11,17 @@ import {
 } from 'calypso/state/reader/conversations/actions';
 import { CONVERSATION_FOLLOW_STATUS } from 'calypso/state/reader/conversations/follow-status';
 
-type Dispatch = jest.Mock< any, any >;
+type Dispatch = Mock< ( ...args: any ) => any >;
 type GetState = () => Record< string, unknown >;
 
 describe( 'actions', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	describe( '#followConversation', () => {
 		test( 'should return an action when a conversation is followed', () => {
-			const dispatch: Dispatch = jest.fn();
+			const dispatch: Dispatch = vi.fn();
 			const getState: GetState = () => ( {} );
 			followConversation( { siteId: 123, postId: 456 } )( dispatch, getState );
 			expect( dispatch ).toHaveBeenCalledWith( {
@@ -35,7 +36,7 @@ describe( 'actions', () => {
 
 	describe( '#muteConversation', () => {
 		test( 'should return an action when a conversation is muted', () => {
-			const dispatch: Dispatch = jest.fn();
+			const dispatch: Dispatch = vi.fn();
 			const getState: GetState = () => ( {} );
 			muteConversation( { siteId: 123, postId: 456 } )( dispatch, getState );
 			expect( dispatch ).toHaveBeenCalledWith( {

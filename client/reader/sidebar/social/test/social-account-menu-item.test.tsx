@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { renderWithProvider as render } from 'calypso/test-helpers/testing-library';
 import { SocialAccountMenuItem } from '../social-account-menu-item';
 
@@ -38,7 +39,7 @@ describe( 'SocialAccountMenuItem', () => {
 
 	it( 'fires onClick when link is clicked', async () => {
 		const user = userEvent.setup();
-		const onClick = jest.fn();
+		const onClick = vi.fn();
 		render( <SocialAccountMenuItem { ...baseProps } onClick={ onClick } /> );
 		await user.click( screen.getByRole( 'link', { name: /Alice/ } ) );
 		expect( onClick ).toHaveBeenCalledTimes( 1 );

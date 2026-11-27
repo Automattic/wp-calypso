@@ -12,7 +12,7 @@ export function getTransferSalePriceText( {
 	productsList,
 	availability,
 } ) {
-	let domainProductSalePrice = null;
+	let domainProductSalePrice;
 
 	if (
 		availability?.status === domainAvailability.TRANSFERRABLE_PREMIUM &&

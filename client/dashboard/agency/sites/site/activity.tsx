@@ -11,9 +11,9 @@ import { DateRangePicker } from '../../../components/date-range-picker';
 import InlineSupportLink from '../../../components/inline-support-link';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
+import SiteActivityLogsDataViews from '../../../sites/activity/components/activity-logs-dataviews';
 import { useDateRange } from '../../../sites/hooks/use-date-range';
 import { useSiteTimezoneWithJetpackFallback } from '../../../sites/hooks/use-site-timezone';
-import SiteActivityLogsDataViews from '../../../sites/logs-activity/dataviews';
 import { hasHostingFeature, hasPlanFeature } from '../../../utils/site-features';
 
 export default function AgencySiteActivity() {

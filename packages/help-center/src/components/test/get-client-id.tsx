@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { vi } from 'vitest';
 import { getClientId } from '../utils';
 import type { ZendeskConversation, ZendeskMessage } from '@automattic/zendesk-client';

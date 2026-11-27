@@ -27,7 +27,6 @@ import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { wasManualRenewalImmediateLoginAttempted } from 'calypso/state/immediate-login/selectors';
 import { rebootAfterLogin } from 'calypso/state/login/actions';
-import { hideMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
 import {
 	getAuthAccountType,
 	getRedirectToOriginal,
@@ -41,7 +40,6 @@ import {
 	getSocialAccountLinkService,
 } from 'calypso/state/login/selectors';
 import { isPasswordlessAccount } from 'calypso/state/login/utils';
-import { logoutUser } from 'calypso/state/logout/actions';
 import { errorNotice as errorNoticeAction } from 'calypso/state/notices/actions';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -646,9 +644,7 @@ export default connect(
 	} ),
 	{
 		rebootAfterLogin,
-		hideMagicLoginRequestForm,
 		sendEmailLogin,
-		logoutUser,
 		redirectToLogout,
 		errorNoticeAction,
 	},

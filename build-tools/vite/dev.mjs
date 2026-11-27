@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import react from '@vitejs/plugin-react';
+import postcssRtlCss from 'postcss-rtlcss';
 import { mergeConfig } from 'vite';
 import { CALYPSO_SRC, calypsoBase, client, root } from './base.mjs';
 
@@ -64,6 +65,20 @@ function reactPreamble() {
 			} );
 		},
 	};
+}
+
+/**
+ * With `BUILD_RTL_CSS=true`, adds an RTL rule next to each direction-specific LTR one, scoped by
+ * the `dir` attribute. `:where()` keeps each selector's specificity unchanged.
+ * @returns {import('postcss').AcceptedPlugin[]}
+ */
+function rtlCssPlugins() {
+	if ( process.env.BUILD_RTL_CSS !== 'true' ) {
+		return [];
+	}
+	return [
+		postcssRtlCss( { ltrPrefix: ':where([dir="ltr"])', rtlPrefix: ':where([dir="rtl"])' } ),
+	];
 }
 
 function calypsoEnv() {
@@ -185,6 +200,7 @@ export function devOverlay( { entries, sections = [], httpServer } ) {
 			],
 		},
 		css: {
+			postcss: { plugins: rtlCssPlugins() },
 			preprocessorOptions: {
 				scss: {
 					quietDeps: true,

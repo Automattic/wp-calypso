@@ -1,0 +1,65 @@
+import { siteDatabaseMutation } from '@automattic/api-queries';
+import { useMutation } from '@tanstack/react-query';
+import {
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+	Button,
+	Modal,
+} from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
+import { useState } from 'react';
+import { ButtonStack } from '../../../../components/button-stack';
+
+interface ResetPasswordModalProps {
+	siteId: number;
+	onClose: () => void;
+	onSuccess: () => void;
+	onError: () => void;
+}
+
+export default function ResetPasswordModal( {
+	siteId,
+	onClose,
+	onSuccess,
+	onError,
+}: ResetPasswordModalProps ) {
+	const mutation = useMutation( siteDatabaseMutation( siteId ) );
+	const [ isRestoring, setIsRestoring ] = useState( false );
+
+	const handleRestore = () => {
+		setIsRestoring( true );
+		mutation.mutate( undefined, {
+			onSuccess: () => {
+				setIsRestoring( false );
+				onSuccess();
+			},
+			onError: () => {
+				setIsRestoring( false );
+				onError();
+			},
+		} );
+	};
+
+	return (
+		<Modal title={ __( 'Reset database password' ) } onRequestClose={ onClose }>
+			<VStack spacing={ 6 }>
+				<Text>
+					{ __( 'Are you sure you want to reset your database password to its default?' ) }
+				</Text>
+				<ButtonStack justify="flex-end">
+					<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
+						{ __( 'Cancel' ) }
+					</Button>
+					<Button
+						__next40pxDefaultSize
+						variant="primary"
+						isBusy={ isRestoring }
+						onClick={ handleRestore }
+					>
+						{ __( 'Reset password' ) }
+					</Button>
+				</ButtonStack>
+			</VStack>
+		</Modal>
+	);
+}

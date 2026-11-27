@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
- * @jest-environment-options {"url": "https://my.wordpress.com/setup/site-setup/importerSquarespace"}
+ * @vitest-environment jsdom
+ * @vitest-environment-options {"url": "https://my.wordpress.com/setup/site-setup/importerSquarespace"}
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useStepNavigator } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/importer/hooks/use-step-navigator';
 
 describe( 'useStepNavigator', () => {
@@ -42,7 +43,7 @@ describe( 'useStepNavigator', () => {
 	] )(
 		'should leave MSD for $url with site ID $siteId and slug $siteSlug',
 		( { siteId, siteSlug, url } ) => {
-			const navigation = { submit: jest.fn() };
+			const navigation = { submit: vi.fn() };
 			const { result } = renderHook(
 				() => useStepNavigator( flow, navigation, siteId, siteSlug, null, null ),
 				{ wrapper }
@@ -62,7 +63,7 @@ describe( 'useStepNavigator', () => {
 
 	it( 'should return default checkout url', async () => {
 		const navigation = {
-			submit: jest.fn(),
+			submit: vi.fn(),
 		};
 		const { result } = renderHook(
 			() => useStepNavigator( flow, navigation, null, null, null, null ),
@@ -87,7 +88,7 @@ describe( 'useStepNavigator', () => {
 
 	it( 'should use custom redirect_to', async () => {
 		const navigation = {
-			submit: jest.fn(),
+			submit: vi.fn(),
 		};
 		const { result } = renderHook(
 			() => useStepNavigator( flow, navigation, null, null, null, null ),

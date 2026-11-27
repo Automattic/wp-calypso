@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
+import { type Mock, vi } from 'vitest';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
@@ -10,30 +11,30 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import { useHelpCenterSite } from '../use-help-center-site';
 
-jest.mock( 'calypso/state/ui/selectors', () => ( {
-	getSelectedSite: jest.fn(),
+vi.mock( 'calypso/state/ui/selectors', () => ( {
+	getSelectedSite: vi.fn(),
 } ) );
-jest.mock( 'calypso/state/selectors/get-primary-site-slug', () => ( {
+vi.mock( 'calypso/state/selectors/get-primary-site-slug', () => ( {
 	__esModule: true,
-	default: jest.fn(),
+	default: vi.fn(),
 } ) );
-jest.mock( 'calypso/state/selectors/get-primary-site-id', () => ( {
+vi.mock( 'calypso/state/selectors/get-primary-site-id', () => ( {
 	__esModule: true,
-	default: jest.fn(),
+	default: vi.fn(),
 } ) );
-jest.mock( 'calypso/state/sites/selectors', () => ( {
-	getSiteBySlug: jest.fn(),
+vi.mock( 'calypso/state/sites/selectors', () => ( {
+	getSiteBySlug: vi.fn(),
 } ) );
-jest.mock( 'calypso/state/sites/selectors/get-site', () => ( {
+vi.mock( 'calypso/state/sites/selectors/get-site', () => ( {
 	__esModule: true,
-	default: jest.fn(),
+	default: vi.fn(),
 } ) );
 
-const mockGetSelectedSite = getSelectedSite as unknown as jest.Mock;
-const mockGetPrimarySiteId = getPrimarySiteId as unknown as jest.Mock;
-const mockGetPrimarySiteSlug = getPrimarySiteSlug as unknown as jest.Mock;
-const mockGetSiteBySlug = getSiteBySlug as unknown as jest.Mock;
-const mockGetSite = getSite as unknown as jest.Mock;
+const mockGetSelectedSite = getSelectedSite as unknown as Mock;
+const mockGetPrimarySiteId = getPrimarySiteId as unknown as Mock;
+const mockGetPrimarySiteSlug = getPrimarySiteSlug as unknown as Mock;
+const mockGetSiteBySlug = getSiteBySlug as unknown as Mock;
+const mockGetSite = getSite as unknown as Mock;
 
 const selectedSite = { ID: 1 };
 const urlParamSite = { ID: 2 };
@@ -41,7 +42,7 @@ const primarySite = { ID: 3 };
 
 describe( 'useHelpCenterSite', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		window.history.replaceState( {}, '', '/' );
 		mockGetSelectedSite.mockReturnValue( null );
 		mockGetPrimarySiteId.mockReturnValue( null );

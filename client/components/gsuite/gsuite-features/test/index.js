@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { GSUITE_BASIC_SLUG, GSUITE_BUSINESS_SLUG } from '@automattic/calypso-products';
 import { render } from '@testing-library/react';

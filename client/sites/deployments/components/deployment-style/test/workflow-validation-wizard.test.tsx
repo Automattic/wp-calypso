@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import { DeploymentStyleContext } from '../context';
 import { WorkflowValidationWizard } from '../workflow-validation-wizard';
 import type { WorkflowsValidation } from '../use-check-workflow-query';
@@ -14,7 +15,7 @@ const getWizard = ( workflowCheckResult?: WorkflowsValidation ) => (
 			value={ {
 				workflowCheckResult,
 				isCheckingWorkflow: false,
-				onWorkflowVerify: jest.fn(),
+				onWorkflowVerify: vi.fn(),
 			} }
 		>
 			<WorkflowValidationWizard

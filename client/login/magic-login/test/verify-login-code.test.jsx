@@ -1,25 +1,26 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 import page from '@automattic/calypso-router';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { I18N, I18NContext } from 'i18n-calypso';
+import { vi } from 'vitest';
 import { navigate } from 'calypso/lib/navigate';
 import { LoginContext } from 'calypso/login/login-context';
 import loginReducer from 'calypso/state/login/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import VerifyLoginCode from '../verify-login-code';
 
-const mockIsWebAuthnSupported = jest.fn();
-const mockReboot = jest.fn();
+const mockIsWebAuthnSupported = vi.fn();
+const mockReboot = vi.fn();
 
-jest.mock( '@automattic/calypso-router', () => jest.fn() );
-jest.mock( 'calypso/lib/navigate', () => ( { navigate: jest.fn() } ) );
-jest.mock( 'calypso/lib/webauthn', () => ( {
-	...jest.requireActual( 'calypso/lib/webauthn' ),
+vi.mock( '@automattic/calypso-router', () => ( { default: vi.fn() } ) );
+vi.mock( 'calypso/lib/navigate', () => ( { navigate: vi.fn() } ) );
+vi.mock( 'calypso/lib/webauthn', async () => ( {
+	...( await vi.importActual( 'calypso/lib/webauthn' ) ),
 	isWebAuthnSupported: () => mockIsWebAuthnSupported(),
 } ) );
 // The thunk only runs when it is dispatched, so a bare call never reaches `mockReboot`.
-jest.mock( 'calypso/state/login/actions/reboot-after-login', () => ( {
+vi.mock( 'calypso/state/login/actions/reboot-after-login', () => ( {
 	rebootAfterLogin: ( tracksEventArgs ) => () => mockReboot( tracksEventArgs ),
 } ) );
 
@@ -27,7 +28,7 @@ const REDIRECT_TO = 'https://wordpress.com/jetpack/connect/authorize?client_id=1
 
 // Answers the magic code authenticate request the way the endpoint does.
 const respondWith = ( data ) => {
-	globalThis.fetch = jest.fn().mockResolvedValue( {
+	globalThis.fetch = vi.fn().mockResolvedValue( {
 		ok: true,
 		json: async () => ( { success: true, data } ),
 	} );
@@ -48,7 +49,7 @@ const submitCode = async ( { localeSlug = 'en' } = {} ) => {
 
 	renderWithProvider(
 		<I18NContext.Provider value={ i18n }>
-			<LoginContext.Provider value={ { setHeaders: jest.fn() } }>
+			<LoginContext.Provider value={ { setHeaders: vi.fn() } }>
 				<VerifyLoginCode publicToken="public-token" usernameOrEmail="user@example.com" />
 			</LoginContext.Provider>
 		</I18NContext.Provider>,
@@ -65,7 +66,7 @@ describe( 'VerifyLoginCode', () => {
 	const originalFetch = globalThis.fetch;
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockIsWebAuthnSupported.mockReturnValue( false );
 	} );
 
@@ -81,6 +82,18 @@ describe( 'VerifyLoginCode', () => {
 		await waitFor( () => expect( navigate ).toHaveBeenCalledWith( REDIRECT_TO ) );
 		expect( page ).not.toHaveBeenCalled();
 		expect( mockReboot ).not.toHaveBeenCalled();
+	} );
+
+	it( 'marks a redirect to a post on a WordPress.com site so iOS keeps it in the browser', async () => {
+		respondWith( { redirect_to: 'https://example.wordpress.com/2024/05/01/my-post/' } );
+
+		await submitCode();
+
+		await waitFor( () =>
+			expect( navigate ).toHaveBeenCalledWith(
+				'https://example.wordpress.com/2024/05/01/my-post/?open_in_browser=1'
+			)
+		);
 	} );
 
 	it( 'reboots an account without two-step authentication when there is no redirect URL', async () => {

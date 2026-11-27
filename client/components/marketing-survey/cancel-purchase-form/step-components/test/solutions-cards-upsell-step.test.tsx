@@ -1,18 +1,19 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import SolutionsCardsUpsellStep from '../solutions-cards-upsell-step';
 import type { Purchase } from '@automattic/api-core';
 import type { SiteDetails } from '@automattic/data-stores';
 
-const mockSetNewMessagingChat = jest.fn();
-const mockSetNavigateToRoute = jest.fn();
-const mockSetShowHelpCenter = jest.fn();
-const mockSetOpenOdieWithContext = jest.fn();
+const mockSetNewMessagingChat = vi.fn();
+const mockSetNavigateToRoute = vi.fn();
+const mockSetShowHelpCenter = vi.fn();
+const mockSetOpenOdieWithContext = vi.fn();
 
-jest.mock( '@wordpress/data', () => {
+vi.mock( '@wordpress/data', () => {
 	const noop = () => ( {} );
 	const identity = ( fn: unknown ) => fn;
 	return {
@@ -39,22 +40,24 @@ jest.mock( '@wordpress/data', () => {
 
 let mockCanConnectToZendesk = true;
 
-jest.mock( '@automattic/zendesk-client', () => ( {
+vi.mock( '@automattic/zendesk-client', () => ( {
 	useCanConnectToZendeskMessaging: () => ( { data: mockCanConnectToZendesk } ),
 } ) );
 
-jest.mock( 'i18n-calypso', () => {
+vi.mock( 'i18n-calypso', () => {
 	const passthrough = ( s: string ) => s;
-	return {
+	return ( ( m ) => ( { ...m, default: m } ) )( {
 		useTranslate: () => passthrough,
 		translate: passthrough,
 		localize: ( Component: React.ComponentType ) => Component,
-	};
+	} );
 } );
 
-jest.mock( 'calypso/components/formatted-header', () => {
-	return function MockFormattedHeader( { headerText }: { headerText: string } ) {
-		return <h2>{ headerText }</h2>;
+vi.mock( 'calypso/components/formatted-header', () => {
+	return {
+		default: function MockFormattedHeader( { headerText }: { headerText: string } ) {
+			return <h2>{ headerText }</h2>;
+		},
 	};
 } );
 
@@ -72,13 +75,13 @@ const site = {
 
 describe( '<SolutionsCardsUpsellStep /> (legacy)', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockCanConnectToZendesk = true;
 	} );
 
 	test( 'speak-with-support calls setNewMessagingChat when Zendesk eligible', async () => {
 		const user = userEvent.setup();
-		const closeDialog = jest.fn();
+		const closeDialog = vi.fn();
 
 		render(
 			<SolutionsCardsUpsellStep
@@ -86,7 +89,7 @@ describe( '<SolutionsCardsUpsellStep /> (legacy)', () => {
 				purchase={ purchase }
 				site={ site }
 				closeDialog={ closeDialog }
-				onDeclineUpsell={ jest.fn() }
+				onDeclineUpsell={ vi.fn() }
 			/>
 		);
 
@@ -109,7 +112,7 @@ describe( '<SolutionsCardsUpsellStep /> (legacy)', () => {
 	test( 'speak-with-support opens Odie fallback when not Zendesk eligible', async () => {
 		mockCanConnectToZendesk = false;
 		const user = userEvent.setup();
-		const closeDialog = jest.fn();
+		const closeDialog = vi.fn();
 
 		render(
 			<SolutionsCardsUpsellStep
@@ -117,7 +120,7 @@ describe( '<SolutionsCardsUpsellStep /> (legacy)', () => {
 				purchase={ purchase }
 				site={ site }
 				closeDialog={ closeDialog }
-				onDeclineUpsell={ jest.fn() }
+				onDeclineUpsell={ vi.fn() }
 			/>
 		);
 
@@ -146,8 +149,8 @@ describe( '<SolutionsCardsUpsellStep /> (legacy)', () => {
 				cancellationReason="tooExpensive"
 				purchase={ purchase }
 				site={ site }
-				closeDialog={ jest.fn() }
-				onDeclineUpsell={ jest.fn() }
+				closeDialog={ vi.fn() }
+				onDeclineUpsell={ vi.fn() }
 				purchaseSettingsUrl={ purchaseSettingsUrl }
 			/>
 		);

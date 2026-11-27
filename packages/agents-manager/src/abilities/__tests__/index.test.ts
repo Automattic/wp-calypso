@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { type Mock, vi } from 'vitest';
 import { executeAbilityFromList } from '../execute-ability';
 

@@ -105,6 +105,46 @@ export default function Notifications( {
 		}
 	}, [ isInboxShown ] );
 
+	// On the full page, the panel stays open when the user moves into the page without leaving the
+	// panel first: from the omnibar, which onFocusOutside below leaves alone, or after its focus fell
+	// to the body. Close it on a click or focus in the page then, before the page acts on it.
+	useEffect( () => {
+		if ( ! isOpen || ! isInboxShown ) {
+			return;
+		}
+		const isOnPage = ( target: EventTarget | null ) =>
+			target instanceof Element &&
+			! target.closest(
+				'.components-popover, .components-modal__screen-overlay, [role="dialog"], #wpcom-omnibar'
+			);
+		// A press that starts in the panel and ends over the page, like selecting a note's text past the
+		// panel's edge, fires its click on an element that holds both, which looks like the page. A click
+		// without a press of its own, such as from the keyboard, goes by its target.
+		let isPressOffPage = false;
+		const rememberPress = ( { target }: PointerEvent ) => {
+			isPressOffPage = ! isOnPage( target );
+		};
+		const closeOnClick = ( { target }: MouseEvent ) => {
+			if ( isOnPage( target ) && ! isPressOffPage ) {
+				setIsOpen( false );
+			}
+			isPressOffPage = false;
+		};
+		const closeOnFocus = ( { target }: FocusEvent ) => {
+			if ( isOnPage( target ) ) {
+				setIsOpen( false );
+			}
+		};
+		document.addEventListener( 'pointerdown', rememberPress, true );
+		document.addEventListener( 'click', closeOnClick, true );
+		document.addEventListener( 'focusin', closeOnFocus );
+		return () => {
+			document.removeEventListener( 'pointerdown', rememberPress, true );
+			document.removeEventListener( 'click', closeOnClick, true );
+			document.removeEventListener( 'focusin', closeOnFocus );
+		};
+	}, [ isOpen, isInboxShown ] );
+
 	// Keep the omnibar button in sync with the panel open state.
 	useEffect( () => {
 		omnibarEvents.notificationsOpen.emit( isOpen );

@@ -1,13 +1,14 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import useLastDraftQuery from '../use-last-draft-query';
 
-const mockGet = jest.fn();
+const mockGet = vi.fn();
 
-jest.mock( 'calypso/lib/wp', () => ( {
+vi.mock( 'calypso/lib/wp', () => ( {
 	__esModule: true,
 	default: { req: { get: ( ...args: unknown[] ) => mockGet( ...args ) } },
 } ) );

@@ -4,8 +4,8 @@
 import { HostingFeatures } from '@automattic/api-core';
 import { screen } from '@testing-library/react';
 import nock from 'nock';
+import ScanCard from '..';
 import { render } from '../../../../../test-utils';
-import ScanCard from '../index';
 import type { Site, Threat } from '@automattic/api-core';
 
 const site = {

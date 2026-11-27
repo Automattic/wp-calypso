@@ -477,9 +477,9 @@ export const ThemeUpgradeModal = ( {
 		] );
 	};
 
-	let modalData = null;
-	let featureList = null;
-	let featureListHeader = null;
+	let modalData;
+	let featureList;
+	let featureListHeader;
 	let modalTitle = translate( 'Unlock this theme' );
 
 	if ( showBundleVersion ) {

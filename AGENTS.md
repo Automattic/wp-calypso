@@ -66,18 +66,16 @@ If `yarn start` fails with `Ineffective mark-compacts near heap limit Allocation
 # JavaScript tests
 yarn test                                       # Run unit tests for client, Dashboard, packages, server, and build-tools (CI also runs apps)
 yarn test-build-tools                           # Run unit tests for build-tools
-yarn test-client                                # Run client unit tests still on Jest, except the Dashboard
-yarn test-client:vitest [path]                  # Run client unit tests that have moved to Vitest
+yarn test-client [path]                         # Run client unit tests, except the Dashboard (on Vitest)
 yarn test-dashboard [path]                      # Run Dashboard unit tests (on Vitest)
 yarn test-apps                                  # Run apps unit tests
 yarn test-packages [path]                       # Run packages unit tests on Vitest
 yarn workspace @automattic/<package> test       # Run a package's own tests, e.g. for packages with a vitest.config
 yarn test-server                                # Run server unit tests
-yarn test-server:coverage                       # Run server unit tests with coverage info
 
 yarn test-client:watch                          # Run unit tests for client in watch mode
 yarn test-client <path_to_test_directory>       # Run client unit tests from a specific directory
-yarn test-client --testNamePattern="<TestName>" # Run a specific client unit test
+yarn test-client -t "<TestName>"                # Run a specific client unit test
 yarn test-dashboard:watch                       # Run Dashboard unit tests in watch mode
 
 # E2E tests - refer to: test/e2e/AGENTS.md
@@ -113,3 +111,5 @@ To commit, push a branch or open a pull request, follow [.agents/skills/create-p
 A failed CI status such as `Unit tests (Web app)` doesn't say what failed: find out before acting, and ask the user if you can't open the build. If a test failed in a file you didn't change, and that file imports nothing you changed, run that file locally a few times. If it passes each time, report it as flaky and ask for a re-run. If it also fails without your change, report that it comes from `trunk`, and update your branch once `trunk` is fixed. Either way, leave the test alone.
 
 `Unit tests (Web app)` runs on the branch as pushed, without merging `trunk`, so a green status can be out of date. When a PR is days behind `trunk`, update it and wait for the new checks before merging.
+
+`check-channel-status` fails while the Calypso channel is red and merging to `trunk` is paused. It runs only when the PR is opened, pushed, reopened or relabeled, so its green can be hours old. If you merge, re-run its latest run right before merging. Adding or removing a label starts a new run: wait for that one. If it fails, don't merge until a re-run passes. Its error offers the `Ignore Red Slack` label to merge anyway: add that label only when the user asks.

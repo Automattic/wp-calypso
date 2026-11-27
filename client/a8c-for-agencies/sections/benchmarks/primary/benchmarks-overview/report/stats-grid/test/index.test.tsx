@@ -1,21 +1,22 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import useFetchAgencyBenchmarksList from '../../../../../hooks/use-fetch-agency-benchmarks-list';
 import useFetchBenchmarksAggregates from '../../../../../hooks/use-fetch-benchmarks-aggregates';
 import BenchmarkStatsGrid from '../index';
 import StatCard from '../stat-card';
 import type { AgencyBenchmark } from '../../../../../constants';
 
-jest.mock( '../../../../../hooks/use-fetch-agency-benchmarks-list', () => jest.fn() );
-jest.mock( '../../../../../hooks/use-fetch-benchmarks-aggregates', () => jest.fn() );
-jest.mock( '../stat-card', () => ( { __esModule: true, default: jest.fn( () => null ) } ) );
+vi.mock( '../../../../../hooks/use-fetch-agency-benchmarks-list', () => ( { default: vi.fn() } ) );
+vi.mock( '../../../../../hooks/use-fetch-benchmarks-aggregates', () => ( { default: vi.fn() } ) );
+vi.mock( '../stat-card', () => ( { __esModule: true, default: vi.fn( () => null ) } ) );
 
-const mockList = useFetchAgencyBenchmarksList as unknown as jest.Mock;
-const mockAggregates = useFetchBenchmarksAggregates as unknown as jest.Mock;
-const mockStatCard = StatCard as unknown as jest.Mock;
+const mockList = useFetchAgencyBenchmarksList as unknown as Mock;
+const mockAggregates = useFetchBenchmarksAggregates as unknown as Mock;
+const mockStatCard = StatCard as unknown as Mock;
 
 function makeSubmission( quarter: 1 | 2 | 3 | 4, year: number, maturity: number ): AgencyBenchmark {
 	return {
@@ -40,7 +41,7 @@ const SUBMISSIONS = [
 
 describe( 'BenchmarkStatsGrid', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockList.mockReturnValue( { data: SUBMISSIONS, isLoading: false } );
 		mockAggregates.mockReturnValue( { data: [], isLoading: false } );
 	} );

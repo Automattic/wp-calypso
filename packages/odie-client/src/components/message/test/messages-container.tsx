@@ -8,6 +8,7 @@ import type {
 	HumanSupportRequest,
 	HumanSupportRouting,
 	HumanSupportRoutingStepProps,
+	Message,
 } from '../../../types';
 
 const mockCreateZendeskConversation = vi.fn();
@@ -40,6 +41,11 @@ vi.mock( 'react-router-dom', () => ( {
 
 vi.mock( '../../../constants', () => ( {
 	getConversationLimitReachedMessage: () => ( { internal_message_id: 'limit' } ),
+	getDirectChatWaitingMessage: () => ( {
+		content: 'What happens next',
+		role: 'bot',
+		type: 'message',
+	} ),
 	getOdieEmailFallbackMessage: () => ( { internal_message_id: 'email-fallback' } ),
 	getOdieInitialMessage: () => ( { content: 'Hi', role: 'bot', type: 'message' } ),
 	getOdieZendeskConnectionErrorMessage: () => ( { internal_message_id: 'connection-error' } ),
@@ -82,7 +88,9 @@ vi.mock( '../../../utils/get-open-live-interactions', () => ( {
 	getOpenLiveInteractions: () => mockGetOpenLiveInteractions(),
 } ) );
 
-vi.mock( '..', () => ( { default: () => null } ) );
+vi.mock( '..', () => ( {
+	default: ( { message }: { message: { content?: string } } ) => <p>{ message.content }</p>,
+} ) );
 vi.mock( '../jump-to-recent', () => ( { JumpToRecent: () => null } ) );
 vi.mock( '../messages-cluster/messages-cluster', () => ( { MessagesClusterizer: () => null } ) );
 vi.mock( '../thinking-placeholder', () => ( {
@@ -95,7 +103,7 @@ const mockSetPendingHumanSupportRequest = vi.fn();
 const RoutingStep = ( { request, startChat, dismiss }: HumanSupportRoutingStepProps ) => (
 	<div>
 		<p>Routing { request.createdFrom }</p>
-		<button onClick={ startChat }>Start chat</button>
+		<button onClick={ () => startChat() }>Start chat</button>
 		<button onClick={ dismiss }>Dismiss</button>
 	</div>
 );
@@ -109,13 +117,14 @@ const mockContext = ( {
 	odieId = null as number | null,
 	humanSupportRouting = null as HumanSupportRouting | null,
 	pendingHumanSupportRequest = null as HumanSupportRequest | null,
+	messages = [] as Message[],
 } = {} ) => {
 	( useOdieAssistantContext as Mock ).mockReturnValue( {
 		chat: {
 			provider: 'odie',
 			conversationId: null,
 			odieId,
-			messages: [],
+			messages,
 			status: chatStatus,
 		},
 		addMessage: mockAddMessage,
@@ -150,6 +159,66 @@ beforeEach( () => {
 	} );
 } );
 
+describe( 'MessagesContainer greeting', () => {
+	// The greeting introduces the AI, so someone who went straight to a person shouldn't get it.
+	it.each( [
+		[
+			'skips it while waiting to start the chat with a person',
+			'provider=zendesk',
+			'loaded',
+			false,
+		],
+		[
+			'skips it while waiting for the first message to a person',
+			'direct-zd-chat=1&start-on-message=1',
+			'loaded',
+			false,
+		],
+		[ 'skips it while the chat with a person is created', 'direct-zd-chat=1', 'transfer', false ],
+		[ 'greets when that chat fails and the AI is back', 'direct-zd-chat=1', 'loaded', true ],
+	] )( '%s', ( _name, params, chatStatus, isGreeted ) => {
+		mockSearchParams = new URLSearchParams( params );
+		mockContext( { isChatLoaded: false, chatStatus } );
+
+		render( container() );
+
+		expect( screen.queryByText( 'Hi' ) !== null ).toBe( isGreeted );
+	} );
+} );
+
+describe( 'MessagesContainer waiting for the first message', () => {
+	// Says what happens next only in the empty chat that waits for the user to write, not while a
+	// chat with a person is requested, while an open one loads or once there's a message to show.
+	it.each( [
+		[ 'says what happens next in the empty chat', 'direct-zd-chat=1&start-on-message=1', [], true ],
+		[
+			'drops it once the first message is sent',
+			'direct-zd-chat=1&start-on-message=1',
+			[ { content: 'My card was declined', role: 'user', type: 'message' } ],
+			false,
+		],
+		[
+			"doesn't show it while the chat client loads",
+			'provider=zendesk&start-on-message=1',
+			[],
+			false,
+		],
+		[
+			"doesn't show it while the open chat the link leads to loads",
+			'direct-zd-chat=1&start-on-message=1&id=open-chat',
+			[],
+			false,
+		],
+	] )( '%s', ( _name, params, messages, isShown ) => {
+		mockSearchParams = new URLSearchParams( params );
+		mockContext( { isChatLoaded: false, messages: messages as Message[] } );
+
+		render( container() );
+
+		expect( screen.queryByText( 'What happens next' ) !== null ).toBe( isShown );
+	} );
+} );
+
 describe( 'MessagesContainer direct link to a human', () => {
 	it( 'opens a new human chat with paid support', () => {
 		// The chat client is loaded.
@@ -157,6 +226,17 @@ describe( 'MessagesContainer direct link to a human', () => {
 
 		expect( mockCreateZendeskConversation ).toHaveBeenCalledWith( { createdFrom: 'direct_url' } );
 		expect( mockAddMessage ).not.toHaveBeenCalled();
+	} );
+
+	it( 'waits for the first message when the link asks the chat to start on one', () => {
+		// Opening it would otherwise make a ticket for someone who never asks anything.
+		mockSearchParams = new URLSearchParams( 'provider=zendesk&start-on-message=1' );
+		mockContext();
+
+		render( container() );
+
+		expect( mockCreateZendeskConversation ).not.toHaveBeenCalled();
+		expect( mockSearchParams.toString() ).toBe( 'start-on-message=1&direct-zd-chat=1' );
 	} );
 
 	it( 'opens it from the chat on show when the link is followed from another chat', () => {
@@ -266,7 +346,12 @@ describe( 'MessagesContainer routing step', () => {
 		createdFrom: 'automatic_escalation',
 		isFromError: false,
 		escalationOnSecondAttempt: true,
-		flags: { isEmergency: true, emergencyType: 'site_down', routeToEmail: false },
+		flags: {
+			isEmergency: true,
+			emergencyType: 'site_down',
+			routeToEmail: false,
+			isUnknownCharge: false,
+		},
 	};
 
 	it( 'shows the routing step for a pending request', () => {
@@ -302,6 +387,36 @@ describe( 'MessagesContainer routing step', () => {
 			isFromError: false,
 			escalationOnSecondAttempt: true,
 		} );
+	} );
+
+	it( 'passes what the step learned to the chat', async () => {
+		const StepWithValues = ( { startChat }: HumanSupportRoutingStepProps ) => (
+			<button
+				onClick={ () =>
+					startChat( {
+						siteUrl: 'https://store.example',
+						ticketFields: { 25254766: 'woocommerce_subscriptions' },
+					} )
+				}
+			>
+				Start chat
+			</button>
+		);
+		mockContext( {
+			humanSupportRouting: { Step: StepWithValues },
+			pendingHumanSupportRequest: request,
+		} );
+		render( container() );
+
+		await userEvent.click( screen.getByText( 'Start chat' ) );
+
+		expect( mockCreateZendeskConversation ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				createdFrom: 'automatic_escalation',
+				siteUrl: 'https://store.example',
+				ticketFields: { 25254766: 'woocommerce_subscriptions' },
+			} )
+		);
 	} );
 
 	it( 'drops the request when the step dismisses it', async () => {

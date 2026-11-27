@@ -15,7 +15,6 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import { protectForm } from 'calypso/lib/protect-form';
 import wp from 'calypso/lib/wp';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { errorNotice } from 'calypso/state/notices/actions';
 import { saveUserSettings } from 'calypso/state/user-settings/actions';
 import {
 	hasUserSettingsRequestFailed,
@@ -188,7 +187,7 @@ export default compose(
 			isPendingPasswordChange: isPendingPasswordChange( state ),
 			hasUserSettingsRequestFailed: hasUserSettingsRequestFailed( state ),
 		} ),
-		{ errorNotice, recordGoogleEvent, saveUserSettings }
+		{ recordGoogleEvent, saveUserSettings }
 	),
 	localize,
 	protectForm

@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
+import { type Mock, vi } from 'vitest';
 import type * as BilmurSpaModule from '../module';
 
 const ONE_WEEK = 1000 * 60 * 60 * 24 * 7;
@@ -10,7 +11,7 @@ let mockFeatures: string[];
 let mockBeaconOrigin: string;
 let mockModuleUrl: string;
 
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const config = ( key: string ) => ( key === 'bilmur_spa_url' ? mockModuleUrl : mockBeaconOrigin );
 	config.isEnabled = ( feature: string ) => mockFeatures.includes( feature );
 	return { __esModule: true, default: config };
@@ -18,15 +19,15 @@ jest.mock( '@automattic/calypso-config', () => {
 
 describe( 'bilmur-spa module', () => {
 	let lib: typeof BilmurSpaModule;
-	let module: { init: jest.Mock };
-	let importModule: jest.Mock;
+	let module: { init: Mock };
+	let importModule: Mock;
 
 	beforeEach( async () => {
 		// The library keeps its state at the module level.
-		jest.resetModules();
+		vi.resetModules();
 		lib = await import( '../module' );
-		module = { init: jest.fn() };
-		importModule = jest.fn().mockResolvedValue( module );
+		module = { init: vi.fn() };
+		importModule = vi.fn().mockResolvedValue( module );
 		mockFeatures = [ 'bilmur-spa' ];
 		mockBeaconOrigin = '';
 		mockModuleUrl = 'https://example.com/bilmur-spa.min.js';
@@ -34,12 +35,12 @@ describe( 'bilmur-spa module', () => {
 	} );
 
 	afterEach( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 		document.head.innerHTML = '';
 	} );
 
 	it( 'imports the module with a weekly cache buster and initializes it', async () => {
-		jest.useFakeTimers().setSystemTime( 3 * ONE_WEEK + 1000 );
+		vi.useFakeTimers().setSystemTime( 3 * ONE_WEEK + 1000 );
 
 		await lib.loadBilmurSpa( importModule );
 

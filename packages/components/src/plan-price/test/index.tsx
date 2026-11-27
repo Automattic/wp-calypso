@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { setGeoLocation, setLocale } from '@automattic/number-formatters';
 import { render, screen } from '@testing-library/react';

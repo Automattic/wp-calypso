@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { ComposerModal, ComposerProvider, useComposer } from 'calypso/reader/social/composer';
 import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -77,15 +78,15 @@ beforeEach( () => {
 	// recordReaderTracksEvent is a thunk that reads the follows query cache.
 	// Stub it so the modal's _compose_opened effect doesn't hit the
 	// missing slice of the test store.
-	jest
-		.spyOn( analytics, 'recordReaderTracksEvent' )
-		.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+	vi.spyOn( analytics, 'recordReaderTracksEvent' ).mockImplementation(
+		() => ( { type: '@@TEST/NOOP' } ) as never
+	);
 	window.history.replaceState( {}, '', '/reader/atmosphere/42/profile' );
 } );
 
 afterEach( () => {
 	nock.cleanAll();
-	jest.restoreAllMocks();
+	vi.restoreAllMocks();
 } );
 
 describe( 'ProfilePanel (own profile)', () => {
@@ -225,7 +226,7 @@ describe( 'ProfilePanel — compose pill', () => {
 			.query( true )
 			.reply( 200, { items: [], cursor: null } );
 
-		const onMode = jest.fn();
+		const onMode = vi.fn();
 		const user = userEvent.setup();
 
 		renderWithProvider(

@@ -29,7 +29,12 @@ jobs:
               repo: context.repo.repo,
               commit_sha: context.payload.sha,
             });
-            const openPrs = prs.filter((pr) => pr.state === 'open');
+            // A commit can be in several open PRs, for example a parent and
+            // the PRs stacked on it, so comment only on the PR whose head is
+            // the failing commit.
+            const openPrs = prs.filter(
+              (pr) => pr.state === 'open' && pr.head.sha === context.payload.sha
+            );
             if (openPrs.length === 0) return;
 
             const buildBody = (prNumber) => [

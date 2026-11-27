@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { MemoryRouter } from 'react-router';
+import { vi } from 'vitest';
 import { startWowFunnelSite } from 'calypso/landing/stepper/utils/wow-funnel-site';
 import { recordSignupComplete } from 'calypso/lib/analytics/signup';
 import {
@@ -22,14 +23,16 @@ const mockApi = () => nock( 'https://public-api.wordpress.com:443' );
 const sessionResponse = { session_id: 'abc123', state: 'capture_queued' };
 const continueWithSession = { action: 'continue', importSessionId: 'abc123' };
 
-jest.mock( 'calypso/lib/analytics/signup', () => ( {
-	...jest.requireActual( 'calypso/lib/analytics/signup' ),
-	recordSignupComplete: jest.fn(),
+vi.mock( 'calypso/lib/analytics/signup', async () => ( {
+	...( await vi.importActual< typeof import( 'calypso/lib/analytics/signup' ) >(
+		'calypso/lib/analytics/signup'
+	) ),
+	recordSignupComplete: vi.fn(),
 } ) );
-jest.mock( 'calypso/landing/stepper/utils/wow-funnel-site', () => ( {
-	startWowFunnelSite: jest.fn(),
+vi.mock( 'calypso/landing/stepper/utils/wow-funnel-site', () => ( {
+	startWowFunnelSite: vi.fn(),
 } ) );
-jest.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
+vi.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
 	useSiteData: () => ( {
 		siteSlug: 'destination.example.com',
 		site: { plan: { product_slug: 'business-bundle' } },
@@ -48,7 +51,7 @@ const render = (
 	if ( afterCheckout ) {
 		setSignupCompleteFlowName( 'static-site-import' );
 	}
-	const submit = jest.fn();
+	const submit = vi.fn();
 	renderWithProvider(
 		<MemoryRouter basename="/setup" initialEntries={ [ url ] }>
 			<StaticSiteImportReading
@@ -69,7 +72,7 @@ describe( 'StaticSiteImportReading', () => {
 
 	beforeEach( () => {
 		nock.cleanAll();
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		window.localStorage.clear();
 		window.sessionStorage.clear();
 	} );
@@ -264,7 +267,7 @@ describe( 'StaticSiteImportReading', () => {
 				expected: { action: 'preview_failed' },
 			},
 		] )( '$name', async ( { preview, expected } ) => {
-			jest.mocked( startWowFunnelSite ).mockImplementation( preview );
+			vi.mocked( startWowFunnelSite ).mockImplementation( preview );
 			mockApi()
 				.post( '/wpcom/v2/static-site-import-session' )
 				.query( true )

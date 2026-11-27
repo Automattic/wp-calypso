@@ -1,15 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { renderHook } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import useFetchActiveSites from '../use-fetch-active-sites';
 import useIsSiteReady from '../use-is-site-ready';
 
-jest.mock( '../use-fetch-active-sites' );
+vi.mock( '../use-fetch-active-sites' );
 
 const mockActiveSites = ( data: unknown ) => {
-	( useFetchActiveSites as jest.Mock ).mockReturnValue( { data } );
+	( useFetchActiveSites as Mock ).mockReturnValue( { data } );
 };
 
 const activeSite = ( id: number ) => ( {

@@ -1,17 +1,18 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { setGeoLocation } from '@automattic/number-formatters';
+import { vi } from 'vitest';
 import { setupCountryCode } from '../geolocation';
 
-jest.mock( '@automattic/number-formatters', () => ( {
-	setGeoLocation: jest.fn(),
+vi.mock( '@automattic/number-formatters', () => ( {
+	setGeoLocation: vi.fn(),
 } ) );
 
 describe( 'setupCountryCode', () => {
 	beforeEach( () => {
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 		document.cookie = '';
 	} );
 

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render as testRenderer } from '@testing-library/react';
 import { ReactNode } from 'react';

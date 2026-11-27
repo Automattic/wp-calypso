@@ -1,14 +1,15 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import useIsOnSale from 'calypso/my-sites/plans/jetpack-plans/use-is-on-sale';
 import { useProductsToCompare } from '../useProductsToCompare';
 
-jest.mock( 'calypso/my-sites/plans/jetpack-plans/use-is-on-sale', () => jest.fn() );
+vi.mock( 'calypso/my-sites/plans/jetpack-plans/use-is-on-sale', () => ( { default: vi.fn() } ) );
 
 const columnsWhenOnSale = ( ...slugs: string[] ) => {
-	jest.mocked( useIsOnSale ).mockReturnValue( ( slug: string ) => slugs.includes( slug ) );
+	vi.mocked( useIsOnSale ).mockReturnValue( ( slug: string ) => slugs.includes( slug ) );
 	const { result } = renderHook( () => useProductsToCompare() );
 	return result.current.map( ( { id } ) => id );
 };

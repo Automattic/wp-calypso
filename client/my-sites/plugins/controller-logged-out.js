@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { DEFAULT_PAGE_SIZE } from 'calypso/data/marketplace/constants';
 import { getESPluginsInfiniteQueryParams } from 'calypso/data/marketplace/use-es-query';
 import {
 	getWPCOMFeaturedPluginsQueryParams,
@@ -8,14 +9,27 @@ import {
 import { getSiteFragment } from 'calypso/lib/route';
 import wpcom from 'calypso/lib/wp';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { setDocumentHeadMeta } from 'calypso/state/document-head/actions';
+import {
+	setDocumentHeadLink,
+	setDocumentHeadMeta,
+	setDocumentHeadTitle,
+} from 'calypso/state/document-head/actions';
 import { getDocumentHeadMeta } from 'calypso/state/document-head/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 import { getPlugin as getWporgPluginSelector } from 'calypso/state/plugins/wporg/selectors';
 import { receiveProductsList } from 'calypso/state/products-list/actions';
 import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/state/products-list/selectors';
 import { ALLOWED_CATEGORIES, getCategories } from './categories/use-categories';
-import { UNLISTED_PLUGINS } from './constants';
+import {
+	CATEGORY_PAGE_QUERY_ARG,
+	MAX_CATEGORY_PAGE,
+	getCategoryName,
+	getCategoryPaginationUrls,
+	getCategoryTitle,
+	isPaginatedCategory,
+	parseCategoryPage,
+} from './category-pagination';
+import { UNLISTED_PLUGINS, WPBEGINNER_PLUGINS } from './constants';
 import { getCategoryForPluginsBrowser } from './controller';
 
 const PREFETCH_TIMEOUT = 2000;
@@ -189,6 +203,60 @@ export async function fetchPlugins( context, next ) {
 	next();
 }
 
+const getRequestedCategoryPage = ( context ) => {
+	const page = parseCategoryPage( context.query?.[ CATEGORY_PAGE_QUERY_ARG ] );
+	const category = getCategoryForPluginsBrowser( context );
+
+	return page && page <= MAX_CATEGORY_PAGE && isPaginatedCategory( category, context.params.lang )
+		? page
+		: null;
+};
+
+/** Redirect `?page=1` to the bare URL, point out-of-range pages at it, and SSR the rest. */
+export function validateCategoryPage( context, next ) {
+	const rawPage = context.query?.[ CATEGORY_PAGE_QUERY_ARG ];
+
+	if ( ! context.isServerSide || rawPage === undefined ) {
+		return next();
+	}
+
+	if ( rawPage === '1' ) {
+		const url = new URL( context.originalUrl, 'https://wordpress.com' );
+		url.searchParams.delete( CATEGORY_PAGE_QUERY_ARG );
+		return context.res.redirect( 301, url.pathname + url.search );
+	}
+
+	// The client shows the first page, so it's canonical; skipping SSR keeps these out of the caches.
+	if ( ! getRequestedCategoryPage( context ) ) {
+		context.excludeSearchFromCanonicalUrl = true;
+		return next();
+	}
+
+	// Calypso skips SSR for URLs with query args, so opt back in when `page` is the only one.
+	if ( Object.keys( context.query ).length === 1 ) {
+		context.serverSideRender = true;
+	}
+
+	next();
+}
+
+const setCategoryPaginationLinks = ( context, { page, hasNextPage } ) => {
+	const { prev, next } = getCategoryPaginationUrls( {
+		pathname: context.pathname,
+		page,
+		hasNextPage,
+	} );
+
+	const links = [
+		prev && { rel: 'prev', href: new URL( prev, 'https://wordpress.com' ).href },
+		next && { rel: 'next', href: new URL( next, 'https://wordpress.com' ).href },
+	].filter( Boolean );
+
+	if ( links.length ) {
+		context.store.dispatch( setDocumentHeadLink( links ) );
+	}
+};
+
 export async function fetchCategoryPlugins( context, next ) {
 	const { queryClient, store } = context;
 
@@ -202,13 +270,18 @@ export async function fetchCategoryPlugins( context, next ) {
 	const categoryTags = categories[ category || '' ]?.tags || [ category ];
 	const tag = categoryTags.join( ',' );
 
+	let page = getRequestedCategoryPage( context ) ?? 1;
+
 	const options = {
 		...getQueryOptions( context ),
 		category,
 		tag,
+		// Matches the client, which lists WPBeginner's picks by slug rather than by tag.
+		slugs: category === 'wpbeginner' ? WPBEGINNER_PLUGINS : undefined,
+		page: page > 1 ? page : undefined,
 	};
 
-	await prefetchTimebox(
+	const dataOrError = await prefetchTimebox(
 		[
 			{ name: 'products-list', promise: prefetchProductList( queryClient, store ) },
 			{ name: 'paid-plugins', promise: prefetchPaidPlugins( queryClient, options ) },
@@ -216,6 +289,38 @@ export async function fetchCategoryPlugins( context, next ) {
 		],
 		context
 	);
+
+	if ( isPaginatedCategory( category, context.params.lang ) ) {
+		const { queryKey } = getESPluginsInfiniteQueryParams( { ...options, infinite: true }, true );
+		const firstPage =
+			dataOrError instanceof Error
+				? undefined
+				: queryClient.getQueryData( queryKey )?.pages?.[ 0 ]?.data;
+		const total = firstPage?.total || 0;
+
+		if ( ! firstPage ) {
+			// The prefetch swallows search errors, so skip SSR rather than cache an empty page.
+			context.serverSideRender = false;
+		} else if ( page > 1 && total > 0 && ( page - 1 ) * DEFAULT_PAGE_SIZE >= total ) {
+			// Past the last page, the client moves to the first page, so it's canonical to it.
+			context.excludeSearchFromCanonicalUrl = true;
+			context.serverSideRender = false;
+			page = 1;
+		} else if ( page > 1 && ! firstPage.results?.length ) {
+			// An empty page within the total is a bad response: drop it so the next request refetches.
+			queryClient.removeQueries( { queryKey, exact: true } );
+			context.serverSideRender = false;
+		} else {
+			setCategoryPaginationLinks( context, { page, hasNextPage: !! firstPage.page_handle } );
+		}
+	}
+
+	// DocumentHead also sets the title, but doesn't run when the markup comes from the cache.
+	if ( ! context.query?.s ) {
+		const translate = context.i18n.translate.bind( context.i18n );
+		const title = getCategoryTitle( translate, getCategoryName( categories, category ), page );
+		store.dispatch( setDocumentHeadTitle( title ) );
+	}
 
 	next();
 }

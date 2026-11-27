@@ -1,32 +1,33 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { GravatarQuickEditorCore } from '@gravatar-com/quick-editor';
 import { screen, fireEvent } from '@testing-library/react';
+import { vi } from 'vitest';
 import { EditGravatar } from 'calypso/blocks/edit-gravatar';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 
-jest.mock( '@gravatar-com/quick-editor', () => ( {
-	GravatarQuickEditorCore: jest.fn().mockImplementation( ( options ) => {
+vi.mock( '@gravatar-com/quick-editor', () => ( {
+	GravatarQuickEditorCore: vi.fn().mockImplementation( function ( options ) {
 		let _isOpen = false;
 		return {
 			// Fire the callback to simulate the profile update.
-			open: jest.fn( () => {
+			open: vi.fn( () => {
 				_isOpen = true;
 				options.onProfileUpdated?.();
 			} ),
-			close: jest.fn( () => {
+			close: vi.fn( () => {
 				_isOpen = false;
 			} ),
-			isOpen: jest.fn( () => _isOpen ),
+			isOpen: vi.fn( () => _isOpen ),
 		};
 	} ),
 } ) );
 
-jest.mock( 'calypso/state/selectors/get-user-settings', () => jest.fn( () => {} ) );
+vi.mock( 'calypso/state/selectors/get-user-settings', () => ( { default: vi.fn( () => {} ) } ) );
 
 const FIXED_NOW = 1_706_790_000_000; // 2025-03-05 00:00 UTC
-jest.spyOn( Date, 'now' ).mockReturnValue( FIXED_NOW );
+vi.spyOn( Date, 'now' ).mockReturnValue( FIXED_NOW );
 
 const user = {
 	email_verified: true,
@@ -36,10 +37,10 @@ const user = {
 const baseProps = {
 	user,
 	translate: ( i ) => i,
-	recordClickButtonEvent: jest.fn(),
-	recordAvatarUpdatedEvent: jest.fn(),
-	setCurrentUser: jest.fn(),
-	receiveGravatarDetails: jest.fn(),
+	recordClickButtonEvent: vi.fn(),
+	recordAvatarUpdatedEvent: vi.fn(),
+	setCurrentUser: vi.fn(),
+	receiveGravatarDetails: vi.fn(),
 };
 
 const setup = ( overrides = {} ) =>
@@ -49,7 +50,7 @@ const clickEditAvatarLink = () =>
 	fireEvent.click( screen.getByRole( 'button', { name: 'Edit your avatar' } ) );
 
 describe( 'EditGravatar', () => {
-	afterEach( jest.clearAllMocks );
+	afterEach( vi.clearAllMocks );
 
 	describe( 'renders', () => {
 		test( 'editable Gravatar', () => {

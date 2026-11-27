@@ -11,6 +11,7 @@
 	// `.dataviews-action-modal` is 1000001.
 	z-index: 1000002;
 
+	// `@wordpress/components` Snackbar hardcodes a near-black background; remove once it uses WPDS tokens.
 	@include ui-mixins.when-dark-theme {
 		.components-snackbar {
 			background: var( --dashboard-surface__background-color );
@@ -42,7 +43,7 @@
 
 		.components-snackbar__action.components-button,
 		.components-snackbar__action.components-external-link {
-			color: var( --wp-admin-theme-color-darker-20 );
+			color: var( --wpds-color-foreground-interactive-brand );
 		}
 	}
 }

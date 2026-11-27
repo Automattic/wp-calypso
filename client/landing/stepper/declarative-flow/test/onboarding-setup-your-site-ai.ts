@@ -1,21 +1,23 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { vi } from 'vitest';
 import onboarding from '../flows/onboarding/onboarding';
 import { renderFlow } from './helpers';
 
 // Only the plans-page experiment still uses ExPlat here; stub it so the flow's unconditional
 // loadExperimentAssignment side effect never hits a real network fetch.
-jest.mock( 'calypso/lib/explat', () => ( {
-	loadExperimentAssignment: jest.fn( () => Promise.resolve( { variationName: null } ) ),
+vi.mock( 'calypso/lib/explat', () => ( {
+	loadExperimentAssignment: vi.fn( () => Promise.resolve( { variationName: null } ) ),
 } ) );
 
 let mockSiteOptions: Record< string, unknown > = {};
 // A lazy Proxy, not a spread of requireActual: eagerly spreading '@wordpress/data' here recurses
 // into its own mock factory while the module is still initializing (via @wordpress/rich-text's
 // store, which the flow pulls in transitively) and crashes before any test runs.
-jest.mock( '@wordpress/data', () => {
-	const actualModule = jest.requireActual( '@wordpress/data' );
+vi.mock( '@wordpress/data', async () => {
+	const actualModule =
+		await vi.importActual< typeof import( '@wordpress/data' ) >( '@wordpress/data' );
 
 	return new Proxy( actualModule, {
 		get: ( target, property ) => {
@@ -38,8 +40,8 @@ describe( 'Onboarding flow: setup-your-site-ai pre-made and AI tool destinations
 	beforeAll( () => {
 		Object.defineProperty( window, 'location', {
 			value: {
-				assign: jest.fn(),
-				replace: jest.fn(),
+				assign: vi.fn(),
+				replace: vi.fn(),
 				pathname: '/setup/onboarding',
 				search: '',
 				href: 'http://wordpress.com/setup/onboarding',
@@ -53,7 +55,7 @@ describe( 'Onboarding flow: setup-your-site-ai pre-made and AI tool destinations
 	} );
 
 	beforeEach( () => {
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 		mockSiteOptions = {};
 	} );
 

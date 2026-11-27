@@ -16,7 +16,7 @@ export const DomainSearchControlsFilterButton = forwardRef(
 	( { count, onClick, disabled, children }: Props, ref: Ref< HTMLButtonElement > ) => {
 		const { __, _n } = useI18n();
 
-		let ariaLabel = '';
+		let ariaLabel;
 		if ( count > 0 ) {
 			ariaLabel = sprintf(
 				/* translators: %(filterCount)s: number of active filters */

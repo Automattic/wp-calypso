@@ -22,6 +22,13 @@
   edits, bind the inputs and the action's context to the same data paths. The agent gets the
   event's `name` and `context`, so name it for what it does, such as `save_title`, and put in its
   context what acting on it needs, such as the item's ID.
+- An activated button shows the WordPress UI loading indicator and announces its loading state
+  until its action promise settles. Only that button is busy; a surface disabled by its host
+  does not give every button a spinner. Repeated activation is suppressed while pending, and
+  success or failure clears the indicator. Hosts must return the pending work from `onAction`
+  and settle it on completion or cancellation. In agent mode, loading ends when the host
+  acknowledges the event, which may be before the agent finishes its response. Modal triggers
+  open the dialog immediately without a loading state. This behavior applies to every theme.
 - Values, such as a `Text`'s `text`, take a literal or a `{"@path": …}` binding. Unlike in A2UI's
   Basic catalog, they never take a `{"@call": …}`: only actions and checks call functions. So send
   display text ready to show: formatted, such as a date or a price, and in the person's language.
@@ -30,6 +37,10 @@
   disabled surface. Its title, which also names the dialog, is its `accessibility.label`, or
   "Details" without one. Its inputs share the surface's data model and are disabled with it. Its own
   buttons send their actions and leave it open; only the person closes it.
+- A `TextField`'s `placeholder` shows in the empty field, as an example of what to enter; it
+  never replaces the `label`. A `ChoicePicker` with `displayStyle: "chips"` shows its options as a
+  wrapping row of pills, in either variant, for a short list of short options. The default,
+  `checkbox`, shows a column of radio buttons or check boxes.
 - Text fields keep their values as strings, choice pickers as string arrays, and date/time inputs
   as local ISO strings. A slider moves in whole numbers from its `min`, or in `steps` equal parts.
 - `Button`, `TextField`, `CheckBox`, `ChoicePicker`, `Slider` and `DateTimeInput` take A2UI's
@@ -51,6 +62,47 @@
 - Components ignore A2UI v1.0 properties they don't support, such as `weight`, a `Text`'s
   `variant` and the `accessibility` of components other than `Modal`, instead of rejecting the
   surface.
+
+## Component preview
+
+From the repository root, run `yarn workspace @automattic/ai-ui-renderer preview`
+and open the printed local URL. The preview uses synthetic data, with no account or MCP server.
+It exercises the actual renderer: responsive cards and detail layouts, the WordPress default,
+ChatGPT and a second token preset, light/dark mode, modals and pending actions.
+Click an action, then **Finish request** or **Fail request** to settle its promise. Close the
+modal before using the page controls. **Switch theme** inside the modal exercises live theme
+changes while it remains open.
+
+## Responsive layouts
+
+Register `createInteractiveUiCatalog( LAYOUT_CATALOG )` beside the Basic catalog and advertise
+`{ catalog: LAYOUT_CATALOG_DOCUMENT }` through `getInteractiveUiRendererCapabilities()`.
+Both exports come from the same entries as the charts catalog. Layout components name
+`LAYOUT_CATALOG_ID` as their `catalogId`; their children can use any registered catalog.
+The shared `style.scss` includes their CSS regardless of the selected theme.
+
+- `Grid`: `children`, `gap` (`none`, `xs`, `sm`, `md`, `lg`, `xl`), `minColumnWidth` (pixels,
+  default 248), optional maximum `columns` (1–6) and `align` (`start`, `center`, `end`, `stretch`).
+  It fits columns to its own container and shrinks to one column without horizontal overflow.
+  `balance: 'wideStart'` or `'wideEnd'` creates a 3:2 or 2:3 detail view above 52rem, stacking
+  its children in reading order below that width. Use these with exactly two children.
+- `Stack`: `children`, the same `gap` and `align`, `direction` (`column` by default, or `row`),
+  `justify` (`start`, `center`, `end`, `space-between`) and `wrap` (false by default).
+
+```json
+{
+	"id": "sites",
+	"component": "Grid",
+	"catalogId": "urn:automattic:ai-ui-renderer:layouts:v1",
+	"minColumnWidth": 248,
+	"gap": "lg",
+	"children": [ "first-site", "second-site" ]
+}
+```
+
+Keep page width, branding, thumbnail cropping and app-specific visibility rules in the host.
+Layout components do not style buttons, cards or text, so the same layout works with the
+WordPress defaults and with optional themes.
 
 ## Charts
 
@@ -128,9 +180,11 @@ const exampleCatalog: InteractiveUiCatalogDefinition = {
   `isShowingErrors` state, and the host's `hostProps`. These replace the surface's props of the
   same name, so don't declare props with those names. A setter writes only to a bound path and
   does nothing for a literal value, so keep an input's value in local state too, as the basic
-  inputs do. It doesn't get A2UI's `buildChild`, so it can't render other components: a
-  `ComponentId` or `ChildList` prop arrives as IDs only. Make custom components leaves, laid out
-  with the basic ones. A `lazy()` component renders nothing while it loads.
+  inputs do. A `ComponentId` or `ChildList` prop arrives as IDs. Use the supplied
+  `buildChild( id, basePath? )` to render them, preserving their data bindings and actions.
+  A template child arrives as `{ id, basePath }`; pass both to `buildChild`.
+  `buildChild` comes from the renderer and cannot be overridden by agent or host props.
+  A `lazy()` component renders nothing while it loads.
 - A component that declares `checks` (an array of `CheckRule`s) also gets `isValid` and
   `validationErrors`, its failed checks' messages. `isShowingErrors` turns true once the person
   activates a `Button` whose checks fail. Show the messages and handle `disabled` as
@@ -269,7 +323,8 @@ An unset primary or input token, or its `on-` pair, keeps the host's WordPress c
 token gets that palette default directly. The input, surface and border defaults follow the light
 or dark mode. A custom `--a2ui-color-primary` without its own `-hover` and `-dark` gets them derived
 from it, as A2UI does.
-The modal renders outside the host, so it copies its surface's theme when it opens.
+The modal renders outside the host, so it copies its surface's theme when it opens, and again
+when the surface's `theme` or `className` changes.
 
 The renderer derives its own colors from those, which follow the light or dark mode:
 
@@ -280,6 +335,65 @@ The renderer derives its own colors from those, which follow the light or dark m
   `--ai-ui-renderer-accent-text-hover` and `--ai-ui-renderer-accent-line`. They're lighter in dark
   mode, so they stand out on the surface. Fills, such as a primary Button or a checked check box,
   keep the primary in both modes, with `--a2ui-color-on-primary` text and marks on top.
+
+### Optional client themes
+
+```tsx
+import '@automattic/ai-ui-renderer/style.scss';
+import '@automattic/ai-ui-renderer/themes/chatgpt.scss';
+
+<InteractiveUiSurface surface={ surface } theme="chatgpt" />;
+```
+
+No theme preserves the WordPress appearance. The host chooses a theme from its MCP client
+information and may update it while a surface or modal is open. The renderer does not inspect
+user agents, tool arguments or transport globals. Unknown clients should use the default theme.
+
+`theme` accepts a preset name, rather than a fixed list of clients. A preset sets the
+`--ai-ui-theme-*` variables below on `[data-ai-ui-theme="your-client"]` and includes the
+`preset()` mixin for its name, which applies them to the components. A theme whose preset isn't
+loaded keeps the WordPress appearance. A preset can live in a consumer or be shared alongside
+`themes/chatgpt.scss`:
+
+```scss
+@use '@automattic/ai-ui-renderer/theme.scss';
+
+[data-ai-ui-theme='your-client'] {
+	--ai-ui-theme-text: #1e1e1e;
+	// …and the other tokens below.
+}
+
+@include theme.preset( your-client );
+```
+
+Use the same contract:
+
+| Tokens (prefix `--ai-ui-theme-`)                                                                                                | Purpose                                                             |
+| ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `font`, `font-size`, `line-height`, `small-size`, `small-line-height`                                                           | Body and control typography                                         |
+| `heading-1-size`, `heading-1-line-height`, `heading-2-size`, `heading-2-line-height`, `heading-3-size`, `heading-3-line-height` | Markdown headings                                                   |
+| `text`, `text-secondary`, `text-disabled`, `danger`                                                                             | Text and validation colors                                          |
+| `surface`, `input`, `inverse`, `on-inverse`, `hover`                                                                            | Cards, inputs and primary actions                                   |
+| `border`, `control-border`, `ring`                                                                                              | Borders and focus indicators                                        |
+| `control-height`, `control-radius`, `card-radius`, `space`                                                                      | Component geometry and spacing unit                                 |
+| `chip-text`, `chip-border-hover`, `chip-hover`, `chip-padding`, `chip-font-weight` (optional)                                   | `ChoicePicker` chips: unselected text and hover, padding and weight |
+
+The optional ChatGPT preset adapts the MIT-licensed OpenAI Apps SDK UI tokens at
+[`0f00143c7a639906f1621fe58e1b6be7b5bea46d`](https://github.com/openai/apps-sdk-ui/tree/0f00143c7a639906f1621fe58e1b6be7b5bea46d/src/styles).
+Its license is preserved in the SCSS header. It uses MCP host style variables when provided,
+with light/dark fallback values. It adds no OpenAI React or Tailwind dependency.
+
+Styles are scoped to the selected surface and its portaled modal. The modal renders on `<body>`,
+so a preset's tokens reach it only from the preset itself or from host variables set on the
+document root, not on an element around the surface. Pass light or dark mode as `a2ui-dark` or
+`a2ui-light` in `className`, or set `color-scheme` on the document root. An open modal follows a
+change to `theme` or `className`; it picks up other host changes when it next opens. Page backgrounds,
+root resets, branding and overlay stacking remain the consumer's responsibility. The optional
+`--ai-ui-theme-page` token is available to hosts that need a matching page background.
+
+When compiling SCSS to inline multiple stylesheets into one UTF-8 HTML document, pass
+`charset: false` to Sass. Otherwise non-ASCII content, including a retained license notice,
+can produce an encoding marker between the stylesheets and prevent the next selector from matching.
 
 ## Adding a component
 

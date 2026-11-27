@@ -1,18 +1,19 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 import React from 'react';
+import { vi } from 'vitest';
 import { getPartnerSignupTosElement } from 'calypso/lib/partner-branding';
 import { getMagicLoginInitialHeaders, MagicLogin } from '../index';
 
-jest.mock( 'calypso/lib/partner-branding', () => ( {
-	detectPartnerConfig: jest.fn(),
-	getPartnerSignupTosElement: jest.fn(),
+vi.mock( 'calypso/lib/partner-branding', () => ( {
+	detectPartnerConfig: vi.fn(),
+	getPartnerSignupTosElement: vi.fn(),
 } ) );
 
 describe( 'magic-login branding behavior', () => {
 	const baseProps = {
 		path: '/log-in/link',
-		recordPageView: jest.fn(),
-		recordTracksEvent: jest.fn(),
+		recordPageView: vi.fn(),
+		recordTracksEvent: vi.fn(),
 		locale: 'en',
 		query: {},
 		showCheckYourEmail: false,
@@ -26,11 +27,11 @@ describe( 'magic-login branding behavior', () => {
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'overrides heading for a branded partner flow', () => {
-		const translate = jest.fn( ( text, options ) => {
+		const translate = vi.fn( ( text, options ) => {
 			if ( options?.args?.partnerName ) {
 				return `Log in to ${ options.args.partnerName }`;
 			}
@@ -57,7 +58,7 @@ describe( 'magic-login branding behavior', () => {
 	} );
 
 	it( 'falls back to default heading when no partner config is present', () => {
-		const translate = jest.fn( ( text ) => text );
+		const translate = vi.fn( ( text ) => text );
 
 		const { heading } = getMagicLoginInitialHeaders( baseProps, translate );
 
@@ -78,7 +79,7 @@ describe( 'magic-login branding behavior', () => {
 
 	it( 'uses fallback ToS when partner ToS is unavailable', () => {
 		getPartnerSignupTosElement.mockReturnValue( undefined );
-		const translate = jest.fn( ( text ) => text );
+		const translate = vi.fn( ( text ) => text );
 
 		const instance = new MagicLogin( {
 			...baseProps,

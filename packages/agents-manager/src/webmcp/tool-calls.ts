@@ -15,12 +15,23 @@ export type ToolCallContext = {
 	knownBlockClientIds: Set< string >;
 };
 
-export function rememberBlockClientIds( result: unknown, context: ToolCallContext ): void {
+export function getBlockTreeBlocks( result: unknown ): unknown[] | undefined {
 	if (
 		! isRecord( result ) ||
 		! isRecord( result.result ) ||
-		! isRecord( result.result.details )
+		! isRecord( result.result.details ) ||
+		! Array.isArray( result.result.details.blocks )
 	) {
+		return undefined;
+	}
+
+	return result.result.details.blocks;
+}
+
+export function rememberBlockClientIds( result: unknown, context: ToolCallContext ): void {
+	const rootBlocks = getBlockTreeBlocks( result );
+
+	if ( ! rootBlocks ) {
 		return;
 	}
 
@@ -43,7 +54,7 @@ export function rememberBlockClientIds( result: unknown, context: ToolCallContex
 	};
 
 	context.knownBlockClientIds.clear();
-	visit( result.result.details.blocks );
+	visit( rootBlocks );
 }
 
 function prepareApplyBlockEditsInput(
@@ -68,9 +79,13 @@ function prepareApplyBlockEditsInput(
 
 				const { blockMarkup: _blockMarkup, block: _block, ...placement } = insert;
 
+				// `big-sky/apply-block-edits` inserts at index 0 by default, so without an index here
+				// each block would land above the one before it.
+				const firstIndex = typeof placement.index === 'number' ? placement.index : 0;
+
 				return blocks.map( ( block, offset ) => ( {
 					...placement,
-					...( typeof placement.index === 'number' ? { index: placement.index + offset } : {} ),
+					index: firstIndex + offset,
 					block: toBlockData( block ),
 				} ) );
 			} )

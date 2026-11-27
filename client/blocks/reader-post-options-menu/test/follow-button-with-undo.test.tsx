@@ -1,17 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render } from '@testing-library/react';
+import { vi } from 'vitest';
 import FollowButtonWithUndo from '../follow-button-with-undo';
 
 let buttonProps: { onFollowSuccess: ( isFollowing: boolean ) => void };
-jest.mock( 'calypso/reader/follow-button', () => ( props: typeof buttonProps ) => {
-	buttonProps = props;
-	return null;
-} );
+vi.mock( 'calypso/reader/follow-button', () => ( {
+	default: ( props: typeof buttonProps ) => {
+		buttonProps = props;
+		return null;
+	},
+} ) );
 
-const mockShowUndoNotice = jest.fn();
-jest.mock( 'calypso/reader/data/site-subscriptions/use-unsubscribe-with-undo', () => ( {
+const mockShowUndoNotice = vi.fn();
+vi.mock( 'calypso/reader/data/site-subscriptions/use-unsubscribe-with-undo', () => ( {
 	useUnsubscribeUndoNotice: () => mockShowUndoNotice,
 } ) );
 
@@ -23,7 +26,7 @@ const props = {
 
 describe( 'FollowButtonWithUndo', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test.each( [

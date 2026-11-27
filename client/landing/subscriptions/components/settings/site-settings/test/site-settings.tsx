@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { Reader } from '@automattic/data-stores';
@@ -7,15 +7,16 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
+import { vi } from 'vitest';
 import {
 	SubscriptionManagerContextProvider,
 	SubscriptionsPortal,
 } from '../../../subscription-manager-context';
 import { SiteSettingsPopover } from '../site-settings';
 
-jest.mock( 'i18n-calypso', () => ( {
-	...jest.requireActual( 'i18n-calypso' ),
-	useTranslate: jest.fn( () => ( text ) => text ),
+vi.mock( 'i18n-calypso', async () => ( {
+	...( await vi.importActual< typeof import( 'i18n-calypso' ) >( 'i18n-calypso' ) ),
+	useTranslate: vi.fn( () => ( text ) => text ),
 } ) );
 
 const queryClient = new QueryClient();

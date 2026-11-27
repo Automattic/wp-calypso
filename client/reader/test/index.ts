@@ -1,104 +1,109 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import page from '@automattic/calypso-router';
+import { vi } from 'vitest';
 import { redirectLoggedOutToSignup } from 'calypso/controller';
 import { setupRedirectRoutes } from 'calypso/utils';
 import initReader from '../index';
 import { readerNotFound } from '../lib/reader-router';
 
-jest.mock( '@automattic/calypso-router', () => {
-	const page = Object.assign( jest.fn(), { redirect: jest.fn() } );
+vi.mock( '@automattic/calypso-router', () => {
+	const page = Object.assign( vi.fn(), { redirect: vi.fn() } );
 	return {
 		__esModule: true,
 		default: page,
 	};
 } );
 
-jest.mock( '@automattic/calypso-config', () => ( {
+vi.mock( '@automattic/calypso-config', () => ( {
 	__esModule: true,
 	default: {
-		isEnabled: jest.fn( () => false ),
+		isEnabled: vi.fn( () => false ),
 	},
 } ) );
 
-jest.mock( '@automattic/i18n-utils', () => ( {
+vi.mock( '@automattic/i18n-utils', () => ( {
 	getAnyLanguageRouteParam: () => ':lang([a-z]{2,3}|[a-z]{2}-[a-z]{2})',
 	getLanguageRouteParam: () => ':lang(en|fr)?',
 } ) );
 
-jest.mock( 'redux-dynamic-middlewares', () => ( {
-	addMiddleware: jest.fn(),
+vi.mock( 'redux-dynamic-middlewares', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		addMiddleware: vi.fn(),
+	} )
+);
+
+vi.mock( 'calypso/controller', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		makeLayout: vi.fn(),
+		redirectLoggedOut: vi.fn(),
+		redirectLoggedOutToSignup: vi.fn(),
+		render: vi.fn(),
+		setSelectedSiteIdByOrigin: vi.fn(),
+	} )
+);
+
+vi.mock( 'calypso/utils', () => ( {
+	setupRedirectRoutes: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/controller', () => ( {
-	makeLayout: jest.fn(),
-	redirectLoggedOut: jest.fn(),
-	redirectLoggedOutToSignup: jest.fn(),
-	render: jest.fn(),
-	setSelectedSiteIdByOrigin: jest.fn(),
+vi.mock( '../controller', () => ( {
+	blogDiscoveryByFeedId: vi.fn(),
+	blogListing: vi.fn(),
+	commentSubscriptionsManager: vi.fn(),
+	feedDiscovery: vi.fn(),
+	feedListing: vi.fn(),
+	feedLookup: vi.fn(),
+	following: vi.fn(),
+	loadNewSubscriptionPage: vi.fn(),
+	pendingSubscriptionsManager: vi.fn(),
+	readA8C: vi.fn(),
+	readFollowingP2: vi.fn(),
+	redirectLoggedOutToDiscover: vi.fn(),
+	setupReadRoutes: vi.fn(),
+	sidebar: vi.fn(),
+	siteSubscription: vi.fn(),
+	siteSubscriptionsManager: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/utils', () => ( {
-	setupRedirectRoutes: jest.fn(),
+vi.mock( '../data/post/middleware', () => ( { default: vi.fn() } ) );
+
+vi.mock( '../lib/reader-router', () => ( {
+	readerNotFound: vi.fn(),
 } ) );
 
-jest.mock( '../controller', () => ( {
-	blogDiscoveryByFeedId: jest.fn(),
-	blogListing: jest.fn(),
-	commentSubscriptionsManager: jest.fn(),
-	feedDiscovery: jest.fn(),
-	feedListing: jest.fn(),
-	feedLookup: jest.fn(),
-	following: jest.fn(),
-	loadNewSubscriptionPage: jest.fn(),
-	pendingSubscriptionsManager: jest.fn(),
-	readA8C: jest.fn(),
-	readFollowingP2: jest.fn(),
-	redirectLoggedOutToDiscover: jest.fn(),
-	setupReadRoutes: jest.fn(),
-	sidebar: jest.fn(),
-	siteSubscription: jest.fn(),
-	siteSubscriptionsManager: jest.fn(),
+vi.mock( '../list/controller', () => ( {
+	createList: vi.fn(),
+	deleteList: vi.fn(),
+	editList: vi.fn(),
+	editListItems: vi.fn(),
+	exportList: vi.fn(),
+	listListing: vi.fn(),
 } ) );
 
-jest.mock( '../data/post/middleware', () => jest.fn() );
-
-jest.mock( '../lib/reader-router', () => ( {
-	readerNotFound: jest.fn(),
+vi.mock( '../four-for-four/controller', () => ( {
+	fourForFour: vi.fn(),
+} ) );
+vi.mock( '../on-this-day/controller', () => ( {
+	onThisDay: vi.fn(),
 } ) );
 
-jest.mock( '../list/controller', () => ( {
-	createList: jest.fn(),
-	deleteList: jest.fn(),
-	editList: jest.fn(),
-	editListItems: jest.fn(),
-	exportList: jest.fn(),
-	listListing: jest.fn(),
-} ) );
-
-jest.mock( '../four-for-four/controller', () => ( {
-	fourForFour: jest.fn(),
-} ) );
-jest.mock( '../on-this-day/controller', () => ( {
-	onThisDay: jest.fn(),
-} ) );
-
-jest.mock( '../user-profile/controller', () => ( {
-	redirectMeToCurrentUser: jest.fn(),
-	userProfile: jest.fn(),
+vi.mock( '../user-profile/controller', () => ( {
+	redirectMeToCurrentUser: vi.fn(),
+	userProfile: vi.fn(),
 } ) );
 
 type RouteCall = [ string | string[], ...unknown[] ];
 
 // `page` is a bare jest.fn(), so its recorded calls are typed as an empty tuple.
 function registeredRoutes(): RouteCall[] {
-	return jest.mocked( page ).mock.calls as unknown as RouteCall[];
+	return vi.mocked( page ).mock.calls as unknown as RouteCall[];
 }
 
 describe( 'reader routes', () => {
 	beforeEach( () => {
-		jest.mocked( page ).mockClear();
+		vi.mocked( page ).mockClear();
 	} );
 
 	it( 'registers catch-alls for reader and legacy read paths', async () => {
@@ -125,7 +130,7 @@ describe( 'reader routes', () => {
 	it( 'redirects the retired Reddit add-a-feed page to the generic form', async () => {
 		await initReader();
 
-		const redirects = jest
+		const redirects = vi
 			.mocked( setupRedirectRoutes )
 			.mock.calls.flatMap( ( [ routes ] ) => routes );
 		const reddit = redirects.find( ( route ) => route.path === '/reader/new/reddit' );

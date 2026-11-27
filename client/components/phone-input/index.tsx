@@ -387,7 +387,7 @@ function getCountrySelectionHandler(
 		if ( newCountryCode === countryCode ) {
 			return;
 		}
-		let inputValue = value;
+		let inputValue;
 		/*
 		 If using national format we need to extract the national number and format it instead of the direct value
 		 This is because not all countries have the same national prefix

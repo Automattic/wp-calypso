@@ -1,12 +1,13 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useLaunchpadDecider } from '..';
 
 test( 'appends siteId and sitdSlug to the post-flow url', () => {
-	const exitFlow = jest.fn();
-	const navigate = jest.fn();
+	const exitFlow = vi.fn();
+	const navigate = vi.fn();
 
 	const { result } = renderHook( () => useLaunchpadDecider( { exitFlow, navigate } ) );
 
@@ -22,8 +23,8 @@ test( 'appends siteId and sitdSlug to the post-flow url', () => {
 } );
 
 test( "doesn't append empty siteId to the post-flow url", () => {
-	const exitFlow = jest.fn();
-	const navigate = jest.fn();
+	const exitFlow = vi.fn();
+	const navigate = vi.fn();
 
 	const { result } = renderHook( () => useLaunchpadDecider( { exitFlow, navigate } ) );
 
@@ -50,8 +51,8 @@ test( "doesn't append empty siteId to the post-flow url", () => {
 } );
 
 test( "doesn't append empty siteSlug to the post-flow url", () => {
-	const exitFlow = jest.fn();
-	const navigate = jest.fn();
+	const exitFlow = vi.fn();
+	const navigate = vi.fn();
 
 	const { result } = renderHook( () => useLaunchpadDecider( { exitFlow, navigate } ) );
 
@@ -64,8 +65,8 @@ test( "doesn't append empty siteSlug to the post-flow url", () => {
 } );
 
 test( "doesn't send an empty siteId back to the launchpad", () => {
-	const exitFlow = jest.fn();
-	const navigate = jest.fn();
+	const exitFlow = vi.fn();
+	const navigate = vi.fn();
 
 	const { result } = renderHook( () => useLaunchpadDecider( { exitFlow, navigate } ) );
 

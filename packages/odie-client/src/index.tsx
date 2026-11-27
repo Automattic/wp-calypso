@@ -5,8 +5,10 @@ import { MessagesContainer } from './components/message/messages-container';
 import { OdieSendMessageButton } from './components/send-message-input';
 import { useOdieAssistantContext, OdieAssistantProvider } from './context';
 import { useCurrentSupportInteraction } from './data/use-current-support-interaction';
+import { useIsPendingDirectChat } from './hooks/use-is-pending-direct-chat';
 import { useOpenLiveInteractions } from './hooks/use-open-interaction-status-map';
 import { useRefreshChatOnFocus } from './hooks/use-refresh-chat-on-focus';
+import { useTrackChatPanelClosed } from './hooks/use-track-chat-panel-closed';
 import {
 	hasCSATMessage,
 	interactionHasEnded,
@@ -20,6 +22,7 @@ export const OdieAssistant: React.FC = () => {
 	const { trackEvent, currentUser, chat, aiDisclosureLine } = useOdieAssistantContext();
 	const aiDisclosureId = useId();
 	useRefreshChatOnFocus();
+	useTrackChatPanelClosed();
 	const { data: currentSupportInteraction, isLoading: isLoadingInteraction } =
 		useCurrentSupportInteraction();
 	const chatHasCSATMessage = hasCSATMessage( chat );
@@ -31,10 +34,12 @@ export const OdieAssistant: React.FC = () => {
 		chatHasCSATMessage ||
 		interactionHasEnded( currentSupportInteraction ) ||
 		isStaleOdieChat( chat );
+	const isPendingDirectChat = useIsPendingDirectChat();
 	const showAiDisclosureLine = shouldShowAiDisclosureLine( {
 		chat,
 		interaction: currentSupportInteraction,
 		isChatPending,
+		isPendingDirectChat,
 	} );
 
 	const currentUuid = currentSupportInteraction?.uuid;
@@ -81,6 +86,10 @@ export const OdieAssistant: React.FC = () => {
 	);
 };
 export { GetSupport } from './components/message/get-support';
+export {
+	isOnWooCommerceCom,
+	isWooCommerceComLink,
+} from './components/message/utils/is-woocommerce-com-link';
 export { useCheckoutSupportVariation } from './hooks/use-checkout-support-variation';
 
 export default OdieAssistantProvider;

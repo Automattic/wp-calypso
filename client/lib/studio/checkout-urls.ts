@@ -15,8 +15,6 @@ export const STUDIO_WEB_ORIGINS: readonly string[] = STUDIO_WEB_HOSTS.map(
  */
 export const STUDIO_DEFAULT_BACK_URL = 'https://wordpress.studio/';
 
-export const STUDIO_WEB_APP_URL = 'https://app.wordpress.studio/';
-
 // The trailing slash keeps `/checkout/studio-return` out.
 const STUDIO_CHECKOUT_PATH_PREFIX = '/checkout/studio/';
 

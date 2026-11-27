@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { waitFor } from '@testing-library/react';
 import React from 'react';
 import { useLocation } from 'react-router';
+import { type Mock, vi } from 'vitest';
 import {
 	checkBlueprintExists,
 	logBlueprintArchiveEvent,
@@ -11,14 +12,14 @@ import {
 import BlueprintStep from '..';
 import { mockStepProps, renderStep } from '../../test/helpers';
 
-jest.mock( 'calypso/landing/stepper/utils/blueprint-archive-import', () => ( {
+vi.mock( 'calypso/landing/stepper/utils/blueprint-archive-import', () => ( {
 	BLUEPRINT_BUILD_DEST_SIMPLE: 'simple',
-	checkBlueprintExists: jest.fn(),
-	logBlueprintArchiveEvent: jest.fn(),
+	checkBlueprintExists: vi.fn(),
+	logBlueprintArchiveEvent: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
 // The router's search params are what navigation carries into the logged-out
@@ -29,7 +30,7 @@ const LocationProbe = () => {
 	return null;
 };
 
-const render = ( initialEntry: string, submit: jest.Mock ) =>
+const render = ( initialEntry: string, submit: Mock ) =>
 	renderStep(
 		<>
 			<BlueprintStep { ...mockStepProps( { navigation: { submit } } ) } />
@@ -40,14 +41,14 @@ const render = ( initialEntry: string, submit: jest.Mock ) =>
 
 describe( 'BlueprintStep', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		currentSearch = '';
 	} );
 
 	it( 'keeps build_dest=wow when the blueprint has an archive', async () => {
-		( checkBlueprintExists as jest.Mock ).mockResolvedValue( true );
+		( checkBlueprintExists as Mock ).mockResolvedValue( true );
 		let searchAtSubmit = '';
-		const submit = jest.fn( () => {
+		const submit = vi.fn( () => {
 			searchAtSubmit = currentSearch;
 		} );
 
@@ -59,9 +60,9 @@ describe( 'BlueprintStep', () => {
 	} );
 
 	it( 'strips build_dest from the router before submitting when the archive is missing', async () => {
-		( checkBlueprintExists as jest.Mock ).mockResolvedValue( false );
+		( checkBlueprintExists as Mock ).mockResolvedValue( false );
 		let searchAtSubmit = '';
-		const submit = jest.fn( () => {
+		const submit = vi.fn( () => {
 			searchAtSubmit = currentSearch;
 		} );
 
@@ -79,9 +80,9 @@ describe( 'BlueprintStep', () => {
 	} );
 
 	it( 'keeps the wow funnel when the blueprint has an archive', async () => {
-		( checkBlueprintExists as jest.Mock ).mockResolvedValue( true );
+		( checkBlueprintExists as Mock ).mockResolvedValue( true );
 		let searchAtSubmit = '';
-		const submit = jest.fn( () => {
+		const submit = vi.fn( () => {
 			searchAtSubmit = currentSearch;
 		} );
 
@@ -94,9 +95,9 @@ describe( 'BlueprintStep', () => {
 	} );
 
 	it( 'strips the wow funnel and dest when the archive is missing', async () => {
-		( checkBlueprintExists as jest.Mock ).mockResolvedValue( false );
+		( checkBlueprintExists as Mock ).mockResolvedValue( false );
 		let searchAtSubmit = '';
-		const submit = jest.fn( () => {
+		const submit = vi.fn( () => {
 			searchAtSubmit = currentSearch;
 		} );
 
@@ -110,7 +111,7 @@ describe( 'BlueprintStep', () => {
 	} );
 
 	it( 'does not look up an archive without build_dest=wow', async () => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 
 		render( '/blueprint?blueprint=941', submit );
 
@@ -119,9 +120,9 @@ describe( 'BlueprintStep', () => {
 	} );
 
 	it( 'verifies a Simple build against the Simple lookup and keeps build_dest=simple', async () => {
-		( checkBlueprintExists as jest.Mock ).mockResolvedValue( true );
+		( checkBlueprintExists as Mock ).mockResolvedValue( true );
 		let searchAtSubmit = '';
-		const submit = jest.fn( () => {
+		const submit = vi.fn( () => {
 			searchAtSubmit = currentSearch;
 		} );
 
@@ -135,9 +136,9 @@ describe( 'BlueprintStep', () => {
 	} );
 
 	it( 'strips build_dest=simple when the blueprint does not exist for Simple', async () => {
-		( checkBlueprintExists as jest.Mock ).mockResolvedValue( false );
+		( checkBlueprintExists as Mock ).mockResolvedValue( false );
 		let searchAtSubmit = '';
-		const submit = jest.fn( () => {
+		const submit = vi.fn( () => {
 			searchAtSubmit = currentSearch;
 		} );
 
@@ -153,8 +154,8 @@ describe( 'BlueprintStep', () => {
 	} );
 
 	it( 'accepts a blueprint slug', async () => {
-		( checkBlueprintExists as jest.Mock ).mockResolvedValue( true );
-		const submit = jest.fn();
+		( checkBlueprintExists as Mock ).mockResolvedValue( true );
+		const submit = vi.fn();
 
 		render( '/blueprint?blueprint=coachava&build_dest=wow', submit );
 

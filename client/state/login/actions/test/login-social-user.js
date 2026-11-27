@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import {
 	SOCIAL_LOGIN_REQUEST,
 	SOCIAL_LOGIN_REQUEST_FAILURE,
@@ -11,17 +12,17 @@ import { remoteLoginUser } from 'calypso/state/login/actions/remote-login-user';
 import { postLoginRequest } from 'calypso/state/login/utils';
 import { loginSocialUser } from '../login-social-user';
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
+vi.mock( '@automattic/calypso-analytics', () => ( {
 	getTracksAnonymousUserId: () => 'test-anonymous-id',
 } ) );
-jest.mock( 'calypso/lib/tos-acceptance-tracking', () => () => ( {} ) );
-jest.mock( 'calypso/state/login/init', () => ( {} ) );
-jest.mock( 'calypso/state/login/actions/remote-login-user', () => ( {
-	remoteLoginUser: jest.fn(),
+vi.mock( 'calypso/lib/tos-acceptance-tracking', () => ( { default: () => ( {} ) } ) );
+vi.mock( 'calypso/state/login/init', () => ( {} ) );
+vi.mock( 'calypso/state/login/actions/remote-login-user', () => ( {
+	remoteLoginUser: vi.fn(),
 } ) );
-jest.mock( 'calypso/state/login/utils', () => ( {
-	...jest.requireActual( 'calypso/state/login/utils' ),
-	postLoginRequest: jest.fn(),
+vi.mock( 'calypso/state/login/utils', async () => ( {
+	...( await vi.importActual( 'calypso/state/login/utils' ) ),
+	postLoginRequest: vi.fn(),
 } ) );
 
 const socialInfo = {
@@ -34,8 +35,8 @@ describe( 'loginSocialUser', () => {
 	let dispatch;
 
 	beforeEach( () => {
-		jest.clearAllMocks();
-		dispatch = jest.fn();
+		vi.clearAllMocks();
+		dispatch = vi.fn();
 		remoteLoginUser.mockResolvedValue();
 	} );
 

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import pagejs from '@automattic/calypso-router';
 import {
@@ -10,11 +10,12 @@ import {
 	redirect,
 } from '@tanstack/react-router';
 import { waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import { createBrowserHistoryAndMemoryRouterSync } from '../router';
 
-jest.mock( '@automattic/calypso-router', () => ( {
+vi.mock( '@automattic/calypso-router', () => ( {
 	__esModule: true,
-	default: { show: jest.fn(), replace: jest.fn() },
+	default: { show: vi.fn(), replace: vi.fn() },
 } ) );
 
 const rootRoute = createRootRoute();
@@ -46,7 +47,7 @@ async function setUp() {
 describe( 'syncMemoryRouterToBrowserHistory', () => {
 	afterEach( () => {
 		unsubscribe();
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'replaces the browser entry when the router navigates with replace', async () => {

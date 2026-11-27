@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { BASIC_CATALOG_ID } from '@automattic/ai-ui-renderer/capabilities';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { type Mock, vi } from 'vitest';

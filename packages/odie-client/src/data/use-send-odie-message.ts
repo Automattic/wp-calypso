@@ -415,6 +415,9 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 				type: 'message',
 				context: returnedChat.messages[ 0 ].context,
 			};
+			trackEvent( 'bot_reply_received', {
+				forward_to_human_support: !! botMessage.context?.flags?.forward_to_human_support,
+			} );
 			setExperimentVariationName( returnedChat.experiment_name );
 			addMessage( {
 				message: botMessage,
@@ -423,8 +426,11 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 			} );
 		},
 		onSettled: () => {
+			// Match on the chat id alone: `useOdieChat` keys it as a number, after a bot slug with
+			// its own fallbacks.
 			queryClient.invalidateQueries( {
-				queryKey: [ 'odie-chat', currentSupportInteraction?.bot_slug, odieId ],
+				queryKey: [ 'odie-chat' ],
+				predicate: ( { queryKey } ) => !! odieId && String( queryKey[ 2 ] ) === odieId,
 			} );
 		},
 		onError: ( error ) => {

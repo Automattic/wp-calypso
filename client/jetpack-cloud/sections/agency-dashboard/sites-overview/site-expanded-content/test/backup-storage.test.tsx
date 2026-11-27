@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
@@ -8,23 +8,26 @@ import { render, screen, fireEvent, act } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import { urlToSlug } from 'calypso/lib/url';
 import { site } from '../../test/test-utils/constants';
 import BackupStorage from '../backup-storage';
 
-jest.mock( 'calypso/data/activity-log/use-rewindable-activity-log-query', () => {
-	return jest.fn().mockReturnValue( {
-		isLoading: false,
-		data: [
-			{
-				activityTs: new Date(),
-				activityName: 'backup',
-				activityDescription: [
-					{ children: [ { text: '5 plugins, 3 themes, 0 uploads, 1 post, 1 page' } ] },
-				],
-			},
-		],
-	} );
+vi.mock( 'calypso/data/activity-log/use-rewindable-activity-log-query', () => {
+	return {
+		default: vi.fn().mockReturnValue( {
+			isLoading: false,
+			data: [
+				{
+					activityTs: new Date(),
+					activityName: 'backup',
+					activityDescription: [
+						{ children: [ { text: '5 plugins, 3 themes, 0 uploads, 1 post, 1 page' } ] },
+					],
+				},
+			],
+		} ),
+	};
 } );
 
 describe( 'BackupStorage component', () => {
@@ -48,7 +51,7 @@ describe( 'BackupStorage component', () => {
 		},
 	};
 
-	const mockTrackEvent = jest.fn();
+	const mockTrackEvent = vi.fn();
 
 	const mockStore = configureStore();
 	const store = mockStore( initialState );

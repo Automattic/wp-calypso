@@ -1,6 +1,7 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { vi } from 'vitest';
 import { resolveResumability } from '../resolve-resumability';
 import { writeResumeRecord, resumeKey, readResumeRecord } from '../resume-storage';
 
@@ -14,7 +15,7 @@ describe( 'resolveResumability', () => {
 			integration: 'telex',
 			contextId: 'proj-1',
 			plan: 'business-bundle',
-			fetchSitePlanStatus: jest.fn(),
+			fetchSitePlanStatus: vi.fn(),
 		} );
 		expect( result.kind ).toBe( 'create' );
 	} );
@@ -28,7 +29,7 @@ describe( 'resolveResumability', () => {
 			integration: 'telex',
 			contextId: 'proj-1',
 			plan: 'ecommerce-bundle',
-			fetchSitePlanStatus: jest.fn(),
+			fetchSitePlanStatus: vi.fn(),
 		} );
 		expect( result.kind ).toBe( 'create' );
 	} );
@@ -42,7 +43,7 @@ describe( 'resolveResumability', () => {
 			integration: 'telex',
 			contextId: 'proj-1',
 			plan: 'business-bundle',
-			fetchSitePlanStatus: jest.fn().mockResolvedValue( { status: 'active' } ),
+			fetchSitePlanStatus: vi.fn().mockResolvedValue( { status: 'active' } ),
 		} );
 		expect( result.kind ).toBe( 'purchased' );
 		expect( ( result as { siteSlug: string } ).siteSlug ).toBe( 'a.wordpress.com' );
@@ -57,7 +58,7 @@ describe( 'resolveResumability', () => {
 			integration: 'telex',
 			contextId: 'proj-1',
 			plan: 'business-bundle',
-			fetchSitePlanStatus: jest.fn().mockResolvedValue( { status: 'pending' } ),
+			fetchSitePlanStatus: vi.fn().mockResolvedValue( { status: 'pending' } ),
 		} );
 		expect( result.kind ).toBe( 'unpurchased' );
 	} );
@@ -71,7 +72,7 @@ describe( 'resolveResumability', () => {
 			integration: 'telex',
 			contextId: 'proj-1',
 			plan: 'business-bundle',
-			fetchSitePlanStatus: jest.fn().mockRejectedValue( new Error( '404' ) ),
+			fetchSitePlanStatus: vi.fn().mockRejectedValue( new Error( '404' ) ),
 		} );
 		expect( result.kind ).toBe( 'create' );
 		expect( ( result as { apiError?: boolean } ).apiError ).toBe( true );

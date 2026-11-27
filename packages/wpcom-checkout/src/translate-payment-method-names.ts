@@ -20,8 +20,6 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 			return 'ebanx';
 		case 'WPCOM_Billing_PayPal_Direct':
 			return 'paypal-direct';
-		case 'WPCOM_Billing_PayPal_Express':
-			return 'paypal-express';
 		case 'WPCOM_Billing_PayPal_PPCP':
 			// NOTE: we cannot use the key `paypal` because composite-checkout
 			// ends up using this as an `id`, which overwrites `window.paypal`
@@ -79,8 +77,6 @@ export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 			return 'WPCOM_Billing_Ebanx';
 		case 'paypal-direct':
 			return 'WPCOM_Billing_PayPal_Direct';
-		case 'paypal-express':
-			return 'WPCOM_Billing_PayPal_Express';
 		case 'paypal-js':
 			return 'WPCOM_Billing_PayPal_PPCP';
 		case 'stripe':
@@ -121,7 +117,6 @@ export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethod 
 		case 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix':
 		case 'WPCOM_Billing_Ebanx_Redirect_Brazil_Pix_Automatico':
 		case 'WPCOM_Billing_PayPal_Direct':
-		case 'WPCOM_Billing_PayPal_Express':
 		case 'WPCOM_Billing_PayPal_PPCP':
 		case 'WPCOM_Billing_Stripe_Payment_Method':
 		case 'WPCOM_Billing_Stripe_Alipay':
@@ -154,7 +149,6 @@ export function readCheckoutPaymentMethodSlug( slug: string ): CheckoutPaymentMe
 		case 'pix':
 		case 'pix_automatico':
 		case 'paypal-direct':
-		case 'paypal-express':
 		case 'paypal-js':
 		case 'card':
 		case 'stripe':
@@ -207,7 +201,6 @@ export function isRedirectPaymentMethod( slug: CheckoutPaymentMethodSlug ): bool
 		'bancontact',
 		'eps',
 		'ideal',
-		'paypal-express',
 		'paypal-js',
 		'p24',
 		'stripe-blik',

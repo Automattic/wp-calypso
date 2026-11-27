@@ -1,26 +1,27 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { renderHook } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
+import useFetchPendingSites from 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites';
+import useNoActiveSite from 'calypso/a8c-for-agencies/hooks/use-no-active-site';
 import useSitesMenuItems from '../use-sites-menu-items';
 
-jest.mock( 'i18n-calypso', () => ( {
-	useTranslate: () => ( str: string ) => str,
-} ) );
+vi.mock( 'i18n-calypso', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		useTranslate: () => ( str: string ) => str,
+	} )
+);
 
-jest.mock( 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites' );
-jest.mock( 'calypso/a8c-for-agencies/hooks/use-no-active-site' );
-jest.mock( 'calypso/my-sites/sidebar/utils', () => ( {
+vi.mock( 'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites' );
+vi.mock( 'calypso/a8c-for-agencies/hooks/use-no-active-site' );
+vi.mock( 'calypso/my-sites/sidebar/utils', () => ( {
 	itemLinkMatches: ( link: string, path: string ) => link === path,
 } ) );
 
-const mockUseFetchPendingSites = jest.requireMock< { default: jest.Mock } >(
-	'calypso/a8c-for-agencies/data/sites/use-fetch-pending-sites'
-).default;
-const mockUseNoActiveSite = jest.requireMock< { default: jest.Mock } >(
-	'calypso/a8c-for-agencies/hooks/use-no-active-site'
-).default;
+const mockUseFetchPendingSites = useFetchPendingSites as Mock;
+const mockUseNoActiveSite = useNoActiveSite as Mock;
 
 const pendingSite = {
 	features: {
@@ -30,7 +31,7 @@ const pendingSite = {
 
 describe( 'useSitesMenuItems', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'shows "Needs setup" when the agency has no created sites but has a pending licence', () => {

@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { FormPhoneInput } from '../';
 
 const countriesList = [
@@ -48,7 +49,7 @@ describe( 'FormPhoneInput', () => {
 		} );
 
 		test( 'should update country on change', async () => {
-			const onChange = jest.fn();
+			const onChange = vi.fn();
 			const { container } = render(
 				<FormPhoneInput
 					onChange={ onChange }

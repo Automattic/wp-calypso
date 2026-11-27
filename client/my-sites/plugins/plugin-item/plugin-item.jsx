@@ -276,7 +276,7 @@ class PluginItem extends Component {
 
 		const pluginTitle = <div className="plugin-item__title">{ plugin.name }</div>;
 
-		let pluginActions = null;
+		let pluginActions;
 		if ( ! this.props.selectedSite ) {
 			pluginActions = this.renderSiteCount();
 		} else {

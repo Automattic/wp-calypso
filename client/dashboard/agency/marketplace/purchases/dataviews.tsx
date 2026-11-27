@@ -14,6 +14,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
 import { Text as DashboardText } from '../../../components/text';
+import { TextBlur } from '../../../components/text-blur';
 import { DEFAULT_PER_PAGE } from '../../../sites/dataviews/views';
 import { formatDate, parseDateAsUTC } from '../../../utils/datetime';
 import { crossoverLinkProps } from '../../crossover/store';
@@ -33,6 +34,7 @@ import {
 	isPressableLicense,
 	isPressableTitanLicense,
 	isRecentlyTransferred,
+	isWooCommerceSiteLicense,
 } from './license-status';
 import LicenseStatusBadge from './status-badge';
 import TransferredBadge from './transferred-badge';
@@ -140,15 +142,20 @@ export function recordLicenseViewChanges(
 
 export const getLicenseId = ( license: JetpackLicense ) => String( license.license_id );
 
+// Roughly the width of a store hostname, so the column doesn't jump when it resolves.
+const SITE_PLACEHOLDER_LENGTH = 16;
+
 export function SiteCell( {
 	license,
 	isAgencyOwner,
 	isProvisioning,
+	isResolvingSite,
 	onManageSite,
 }: {
 	license: JetpackLicense;
 	isAgencyOwner: boolean;
 	isProvisioning: boolean;
+	isResolvingSite: boolean;
 	onManageSite: ( license: JetpackLicense ) => void;
 } ) {
 	if ( isPressableTitanLicense( license ) ) {
@@ -167,15 +174,16 @@ export function SiteCell( {
 	if ( isBundleParent( license ) ) {
 		return <Text variant="muted">—</Text>;
 	}
-	if ( ! license.siteurl ) {
-		return (
-			<Text variant="muted">
-				{ isProvisioning ? __( 'Being created…' ) : __( 'Not assigned' ) }
-			</Text>
-		);
-	}
 	return (
-		<ExternalLink href={ license.siteurl }>{ getSiteHostname( license.siteurl ) }</ExternalLink>
+		<TextBlur isBlurred={ isResolvingSite } length={ SITE_PLACEHOLDER_LENGTH }>
+			{ license.siteurl ? (
+				<ExternalLink href={ license.siteurl }>{ getSiteHostname( license.siteurl ) }</ExternalLink>
+			) : (
+				<Text variant="muted">
+					{ isProvisioning ? __( 'Being created…' ) : __( 'Not assigned' ) }
+				</Text>
+			) }
+		</TextBlur>
 	);
 }
 
@@ -213,24 +221,41 @@ export function RenewalCell( { license, locale }: { license: JetpackLicense; loc
 	const badges = getRenewalBadges( license );
 	const labels = getRenewalBadgeLabels();
 	return (
-		<HStack justify="flex-start" spacing={ 2 } expanded={ false } wrap>
-			<DashboardText
-				intent={ badges.includes( 'expired' ) ? 'error' : undefined }
-				style={ { whiteSpace: 'nowrap' } }
-			>
-				{ formatDate( parseDateAsUTC( expiry ), locale, { dateStyle: 'medium', timeZone: 'UTC' } ) }
-			</DashboardText>
-			{ badges.length > 0 && (
-				<HStack justify="flex-start" spacing={ 2 } expanded={ false }>
-					{ badges.map( ( badge ) => (
-						<Badge key={ badge } intent={ RENEWAL_BADGE_INTENT[ badge ] }>
-							{ labels[ badge ] }
-						</Badge>
-					) ) }
-				</HStack>
-			) }
-		</HStack>
+		<VStack spacing={ 0 }>
+			<HStack justify="flex-start" spacing={ 2 } expanded={ false } wrap>
+				<DashboardText
+					intent={ badges.includes( 'expired' ) ? 'error' : undefined }
+					style={ { whiteSpace: 'nowrap' } }
+				>
+					{ formatDate( parseDateAsUTC( expiry ), locale, {
+						dateStyle: 'medium',
+						timeZone: 'UTC',
+					} ) }
+				</DashboardText>
+				{ badges.length > 0 && (
+					<HStack justify="flex-start" spacing={ 2 } expanded={ false }>
+						{ badges.map( ( badge ) => (
+							<Badge key={ badge } intent={ RENEWAL_BADGE_INTENT[ badge ] }>
+								{ labels[ badge ] }
+							</Badge>
+						) ) }
+					</HStack>
+				) }
+			</HStack>
+			<BillingTermLine license={ license } />
+		</VStack>
 	);
+}
+
+function BillingTermLine( { license }: { license: JetpackLicense } ) {
+	const unit = license.subscription?.billing_interval_unit;
+	if ( unit === 'year' ) {
+		return <Text variant="muted">{ __( 'Yearly' ) }</Text>;
+	}
+	if ( unit === 'month' ) {
+		return <Text variant="muted">{ __( 'Monthly' ) }</Text>;
+	}
+	return null;
 }
 
 function TitanTrialLine( { license, locale }: { license: JetpackLicense; locale: string } ) {
@@ -298,11 +323,13 @@ export function getLicenseFields( {
 	locale,
 	isAgencyOwner,
 	provisioningLicenseKeys,
+	isLoadingWooCommerceSites,
 	onManageSite,
 }: {
 	locale: string;
 	isAgencyOwner: boolean;
 	provisioningLicenseKeys: Set< string >;
+	isLoadingWooCommerceSites: boolean;
 	onManageSite: ( license: JetpackLicense ) => void;
 } ): Field< JetpackLicense >[] {
 	const statusLabels = getLicenseStatusLabels();
@@ -354,6 +381,7 @@ export function getLicenseFields( {
 					license={ item }
 					isAgencyOwner={ isAgencyOwner }
 					isProvisioning={ provisioningLicenseKeys.has( item.license_key ) }
+					isResolvingSite={ isLoadingWooCommerceSites && isWooCommerceSiteLicense( item ) }
 					onManageSite={ onManageSite }
 				/>
 			),

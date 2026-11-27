@@ -18,7 +18,6 @@ yarn stylelint <file>                       # Lint CSS/SCSS
 yarn prettier --write <file>                # Format
 yarn typecheck-client                       # Type-check (slow)
 yarn test-client <file>                     # Run specific test
-yarn test-client --findRelatedTests <file>  # Find + run related tests
 yarn test-dashboard <file>                  # Run specific Dashboard test (Vitest)
 ```
 

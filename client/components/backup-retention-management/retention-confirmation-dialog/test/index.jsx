@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ReactModal from 'react-modal';
+import { vi } from 'vitest';
 import { BACKUP_RETENTION_UPDATE_REQUEST } from 'calypso/state/rewind/retention/constants';
 import RetentionConfirmationDialog from '../index';
 
@@ -16,8 +17,8 @@ describe( 'RetentionConfirmationDialog', () => {
 				confirmationDialogVisible
 				retentionSelected={ 2 }
 				updateRetentionRequestStatus={ BACKUP_RETENTION_UPDATE_REQUEST.SUBMITTED }
-				onClose={ jest.fn() }
-				onConfirmation={ jest.fn() }
+				onClose={ vi.fn() }
+				onConfirmation={ vi.fn() }
 			/>
 		);
 		expect( screen.getByText( 'Update settings' ) ).toBeInTheDocument();
@@ -35,8 +36,8 @@ describe( 'RetentionConfirmationDialog', () => {
 				confirmationDialogVisible
 				retentionSelected={ 7 }
 				updateRetentionRequestStatus={ BACKUP_RETENTION_UPDATE_REQUEST.SUBMITTED }
-				onClose={ jest.fn() }
-				onConfirmation={ jest.fn() }
+				onClose={ vi.fn() }
+				onConfirmation={ vi.fn() }
 			/>
 		);
 		expect( screen.getByText( 'Update settings' ) ).toBeInTheDocument();
@@ -54,8 +55,8 @@ describe( 'RetentionConfirmationDialog', () => {
 				confirmationDialogVisible
 				retentionSelected={ 7 }
 				updateRetentionRequestStatus={ BACKUP_RETENTION_UPDATE_REQUEST.PENDING }
-				onClose={ jest.fn() }
-				onConfirmation={ jest.fn() }
+				onClose={ vi.fn() }
+				onConfirmation={ vi.fn() }
 			/>
 		);
 		expect( screen.getByText( 'Update settings' ) ).toBeInTheDocument();
@@ -68,13 +69,13 @@ describe( 'RetentionConfirmationDialog', () => {
 		).toBeInTheDocument();
 	} );
 	test( 'should call confirmation callback when confirm is clicked', async () => {
-		const confirmationCallback = jest.fn();
+		const confirmationCallback = vi.fn();
 		render(
 			<RetentionConfirmationDialog
 				confirmationDialogVisible
 				retentionSelected={ 7 }
 				updateRetentionRequestStatus={ BACKUP_RETENTION_UPDATE_REQUEST.UNSUBMITTED }
-				onClose={ jest.fn() }
+				onClose={ vi.fn() }
 				onConfirmation={ confirmationCallback }
 			/>
 		);
@@ -88,14 +89,14 @@ describe( 'RetentionConfirmationDialog', () => {
 		expect( confirmationCallback ).toHaveBeenCalledTimes( 1 );
 	} );
 	test( 'should call cancel callback when cancel button is clicked', async () => {
-		const cancelCallback = jest.fn();
+		const cancelCallback = vi.fn();
 		render(
 			<RetentionConfirmationDialog
 				confirmationDialogVisible
 				retentionSelected={ 7 }
 				updateRetentionRequestStatus={ BACKUP_RETENTION_UPDATE_REQUEST.UNSUBMITTED }
 				onClose={ cancelCallback }
-				onConfirmation={ jest.fn() }
+				onConfirmation={ vi.fn() }
 			/>
 		);
 		// get confirm button.
@@ -113,8 +114,8 @@ describe( 'RetentionConfirmationDialog', () => {
 				confirmationDialogVisible={ false }
 				retentionSelected={ 7 }
 				updateRetentionRequestStatus={ BACKUP_RETENTION_UPDATE_REQUEST.UNSUBMITTED }
-				onClose={ jest.fn() }
-				onConfirmation={ jest.fn() }
+				onClose={ vi.fn() }
+				onConfirmation={ vi.fn() }
 			/>
 		);
 		expect( screen.queryByText( 'Update settings' ) ).not.toBeInTheDocument();

@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { useCallback, useEffect, useState, type MouseEvent, type TransitionEvent } from 'react';
 import { Provider } from 'react-redux';
 import repliesCache from '../panel/comment-replies-cache';
-import { modifierKeyIsActive } from '../panel/helpers/input';
+import { isTyping, modifierKeyIsActive } from '../panel/helpers/input';
 import { logError } from '../panel/helpers/log-error';
 import { store } from '../panel/state';
 import actions from '../panel/state/actions';
@@ -13,11 +13,12 @@ import getIsPanelOpen from '../panel/state/selectors/get-is-panel-open';
 import getKeyboardShortcutsEnabled from '../panel/state/selectors/get-keyboard-shortcuts-enabled';
 import { interceptLinks } from '../panel/utils/link-interceptor';
 import { getClient, initClient, showNotes } from './client';
-import { AppProvider, type FullView } from './context';
+import { AppProvider, NoteOpenContext, type FullView } from './context';
 import ErrorBoundary from './error-boundary';
 import Note from './note';
 import { useNoteNavigation } from './note/hooks';
 import NotePanel from './note-panel';
+import { markPanelMounted } from './panel-mounted';
 import { useTracksSurface, type TracksSurface } from './use-tracks-surface';
 import type { FilterName } from './types';
 
@@ -94,6 +95,11 @@ const NotificationContent = ( {
 		}
 	};
 
+	const ignoreClick = ( event: MouseEvent< HTMLDivElement > ) => {
+		event.preventDefault();
+		event.stopPropagation();
+	};
+
 	const noteNavigation = useNoteNavigation( { filterName, selectedNoteId, setSelectedNoteId } );
 	const constrainedTabbingRef = useConstrainedTabbing();
 
@@ -110,6 +116,9 @@ const NotificationContent = ( {
 			<div
 				className={ clsx( 'wpnc-app__detail-pane', { 'is-open': isDetailOpen } ) }
 				onTransitionEnd={ handleDetailPaneTransitionEnd }
+				// A closed note keeps the focus while it slides out (see `inert` below), so a click
+				// on it, or Enter on one of its buttons, could still act on it.
+				onClickCapture={ isDetailOpen ? undefined : ignoreClick }
 				// Keep the pane interactive through the exit transition: it's
 				// still on-screen sliding out and `displayedNoteId` is still
 				// set. Flipping `inert` synchronously on `isDetailOpen` (the
@@ -120,12 +129,14 @@ const NotificationContent = ( {
 				inert={ displayedNoteId === undefined ? '' : undefined }
 			>
 				<ErrorBoundary>
-					<Note
-						isDismissible={ isDismissible }
-						noteId={ displayedNoteId }
-						setSelectedNoteId={ setSelectedNoteId }
-						noteNavigation={ noteNavigation }
-					/>
+					<NoteOpenContext.Provider value={ isDetailOpen }>
+						<Note
+							isDismissible={ isDismissible }
+							noteId={ displayedNoteId }
+							setSelectedNoteId={ setSelectedNoteId }
+							noteNavigation={ noteNavigation }
+						/>
+					</NoteOpenContext.Provider>
 				</ErrorBoundary>
 			</div>
 			<div className="wpnc-app__list-pane">
@@ -192,6 +203,8 @@ const NotificationApp = ( {
 
 	useEffect( () => {
 		store.dispatch( actions.ui.enableKeyboardShortcuts() );
+
+		return markPanelMounted();
 	}, [] );
 
 	useEffect( () => {
@@ -220,7 +233,7 @@ const NotificationApp = ( {
 			if ( ! getKeyboardShortcutsEnabled( store.getState() ) ) {
 				return;
 			}
-			if ( modifierKeyIsActive( event ) ) {
+			if ( modifierKeyIsActive( event ) || isTyping( event ) ) {
 				return;
 			}
 			switch ( event.key ) {

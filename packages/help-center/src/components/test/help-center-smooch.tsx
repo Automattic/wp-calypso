@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { fetchMessagingAuth } from '@automattic/zendesk-client';
 import { act, render } from '@testing-library/react';
 import { vi } from 'vitest';

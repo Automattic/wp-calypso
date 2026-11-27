@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { readerAtmosphereKeys } from '@automattic/api-core';
 import { QueryClient } from '@tanstack/react-query';
@@ -7,9 +7,10 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { useState } from 'react';
-import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils';
+import { type Mock, vi } from 'vitest';
 import { ComposerModal, ComposerProvider } from 'calypso/reader/social/composer';
 import * as analytics from 'calypso/state/reader/analytics/actions';
+import { mockAllIsIntersecting } from 'calypso/test-helpers/intersection-observer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { atmosphereComposerConfig } from '../composer-config';
 import { TimelinePanel } from '../timeline-panel';
@@ -20,8 +21,8 @@ import type {
 } from '@automattic/api-core';
 import type { InfiniteData } from '@tanstack/react-query';
 
-jest.mock( 'calypso/lib/logstash', () => ( {
-	logToLogstash: jest.fn(),
+vi.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: vi.fn(),
 } ) );
 
 const connection: AtmosphereConnection = {
@@ -100,14 +101,14 @@ describe( 'TimelinePanel', () => {
 		// recordReaderTracksEvent is a thunk that reads the follows query cache.
 		// Replace it with a no-op action creator so dispatch() doesn't throw,
 		// while still letting spies observe call-site arguments.
-		jest
-			.spyOn( analytics, 'recordReaderTracksEvent' )
-			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+		vi.spyOn( analytics, 'recordReaderTracksEvent' ).mockImplementation(
+			() => ( { type: '@@TEST/NOOP' } ) as never
+		);
 	} );
 
 	afterEach( () => {
 		nock.cleanAll();
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	it( 'renders the skeleton, then the first page of posts', async () => {
@@ -126,7 +127,7 @@ describe( 'TimelinePanel', () => {
 	} );
 
 	it( 'fires the timeline_viewed Tracks event on mount', async () => {
-		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		const spy = analytics.recordReaderTracksEvent as unknown as Mock;
 		nock( BASE ).get( PATH ).query( {} ).reply( 200, { items: [], cursor: null } );
 
 		renderWithProvider( <TimelinePanel connection={ connection } />, {
@@ -170,7 +171,7 @@ describe( 'TimelinePanel', () => {
 	} );
 
 	it( 'fires error_shown on upstream_unavailable + recovers via Retry', async () => {
-		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		const spy = analytics.recordReaderTracksEvent as unknown as Mock;
 		nock( BASE )
 			.get( PATH )
 			.query( {} )
@@ -201,7 +202,7 @@ describe( 'TimelinePanel', () => {
 	} );
 
 	it( 'fires post_clicked when the timestamp anchor is clicked', async () => {
-		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		const spy = analytics.recordReaderTracksEvent as unknown as Mock;
 		nock( BASE )
 			.get( PATH )
 			.query( {} )
@@ -225,7 +226,7 @@ describe( 'TimelinePanel', () => {
 	} );
 
 	it( 'fires author_clicked when the author anchor is clicked', async () => {
-		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		const spy = analytics.recordReaderTracksEvent as unknown as Mock;
 		nock( BASE )
 			.get( PATH )
 			.query( {} )
@@ -243,7 +244,7 @@ describe( 'TimelinePanel', () => {
 	} );
 
 	it( 'fires external_clicked when an external embed is clicked', async () => {
-		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		const spy = analytics.recordReaderTracksEvent as unknown as Mock;
 		const post = makePost( 'at://abc', 'with link' );
 		( post as unknown as { embed: unknown } ).embed = {
 			type: 'external',
@@ -273,7 +274,7 @@ describe( 'TimelinePanel', () => {
 	} );
 
 	it( 'fires quote_clicked when a live quote embed is clicked', async () => {
-		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		const spy = analytics.recordReaderTracksEvent as unknown as Mock;
 		const inner = makePost( 'at://quoted', 'inner text' );
 		inner.bluesky_url = 'https://bsky.app/profile/alice.bsky.social/post/quoted';
 		const outer = makePost( 'at://abc', 'outer' );
@@ -342,7 +343,9 @@ describe( 'TimelinePanel', () => {
 
 		await user.click( button );
 
-		await waitFor( () => expect( screen.getByRole( 'button', { name: /like, 6 likes/i } ) ) );
+		await waitFor( () =>
+			expect( screen.getByRole( 'button', { name: /like, 6 likes/i } ) ).toBeVisible()
+		);
 		expect( screen.getByRole( 'button', { name: /like, 6 likes/i } ) ).toHaveAttribute(
 			'aria-pressed',
 			'true'
@@ -421,14 +424,14 @@ function makeFeedItem( overrides: Record< string, unknown > = {} ) {
 
 describe( 'TimelinePanel in-app click destinations', () => {
 	beforeEach( () => {
-		jest
-			.spyOn( analytics, 'recordReaderTracksEvent' )
-			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+		vi.spyOn( analytics, 'recordReaderTracksEvent' ).mockImplementation(
+			() => ( { type: '@@TEST/NOOP' } ) as never
+		);
 	} );
 
 	afterEach( () => {
 		nock.cleanAll();
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	const TARGET_URI = 'at://did:plc:abc234567defghi234567jkl/app.bsky.feed.post/3kabcdefghijk';
@@ -567,14 +570,14 @@ describe( 'TimelinePanel — slice 6 author chip + repost preface rewrites', () 
 	}
 
 	beforeEach( () => {
-		jest
-			.spyOn( analytics, 'recordReaderTracksEvent' )
-			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+		vi.spyOn( analytics, 'recordReaderTracksEvent' ).mockImplementation(
+			() => ( { type: '@@TEST/NOOP' } ) as never
+		);
 	} );
 
 	afterEach( () => {
 		nock.cleanAll();
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	it( 'author chip <a> href is the in-app profile URL (same-tab, no target/rel)', async () => {
@@ -618,7 +621,7 @@ describe( 'TimelinePanel — slice 6 author chip + repost preface rewrites', () 
 	} );
 
 	it( 'fires author_clicked with destination=in_app after the rewrite', async () => {
-		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		const spy = analytics.recordReaderTracksEvent as unknown as Mock;
 		nock( 'https://public-api.wordpress.com' )
 			.get( /\/connections\/7\/timeline/ )
 			.query( true )
@@ -647,7 +650,7 @@ describe( 'TimelinePanel — slice 6 author chip + repost preface rewrites', () 
 	} );
 
 	it( 'fires repost_author_clicked with destination=in_app when the reposter link is clicked', async () => {
-		const spy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+		const spy = analytics.recordReaderTracksEvent as unknown as Mock;
 		nock( 'https://public-api.wordpress.com' )
 			.get( /\/connections\/7\/timeline/ )
 			.query( true )
@@ -675,14 +678,14 @@ describe( 'TimelinePanel — slice 6 author chip + repost preface rewrites', () 
 
 describe( 'TimelinePanel — quote composer integration', () => {
 	beforeEach( () => {
-		jest
-			.spyOn( analytics, 'recordReaderTracksEvent' )
-			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+		vi.spyOn( analytics, 'recordReaderTracksEvent' ).mockImplementation(
+			() => ( { type: '@@TEST/NOOP' } ) as never
+		);
 	} );
 
 	afterEach( () => {
 		nock.cleanAll();
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	it( 'opens the composer in quote mode when the quotes count is clicked', async () => {
@@ -722,14 +725,14 @@ describe( 'TimelinePanel — quote composer integration', () => {
 
 describe( 'TimelinePanel — reply composer integration', () => {
 	beforeEach( () => {
-		jest
-			.spyOn( analytics, 'recordReaderTracksEvent' )
-			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+		vi.spyOn( analytics, 'recordReaderTracksEvent' ).mockImplementation(
+			() => ( { type: '@@TEST/NOOP' } ) as never
+		);
 	} );
 
 	afterEach( () => {
 		nock.cleanAll();
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	function makeOnePagePayload(
@@ -796,14 +799,14 @@ describe( 'TimelinePanel — reply composer integration', () => {
 
 describe( 'TimelinePanel — reply composer errors', () => {
 	beforeEach( () => {
-		jest
-			.spyOn( analytics, 'recordReaderTracksEvent' )
-			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+		vi.spyOn( analytics, 'recordReaderTracksEvent' ).mockImplementation(
+			() => ( { type: '@@TEST/NOOP' } ) as never
+		);
 	} );
 
 	afterEach( () => {
 		nock.cleanAll();
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	function makeOnePagePayload(
@@ -852,7 +855,7 @@ describe( 'TimelinePanel — reply composer errors', () => {
 	it.each( ERROR_CASES )(
 		'maps HTTP $status to kind $kind, keeps modal + draft, and fires _error_shown',
 		async ( { status, code, kind, copy } ) => {
-			const recordSpy = analytics.recordReaderTracksEvent as unknown as jest.Mock;
+			const recordSpy = analytics.recordReaderTracksEvent as unknown as Mock;
 
 			const queryClient = makeQueryClient();
 			queryClient.setQueryData(
@@ -939,14 +942,14 @@ describe( 'TimelinePanel — compose pill', () => {
 	const PLACEHOLDER_RE = /what['’]s up/i;
 
 	beforeEach( () => {
-		jest
-			.spyOn( analytics, 'recordReaderTracksEvent' )
-			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+		vi.spyOn( analytics, 'recordReaderTracksEvent' ).mockImplementation(
+			() => ( { type: '@@TEST/NOOP' } ) as never
+		);
 	} );
 
 	afterEach( () => {
 		nock.cleanAll();
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	it( 'renders the compose pill at the top of the feed and opens the standalone modal on click', async () => {
@@ -1002,14 +1005,14 @@ describe( 'TimelinePanel — compose pill', () => {
 
 describe( 'TimelinePanel — reply composer optimistic + stickiness', () => {
 	beforeEach( () => {
-		jest
-			.spyOn( analytics, 'recordReaderTracksEvent' )
-			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+		vi.spyOn( analytics, 'recordReaderTracksEvent' ).mockImplementation(
+			() => ( { type: '@@TEST/NOOP' } ) as never
+		);
 	} );
 
 	afterEach( () => {
 		nock.cleanAll();
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	function makeOnePagePayload(

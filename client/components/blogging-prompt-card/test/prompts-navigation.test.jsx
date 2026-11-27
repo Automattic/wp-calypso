@@ -1,14 +1,15 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { navigate } from 'calypso/lib/navigate';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import PromptsNavigation from '../prompts-navigation';
 
-jest.mock( 'calypso/lib/navigate', () => ( { navigate: jest.fn() } ) );
+vi.mock( 'calypso/lib/navigate', () => ( { navigate: vi.fn() } ) );
 
 const PROMPT = {
 	id: 1,

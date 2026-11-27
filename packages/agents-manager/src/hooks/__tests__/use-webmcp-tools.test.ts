@@ -79,7 +79,7 @@ describe( 'useWebMcpTools', () => {
 		};
 
 		const { rerender, unmount } = renderHook(
-			( { scope } ) => useWebMcpTools( { toolProvider, scope } ),
+			( { scope } ) => useWebMcpTools( { providers: { toolProvider }, scope } ),
 			{ initialProps: { scope: 'site-1' } }
 		);
 
@@ -110,7 +110,9 @@ describe( 'useWebMcpTools', () => {
 			getAbilities: vi.fn( async () => [] ),
 			executeAbility: vi.fn(),
 		};
-		const { unmount } = renderHook( () => useWebMcpTools( { toolProvider, scope: 'site-1' } ) );
+		const { unmount } = renderHook( () =>
+			useWebMcpTools( { providers: { toolProvider }, scope: 'site-1' } )
+		);
 		onTestFinished( () => {
 			unmount();
 			unregisterAbility( 'test/late' );
@@ -136,6 +138,78 @@ describe( 'useWebMcpTools', () => {
 		);
 	} );
 
+	it( 'registers registry abilities once the providers load without a tool provider', async () => {
+		const registerTool = vi.fn();
+		Object.defineProperty( document, 'modelContext', {
+			configurable: true,
+			value: { registerTool },
+		} );
+		registerAbilityCategory( 'webmcp-test', { label: 'Test', description: 'Test abilities' } );
+		registerAbility( {
+			name: 'test/registry-only',
+			label: 'Registry only',
+			description: 'Registered by a plugin that is not a provider.',
+			category: 'webmcp-test',
+			callback: vi.fn(),
+			meta: { webmcp: { public: true } },
+		} );
+		const { rerender, unmount } = renderHook(
+			( { providers } ) => useWebMcpTools( { providers, scope: 'site-1' } ),
+			{ initialProps: { providers: null as { toolProvider?: ToolProvider } | null } }
+		);
+		onTestFinished( () => {
+			unmount();
+			unregisterAbility( 'test/registry-only' );
+			unregisterAbilityCategory( 'webmcp-test' );
+		} );
+
+		await import( '../../webmcp/adapter' );
+
+		expect( registerTool ).not.toHaveBeenCalled();
+
+		rerender( { providers: {} } );
+
+		await waitFor( () =>
+			expect( registerTool ).toHaveBeenCalledWith(
+				expect.objectContaining( { name: 'test__registry_only' } ),
+				expect.anything()
+			)
+		);
+	} );
+
+	it( 'registers only the tools listed for a screen outside the editors', async () => {
+		const registerTool = vi.fn();
+		Object.defineProperty( document, 'modelContext', {
+			configurable: true,
+			value: { registerTool },
+		} );
+		const ordersTool = {
+			...ability,
+			name: 'woocommerce/update-order',
+			meta: { webmcp: { public: true, screens: [ 'woocommerce_page_wc-orders' ] } },
+		};
+		const toolProvider: ToolProvider = {
+			getAbilities: vi.fn( async () => [ ability, ordersTool ] ),
+			executeAbility: vi.fn(),
+		};
+		document.body.className = 'wp-admin';
+		window.pagenow = 'woocommerce_page_wc-orders';
+		onTestFinished( () => {
+			delete window.pagenow;
+		} );
+
+		const { unmount } = renderHook( () =>
+			useWebMcpTools( { providers: { toolProvider }, scope: 'site-1' } )
+		);
+		onTestFinished( unmount );
+
+		await waitFor( () => expect( registerTool ).toHaveBeenCalledTimes( 1 ) );
+		expect( registerTool ).toHaveBeenCalledWith(
+			expect.objectContaining( { name: 'woocommerce__update_order' } ),
+			expect.anything()
+		);
+	} );
+
 	it( 'runs provider tools as calls no chat made, over any id the agent sends', async () => {
 		const tools: WebMcpTool[] = [];
 		Object.defineProperty( document, 'modelContext', {
@@ -146,7 +220,9 @@ describe( 'useWebMcpTools', () => {
 			getAbilities: vi.fn().mockResolvedValue( [ { ...ability, name: 'big-sky/set-site-logo' } ] ),
 			executeAbility: vi.fn(),
 		};
-		const { unmount } = renderHook( () => useWebMcpTools( { toolProvider, scope: 'site-1' } ) );
+		const { unmount } = renderHook( () =>
+			useWebMcpTools( { providers: { toolProvider }, scope: 'site-1' } )
+		);
 		onTestFinished( unmount );
 		await waitFor( () => expect( tools ).toHaveLength( 1 ) );
 
@@ -156,6 +232,35 @@ describe( 'useWebMcpTools', () => {
 			fileObj: { attachment_id: '7' },
 			toolCallId: null,
 		} );
+	} );
+
+	it( 'runs block edits through the server corrections', async () => {
+		const tools: WebMcpTool[] = [];
+		Object.defineProperty( document, 'modelContext', {
+			configurable: true,
+			value: { registerTool: vi.fn( async ( tool: WebMcpTool ) => tools.push( tool ) ) },
+		} );
+		const blockTreeAbility = { ...ability, name: 'agents-manager/get-block-tree', meta: {} };
+		const toolProvider: ToolProvider = {
+			getAbilities: vi.fn().mockResolvedValue( [ ability, blockTreeAbility ] ),
+			executeAbility: vi.fn().mockResolvedValue( { result: { details: { blocks: [] } } } ),
+		};
+		const { unmount } = renderHook( () =>
+			useWebMcpTools( { providers: { toolProvider }, scope: 'site-1' } )
+		);
+		onTestFinished( unmount );
+		await waitFor( () => expect( tools ).toHaveLength( 1 ) );
+		vi.mocked( apiFetch ).mockResolvedValue( { edits: { deletes: [ 'block-1' ] } } );
+
+		await tools[ 0 ].execute( { deletes: [ 'block-1' ] } );
+
+		expect( apiFetch ).toHaveBeenCalledWith(
+			expect.objectContaining( { path: expect.stringContaining( 'correct-block-edits' ) } )
+		);
+		expect( toolProvider.executeAbility ).toHaveBeenLastCalledWith(
+			'big-sky/apply-block-edits',
+			expect.objectContaining( { deletes: [ 'block-1' ], toolCallId: null } )
+		);
 	} );
 
 	it( 'does not load tools outside development mode', async () => {
@@ -172,7 +277,9 @@ describe( 'useWebMcpTools', () => {
 			executeAbility: vi.fn(),
 		};
 
-		const { unmount } = renderHook( () => useWebMcpTools( { toolProvider, scope: 'site-1' } ) );
+		const { unmount } = renderHook( () =>
+			useWebMcpTools( { providers: { toolProvider }, scope: 'site-1' } )
+		);
 		await Promise.resolve();
 
 		expect( registerTool ).not.toHaveBeenCalled();

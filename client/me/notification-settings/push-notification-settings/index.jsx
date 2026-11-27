@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import userAgent from 'calypso/lib/user-agent';
 import { setEnabledState } from 'calypso/state/push-notifications/actions';
-import { getStatus, isApiReady, isEnabled } from 'calypso/state/push-notifications/selectors';
+import { getStatus, isApiReady } from 'calypso/state/push-notifications/selectors';
 
 import './style.scss';
 
@@ -156,7 +156,6 @@ export default connect(
 	( state ) => {
 		return {
 			apiReady: isApiReady( state ),
-			isEnabled: isEnabled( state ),
 			status: getStatus( state ),
 		};
 	},

@@ -1,8 +1,9 @@
+import { vi } from 'vitest';
 import performanceMark, { finalizePerfMarks } from '../';
 
 describe( 'performanceMark', () => {
 	beforeAll( () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 	} );
 
 	it( 'does nothing if the context has not been created', () => {
@@ -48,11 +49,11 @@ describe( 'performanceMark', () => {
 
 		performanceMark( context, 'parent-1' );
 		performanceMark( context, 'child-1', true );
-		jest.advanceTimersByTime( duration1 );
+		vi.advanceTimersByTime( duration1 );
 		performanceMark( context, 'child-2', true );
-		jest.advanceTimersByTime( duration2 );
+		vi.advanceTimersByTime( duration2 );
 		performanceMark( context, 'parent-2' );
-		jest.advanceTimersByTime( duration3 );
+		vi.advanceTimersByTime( duration3 );
 		performanceMark( context, 'parent-3' );
 		performanceMark( context, 'child-3', true );
 
@@ -122,13 +123,13 @@ describe( 'performanceMark', () => {
 
 		performanceMark( context, 'parent-1' );
 		performanceMark( context, 'child-1', true );
-		jest.advanceTimersByTime( 5 );
+		vi.advanceTimersByTime( 5 );
 		finalizePerfMarks( context );
 
 		expect( context.performanceMarks[ 0 ].duration ).toBe( 5 );
 		expect( context.performanceMarks[ 0 ].steps[ 0 ].duration ).toBe( 5 );
 
-		jest.advanceTimersByTime( 200 );
+		vi.advanceTimersByTime( 200 );
 		// Normally, this would update the duration of pending marks. Since they
 		// were already updated by finalizePerfMarks, it should do nothing.
 		performanceMark( context, 'test' );
@@ -155,7 +156,7 @@ describe( 'finalizePerfMarks', () => {
 		const req = { context: {} };
 		performanceMark( req.context, 'test' );
 		performanceMark( req.context, 'test child', true );
-		jest.advanceTimersByTime( 55 );
+		vi.advanceTimersByTime( 55 );
 
 		expect( req.context.performanceMarks[ 0 ].duration ).toBeUndefined();
 		expect( req.context.performanceMarks[ 0 ].steps[ 0 ].duration ).toBeUndefined();
@@ -172,15 +173,15 @@ describe( 'finalizePerfMarks', () => {
 		const req = { context: {} };
 		performanceMark( req.context, 'test' );
 		performanceMark( req.context, 'test child', true );
-		jest.advanceTimersByTime( 55 );
+		vi.advanceTimersByTime( 55 );
 		performanceMark( req.context, 'another test' );
-		jest.advanceTimersByTime( 2 );
+		vi.advanceTimersByTime( 2 );
 		performanceMark( req.context, 'another test child', true );
-		jest.advanceTimersByTime( 1000 );
+		vi.advanceTimersByTime( 1000 );
 		performanceMark( req.context, 'test child once more', true );
-		jest.advanceTimersByTime( 3 );
+		vi.advanceTimersByTime( 3 );
 		performanceMark( req.context, 'another-mark' );
-		jest.advanceTimersByTime( 70 );
+		vi.advanceTimersByTime( 70 );
 
 		const finalMarks = finalizePerfMarks( req.context );
 		// First mark has one child:

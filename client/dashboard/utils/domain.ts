@@ -382,8 +382,10 @@ export function isGoogleWorkspaceSupportedDomain( domain: Domain ) {
 		return true;
 	}
 
+	// A domain that already has Google Workspace with us can add more mailboxes,
+	// wherever its name servers point.
 	const isHostedOnWpcom =
-		isRegisteredDomain( domain ) && ( domain.has_wpcom_nameservers || hasGSuiteWithUs( domain ) );
+		hasGSuiteWithUs( domain ) || ( isRegisteredDomain( domain ) && domain.has_wpcom_nameservers );
 	if (
 		! isHostedOnWpcom &&
 		! ( domain.type === DomainTypes.MAPPED && domain.has_wpcom_nameservers )

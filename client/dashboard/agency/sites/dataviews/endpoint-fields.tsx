@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { Text } from '../../../components/text';
+import { formatWordPressVersion } from '../../../sites/wordpress-version/utils';
 import { DEFAULT_PROVIDER_NAME, getSiteProviderName } from '../../../utils/site-provider';
-import { formatWordPressVersion } from '../../../utils/wp-version';
 import type { AgencySite } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 

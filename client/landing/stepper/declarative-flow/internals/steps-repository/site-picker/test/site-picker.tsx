@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import {
 	DEFAULT_SITE_LAUNCH_STATUS_GROUP_VALUE,
@@ -11,6 +11,7 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { type Mock, vi } from 'vitest';
 import { STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT } from 'calypso/landing/stepper/constants';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import preferencesReducer from 'calypso/state/preferences/reducer';
@@ -22,8 +23,8 @@ import SitePicker from '../site-picker';
 import type { Flow } from '../../../types';
 import type { JSX } from 'react';
 
-jest.mock( 'calypso/lib/analytics/tracks' );
-jest.mock( '../../../analytics/record-step-navigation' );
+vi.mock( 'calypso/lib/analytics/tracks' );
+vi.mock( '../../../analytics/record-step-navigation' );
 
 const renderComponent = ( component: JSX.Element, initialState = {} ) => {
 	const mockStore = configureStore();
@@ -113,13 +114,18 @@ describe( 'SitePicker', () => {
 			.get( ( uri ) => uri.startsWith( '/rest/v1.2/me/sites' ) )
 			.reply( 200, { sites: initialState.sites.items } );
 
-		const mockIntersectionObserver = jest.fn();
-		mockIntersectionObserver.mockReturnValue( {
-			observe: () => null,
-			unobserve: () => null,
-			disconnect: () => null,
+		window.IntersectionObserver = vi.fn( function () {
+			return {
+				observe: () => null,
+				unobserve: () => null,
+				disconnect: () => null,
+				root: null,
+				rootMargin: '',
+				scrollMargin: '',
+				thresholds: [],
+				takeRecords: () => [],
+			};
 		} );
-		window.IntersectionObserver = mockIntersectionObserver;
 	} );
 
 	test( 'renders with correct list of sites', () => {
@@ -139,7 +145,7 @@ describe( 'SitePicker', () => {
 		initialEntry = '/site-migration/sitePicker',
 		skipConfirmation?: boolean
 	) => {
-		const submit = jest.fn();
+		const submit = vi.fn();
 		const flow: Flow = {
 			name: 'site-migration',
 			isSignupFlow: false,
@@ -165,8 +171,8 @@ describe( 'SitePicker', () => {
 			initialState,
 			reducers: { preferences: preferencesReducer },
 		} );
-		jest.mocked( recordTracksEvent ).mockClear();
-		jest.mocked( recordStepNavigation ).mockClear();
+		vi.mocked( recordTracksEvent ).mockClear();
+		vi.mocked( recordStepNavigation ).mockClear();
 		submit.mockClear();
 		return submit;
 	};
@@ -190,7 +196,7 @@ describe( 'SitePicker', () => {
 		expect( recordStepNavigation ).not.toHaveBeenCalled();
 	} );
 
-	const expectSelectSiteSubmitTracked = async ( submit: jest.Mock ) => {
+	const expectSelectSiteSubmitTracked = async ( submit: Mock ) => {
 		await waitFor( () =>
 			expect( submit ).toHaveBeenCalledWith(
 				expect.objectContaining( {

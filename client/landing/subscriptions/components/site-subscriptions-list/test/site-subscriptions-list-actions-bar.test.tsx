@@ -1,15 +1,16 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { render, screen } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import SiteSubscriptionsListActionsBar from '../site-subscriptions-list-actions-bar';
 
-jest.mock( '@automattic/data-stores', () => ( {
+vi.mock( '@automattic/data-stores', () => ( {
 	SubscriptionManager: {
-		useSiteSubscriptionsQueryProps: jest.fn(),
-		useSiteSubscriptionsQuery: jest.fn(),
+		useSiteSubscriptionsQueryProps: vi.fn(),
+		useSiteSubscriptionsQuery: vi.fn(),
 	},
 	Reader: {
 		SiteSubscriptionsSortBy: {
@@ -26,7 +27,7 @@ jest.mock( '@automattic/data-stores', () => ( {
 	},
 } ) );
 
-jest.mock( 'calypso/landing/subscriptions/hooks', () => ( {
+vi.mock( 'calypso/landing/subscriptions/hooks', () => ( {
 	useSiteSubscriptionsFilterOptions: () => [
 		{ value: 'all', label: 'All' },
 		{ value: 'paid', label: 'Paid' },
@@ -34,16 +35,16 @@ jest.mock( 'calypso/landing/subscriptions/hooks', () => ( {
 } ) );
 
 const mockUseSiteSubscriptionsQueryProps =
-	SubscriptionManager.useSiteSubscriptionsQueryProps as jest.Mock;
-const mockUseSiteSubscriptionsQuery = SubscriptionManager.useSiteSubscriptionsQuery as jest.Mock;
+	SubscriptionManager.useSiteSubscriptionsQueryProps as Mock;
+const mockUseSiteSubscriptionsQuery = SubscriptionManager.useSiteSubscriptionsQuery as Mock;
 
 const defaultQueryProps = {
 	searchTerm: '',
-	setSearchTerm: jest.fn(),
+	setSearchTerm: vi.fn(),
 	sortTerm: Reader.SiteSubscriptionsSortBy.LastUpdated,
-	setSortTerm: jest.fn(),
+	setSortTerm: vi.fn(),
 	filterOption: Reader.SiteSubscriptionsFilterBy.All,
-	setFilterOption: jest.fn(),
+	setFilterOption: vi.fn(),
 };
 
 const renderActionsBar = ( {
@@ -69,7 +70,7 @@ const renderActionsBar = ( {
 
 describe( 'SiteSubscriptionsListActionsBar', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'disables sort when the subscribed table has no visible rows', () => {

@@ -1,31 +1,29 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 
 import { fireEvent, screen } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import { shouldUseStepContainerV2 } from 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2';
 import PlansPageSubheader from 'calypso/my-sites/plans-features-main/components/plans-page-subheader';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 
-jest.mock(
-	'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2',
-	() => ( {
-		shouldUseStepContainerV2: jest.fn(),
-	} )
-);
+vi.mock( 'calypso/landing/stepper/declarative-flow/helpers/should-use-step-container-v2', () => ( {
+	shouldUseStepContainerV2: vi.fn(),
+} ) );
 
 const defaultProps = {
 	isDisplayingPlansNeededForFeature: false,
 	deemphasizeFreePlan: true,
 	offeringFreePlan: true,
 	flowName: 'domain',
-	onFreePlanCTAClick: jest.fn(),
+	onFreePlanCTAClick: vi.fn(),
 	selectedFeature: null,
 };
 
 describe( 'PlansPageSubheader', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
-		jest.mocked( shouldUseStepContainerV2 ).mockReturnValue( true );
+		vi.clearAllMocks();
+		vi.mocked( shouldUseStepContainerV2 ).mockReturnValue( true );
 	} );
 
 	test( 'does not render the free-plan CTA in stepper-v2 by default', () => {

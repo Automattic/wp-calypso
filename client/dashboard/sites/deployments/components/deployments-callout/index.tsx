@@ -1,0 +1,38 @@
+import { HostingFeatures } from '@automattic/api-core';
+import { __ } from '@wordpress/i18n';
+import { ThemedIllustration } from '../../../../components/themed-illustration';
+import UpsellCallout from '../../../hosting-features/components/hosting-feature-upsell-callout';
+import GithubIcon from '../github-icon';
+import illustrationDarkUrl from '../upsell-illustration/upsell-illustration-dark.svg';
+import illustrationUrl from '../upsell-illustration/upsell-illustration.svg';
+import type { Site } from '@automattic/api-core';
+import type { JSX } from 'react';
+
+export function getDeploymentsCalloutProps() {
+	return {
+		feature: HostingFeatures.DEPLOYMENT,
+		upsellId: 'site-deployments',
+		upsellIcon: <GithubIcon aria-label={ __( 'GitHub logo' ) } />,
+		upsellTitle: __( 'Deploy from GitHub' ),
+		upsellImage: <ThemedIllustration light={ illustrationUrl } dark={ illustrationDarkUrl } />,
+		upsellDescription: __(
+			'Connect your GitHub repository directly to your WordPress.com site—with seamless integration, straightforward version control, and automated workflows.'
+		),
+	};
+}
+
+export function DeploymentsCallout( {
+	siteSlug,
+	titleAs = 'h1',
+}: {
+	siteSlug: string;
+	titleAs?: React.ElementType | keyof JSX.IntrinsicElements;
+} ) {
+	return (
+		<UpsellCallout
+			{ ...getDeploymentsCalloutProps() }
+			upsellTitleAs={ titleAs }
+			site={ { slug: siteSlug } as Site }
+		/>
+	);
+}

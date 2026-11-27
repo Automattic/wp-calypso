@@ -1,0 +1,193 @@
+import {
+	getWooChatValues,
+	getWooRoutingInput,
+	normalizeStoreUrl,
+	isProductAsked,
+	isStoreAsked,
+	isStoreRequired,
+	WOO_CORE_PRODUCT_SLUG,
+} from '../woo-handoff';
+import type { WooHandoffData, WooHandoffProduct } from '../woo-handoff';
+
+const subscriptions: WooHandoffProduct = {
+	slug: 'woocommerce-subscriptions',
+	name: 'WooCommerce Subscriptions',
+	supportType: 'woo',
+	isRevShare: false,
+};
+
+const core: WooHandoffProduct = {
+	slug: WOO_CORE_PRODUCT_SLUG,
+	name: 'WooCommerce',
+	supportType: 'woo',
+	isRevShare: false,
+};
+
+const external: WooHandoffProduct = {
+	slug: 'stripe-tax',
+	name: 'Stripe Tax',
+	supportType: 'external',
+	isRevShare: false,
+	externalSupportUrl: 'https://example.com/support',
+};
+
+const data: WooHandoffData = {
+	supportTier: 'tier_2',
+	isPaying: true,
+	isWooEnterpriseCustomer: false,
+	connectedStores: [ { url: 'https://store.example', domain: 'store.example' } ],
+	supportedProducts: [ subscriptions, core, external ],
+	isVendor: false,
+};
+
+const flags = {
+	isEmergency: false,
+	emergencyType: null,
+	routeToEmail: false,
+	isUnknownCharge: false,
+};
+
+describe( 'getWooRoutingInput', () => {
+	it( 'maps the merchant and the chosen product', () => {
+		expect(
+			getWooRoutingInput( {
+				data,
+				flags,
+				answers: {
+					question: 'technical-support',
+					productSlug: 'woocommerce-subscriptions',
+					storeUrl: 'https://store.example',
+				},
+			} )
+		).toEqual( {
+			flags,
+			question: 'technical-support',
+			customer: {
+				supportTier: 'tier_2',
+				isPaying: true,
+				isWooEnterpriseCustomer: false,
+			},
+			product: {
+				slug: 'woocommerce-subscriptions',
+				supportType: 'woo',
+				isRevShare: false,
+				isCore: false,
+			},
+		} );
+	} );
+
+	it( 'marks WooCommerce Core', () => {
+		const input = getWooRoutingInput( {
+			data,
+			flags,
+			answers: {
+				question: 'technical-support',
+				productSlug: WOO_CORE_PRODUCT_SLUG,
+				storeUrl: null,
+			},
+		} );
+
+		expect( input.product?.isCore ).toBe( true );
+	} );
+
+	it( 'has no customer without merchant data', () => {
+		const answers = { question: 'account' as const, productSlug: null, storeUrl: null };
+
+		expect( getWooRoutingInput( { data: null, flags, answers } ).customer ).toBeNull();
+	} );
+
+	it( 'keeps the merchant when WooCommerce.com has no tier for them', () => {
+		const answers = { question: 'account' as const, productSlug: null, storeUrl: null };
+
+		expect(
+			getWooRoutingInput( { data: { ...data, supportTier: null }, flags, answers } ).customer
+		).toEqual( {
+			supportTier: null,
+			isPaying: true,
+			isWooEnterpriseCustomer: false,
+		} );
+	} );
+
+	it( 'has no product when none was picked or it is not in the list', () => {
+		const input = ( productSlug: string | null ) =>
+			getWooRoutingInput( {
+				data,
+				flags,
+				answers: { question: 'pre-sales', productSlug, storeUrl: null },
+			} );
+
+		expect( input( null ).product ).toBeNull();
+		expect( input( 'unknown-product' ).product ).toBeNull();
+	} );
+} );
+
+describe( 'which questions are asked', () => {
+	it( 'asks for a product for technical support only', () => {
+		expect( isProductAsked( 'technical-support' ) ).toBe( true );
+		expect( isProductAsked( 'pre-sales' ) ).toBe( false );
+		expect( isProductAsked( 'account' ) ).toBe( false );
+	} );
+
+	it( 'asks for a store unless the product is supported externally', () => {
+		expect( isStoreAsked( 'technical-support', subscriptions ) ).toBe( true );
+		expect( isStoreAsked( 'technical-support', null ) ).toBe( true );
+		expect( isStoreAsked( 'technical-support', external ) ).toBe( false );
+		expect( isStoreAsked( 'pre-sales', null ) ).toBe( true );
+		expect( isStoreAsked( 'start-scale-store', null ) ).toBe( false );
+		expect( isStoreRequired( 'technical-support' ) ).toBe( true );
+		expect( isStoreRequired( 'pre-sales' ) ).toBe( false );
+	} );
+} );
+
+describe( 'getWooChatValues', () => {
+	const noFlags = {
+		isEmergency: false,
+		emergencyType: null,
+		routeToEmail: false,
+		isUnknownCharge: false,
+	};
+
+	it( 'sends the store as the Site URL and the product to the Product field', () => {
+		expect(
+			getWooChatValues( {
+				storeUrl: 'https://store.example',
+				product: { ...subscriptions, zendeskSlug: 'woocommerce_subscriptions' },
+				flags: noFlags,
+			} )
+		).toEqual( {
+			siteUrl: 'https://store.example',
+			ticketFields: { 25254766: 'woocommerce_subscriptions' },
+		} );
+	} );
+
+	it( 'sends nothing it doesn’t know', () => {
+		expect( getWooChatValues( { storeUrl: null, product: null, flags: noFlags } ) ).toEqual( {} );
+		// Without a Zendesk slug, the Product field stays empty rather than guessed.
+		expect(
+			getWooChatValues( { storeUrl: null, product: subscriptions, flags: noFlags } )
+		).toEqual( {} );
+	} );
+
+	/** Zendesk's High priority trigger needs `woo_emergency` on every emergency chat. */
+	it.each( [
+		[ 'site_down', [ 'woo_emergency', 'woo_emergency_site_down' ] ],
+		// The bot sends no type before its HALSAS-492 version.
+		[ null, [ 'woo_emergency' ] ],
+		// A type that isn't a plain slug would add tags of its own.
+		[ 'site_down,woo_vip', [ 'woo_emergency' ] ],
+	] )( 'tags an emergency of type %s', ( emergencyType, tags ) => {
+		expect(
+			getWooChatValues( {
+				storeUrl: null,
+				product: null,
+				flags: { ...noFlags, isEmergency: true, emergencyType },
+			} )
+		).toEqual( { tags } );
+	} );
+
+	it( 'adds https:// to a typed store address', () => {
+		expect( normalizeStoreUrl( 'store.example' ) ).toBe( 'https://store.example' );
+		expect( normalizeStoreUrl( 'http://store.example' ) ).toBe( 'http://store.example' );
+		expect( normalizeStoreUrl( 'HTTPS://store.example' ) ).toBe( 'HTTPS://store.example' );
+	} );
+} );

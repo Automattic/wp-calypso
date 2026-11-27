@@ -12,4 +12,9 @@
 	@extend %rendered-block-content;
 	font-family: $sans;
 	line-height: 1.56;
+	// Comment markup comes from other sites, and its class names can match Calypso's styles.
+	// Paint containment keeps whatever it renders inside the comment's box. The clip margin leaves
+	// room for focus outlines on links at the box's edges.
+	contain: paint;
+	overflow-clip-margin: 4px;
 }

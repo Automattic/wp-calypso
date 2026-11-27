@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';

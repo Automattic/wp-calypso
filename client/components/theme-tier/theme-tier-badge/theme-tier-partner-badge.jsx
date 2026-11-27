@@ -2,7 +2,7 @@ import { PremiumBadge } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import { getProductionSiteId } from 'calypso/dashboard/utils/site-staging-site';
+import { getProductionSiteId } from 'calypso/dashboard/sites/staging-site/utils';
 import { useSelector } from 'calypso/state';
 import { getSite } from 'calypso/state/sites/selectors';
 import { useIsThemeAllowedOnSite } from 'calypso/state/themes/hooks/use-is-theme-allowed-on-site';

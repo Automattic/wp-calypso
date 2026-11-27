@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { fetchAtomicTransfer, setAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
 import { atomicTransfer } from 'calypso/state/atomic-transfer/reducer';
@@ -11,8 +12,8 @@ import {
 	TRANSFER_POLL_DEADLINE_MS,
 } from '../latest';
 
-jest.mock( 'calypso/state/sites/actions', () => ( {
-	requestSite: jest.fn( ( requestedSiteId ) => ( {
+vi.mock( 'calypso/state/sites/actions', () => ( {
+	requestSite: vi.fn( ( requestedSiteId ) => ( {
 		type: 'TEST_REQUEST_SITE',
 		siteId: requestedSiteId,
 	} ) ),
@@ -35,7 +36,7 @@ const timedOut = ( transferData = {} ) =>
 const createStore = () => {
 	const state = { atomicTransfer: {} };
 	const getState = () => state;
-	const dispatch = jest.fn( ( action ) => {
+	const dispatch = vi.fn( ( action ) => {
 		state.atomicTransfer[ action.siteId ] = atomicTransfer(
 			state.atomicTransfer[ action.siteId ],
 			action
@@ -61,13 +62,13 @@ const fail = ( store, error ) =>
 	onTransferError( { siteId }, error )( store.dispatch, store.getState );
 
 beforeEach( () => {
-	jest.useFakeTimers();
-	jest.clearAllMocks();
+	vi.useFakeTimers();
+	vi.clearAllMocks();
 	clearTransferWaits();
 } );
 
 afterEach( () => {
-	jest.useRealTimers();
+	vi.useRealTimers();
 } );
 
 describe( 'requestTransfer', () => {
@@ -90,7 +91,7 @@ describe( 'requestTransfer', () => {
 		const store = createStore();
 
 		startWait( store );
-		jest.advanceTimersByTime( TRANSFER_POLL_DEADLINE_MS );
+		vi.advanceTimersByTime( TRANSFER_POLL_DEADLINE_MS );
 
 		expect( store.dispatch ).toHaveBeenCalledWith( timedOut() );
 	} );
@@ -99,9 +100,9 @@ describe( 'requestTransfer', () => {
 		const store = createStore();
 
 		startWait( store );
-		jest.advanceTimersByTime( TRANSFER_POLL_DEADLINE_MS / 2 );
+		vi.advanceTimersByTime( TRANSFER_POLL_DEADLINE_MS / 2 );
 		startWait( store );
-		jest.advanceTimersByTime( TRANSFER_POLL_DEADLINE_MS / 2 );
+		vi.advanceTimersByTime( TRANSFER_POLL_DEADLINE_MS / 2 );
 
 		expect( store.dispatch ).toHaveBeenCalledWith( timedOut() );
 	} );
@@ -112,7 +113,7 @@ describe( 'requestTransfer', () => {
 		store.dispatch( timedOut() );
 		store.dispatch.mockClear();
 		startWait( store );
-		jest.advanceTimersByTime( TRANSFER_POLL_DEADLINE_MS );
+		vi.advanceTimersByTime( TRANSFER_POLL_DEADLINE_MS );
 
 		expect( store.dispatch ).toHaveBeenCalledWith( timedOut() );
 	} );
@@ -127,7 +128,7 @@ describe( 'requestTransfer', () => {
 		receive( store, response );
 
 		expect( store.dispatch ).toHaveBeenCalledWith( setAtomicTransfer( siteId, response ) );
-		jest.advanceTimersByTime( POLL_INTERVAL_MS );
+		vi.advanceTimersByTime( POLL_INTERVAL_MS );
 		expect( store.dispatch ).toHaveBeenCalledWith( fetchAtomicTransfer( siteId ) );
 	} );
 } );
@@ -140,7 +141,7 @@ describe( 'receiveTransfer', () => {
 		receive( store, response );
 
 		expect( store.dispatch ).toHaveBeenCalledWith( setAtomicTransfer( siteId, response ) );
-		jest.advanceTimersByTime( POLL_INTERVAL_MS );
+		vi.advanceTimersByTime( POLL_INTERVAL_MS );
 		expect( store.dispatch ).toHaveBeenCalledWith( fetchAtomicTransfer( siteId ) );
 	} );
 
@@ -148,7 +149,7 @@ describe( 'receiveTransfer', () => {
 		const store = createStore();
 
 		receive( store, transfer( status ) );
-		jest.advanceTimersByTime( POLL_INTERVAL_MS );
+		vi.advanceTimersByTime( POLL_INTERVAL_MS );
 
 		expect( store.dispatch ).toHaveBeenCalledWith( fetchAtomicTransfer( siteId ) );
 	} );
@@ -159,7 +160,7 @@ describe( 'receiveTransfer', () => {
 		receive( store, transfer( transferStates.ACTIVE ) );
 		receive( store, transfer( transferStates.ACTIVE ) );
 
-		expect( jest.getTimerCount() ).toBe( 1 );
+		expect( vi.getTimerCount() ).toBe( 1 );
 	} );
 
 	test.each( [ transferStates.COMPLETED, transferStates.ERROR, transferStates.REVERTED ] )(
@@ -168,7 +169,7 @@ describe( 'receiveTransfer', () => {
 			const store = createStore();
 
 			receive( store, transfer( status ) );
-			jest.advanceTimersByTime( POLL_INTERVAL_MS );
+			vi.advanceTimersByTime( POLL_INTERVAL_MS );
 
 			expect( store.dispatch ).not.toHaveBeenCalledWith( fetchAtomicTransfer( siteId ) );
 		}
@@ -188,11 +189,11 @@ describe( 'receiveTransfer', () => {
 		const response = transfer( transferStates.ACTIVE );
 
 		startWait( store );
-		jest.advanceTimersByTime( TRANSFER_POLL_DEADLINE_MS / 2 );
+		vi.advanceTimersByTime( TRANSFER_POLL_DEADLINE_MS / 2 );
 		receive( store, response );
 
 		expect( store.dispatch ).not.toHaveBeenCalledWith( timedOut( response ) );
-		jest.advanceTimersByTime( POLL_INTERVAL_MS );
+		vi.advanceTimersByTime( POLL_INTERVAL_MS );
 		expect( store.dispatch ).toHaveBeenCalledWith( fetchAtomicTransfer( siteId ) );
 	} );
 
@@ -201,9 +202,9 @@ describe( 'receiveTransfer', () => {
 
 		startWait( store );
 		receive( store, transfer( transferStates.ACTIVE ) );
-		jest.advanceTimersByTime( TRANSFER_POLL_DEADLINE_MS );
+		vi.advanceTimersByTime( TRANSFER_POLL_DEADLINE_MS );
 		store.dispatch.mockClear();
-		jest.advanceTimersByTime( TRANSFER_POLL_DEADLINE_MS );
+		vi.advanceTimersByTime( TRANSFER_POLL_DEADLINE_MS );
 
 		expect( store.dispatch ).not.toHaveBeenCalledWith( fetchAtomicTransfer( siteId ) );
 	} );
@@ -214,7 +215,7 @@ describe( 'receiveTransfer', () => {
 
 		startWait( store );
 		receive( store, response );
-		jest.advanceTimersByTime( TRANSFER_POLL_DEADLINE_MS );
+		vi.advanceTimersByTime( TRANSFER_POLL_DEADLINE_MS );
 		store.dispatch.mockClear();
 		receive( store, response );
 
@@ -228,7 +229,7 @@ describe( 'receiveTransfer', () => {
 
 		startWait( store );
 		receive( store, transfer( transferStates.ACTIVE, 1 ) );
-		jest.advanceTimersByTime( TRANSFER_POLL_DEADLINE_MS );
+		vi.advanceTimersByTime( TRANSFER_POLL_DEADLINE_MS );
 		store.dispatch.mockClear();
 
 		receive( store, newTransfer );
@@ -236,7 +237,7 @@ describe( 'receiveTransfer', () => {
 
 		expect( store.dispatch ).not.toHaveBeenCalledWith( timedOut( newTransfer ) );
 		expect( store.dispatch ).toHaveBeenCalledWith( setAtomicTransfer( siteId, newTransfer ) );
-		jest.advanceTimersByTime( POLL_INTERVAL_MS );
+		vi.advanceTimersByTime( POLL_INTERVAL_MS );
 		expect( store.dispatch ).toHaveBeenCalledWith( fetchAtomicTransfer( siteId ) );
 	} );
 
@@ -244,7 +245,7 @@ describe( 'receiveTransfer', () => {
 		const store = createStore();
 
 		receive( store, undefined );
-		jest.advanceTimersByTime( POLL_INTERVAL_MS );
+		vi.advanceTimersByTime( POLL_INTERVAL_MS );
 
 		expect( store.dispatch ).toHaveBeenCalledWith( fetchAtomicTransfer( siteId ) );
 	} );
@@ -253,7 +254,7 @@ describe( 'receiveTransfer', () => {
 		const store = createStore();
 
 		startWait( store );
-		jest.advanceTimersByTime( TRANSFER_POLL_DEADLINE_MS );
+		vi.advanceTimersByTime( TRANSFER_POLL_DEADLINE_MS );
 		store.dispatch.mockClear();
 		receive( store, undefined );
 
@@ -263,14 +264,14 @@ describe( 'receiveTransfer', () => {
 
 describe( 'onTransferError', () => {
 	test.each( [ { status: 404 }, { statusCode: 403 } ] )(
-		'should end the wait on client error %p',
+		'should end the wait on client error %o',
 		( error ) => {
 			const store = createStore();
 
 			startWait( store );
 			store.dispatch.mockClear();
 			fail( store, error );
-			jest.advanceTimersByTime( POLL_INTERVAL_MS );
+			vi.advanceTimersByTime( POLL_INTERVAL_MS );
 
 			expect( store.dispatch ).toHaveBeenCalledWith( timedOut() );
 			expect( store.dispatch ).not.toHaveBeenCalledWith( fetchAtomicTransfer( siteId ) );
@@ -285,7 +286,7 @@ describe( 'onTransferError', () => {
 
 		for ( let attempt = 1; attempt < 6; attempt++ ) {
 			fail( store, missingRecord );
-			jest.advanceTimersByTime( POLL_INTERVAL_MS );
+			vi.advanceTimersByTime( POLL_INTERVAL_MS );
 		}
 
 		expect( store.dispatch ).toHaveBeenCalledWith( fetchAtomicTransfer( siteId ) );
@@ -303,7 +304,7 @@ describe( 'onTransferError', () => {
 		store.dispatch.mockClear();
 
 		fail( store, missingRecord );
-		jest.advanceTimersByTime( POLL_INTERVAL_MS );
+		vi.advanceTimersByTime( POLL_INTERVAL_MS );
 
 		expect( store.dispatch ).not.toHaveBeenCalledWith( fetchAtomicTransfer( siteId ) );
 		expect( store.getState().atomicTransfer[ siteId ].status ).toBe(
@@ -316,7 +317,7 @@ describe( 'onTransferError', () => {
 
 		startWait( store );
 		fail( store, { status: 500 } );
-		jest.advanceTimersByTime( POLL_INTERVAL_MS );
+		vi.advanceTimersByTime( POLL_INTERVAL_MS );
 
 		expect( store.dispatch ).toHaveBeenCalledWith( fetchAtomicTransfer( siteId ) );
 	} );
@@ -325,10 +326,10 @@ describe( 'onTransferError', () => {
 		const store = createStore();
 
 		startWait( store );
-		jest.advanceTimersByTime( TRANSFER_POLL_DEADLINE_MS );
+		vi.advanceTimersByTime( TRANSFER_POLL_DEADLINE_MS );
 		store.dispatch.mockClear();
 		fail( store, { status: 500 } );
-		jest.advanceTimersByTime( POLL_INTERVAL_MS );
+		vi.advanceTimersByTime( POLL_INTERVAL_MS );
 
 		expect( store.dispatch ).toHaveBeenCalledWith( timedOut() );
 		expect( store.dispatch ).not.toHaveBeenCalledWith( fetchAtomicTransfer( siteId ) );

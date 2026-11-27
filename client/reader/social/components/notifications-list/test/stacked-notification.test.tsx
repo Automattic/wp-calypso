@@ -1,16 +1,17 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import page from '@automattic/calypso-router';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { StackedNotification } from '../stacked-notification';
 import type { StackedRow } from '../group-notifications';
 import type { AtmosphereNotification } from '@automattic/api-core';
 
-jest.mock( '@automattic/calypso-router', () => jest.fn() );
-const pageMock = jest.mocked( page );
+vi.mock( '@automattic/calypso-router', () => ( { default: vi.fn() } ) );
+const pageMock = vi.mocked( page );
 
 function makeMember(
 	id: string,
@@ -147,7 +148,7 @@ describe( 'StackedNotification', () => {
 
 	it( 'toggles expansion and shows per-member child links on click', async () => {
 		const user = userEvent.setup();
-		const onExpandedChange = jest.fn();
+		const onExpandedChange = vi.fn();
 		renderWithProvider(
 			<StackedNotification stack={ makeFollowStack( 3 ) } onExpandedChange={ onExpandedChange } />
 		);

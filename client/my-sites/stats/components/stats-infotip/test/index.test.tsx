@@ -1,16 +1,17 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import StatsInfotip from '..';
 
 describe( 'StatsInfotip', () => {
 	it( 'keeps trigger clicks from activating clickable parents', () => {
-		const onParentClick = jest.fn();
+		const onParentClick = vi.fn();
 
 		render(
-			<div role="button" tabIndex={ 0 } onClick={ onParentClick } onKeyDown={ jest.fn() }>
+			<div role="button" tabIndex={ 0 } onClick={ onParentClick } onKeyDown={ vi.fn() }>
 				<StatsInfotip label="More information">Tooltip content</StatsInfotip>
 			</div>
 		);

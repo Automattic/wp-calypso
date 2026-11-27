@@ -19,7 +19,7 @@ export default async function runTask( { name = 'yarn', args, env = {}, testId }
 			env: {
 				...process.env,
 				...env,
-				// This is used by the jest-teamcity reporter to let us nest test results in the log output.
+				// A reporter that writes TeamCity service messages can use this to nest its results in the log.
 				TEAMCITY_FLOWID: testId,
 			},
 		} );
@@ -50,16 +50,15 @@ export default async function runTask( { name = 'yarn', args, env = {}, testId }
 
 			// Avoid logging empty blocks when there's no output:
 			// Essentially, any messages with a flowId will get nested inside the
-			// test suite. This happens with the jest-teamcity reporter, making it
-			// easy to nest Jest's test results. We put this inside a block without
-			// a flowId so that messages without a flowId can still be contained
-			// within the block. (Like stdout.)
+			// test suite, which makes it easy to nest a reporter's test results.
+			// We put this inside a block without a flowId so that messages without
+			// a flowId can still be contained within the block. (Like stdout.)
 			console.log(
 				`##teamcity[testSuiteStarted name='     Tests for ${ testId }' flowId='${ testId }']`
 			);
 			if ( stdout.trim() ) {
 				// TeamCity will take the service messages with a flowId (like from
-				// the jest test reporter) and put them under the test suite block.
+				// a test reporter) and put them under the test suite block.
 				// Non-service-message output will not be nested, but would be shown
 				// below. If everything in stdout was a service message, it will
 				// appear empty here. So we add a message to indicate that.

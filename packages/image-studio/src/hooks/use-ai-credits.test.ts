@@ -2,6 +2,7 @@
  * Tests for useAiCredits and its reader of the `ai_credits` snapshot that
  * WordPress.com sends for sites on AI credits.
  */
+import { parseLiveCreditsStatus } from '@automattic/agents-manager';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { type Mock, vi } from 'vitest';
@@ -136,10 +137,14 @@ const meterAt = ( percent: number, isOpen = false ) => ( {
 
 describe( 'getSiteCreditsLevel', () => {
 	it.each( [
-		{ name: 'low below 10,000', remaining: 9_999, level: 'low' },
-		{ name: 'nothing from 10,000', remaining: 10_000, level: null },
+		{ name: 'low below a quarter of the allowance', remaining: 2_499, level: 'low' },
+		{ name: 'nothing from a quarter of the allowance', remaining: 2_500, level: null },
 	] )( '$name', ( { remaining, level } ) => {
-		expect( getSiteCreditsLevel( remaining ) ).toBe( level );
+		const status = parseLiveCreditsStatus(
+			planSnapshot( remaining, { credits_limit: 10_000, credits_used: 10_000 - remaining } ),
+			BLOG_ID
+		);
+		expect( status?.plan === 'paid' && getSiteCreditsLevel( status ) ).toBe( level );
 	} );
 } );
 

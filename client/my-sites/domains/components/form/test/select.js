@@ -1,14 +1,15 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import Select from '../select';
 
 describe( '<Select />', () => {
 	const defaultProps = {
 		label: 'Select label',
 		name: 'select',
-		onChange: jest.fn(),
+		onChange: vi.fn(),
 		options: [
 			{ label: 'uno', value: 1 },
 			{ label: 'due', value: 2 },

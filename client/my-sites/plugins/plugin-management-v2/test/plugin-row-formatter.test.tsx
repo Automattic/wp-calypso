@@ -1,11 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { WPCOM_FEATURES_INSTALL_PLUGINS } from '@automattic/calypso-products';
 import userEvent from '@testing-library/user-event';
 import moment from 'moment';
 import React from 'react';
+import { vi } from 'vitest';
 import documentHead from 'calypso/state/document-head/reducer';
 import marketplace from 'calypso/state/marketplace/reducer';
 import plugins from 'calypso/state/plugins/reducer';
@@ -60,13 +61,13 @@ const props = {
 
 describe( '<PluginRowFormatter>', () => {
 	beforeAll( () => {
-		window.matchMedia = jest.fn().mockImplementation( ( query ) => {
+		window.matchMedia = vi.fn().mockImplementation( ( query ) => {
 			return {
 				matches: true,
 				media: query,
 				onchange: null,
-				addListener: jest.fn(),
-				removeListener: jest.fn(),
+				addListener: vi.fn(),
+				removeListener: vi.fn(),
 			};
 		} );
 	} );

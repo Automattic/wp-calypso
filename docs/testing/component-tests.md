@@ -10,7 +10,7 @@ Going through the current tests is a good way to get ideas for how different kin
 
 ### [Set up a test environment](#setting-up-environment)
 
-It's very possible that your tests will assume the existence of a browser environment to work properly. The test runner we use, [Jest](https://facebook.github.io/jest), uses the browser-like environment [jsdom](https://github.com/tmpvar/jsdom). We default to a node-like environment to make tests faster. If some tests require another environment, you can add `/** @jest-environment jsdom */` docblock. Check [this Jest doc](https://facebook.github.io/jest/docs/en/configuration.html#testenvironment-string) to learn more.
+It's very possible that your tests will assume the existence of a browser environment to work properly. The test runner we use, [Vitest](https://vitest.dev/), can use the browser-like environment [jsdom](https://github.com/jsdom/jsdom). We default to a node-like environment to make tests faster. If some tests require another environment, you can add a `/** @vitest-environment jsdom */` docblock. Check [the Vitest docs](https://vitest.dev/guide/environment.html) to learn more.
 
 ### [What to test?](#what-to-test)
 
@@ -173,54 +173,4 @@ See [#18064](https://github.com/Automattic/wp-calypso/pull/18064) for full examp
 
 Historically, we used to support [`enzyme`](https://github.com/enzymejs/enzyme), but support was dropped in favor of `@testing-library/react`, the primary reason being the fact that it was incompatible with React 18, and we are aiming at unblocking the upgrade to React 18. There were additional motivations, like being able to write more accessible tests and being able to test closer to what the user actually experiences.
 
-Previously, `enzyme` was provided by the `@automattic/calypso-jest` package as part of the testing infrastructure. Nowadays, in the Calypso monorepo, it's recommended to use `@testing-library/react` for component tests.
-
-If you wish to use `enzyme` in your project that uses a Calypso package, you can still use it by manually providing the React 17 adapter, by following the steps below. Note that it's likely that Enzyme still doesn't support React 18 yet.
-
-To install the enzyme dependency, run:
-
-```bash
-npm install --save enzyme
-```
-
-To install the React 17 adapter dependency, run:
-
-```bash
-npm install --save @wojtekmaj/enzyme-adapter-react-17
-```
-
-To use the React 17 adapter, use this in your [`setupFilesAfterEnv`](https://jestjs.io/docs/configuration#setupfilesafterenv-array) configuration:
-
-```javascript
-// It "mocks" enzyme, so that we can delay loading of
-// the utility functions until enzyme is imported in tests.
-// Props to @gdborton for sharing this technique in his article:
-// https://medium.com/airbnb-engineering/unlocking-test-performance-migrating-from-mocha-to-jest-2796c508ec50.
-let mockEnzymeSetup = false;
-jest.mock( 'enzyme', () => {
-	const actualEnzyme = jest.requireActual( 'enzyme' );
-	if ( ! mockEnzymeSetup ) {
-		mockEnzymeSetup = true;
-		// Configure enzyme 3 for React, from docs: http://airbnb.io/enzyme/docs/installation/index.html
-		const Adapter = jest.requireActual( '@wojtekmaj/enzyme-adapter-react-17' );
-		actualEnzyme.configure( { adapter: new Adapter() } );
-	}
-	return actualEnzyme;
-} );
-```
-
-If you also use snapshot tests with `enzyme`, you might want to add support for serializing them, through the `enzyme-to-json` package.
-
-To install the dependency, run:
-
-```bash
-npm install --save enzyme-to-json
-```
-
-Finally, you should add `enzyme-to-json/serializer` to the array of [`snapshotSerializers`](https://jestjs.io/docs/configuration#snapshotserializers-arraystring) in your `jest` configuration:
-
-```
-{
-	snapshotSerializers: [ 'enzyme-to-json/serializer' ]
-}
-```
+Calypso's test setup no longer provides `enzyme`. Use `@testing-library/react` for component tests.

@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
 import { resolveSelect, useSelect } from '@wordpress/data';
+import { type Mock, vi } from 'vitest';
 import { clearSessionStorageQuery } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
@@ -10,104 +11,106 @@ import { setSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
 import onboarding from '../onboarding';
 
-jest.mock( 'calypso/components/domains/wpcom-domain-search/use-query-handler', () => ( {
-	clearSessionStorageQuery: jest.fn(),
+vi.mock( 'calypso/components/domains/wpcom-domain-search/use-query-handler', () => ( {
+	clearSessionStorageQuery: vi.fn(),
 } ) );
 
-const mockResetOnboardStore = jest.fn();
-const mockSetPlanCartItem = jest.fn();
-const mockSetProductCartItems = jest.fn();
-const mockSetDomainCartItem = jest.fn();
-const mockSetDomainCartItems = jest.fn();
+const mockResetOnboardStore = vi.fn();
+const mockSetPlanCartItem = vi.fn();
+const mockSetProductCartItems = vi.fn();
+const mockSetDomainCartItem = vi.fn();
+const mockSetDomainCartItems = vi.fn();
 
 // The product catalog's feature list pulls @wordpress/components in through this, and that
 // chain needs a real @wordpress/data, which this file mocks. Only JSX uses these.
-jest.mock( '@automattic/components', () => ( {
+vi.mock( '@automattic/components', () => ( {
 	MaterialIcon: () => null,
 	ExternalLink: () => null,
 } ) );
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		resetOnboardStore: mockResetOnboardStore,
-		setDomain: jest.fn(),
+		setDomain: vi.fn(),
 		setDomainCartItem: mockSetDomainCartItem,
 		setDomainCartItems: mockSetDomainCartItems,
-		setHideFreePlan: jest.fn(),
+		setHideFreePlan: vi.fn(),
 		setPlanCartItem: mockSetPlanCartItem,
 		setProductCartItems: mockSetProductCartItems,
-		setSignupDomainOrigin: jest.fn(),
-		setSiteUrl: jest.fn(),
+		setSignupDomainOrigin: vi.fn(),
+		setSiteUrl: vi.fn(),
 	} ),
-	useSelect: jest.fn( () => ( {} ) ),
-	resolveSelect: jest.fn(),
+	useSelect: vi.fn( () => ( {} ) ),
+	resolveSelect: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
-	useQuery: jest.fn( () => new URLSearchParams( '' ) ),
+vi.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
+	useQuery: vi.fn( () => new URLSearchParams( '' ) ),
 } ) );
 
-jest.mock( 'calypso/landing/stepper/hooks/use-flow-locale', () => ( {
-	useFlowLocale: jest.fn( () => 'en' ),
+vi.mock( 'calypso/landing/stepper/hooks/use-flow-locale', () => ( {
+	useFlowLocale: vi.fn( () => 'en' ),
 } ) );
 
-jest.mock( 'calypso/state', () => ( {
-	useSelector: jest.fn(),
-	useDispatch: () => jest.fn(),
+vi.mock( 'calypso/state', () => ( {
+	useSelector: vi.fn(),
+	useDispatch: () => vi.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/analytics/survicate', () => ( {
-	addSurvicate: jest.fn(),
+vi.mock( 'calypso/lib/analytics/survicate', () => ( {
+	addSurvicate: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/analytics/signup', () => ( {
+vi.mock( 'calypso/lib/analytics/signup', () => ( {
 	SIGNUP_DOMAIN_ORIGIN: {},
 } ) );
 
-jest.mock( 'calypso/lib/explat', () => ( {
-	loadExperimentAssignment: jest.fn(),
+vi.mock( 'calypso/lib/explat', () => ( {
+	loadExperimentAssignment: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/landing/stepper/stores', () => ( {
+vi.mock( 'calypso/landing/stepper/stores', () => ( {
 	ONBOARD_STORE: 'ONBOARD_STORE',
 	SITE_STORE: 'SITE_STORE',
 } ) );
 
-jest.mock( '@automattic/data-stores', () => ( {
+vi.mock( '@automattic/data-stores', async () => ( {
 	// Real add-on constants: the barrel is too heavy for this environment, this file is not.
-	AddOns: jest.requireActual( '@automattic/data-stores/src/add-ons/constants' ),
+	AddOns: await vi.importActual< typeof import( '@automattic/data-stores/src/add-ons/constants' ) >(
+		'@automattic/data-stores/src/add-ons/constants'
+	),
 } ) );
 
-jest.mock(
+vi.mock(
 	'calypso/landing/stepper/declarative-flow/internals/hooks/use-purchase-plan-notification',
 	() => ( {
-		usePurchasePlanNotification: jest.fn( () => ( { setShouldShowNotification: jest.fn() } ) ),
+		usePurchasePlanNotification: vi.fn( () => ( { setShouldShowNotification: vi.fn() } ) ),
 	} )
 );
 
-jest.mock( 'calypso/signup/storageUtils', () => ( {
-	persistSignupDestination: jest.fn(),
-	setSignupCompleteFlowName: jest.fn(),
-	setSignupCompleteSlug: jest.fn(),
-	clearSignupCompleteSlug: jest.fn(),
-	clearSignupCompleteFlowName: jest.fn(),
-	clearSignupDestinationCookie: jest.fn(),
-	clearSignupCompleteSiteID: jest.fn(),
+vi.mock( 'calypso/signup/storageUtils', () => ( {
+	persistSignupDestination: vi.fn(),
+	setSignupCompleteFlowName: vi.fn(),
+	setSignupCompleteSlug: vi.fn(),
+	clearSignupCompleteSlug: vi.fn(),
+	clearSignupCompleteFlowName: vi.fn(),
+	clearSignupDestinationCookie: vi.fn(),
+	clearSignupCompleteSiteID: vi.fn(),
 } ) );
 
-jest.mock( '@automattic/onboarding', () => ( {
+vi.mock( '@automattic/onboarding', () => ( {
 	NEW_HOSTED_SITE_FLOW: 'new-hosted-site',
 	ONBOARDING_FLOW: 'onboarding',
 	SITE_SETUP_FLOW: 'site-setup',
-	clearStepPersistedState: jest.fn(),
+	clearStepPersistedState: vi.fn(),
 } ) );
 
 describe( 'onboarding flow side effects', () => {
-	const navigate = jest.fn();
+	const navigate = vi.fn();
 	const renderSideEffect = ( currentStepSlug: string | null ) =>
 		renderHook( () =>
 			// `useSideEffect` reads `this.name`, so it must be invoked bound to the flow.
@@ -119,7 +122,7 @@ describe( 'onboarding flow side effects', () => {
 		);
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		sessionStorage.clear();
 	} );
 
@@ -185,7 +188,7 @@ describe( 'onboarding flow side effects', () => {
 
 describe( 'onboarding flow step props', () => {
 	const renderStepsProps = ( search: string ) => {
-		( useQuery as jest.Mock ).mockReturnValue( new URLSearchParams( search ) );
+		( useQuery as Mock ).mockReturnValue( new URLSearchParams( search ) );
 		return renderHook( () => onboarding.useStepsProps?.call( onboarding ) ).result.current;
 	};
 
@@ -204,13 +207,13 @@ describe( 'onboarding flow step props', () => {
 
 describe( 'onboarding flow post-checkout processing', () => {
 	const originalLocation = window.location;
-	const navigate = jest.fn();
+	const navigate = vi.fn();
 
 	const submitProcessing = async (
 		search: string,
 		providedDependencies: Record< string, unknown > = {}
 	) => {
-		( useQuery as jest.Mock ).mockReturnValue( new URLSearchParams( search ) );
+		( useQuery as Mock ).mockReturnValue( new URLSearchParams( search ) );
 
 		const { result } = renderHook( () =>
 			onboarding.useStepNavigation.call(
@@ -231,11 +234,11 @@ describe( 'onboarding flow post-checkout processing', () => {
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		// A site without the Launchpad options lands on My Home.
-		( resolveSelect as jest.Mock ).mockReturnValue( { getSite: async () => ( { options: {} } ) } );
+		( resolveSelect as Mock ).mockReturnValue( { getSite: async () => ( { options: {} } ) } );
 		Object.defineProperty( window, 'location', {
-			value: { ...originalLocation, replace: jest.fn() },
+			value: { ...originalLocation, replace: vi.fn() },
 			writable: true,
 			configurable: true,
 		} );
@@ -276,12 +279,12 @@ describe( 'onboarding flow post-checkout processing', () => {
 describe( 'onboarding flow use-my-domain navigation', () => {
 	const submitUseMyDomain = ( providedDependencies: Record< string, unknown >, search = '' ) => {
 		const query = new URLSearchParams( search );
-		( useQuery as jest.Mock ).mockReturnValue( query );
-		( useSelect as jest.Mock ).mockReturnValue(
+		( useQuery as Mock ).mockReturnValue( query );
+		( useSelect as Mock ).mockReturnValue(
 			query.get( 'blueprint' ) ? { blueprint: query.get( 'blueprint' ) } : {}
 		);
 
-		const navigate = jest.fn();
+		const navigate = vi.fn();
 		const { result } = renderHook( () =>
 			// `useStepNavigation` reads `this.name`, so it must be invoked bound to the flow.
 			onboarding.useStepNavigation.call(
@@ -300,7 +303,7 @@ describe( 'onboarding flow use-my-domain navigation', () => {
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	// Regression: the destination must be the bare `use-my-domain` slug. A leading
@@ -356,14 +359,14 @@ describe( 'onboarding flow domains navigation', () => {
 		domainItem?: Record< string, unknown >
 	) => {
 		const query = new URLSearchParams( search );
-		( useQuery as jest.Mock ).mockReturnValue( query );
-		( useSelect as jest.Mock ).mockReturnValue( {
+		( useQuery as Mock ).mockReturnValue( query );
+		( useSelect as Mock ).mockReturnValue( {
 			...( cartPlan ? { planCartItem: { product_slug: cartPlan } } : {} ),
 			// The blueprint step stores the slug it verified; the flow reads it from the store.
 			...( query.get( 'blueprint' ) ? { blueprint: query.get( 'blueprint' ) } : {} ),
 		} );
 
-		const navigate = jest.fn();
+		const navigate = vi.fn();
 		const { result } = renderHook( () =>
 			// `useStepNavigation` reads `this.name`, so it must be invoked bound to the flow.
 			onboarding.useStepNavigation.call(
@@ -382,7 +385,7 @@ describe( 'onboarding flow domains navigation', () => {
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	// Without this, redirected traffic is asked to pick a plan it already chose.
@@ -438,13 +441,13 @@ describe( 'onboarding flow plans navigation', () => {
 	const registration = { product_slug: 'dotcom_domain', meta: 'new.com' };
 
 	const submitFreePlan = ( domainCartItems: Record< string, unknown >[] ) => {
-		( useQuery as jest.Mock ).mockReturnValue( new URLSearchParams( '' ) );
-		( useSelect as jest.Mock ).mockReturnValue( {
+		( useQuery as Mock ).mockReturnValue( new URLSearchParams( '' ) );
+		( useSelect as Mock ).mockReturnValue( {
 			domainCartItem: domainCartItems[ 0 ],
 			domainCartItems,
 		} );
 
-		const navigate = jest.fn();
+		const navigate = vi.fn();
 		const { result } = renderHook( () =>
 			// `useStepNavigation` reads `this.name`, so it must be invoked bound to the flow.
 			onboarding.useStepNavigation.call(
@@ -463,7 +466,7 @@ describe( 'onboarding flow plans navigation', () => {
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	// The server refuses a connected-domain move without a plan.
@@ -515,13 +518,13 @@ describe( 'onboarding flow plan preselection', () => {
 			onboarding.useSideEffect?.call(
 				onboarding,
 				currentStepSlug as Parameters< NonNullable< typeof onboarding.useSideEffect > >[ 0 ],
-				jest.fn()
+				vi.fn()
 			)
 		);
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		sessionStorage.clear();
 	} );
 
@@ -584,13 +587,13 @@ describe( 'onboarding flow plan preselection', () => {
 
 describe( 'onboarding flow tracks event props', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	// The consumer keys its effect on object identity, so a new object each render records
 	// another signup start.
 	it( 'returns a stable object across renders', () => {
-		( useQuery as jest.Mock ).mockReturnValue(
+		( useQuery as Mock ).mockReturnValue(
 			new URLSearchParams( 'plan=personal-bundle&coupon=WC_ABC' )
 		);
 
@@ -607,7 +610,7 @@ describe( 'onboarding flow tracks event props', () => {
 		} );
 
 		// WordCamp coupon links name no plan.
-		( useQuery as jest.Mock ).mockReturnValue( new URLSearchParams( 'coupon=WC_ABC' ) );
+		( useQuery as Mock ).mockReturnValue( new URLSearchParams( 'coupon=WC_ABC' ) );
 		rerender();
 
 		expect( result.current?.eventsProperties.calypso_signup_start ).toEqual( {
@@ -617,7 +620,7 @@ describe( 'onboarding flow tracks event props', () => {
 
 	// Without this, signups from a folded legacy flow count as plain onboarding.
 	it( 'reports the legacy flow a link came from', () => {
-		( useQuery as jest.Mock ).mockReturnValue( new URLSearchParams( 'flow=import' ) );
+		( useQuery as Mock ).mockReturnValue( new URLSearchParams( 'flow=import' ) );
 
 		const { result } = renderHook( () => onboarding.useTracksEventProps?.call( onboarding ) );
 
@@ -631,7 +634,7 @@ describe( 'onboarding flow tracks event props', () => {
 		'reports Commerce for a store from the Playground step on (%s)',
 		( extraQuery ) => {
 			window.history.replaceState( null, '', '/setup/onboarding/playground' );
-			( useQuery as jest.Mock ).mockReturnValue(
+			( useQuery as Mock ).mockReturnValue(
 				new URLSearchParams( `intent=woocommerce${ extraQuery }` )
 			);
 
@@ -640,7 +643,7 @@ describe( 'onboarding flow tracks event props', () => {
 			);
 			const first = result.current;
 
-			( useQuery as jest.Mock ).mockReturnValue(
+			( useQuery as Mock ).mockReturnValue(
 				new URLSearchParams( `intent=woocommerce${ extraQuery }&playground=abc` )
 			);
 			rerender();
@@ -660,7 +663,7 @@ describe( 'onboarding flow tracks event props', () => {
 	// Elsewhere the WooCommerce intent only styles the plans grid.
 	it( 'reports the plan of a WooCommerce intent link without a Playground', () => {
 		window.history.replaceState( null, '', '/setup/onboarding' );
-		( useQuery as jest.Mock ).mockReturnValue(
+		( useQuery as Mock ).mockReturnValue(
 			new URLSearchParams( 'intent=woocommerce&plan=personal-bundle' )
 		);
 
@@ -683,13 +686,13 @@ describe( 'onboarding flow plans-page experiment enrolment', () => {
 			onboarding.useSideEffect?.call(
 				onboarding,
 				'' as Parameters< NonNullable< typeof onboarding.useSideEffect > >[ 0 ],
-				jest.fn()
+				vi.fn()
 			)
 		);
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		sessionStorage.clear();
 	} );
 
@@ -720,10 +723,10 @@ describe( 'onboarding flow plans-page experiment enrolment', () => {
 describe( 'onboarding flow playground navigation', () => {
 	const renderFlowAt = ( step: string, search: string ) => {
 		window.history.replaceState( null, '', `/setup/onboarding/${ step }${ search }` );
-		( useQuery as jest.Mock ).mockReturnValue( new URLSearchParams( search ) );
-		( useSelect as jest.Mock ).mockReturnValue( {} );
+		( useQuery as Mock ).mockReturnValue( new URLSearchParams( search ) );
+		( useSelect as Mock ).mockReturnValue( {} );
 
-		const navigate = jest.fn();
+		const navigate = vi.fn();
 		const { result } = renderHook( () =>
 			// `useStepNavigation` reads `this.name`, so it must be invoked bound to the flow.
 			onboarding.useStepNavigation.call(
@@ -759,7 +762,7 @@ describe( 'onboarding flow playground navigation', () => {
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		sessionStorage.clear();
 	} );
 
@@ -820,10 +823,10 @@ describe( 'onboarding flow zoom navigation', () => {
 
 	const submitZoom = ( search: string ) => {
 		window.history.replaceState( null, '', `/setup/onboarding/zoom${ search }` );
-		( useQuery as jest.Mock ).mockReturnValue( new URLSearchParams( search ) );
-		( useSelect as jest.Mock ).mockReturnValue( {} );
+		( useQuery as Mock ).mockReturnValue( new URLSearchParams( search ) );
+		( useSelect as Mock ).mockReturnValue( {} );
 
-		const navigate = jest.fn();
+		const navigate = vi.fn();
 		const { result } = renderHook( () =>
 			// `useStepNavigation` reads `this.name`, so it must be invoked bound to the flow.
 			onboarding.useStepNavigation.call(
@@ -841,7 +844,7 @@ describe( 'onboarding flow zoom navigation', () => {
 		return navigate;
 	};
 
-	const stepQuery = ( navigate: jest.Mock ) =>
+	const stepQuery = ( navigate: Mock ) =>
 		Object.fromEntries( new URLSearchParams( navigate.mock.calls[ 0 ][ 0 ].split( '?' )[ 1 ] ) );
 
 	// The partner link usually names only the booking URL; the step then stands for a Simple build

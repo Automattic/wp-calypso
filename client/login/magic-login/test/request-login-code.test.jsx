@@ -1,4 +1,4 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 import { mapState } from '../request-login-code';
 
 describe( 'RequestLoginCode mapState', () => {

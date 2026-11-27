@@ -125,7 +125,7 @@ export const useSiteLogsDownloader = ( {
 			type: 'DOWNLOAD_START',
 		} );
 
-		let path = null;
+		let path;
 		if ( logType === LogType.PHP ) {
 			path = `/sites/${ siteId }/hosting/error-logs`;
 		} else if ( logType === LogType.WEB ) {
@@ -165,7 +165,6 @@ export const useSiteLogsDownloader = ( {
 
 		let scrollId = null;
 		let logs: string[] = [];
-		let logFile = new Blob();
 		let totalLogs = 0;
 		let isError = false;
 
@@ -245,7 +244,7 @@ export const useSiteLogsDownloader = ( {
 			return;
 		}
 
-		logFile = new Blob( logs );
+		const logFile = new Blob( logs );
 
 		const url = window.URL.createObjectURL( logFile );
 		const link = document.createElement( 'a' );

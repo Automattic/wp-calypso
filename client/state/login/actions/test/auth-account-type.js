@@ -1,11 +1,12 @@
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { thunk } from 'redux-thunk';
+import { vi } from 'vitest';
 import { LOGIN_AUTH_ACCOUNT_TYPE_REQUESTING } from 'calypso/state/action-types';
 import { receiveSuccess, receiveError } from 'calypso/state/data-layer/wpcom/users/auth-options';
 import loginReducer from 'calypso/state/login/reducer';
 import { getAuthAccountType } from '../auth-account-type';
 
-jest.mock( 'calypso/state/analytics/actions', () => ( {
+vi.mock( 'calypso/state/analytics/actions', () => ( {
 	recordTracksEventWithClientId: () => ( { type: 'TEST_TRACKS_EVENT' } ),
 } ) );
 
@@ -68,7 +69,7 @@ describe( 'getAuthAccountType', () => {
 		const { store, requests } = createTestStore();
 		let finish;
 		const blackbox = {
-			getSessionId: jest.fn( () => new Promise( ( resolve ) => ( finish = resolve ) ) ),
+			getSessionId: vi.fn( () => new Promise( ( resolve ) => ( finish = resolve ) ) ),
 		};
 		const pending = store.dispatch( getAuthAccountType( 'someone', blackbox ) );
 		await store.dispatch( getAuthAccountType( 'someone', blackbox ) );
@@ -84,8 +85,8 @@ describe( 'getAuthAccountType', () => {
 			const { store, requests } = createTestStore();
 			let sessionId = 'first';
 			const blackbox = {
-				getSessionId: jest.fn( async () => sessionId ),
-				reset: jest.fn( () => {
+				getSessionId: vi.fn( async () => sessionId ),
+				reset: vi.fn( () => {
 					sessionId = 'second';
 				} ),
 			};
@@ -107,18 +108,18 @@ describe( 'getAuthAccountType', () => {
 	);
 
 	test( 'validates an empty identifier without collecting', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		try {
 			const { store, requests } = createTestStore();
-			const blackbox = { getSessionId: jest.fn() };
+			const blackbox = { getSessionId: vi.fn() };
 			await store.dispatch( getAuthAccountType( '', blackbox ) );
-			jest.runAllTimers();
+			vi.runAllTimers();
 			expect( blackbox.getSessionId ).not.toHaveBeenCalled();
 			expect( requests ).toHaveLength( 0 );
 			expect( store.getState().login.requestError.code ).toBe( 'empty_username' );
 			expect( store.getState().login.isFormDisabled ).toBe( false );
 		} finally {
-			jest.useRealTimers();
+			vi.useRealTimers();
 		}
 	} );
 } );

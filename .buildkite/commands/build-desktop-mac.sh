@@ -20,7 +20,7 @@ yarn install --immutable --inline-builds
 
 # The only desktop step that runs on trunk, so this doubles as the post-merge
 # guard for the signing routing/arg logic.
-echo "--- :jest: Running unit tests"
+echo "--- :test_tube: Running unit tests"
 yarn run test:unit
 
 echo "--- :ruby: Setting up Ruby tooling"

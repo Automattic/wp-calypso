@@ -1,26 +1,27 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { SiteExcerptData } from '@automattic/sites';
+import { vi } from 'vitest';
 import { isActionEligible } from 'calypso/sites/components/sites-dataviews/actions';
 
-jest.mock( 'calypso/state/analytics/actions', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( 'calypso/state/analytics/actions', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/state/notices/actions', () => ( {
-	errorNotice: jest.fn(),
-	successNotice: jest.fn(),
+vi.mock( 'calypso/state/notices/actions', () => ( {
+	errorNotice: vi.fn(),
+	successNotice: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/state', () => ( {
-	useSelector: jest.fn(),
-	useDispatch: jest.fn(),
+vi.mock( 'calypso/state', () => ( {
+	useSelector: vi.fn(),
+	useDispatch: vi.fn(),
 } ) );
 
 describe( 'isActionEligible', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	const siteMock = {

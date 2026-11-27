@@ -4,12 +4,14 @@ export type PartnerOffer = {
 	id: string;
 	type?: string;
 	offerType: string;
+	badge?: string;
 	product?: string;
 	productType?: string;
 	logo: ReactNode;
 	title: string;
 	description: string;
 	termsUrl?: string;
+	tracksEventName?: string;
 	cta: {
 		label: string;
 		url: string;

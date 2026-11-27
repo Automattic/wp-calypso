@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
+import { type Mock, vi } from 'vitest';
 import { useEntrepreneurAdminDestination } from 'calypso/landing/stepper/hooks/use-entrepreneur-admin-destination';
 import { useIsSiteOwner } from 'calypso/landing/stepper/hooks/use-is-site-owner';
 import entrepreneurFlow from '../flows/entrepreneur-flow/entrepreneur-flow';
@@ -12,26 +13,26 @@ import { getFlowLocation, renderFlow } from './helpers';
 // we need to save the original object for later to not affect tests from other files
 const originalLocation = window.location;
 
-jest.mock( '../../utils/checkout' );
-jest.mock( '@automattic/data-stores/src/user/selectors' );
-jest.mock( 'calypso/landing/stepper/hooks/use-is-site-owner' );
+vi.mock( '../../utils/checkout' );
+vi.mock( '@automattic/data-stores/src/user/selectors' );
+vi.mock( 'calypso/landing/stepper/hooks/use-is-site-owner' );
 
-jest.mock( 'calypso/landing/stepper/declarative-flow/internals/state-manager/store', () => ( {
-	useFlowState: jest.fn().mockReturnValue( {
-		get: jest.fn(),
-		set: jest.fn(),
+vi.mock( 'calypso/landing/stepper/declarative-flow/internals/state-manager/store', () => ( {
+	useFlowState: vi.fn().mockReturnValue( {
+		get: vi.fn(),
+		set: vi.fn(),
 		sessionId: '123',
 	} ),
 } ) );
 
-jest.mock( 'calypso/landing/stepper/hooks/use-entrepreneur-admin-destination', () => ( {
-	useEntrepreneurAdminDestination: jest.fn(),
+vi.mock( 'calypso/landing/stepper/hooks/use-entrepreneur-admin-destination', () => ( {
+	useEntrepreneurAdminDestination: vi.fn(),
 } ) );
 
 describe( 'Entrepreneur Flow', () => {
 	beforeAll( () => {
 		Object.defineProperty( window, 'location', {
-			value: { ...originalLocation, assign: jest.fn() },
+			value: { ...originalLocation, assign: vi.fn() },
 		} );
 	} );
 
@@ -40,14 +41,14 @@ describe( 'Entrepreneur Flow', () => {
 	} );
 
 	beforeEach( () => {
-		( window.location.assign as jest.Mock ).mockClear();
+		( window.location.assign as Mock ).mockClear();
 		window.location.search = '';
-		( isCurrentUserLoggedIn as jest.Mock ).mockReturnValue( true );
-		( useIsSiteOwner as jest.Mock ).mockReturnValue( {
+		( isCurrentUserLoggedIn as Mock ).mockReturnValue( true );
+		( useIsSiteOwner as Mock ).mockReturnValue( {
 			isOwner: true,
 		} );
 
-		( useEntrepreneurAdminDestination as jest.Mock ).mockReturnValue(
+		( useEntrepreneurAdminDestination as Mock ).mockReturnValue(
 			'https://example.wpcomstaging.com/wp-login.php?action=jetpack-sso&redirect_to=https%3A%2F%2Fexample.wpcomstaging.com%2Fwp-admin%2Fadmin.php%3Fpage%3Dwc-admin%26path%3D%252Fcustomize-store%252Fdesign-with-ai%26ref%3Dentrepreneur-signup'
 		);
 	} );

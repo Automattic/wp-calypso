@@ -10,7 +10,7 @@ const DURATION_IN_MS = 6000;
 
 const useSteps = ( flowName: string ) => {
 	const { __ } = useI18n();
-	let steps = [];
+	let steps;
 
 	switch ( flowName ) {
 		case NEWSLETTER_FLOW:

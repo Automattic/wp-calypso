@@ -1,23 +1,24 @@
 /*
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { readerPostQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { type Mock, vi } from 'vitest';
 import waitForImagesToLoad from 'calypso/lib/post-normalizer/rule-wait-for-images-to-load';
 import { getCachedPost, syncPostCache } from 'calypso/reader/data/post/cache';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 
-jest.mock( 'calypso/lib/post-normalizer/rule-wait-for-images-to-load', () => ( {
+vi.mock( 'calypso/lib/post-normalizer/rule-wait-for-images-to-load', () => ( {
 	__esModule: true,
-	default: jest.fn( ( post: Record< string, unknown > ) =>
+	default: vi.fn( ( post: Record< string, unknown > ) =>
 		Promise.resolve( { ...post, slow_cache_test_marker: true } )
 	),
 } ) );
 
 const makeQueryClient = () => new QueryClient();
-const mockWaitForImagesToLoad = waitForImagesToLoad as jest.Mock;
+const mockWaitForImagesToLoad = waitForImagesToLoad as Mock;
 
 describe( 'syncPostCache', () => {
 	beforeAll( () => {

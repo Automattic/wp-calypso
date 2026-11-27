@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { useFormStatus } from '@automattic/composite-checkout';
@@ -9,16 +9,17 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import * as actions from 'calypso/state/partner-portal/credit-card-form/actions';
 import * as selectors from 'calypso/state/partner-portal/credit-card-form/selectors';
 import CreditCardSubmitButton from '../credit-card-submit-button';
 
-jest.mock( '@stripe/stripe-js', () => ( {
+vi.mock( '@stripe/stripe-js', () => ( {
 	loadStripe: () => null,
 } ) );
 
-jest.mock( 'calypso/state/partner-portal/credit-card-form/selectors', () => {
-	const items = jest.requireActual( 'calypso/state/partner-portal/credit-card-form/selectors' );
+vi.mock( 'calypso/state/partner-portal/credit-card-form/selectors', async () => {
+	const items = await vi.importActual( 'calypso/state/partner-portal/credit-card-form/selectors' );
 	return {
 		...items,
 		getFields: () => {
@@ -36,10 +37,10 @@ jest.mock( 'calypso/state/partner-portal/credit-card-form/selectors', () => {
 		},
 	};
 } );
-jest.mock( 'calypso/state/partner-portal/credit-card-form/actions' );
+vi.mock( 'calypso/state/partner-portal/credit-card-form/actions' );
 
-jest.mock( '@automattic/composite-checkout', () => {
-	const button = jest.requireActual( '@automattic/composite-checkout' ).Button;
+vi.mock( '@automattic/composite-checkout', async () => {
+	const button = ( await vi.importActual( '@automattic/composite-checkout' ) ).Button;
 	const buttonComponent = ( args ) => {
 		const props = {
 			...args,
@@ -51,7 +52,7 @@ jest.mock( '@automattic/composite-checkout', () => {
 		return button( props );
 	};
 	return {
-		useFormStatus: jest.fn(),
+		useFormStatus: vi.fn(),
 		FormStatus: {
 			LOADING: 'loading',
 			READY: 'ready',
@@ -66,11 +67,11 @@ jest.mock( '@automattic/composite-checkout', () => {
 describe( '<CreditCardSubmitButton>', () => {
 	beforeEach( () => {
 		// Re-mock dependencies
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		useFormStatus.mockImplementation( () => {
 			return {
 				formStatus: 'ready',
-				setFormReady: jest.fn(),
+				setFormReady: vi.fn(),
 			};
 		} );
 	} );
@@ -103,7 +104,7 @@ describe( '<CreditCardSubmitButton>', () => {
 			stripe,
 			stripeConfiguration,
 			disabled: false,
-			onClick: jest.fn(),
+			onClick: vi.fn(),
 			activeButtonText: buttonText,
 		};
 

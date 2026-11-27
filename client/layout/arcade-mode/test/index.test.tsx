@@ -1,24 +1,25 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { type Mock, vi } from 'vitest';
 import { activateArcadeMode } from '../activate';
 import { installKonamiListener } from '../detect';
 
-jest.mock( '../activate', () => ( {
-	activateArcadeMode: jest.fn(),
+vi.mock( '../activate', () => ( {
+	activateArcadeMode: vi.fn(),
 } ) );
 
-const mockUnlockAchievement = jest.fn();
+const mockUnlockAchievement = vi.fn();
 
-jest.mock( '@automattic/api-core', () => ( {
+vi.mock( '@automattic/api-core', () => ( {
 	unlockAchievement: ( ...args: unknown[] ) => mockUnlockAchievement( ...args ),
 } ) );
 
-jest.mock( 'calypso/state/query-client', () => ( {
+vi.mock( 'calypso/state/query-client', () => ( {
 	getCalypsoQueryClient: () => null,
 } ) );
 
-const realActivate = jest.requireActual< typeof import( '../activate' ) >( '../activate' );
+const realActivate = await vi.importActual< typeof import( '../activate' ) >( '../activate' );
 
 const KONAMI_KEYS = [
 	'ArrowUp',
@@ -40,10 +41,10 @@ function dispatchKey( key: string, target: EventTarget = document ) {
 }
 
 async function flushImport() {
-	// installKonamiListener triggers a dynamic import on match — wait for the
-	// resulting microtasks to settle so the mock is observed.
-	await Promise.resolve();
-	await Promise.resolve();
+	// installKonamiListener triggers a dynamic import on match — wait for that import, then for
+	// its `then()` callback, so the mock is observed.
+	await import( '../activate' );
+	await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 }
 
 function mountFakeMasterbar() {
@@ -63,7 +64,7 @@ describe( 'installKonamiListener', () => {
 	let uninstall: () => void;
 
 	beforeEach( () => {
-		( activateArcadeMode as jest.Mock ).mockClear();
+		( activateArcadeMode as Mock ).mockClear();
 		uninstall = installKonamiListener();
 	} );
 

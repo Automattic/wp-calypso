@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { useExperiment } from 'calypso/lib/explat';
 import { useSelector } from 'calypso/state';
 import usePlanDifferentiatorsExperiment, {
@@ -9,12 +10,12 @@ import usePlanDifferentiatorsExperiment, {
 } from '../use-plan-differentiators-experiment';
 import type { PlansIntent } from '@automattic/plans-grid-next';
 
-jest.mock( 'calypso/lib/explat', () => ( {
-	useExperiment: jest.fn(),
+vi.mock( 'calypso/lib/explat', () => ( {
+	useExperiment: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/state', () => ( {
-	useSelector: jest.fn(),
+vi.mock( 'calypso/state', () => ( {
+	useSelector: vi.fn(),
 } ) );
 
 const EXPERIMENT_NAME = 'calypso_pricing_differentiation_202611';
@@ -32,8 +33,8 @@ const INELIGIBLE_RESULT = {
 	isExperimentEligible: false,
 };
 
-const mockUseExperiment = useExperiment as jest.Mock;
-const mockUseSelector = useSelector as jest.Mock;
+const mockUseExperiment = useExperiment as Mock;
+const mockUseSelector = useSelector as Mock;
 
 const SITE_ID = 123;
 
@@ -92,7 +93,7 @@ const SITE_PARAMS = {
 
 describe( 'usePlanDifferentiatorsExperiment', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockNoSite();
 		mockUseExperiment.mockReturnValue( [ false, { variationName: 'control' } ] );
 	} );

@@ -5,7 +5,7 @@ import {
 	PLUGINS_WPORG_PLUGIN_RECEIVE,
 	PLUGINS_WPORG_PLUGIN_REQUEST,
 } from 'calypso/state/action-types';
-import { fetchingItems, fetchingLists, items, listsPagination } from '../reducer';
+import { fetchingItems, fetchingLists, items } from '../reducer';
 
 describe( 'wporg reducer', () => {
 	describe( 'items', () => {
@@ -117,70 +117,6 @@ describe( 'wporg reducer', () => {
 			expect( state ).toEqual( {
 				category: { popular: true },
 				search: { security: false },
-			} );
-		} );
-	} );
-
-	describe( 'listsPagination', () => {
-		const pagination = {
-			page: 1,
-			pages: 100,
-			results: 2359,
-		};
-		const pagination2 = {
-			...pagination,
-			page: 2,
-		};
-
-		test( 'should store plugin list pagination by category', () => {
-			const state = listsPagination( undefined, {
-				type: PLUGINS_WPORG_LIST_RECEIVE,
-				category: 'popular',
-				pagination,
-			} );
-			expect( state ).toEqual( {
-				category: { popular: pagination },
-			} );
-		} );
-
-		test( 'should store plugin list pagination by multiple categories', () => {
-			const state = listsPagination(
-				{
-					category: { popular: pagination },
-				},
-				{
-					type: PLUGINS_WPORG_LIST_RECEIVE,
-					category: 'new',
-					pagination: pagination2,
-				}
-			);
-			expect( state ).toEqual( {
-				category: {
-					popular: pagination,
-					new: pagination2,
-				},
-			} );
-		} );
-
-		test( 'should overwrite existing plugin list paginations', () => {
-			const state = listsPagination(
-				{
-					category: {
-						popular: pagination,
-						new: pagination,
-					},
-				},
-				{
-					type: PLUGINS_WPORG_LIST_RECEIVE,
-					category: 'popular',
-					pagination: pagination2,
-				}
-			);
-			expect( state ).toEqual( {
-				category: {
-					popular: pagination2,
-					new: pagination,
-				},
 			} );
 		} );
 	} );

@@ -1,0 +1,104 @@
+import {
+	siteBySlugQuery,
+	updateCodeDeploymentMutation,
+	codeDeploymentQuery,
+} from '@automattic/api-queries';
+import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import { useNavigate, useParams } from '@tanstack/react-router';
+import { __, sprintf } from '@wordpress/i18n';
+import { useAnalytics } from '../../../../../../../../app/analytics';
+import Breadcrumbs from '../../../../../../../../app/breadcrumbs';
+import { Card, CardBody } from '../../../../../../../../components/card';
+import { PageHeader } from '../../../../../../../../components/page-header';
+import PageLayout from '../../../../../../../../components/page-layout';
+import { ConnectRepositoryForm } from '../../../../../../../../sites/deployments/components/connect-repository-form';
+import {
+	getDeploymentErrorReason,
+	getDeploymentTypeFromPath,
+} from '../../../../../../../../sites/deployments/utils/deployment-tracks';
+
+export default function ConfigureRepository() {
+	const { siteSlug, deploymentId } = useParams( { strict: false } ) as {
+		siteSlug: string;
+		deploymentId: number;
+	};
+	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const { data: existingDeployment } = useSuspenseQuery(
+		codeDeploymentQuery( site.ID, deploymentId )
+	);
+	const navigate = useNavigate();
+	const { recordTracksEvent } = useAnalytics();
+
+	const handleCancel = () => {
+		navigate( { to: `/sites/${ siteSlug }/settings/repositories` } );
+	};
+
+	const updateMutationOptions = updateCodeDeploymentMutation( site.ID, deploymentId ?? 0 );
+	const updateMutation = useMutation( {
+		...updateMutationOptions,
+		onSuccess: ( data, variables, context ) => {
+			updateMutationOptions.onSuccess?.( data, variables, context );
+			recordTracksEvent( 'calypso_hosting_github_update_deployment_success', {
+				deployment_type: getDeploymentTypeFromPath( data.target_dir ),
+				is_automated: data.is_automated,
+				workflow_path: data.workflow_path,
+			} );
+		},
+		onError: ( error, variables, context ) => {
+			updateMutationOptions.onError?.( error, variables, context );
+			recordTracksEvent( 'calypso_hosting_github_update_deployment_failure', {
+				reason: getDeploymentErrorReason( error ),
+			} );
+		},
+	} );
+
+	const initialValues = {
+		selectedInstallationId: existingDeployment.installation_id,
+		selectedRepositoryId: existingDeployment.external_repository_id,
+		branch: existingDeployment.branch_name,
+		targetDir: existingDeployment.target_dir,
+		isAutomated: existingDeployment.is_automated,
+		deploymentMode: existingDeployment.workflow_path
+			? ( 'advanced' as const )
+			: ( 'simple' as const ),
+		workflowPath: existingDeployment.workflow_path ?? '',
+	};
+
+	return (
+		<PageLayout
+			size="small"
+			header={
+				<PageHeader
+					prefix={ <Breadcrumbs length={ 3 } /> }
+					title={ __( 'Configure Repository' ) }
+					description={ __(
+						'Update the GitHub repository connection to deploy code to your WordPress site.'
+					) }
+				/>
+			}
+		>
+			<Card>
+				<CardBody>
+					<ConnectRepositoryForm
+						formTitle={ __( 'Update connection details' ) }
+						formDescription={ __(
+							'Configure a repository connection to deploy a GitHub repository to your WordPress.com site.'
+						) }
+						onCancel={ handleCancel }
+						mutation={ updateMutation }
+						initialValues={ initialValues }
+						submitText={ __( 'Update Connection' ) }
+						successMessage={ __( 'Repository settings updated successfully.' ) }
+						errorMessage={ ( reason ) =>
+							sprintf(
+								// translators: %(reason)s: why updating the repository failed.
+								__( 'Failed to update repository: %(reason)s' ),
+								{ reason }
+							)
+						}
+					/>
+				</CardBody>
+			</Card>
+		</PageLayout>
+	);
+}

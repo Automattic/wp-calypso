@@ -1,18 +1,19 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { renderHook, act } from '@testing-library/react';
+import { vi } from 'vitest';
 import { STEPS } from '../../../internals/steps';
 import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
 import hosting from '../new-hosted-site-flow';
 import type { BaseNavigationControls } from '../../../internals/types';
 
-jest.mock( '@automattic/onboarding', () => ( {
+vi.mock( '@automattic/onboarding', () => ( {
 	NEW_HOSTED_SITE_FLOW: 'new-hosted-site',
-	clearStepPersistedState: jest.fn(),
+	clearStepPersistedState: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/landing/stepper/stores', () => ( { ONBOARD_STORE: 'ONBOARD_STORE' } ) );
+vi.mock( 'calypso/landing/stepper/stores', () => ( { ONBOARD_STORE: 'ONBOARD_STORE' } ) );
 
 let mockQuery = new URLSearchParams();
 let mockLocale = 'en';
@@ -20,70 +21,70 @@ let mockTrialPlan = false;
 let mockValidPlan = true;
 let mockEligibleForTrial = true;
 let mockPlan: { product_slug: string } | null = { product_slug: 'ecommerce-bundle-2y' };
-const mockReset = jest.fn();
-const mockSeed = jest.fn();
-const mockClear = jest.fn();
-const mockReduxDispatch = jest.fn();
+const mockReset = vi.fn();
+const mockSeed = vi.fn();
+const mockClear = vi.fn();
+const mockReduxDispatch = vi.fn();
 const mockSite = { siteSlug: 'example.wordpress.com', siteId: '123' };
 
-jest.mock( '@automattic/calypso-products', () => ( {
+vi.mock( '@automattic/calypso-products', () => ( {
 	isDotComPlan: () => mockValidPlan,
 	isFreeHostingTrial: () => mockTrialPlan,
 } ) );
-jest.mock( 'calypso/state', () => ( {
+vi.mock( 'calypso/state', () => ( {
 	useDispatch: () => mockReduxDispatch,
 	useSelector: () => mockEligibleForTrial,
 } ) );
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useSelect: ( callback: ( select: () => unknown ) => unknown ) =>
 		callback( () => ( { getPlanCartItem: () => mockPlan, getCouponCode: () => '' } ) ),
 	useDispatch: () => ( {
-		setDomain: jest.fn(),
-		setDomainCartItem: jest.fn(),
-		setDomainCartItems: jest.fn(),
-		setSiteUrl: jest.fn(),
-		setSignupDomainOrigin: jest.fn(),
+		setDomain: vi.fn(),
+		setDomainCartItem: vi.fn(),
+		setDomainCartItems: vi.fn(),
+		setSiteUrl: vi.fn(),
+		setSignupDomainOrigin: vi.fn(),
 		setPlanCartItem: mockSeed,
 	} ),
 	dispatch: () => ( { resetOnboardStore: mockReset, setPlanCartItem: mockSeed } ),
 } ) );
-jest.mock( 'calypso/landing/stepper/hooks/use-query', () => ( { useQuery: () => mockQuery } ) );
-jest.mock( 'calypso/landing/stepper/utils/preselected-plan', () => ( {
+vi.mock( 'calypso/landing/stepper/hooks/use-query', () => ( { useQuery: () => mockQuery } ) );
+vi.mock( 'calypso/landing/stepper/utils/preselected-plan', () => ( {
 	shouldSkipPlansStep: ( query: URLSearchParams, cart: { product_slug: string } | null ) =>
 		!! query.get( 'plan' ) && query.get( 'plan' ) === cart?.product_slug,
 } ) );
-jest.mock( 'calypso/landing/stepper/hooks/use-flow-locale', () => ( {
+vi.mock( 'calypso/landing/stepper/hooks/use-flow-locale', () => ( {
 	useFlowLocale: () => mockLocale,
 } ) );
-jest.mock( 'calypso/landing/stepper/utils/get-current-query-params', () => ( {
+vi.mock( 'calypso/landing/stepper/utils/get-current-query-params', () => ( {
 	getCurrentQueryParams: () => mockQuery,
 } ) );
-jest.mock( 'calypso/landing/stepper/hooks/use-is-valid-woo-partner', () => ( {
+vi.mock( 'calypso/landing/stepper/hooks/use-is-valid-woo-partner', () => ( {
 	useIsValidWooPartner: () => false,
 } ) );
-jest.mock( 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial', () => ( {
+vi.mock( 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial', () => ( {
 	isUserEligibleForFreeHostingTrial: () => mockEligibleForTrial,
 } ) );
-jest.mock( 'calypso/lib/url', () => ( {
-	...jest.requireActual( 'calypso/lib/url' ),
+vi.mock( 'calypso/lib/url', async () => ( {
+	...( await vi.importActual< typeof import( 'calypso/lib/url' ) >( 'calypso/lib/url' ) ),
 	pathToUrl: ( path: string ) => `https://wordpress.com${ path }`,
 } ) );
-jest.mock( 'calypso/signup/storageUtils', () => ( {
+vi.mock( 'calypso/signup/storageUtils', () => ( {
 	getSignupCompleteSiteID: () => mockSite.siteId,
 	getSignupCompleteSlug: () => mockSite.siteSlug,
 	clearSignupDestinationCookie: () => mockClear(),
-	clearSignupCompleteFlowName: jest.fn(),
-	clearSignupCompleteSlug: jest.fn(),
-	clearSignupCompleteSiteID: jest.fn(),
-	setSignupCompleteSiteID: jest.fn(),
-	setSignupCompleteSlug: jest.fn(),
-	setSignupCompleteFlowName: jest.fn(),
-	persistSignupDestination: jest.fn(),
+	clearSignupCompleteFlowName: vi.fn(),
+	clearSignupCompleteSlug: vi.fn(),
+	clearSignupCompleteSiteID: vi.fn(),
+	setSignupCompleteSiteID: vi.fn(),
+	setSignupCompleteSlug: vi.fn(),
+	setSignupCompleteFlowName: vi.fn(),
+	persistSignupDestination: vi.fn(),
 } ) );
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 	mockLocale = 'en';
 	mockTrialPlan = false;
 	mockValidPlan = true;
@@ -98,19 +99,19 @@ beforeEach( () => {
 		value: {
 			...window.location,
 			pathname: '/setup/new-hosted-site/domains',
-			assign: jest.fn(),
-			replace: jest.fn(),
+			assign: vi.fn(),
+			replace: vi.fn(),
 		},
 		writable: true,
 	} );
 } );
 
 const sideEffect = ( step: string ) =>
-	renderHook( ( { stepSlug } ) => hosting.useSideEffect?.( stepSlug as never, jest.fn() ), {
+	renderHook( ( { stepSlug } ) => hosting.useSideEffect?.( stepSlug as never, vi.fn() ), {
 		initialProps: { stepSlug: step },
 	} );
 
-const navigation = ( step: string, navigate = jest.fn() ) =>
+const navigation = ( step: string, navigate = vi.fn() ) =>
 	renderHook( () => hosting.useStepNavigation( step as never, navigate ) ).result
 		.current as ReturnType< typeof hosting.useStepNavigation > & BaseNavigationControls;
 
@@ -129,7 +130,7 @@ it.each( [ 'en', 'fr' ] )( 'passes checkout steps and a domain return URL in %s'
 		} as never )
 	);
 	const checkout = new URL(
-		jest.mocked( window.location.replace ).mock.calls[ 0 ][ 0 ] as string,
+		vi.mocked( window.location.replace ).mock.calls[ 0 ][ 0 ] as string,
 		'https://wordpress.com'
 	);
 	expect( checkout.searchParams.get( 'steps_current' ) ).toBe( '2' );
@@ -162,7 +163,7 @@ it( 'keeps other Commerce entries on their existing checkout behavior', () => {
 		} as never )
 	);
 	const checkout = new URL(
-		jest.mocked( window.location.assign ).mock.calls[ 0 ][ 0 ] as string,
+		vi.mocked( window.location.assign ).mock.calls[ 0 ][ 0 ] as string,
 		'https://wordpress.com'
 	);
 	expect( checkout.searchParams.has( 'showPurchaseSteps' ) ).toBe( false );
@@ -172,7 +173,7 @@ it( 'keeps other Commerce entries on their existing checkout behavior', () => {
 it( 'keeps existing navigation after choosing a plan from the grid without progress', () => {
 	mockQuery.delete( 'plan' );
 	mockQuery.delete( 'showPurchaseSteps' );
-	const navigate = jest.fn();
+	const navigate = vi.fn();
 	const nav = navigation( 'domains', navigate );
 	act( () => nav.submit( { slug: 'domains', providedDependencies: { domainCart: [] } } as never ) );
 	expect( navigate ).toHaveBeenLastCalledWith( STEPS.SITE_CREATION_STEP.slug );
@@ -180,7 +181,7 @@ it( 'keeps existing navigation after choosing a plan from the grid without progr
 
 it( 'keeps the plan step when a visit chooses its plan from the grid', () => {
 	mockQuery.delete( 'plan' );
-	const navigate = jest.fn();
+	const navigate = vi.fn();
 	mockPlan = null;
 	const domainNav = navigation( 'domains', navigate );
 	act( () =>
@@ -204,7 +205,7 @@ it( 'keeps the plan step when a visit chooses its plan from the grid', () => {
 		} as never )
 	);
 	const checkout = new URL(
-		jest.mocked( window.location.replace ).mock.calls[ 0 ][ 0 ] as string,
+		vi.mocked( window.location.replace ).mock.calls[ 0 ][ 0 ] as string,
 		'https://wordpress.com'
 	);
 	expect( checkout.searchParams.get( 'steps_total' ) ).toBe( '3' );
@@ -225,7 +226,7 @@ it.each( [ true, false ] )(
 	'uses the existing site-creation path with progress=%s',
 	( enabled ) => {
 		mockQuery.set( 'showPurchaseSteps', String( enabled ) );
-		const navigate = jest.fn();
+		const navigate = vi.fn();
 		const nav = navigation( 'domains', navigate );
 		act( () =>
 			nav.submit( { slug: 'domains', providedDependencies: { domainCart: [] } } as never )
@@ -240,7 +241,7 @@ it.each( [ 'domains', 'plans' ] )(
 	'preserves signup state on opted-in %s entries without checkout markers',
 	async ( step ) => {
 		window.location.pathname = '/a-different-route-format';
-		await hosting.initialize( { dispatch: jest.fn(), getState: () => ( {} ) } as never );
+		await hosting.initialize( { dispatch: vi.fn(), getState: () => ( {} ) } as never );
 		sideEffect( step );
 		expect( mockReset ).not.toHaveBeenCalled();
 		expect( mockClear ).not.toHaveBeenCalled();
@@ -260,7 +261,7 @@ it( 'returns through plans on the same site without reseeding the entry plan', a
 		} as never )
 	);
 	const checkout = new URL(
-		jest.mocked( window.location.replace ).mock.calls[ 0 ][ 0 ] as string,
+		vi.mocked( window.location.replace ).mock.calls[ 0 ][ 0 ] as string,
 		'https://wordpress.com'
 	);
 	const back = new URL( checkout.searchParams.get( 'checkoutBackUrlDomains' )! );
@@ -269,7 +270,7 @@ it( 'returns through plans on the same site without reseeding the entry plan', a
 	sideEffect( 'domains' );
 
 	const steps = await hosting.initialize( {
-		dispatch: jest.fn(),
+		dispatch: vi.fn(),
 		getState: () => ( {} ),
 	} as never );
 	expect( mockReset ).not.toHaveBeenCalled();
@@ -277,7 +278,7 @@ it( 'returns through plans on the same site without reseeding the entry plan', a
 	expect( steps ).toContainEqual( expect.objectContaining( { slug: STEPS.UNIFIED_PLANS.slug } ) );
 	expect( mockQuery.get( 'siteSlug' ) ).toBe( mockSite.siteSlug );
 
-	const navigate = jest.fn();
+	const navigate = vi.fn();
 	const domainNav = navigation( 'domains', navigate );
 	act( () =>
 		domainNav.submit( { slug: 'domains', providedDependencies: { domainCart: [] } } as never )
@@ -296,7 +297,7 @@ it.each( [
 	} else {
 		mockQuery.set( 'showPurchaseSteps', progress );
 	}
-	await hosting.initialize( { dispatch: jest.fn(), getState: () => ( {} ) } as never );
+	await hosting.initialize( { dispatch: vi.fn(), getState: () => ( {} ) } as never );
 	sideEffect( step );
 	expect( mockReset ).toHaveBeenCalledTimes( 1 );
 	expect( mockClear ).toHaveBeenCalledTimes( 1 );
@@ -326,7 +327,7 @@ it.each( [ true, false ] )(
 			[ true, false, true, false, false ],
 			[ false, true, false, false, true ],
 		] ) {
-			jest.clearAllMocks();
+			vi.clearAllMocks();
 			mockTrialPlan = trial;
 			mockEligibleForTrial = eligible;
 			mockValidPlan = valid;
@@ -348,7 +349,7 @@ it.each( [ true, false ] )(
 it( 'treats purchase progress without the domain step as a plain visit', async () => {
 	mockQuery.delete( 'showDomainStep' );
 	const steps = await hosting.initialize( {
-		dispatch: jest.fn(),
+		dispatch: vi.fn(),
 		getState: () => ( {} ),
 	} as never );
 	expect( steps ).not.toContainEqual(
@@ -368,7 +369,7 @@ it( 'treats purchase progress without the domain step as a plain visit', async (
 		} as never )
 	);
 	const checkout = new URL(
-		jest.mocked( window.location.assign ).mock.calls[ 0 ][ 0 ] as string,
+		vi.mocked( window.location.assign ).mock.calls[ 0 ][ 0 ] as string,
 		'https://wordpress.com'
 	);
 	expect( checkout.searchParams.has( 'showPurchaseSteps' ) ).toBe( false );

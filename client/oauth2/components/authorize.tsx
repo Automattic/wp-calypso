@@ -181,7 +181,7 @@ function Authorize( {
 	// Don't pass a custom signupUrl - let OneLoginLayout use its default getSignupUrl() logic
 	// which already handles OAuth clients properly via the oauth2Client from Redux
 
-	let content = null;
+	let content;
 	if ( isLoading || ! meta ) {
 		content = (
 			<div className="oauth2-connect oauth2-connect--loading">

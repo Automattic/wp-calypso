@@ -43,7 +43,7 @@ class InviteAcceptLoggedIn extends Component {
 	};
 
 	getButtonText = () => {
-		let text = '';
+		let text;
 		if ( 'follower' === this.props.invite.role ) {
 			text = this.state.submitting
 				? this.props.translate( 'Following…', { context: 'button' } )

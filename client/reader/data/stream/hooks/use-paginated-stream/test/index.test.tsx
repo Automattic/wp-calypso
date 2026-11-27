@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
@@ -7,6 +7,7 @@ import nock from 'nock';
 import { Provider } from 'react-redux';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { thunk as thunkMiddleware } from 'redux-thunk';
+import { vi } from 'vitest';
 import { getCachedPost } from 'calypso/reader/data/post/cache';
 import { createPostCacheMiddleware } from 'calypso/reader/data/post/middleware';
 import { fetchPaginatedStream, usePaginatedStream } from 'calypso/reader/data/stream';
@@ -70,7 +71,7 @@ describe( 'usePaginatedStream', () => {
 			} );
 
 		const queryClient = makeQueryClient();
-		const dispatch = jest.fn();
+		const dispatch = vi.fn();
 
 		await fetchPaginatedStream( queryClient, dispatch, {
 			streamKey: 'likes',

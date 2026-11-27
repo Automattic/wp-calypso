@@ -1,6 +1,7 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { vi } from 'vitest';
 import { getOnboardingPostCheckoutDestination } from '../get-onboarding-post-checkout-destination';
 
 describe( 'getOnboardingPostCheckoutDestination', () => {
@@ -11,7 +12,7 @@ describe( 'getOnboardingPostCheckoutDestination', () => {
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'should return home destination with correct query args', () => {

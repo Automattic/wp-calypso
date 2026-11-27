@@ -9,7 +9,7 @@ import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import searchSites from 'calypso/components/search-sites';
 import { urlToSlug } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { checkUrl, dismissUrl } from 'calypso/state/jetpack-connect/actions';
+import { checkUrl } from 'calypso/state/jetpack-connect/actions';
 import { getConnectingSite, getJetpackSiteByUrl } from 'calypso/state/jetpack-connect/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
 import { getSiteByUrl, isRequestingSites } from 'calypso/state/sites/selectors';
@@ -215,13 +215,11 @@ const connectComponent = connect(
 			jetpackConnectSite,
 			mobileAppRedirect,
 			skipRemoteInstall,
-			siteHomeUrl: siteData.urlAfterRedirects || jetpackConnectSite.url,
 			sites,
 		};
 	},
 	{
 		checkUrl,
-		dismissUrl,
 		recordTracksEvent,
 	}
 );

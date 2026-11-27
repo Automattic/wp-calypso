@@ -1,6 +1,7 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { vi } from 'vitest';
 import { redirectToMigrationFlow } from '../controller';
 
 describe( 'redirectToMigrationFlow', () => {
@@ -8,7 +9,7 @@ describe( 'redirectToMigrationFlow', () => {
 	let locationReplace;
 
 	beforeEach( () => {
-		locationReplace = jest.fn();
+		locationReplace = vi.fn();
 		Object.defineProperty( window, 'location', {
 			configurable: true,
 			writable: true,

@@ -10,7 +10,7 @@ import {
 	enhanceWithSiteType,
 } from 'calypso/state/analytics/actions';
 import { hideMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
-import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { withEnhancers } from 'calypso/state/utils';
 import {
 	getResendEmailErrorMessages,
@@ -194,7 +194,6 @@ class EmailedLoginLinkExpired extends Component {
 const mapDispatchToProps = {
 	hideMagicLoginRequestForm,
 	recordPageView: withEnhancers( recordPageView, [ enhanceWithSiteType ] ),
-	successNotice,
 	errorNotice,
 };
 

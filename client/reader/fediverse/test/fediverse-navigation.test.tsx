@@ -1,7 +1,8 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import * as analytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { FediverseNavigation } from '../fediverse-navigation';
@@ -23,11 +24,11 @@ describe( 'FediverseNavigation', () => {
 
 	beforeEach( () => {
 		// recordReaderTracksEvent is a thunk reading the follows query cache.
-		jest
-			.spyOn( analytics, 'recordReaderTracksEvent' )
-			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
+		vi.spyOn( analytics, 'recordReaderTracksEvent' ).mockImplementation(
+			() => ( { type: '@@TEST/NOOP' } ) as never
+		);
 	} );
-	afterEach( () => jest.restoreAllMocks() );
+	afterEach( () => vi.restoreAllMocks() );
 
 	it( 'renders the Timeline, Notifications, and Profile tabs with paths scoped to the connection id', () => {
 		renderWithProvider( <FediverseNavigation connectionId={ 7 } selectedTab="timeline" /> );

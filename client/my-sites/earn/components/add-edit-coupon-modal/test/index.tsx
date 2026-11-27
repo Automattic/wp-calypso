@@ -1,19 +1,12 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
-
-const mockGetConnectedAccountDefaultCurrencyForSiteId = () => 'USD';
-const mockGetConnectedAccountMinimumCurrencyForSiteId = () => 0.5;
-
-jest.mock( 'calypso/state/ui/selectors/get-selected-site-id' );
-jest.mock( 'calypso/state/memberships/product-list/selectors' );
-jest.mock( 'calypso/state/memberships/settings/selectors' );
-jest.mock( 'calypso/state/ui/selectors' );
 
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Modal from 'react-modal';
+import { vi } from 'vitest';
 import {
 	getconnectedAccountDefaultCurrencyForSiteId,
 	getconnectedAccountMinimumCurrencyForSiteId,
@@ -27,7 +20,15 @@ import {
 } from '../../../memberships/constants';
 import RecurringPaymentsCouponAddEditModal from '../index';
 
-const closeDialog = jest.fn();
+const mockGetConnectedAccountDefaultCurrencyForSiteId = () => 'USD';
+const mockGetConnectedAccountMinimumCurrencyForSiteId = () => 0.5;
+
+vi.mock( 'calypso/state/ui/selectors/get-selected-site-id' );
+vi.mock( 'calypso/state/memberships/product-list/selectors' );
+vi.mock( 'calypso/state/memberships/settings/selectors' );
+vi.mock( 'calypso/state/ui/selectors' );
+
+const closeDialog = vi.fn();
 
 describe( 'RecurringPaymentsCouponAddEditModal', () => {
 	let modalRoot;
@@ -53,7 +54,7 @@ describe( 'RecurringPaymentsCouponAddEditModal', () => {
 		screen.getByRole( 'textbox', { name: 'Limit coupon to specific emails text input' } );
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 
 		getconnectedAccountDefaultCurrencyForSiteId.mockImplementation(
 			mockGetConnectedAccountDefaultCurrencyForSiteId

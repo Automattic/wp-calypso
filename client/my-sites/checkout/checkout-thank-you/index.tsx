@@ -536,14 +536,14 @@ export class CheckoutThankYou extends Component<
 
 		/** REFACTORED REDESIGN */
 		if ( isRefactoredForThankYouV2( this.props ) ) {
-			let pageContent = null;
+			let pageContent;
 			const domainPurchase = getDomainPurchase( purchases );
 			const gSuiteOrExtraLicenseOrGoogleWorkspace = purchases.find(
 				isGSuiteOrExtraLicenseOrGoogleWorkspace
 			);
 
 			if ( this.isStudioThankYou() ) {
-				pageContent = <StudioThankYou purchases={ purchases } receiptId={ this.props.receiptId } />;
+				pageContent = <StudioThankYou purchases={ purchases } />;
 			} else if ( this.props.receipt && isOnlyDomainTransfers( purchases ) ) {
 				pageContent = (
 					<DomainBulkTransferThankYou
@@ -654,11 +654,7 @@ export class CheckoutThankYou extends Component<
 
 						{ this.getMasterBar() }
 
-						<StudioHandoff
-							siteId={ siteId }
-							receiptId={ this.props.receiptId }
-							hideNotice={ this.isStudioThankYou() }
-						/>
+						<StudioHandoff siteId={ siteId } receiptId={ this.props.receiptId } />
 
 						{ pageContent }
 					</Main>

@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import config from '@automattic/calypso-config';
@@ -10,6 +10,7 @@ import nock from 'nock';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
+import { type Mock, vi } from 'vitest';
 import { createReduxStore } from 'calypso/state/create-store';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import initialReducer from 'calypso/state/reducer';
@@ -18,11 +19,13 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import Launchpad from '../index';
 import { buildSiteDetails, defaultSiteDetails, MOCK_USE_QUERY_RESULT } from './lib/fixtures';
 
-jest.mock( '../launchpad-site-preview', () => () => {
-	return <div></div>;
-} );
+vi.mock( '../launchpad-site-preview', () => ( {
+	default: () => {
+		return <div></div>;
+	},
+} ) );
 
-jest.mock( 'calypso/data/domains/use-get-domains-query', () => ( {
+vi.mock( 'calypso/data/domains/use-get-domains-query', () => ( {
 	useGetDomainsQuery: () => ( {
 		isLoading: true,
 		data: [
@@ -34,23 +37,22 @@ jest.mock( 'calypso/data/domains/use-get-domains-query', () => ( {
 	} ),
 } ) );
 
-jest.mock( 'calypso/state/sites/hooks/use-site-global-styles-status', () => ( {
+vi.mock( 'calypso/state/sites/hooks/use-site-global-styles-status', () => ( {
 	useSiteGlobalStylesStatus: () => ( {
 		shouldLimitGlobalStyles: false,
 		globalStylesInUse: false,
 	} ),
 } ) );
 
-jest.mock( '@automattic/launchpad', () => ( {
-	...jest.requireActual( '@automattic/launchpad' ),
-	useLaunchpad: jest.fn( () => {
-		return jest.requireActual( '@automattic/launchpad' ).useLaunchpad();
-	} ),
-} ) );
+vi.mock( '@automattic/launchpad', async () => {
+	const actual =
+		await vi.importActual< typeof import( '@automattic/launchpad' ) >( '@automattic/launchpad' );
+	return { ...actual, useLaunchpad: vi.fn( actual.useLaunchpad ) };
+} );
 
 // JSDOM doesn't support browser navigation, so we temporarily mock the
 // window.location object
-const replaceMock = jest.fn();
+const replaceMock = vi.fn();
 declare global {
 	interface Window {
 		initialReduxState: object;
@@ -125,7 +127,7 @@ describe( 'Launchpad', () => {
 				launchpad_screen: 'full',
 				site_intent: '',
 			} );
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	afterEach( () => {
@@ -141,7 +143,7 @@ describe( 'Launchpad', () => {
 	describe( 'when loading the Launchpad view', () => {
 		describe( 'and the site is launchpad enabled', () => {
 			it( 'does not redirect', () => {
-				( useLaunchpad as jest.Mock ).mockReturnValue( {
+				( useLaunchpad as Mock ).mockReturnValue( {
 					...MOCK_USE_QUERY_RESULT,
 					data: { launchpad_screen: 'full' },
 				} );
@@ -156,7 +158,7 @@ describe( 'Launchpad', () => {
 			} );
 
 			it( 'does not redirect when site id is used', () => {
-				( useLaunchpad as jest.Mock ).mockReturnValue( {
+				( useLaunchpad as Mock ).mockReturnValue( {
 					...MOCK_USE_QUERY_RESULT,
 					data: { launchpad_screen: 'full' },
 				} );
@@ -173,7 +175,7 @@ describe( 'Launchpad', () => {
 
 		describe( 'and the site is not launchpad enabled', () => {
 			it( 'redirects to Calypso My Home', () => {
-				( useLaunchpad as jest.Mock ).mockReturnValueOnce( {
+				( useLaunchpad as Mock ).mockReturnValueOnce( {
 					...MOCK_USE_QUERY_RESULT,
 					data: { launchpad_screen: 'off' },
 				} );

@@ -1,45 +1,48 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import InviteAccept from '../index';
 
-const mockLoggedIn = jest.fn();
-const mockLoggedOut = jest.fn();
+const mockLoggedIn = vi.fn();
+const mockLoggedOut = vi.fn();
 let mockCurrentUser = null;
 
-jest.mock( 'calypso/state/current-user/selectors', () => ( {
+vi.mock( 'calypso/state/current-user/selectors', () => ( {
 	getCurrentUser: () => mockCurrentUser,
 } ) );
 
-jest.mock( 'calypso/state/dashboard/selectors', () => ( {
+vi.mock( 'calypso/state/dashboard/selectors', () => ( {
 	hasDashboardOptIn: () => false,
 } ) );
 
-jest.mock( 'calypso/state/current-user/actions', () => ( {
+vi.mock( 'calypso/state/current-user/actions', () => ( {
 	redirectToLogout: () => ( { type: 'REDIRECT_TO_LOGOUT' } ),
 } ) );
 
-jest.mock( 'calypso/state/ui/actions', () => ( {
+vi.mock( 'calypso/state/ui/actions', () => ( {
 	hideMasterbar: () => ( { type: 'HIDE_MASTERBAR' } ),
 } ) );
 
-jest.mock( 'calypso/state/notices/actions', () => ( {
+vi.mock( 'calypso/state/notices/actions', () => ( {
 	successNotice: () => ( { type: 'SUCCESS_NOTICE' } ),
 	infoNotice: () => ( { type: 'INFO_NOTICE' } ),
 } ) );
 
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: () => {},
 } ) );
 
-jest.mock( 'calypso/lib/wp', () => ( { req: { get: () => new Promise( () => {} ) } } ) );
+vi.mock( 'calypso/lib/wp', () =>
+	( ( m ) => ( { ...m, default: m } ) )( { req: { get: () => new Promise( () => {} ) } } )
+);
 
-jest.mock( 'calypso/components/locale-suggestions', () => () => null );
+vi.mock( 'calypso/components/locale-suggestions', () => ( { default: () => null } ) );
 
-jest.mock( 'calypso/my-sites/invites/invite-accept-logged-in', () => ( {
+vi.mock( 'calypso/my-sites/invites/invite-accept-logged-in', () => ( {
 	__esModule: true,
 	default: ( props ) => {
 		mockLoggedIn( props );
@@ -47,7 +50,7 @@ jest.mock( 'calypso/my-sites/invites/invite-accept-logged-in', () => ( {
 	},
 } ) );
 
-jest.mock( 'calypso/my-sites/invites/invite-accept-logged-out', () => ( {
+vi.mock( 'calypso/my-sites/invites/invite-accept-logged-out', () => ( {
 	__esModule: true,
 	default: ( props ) => {
 		mockLoggedOut( props );

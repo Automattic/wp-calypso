@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { speak } from '@wordpress/a11y';
+import { vi } from 'vitest';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { PlaygroundIframe } from '../components/playground-iframe';
@@ -12,19 +13,19 @@ import { BlueprintLoadError } from '../lib/blueprint-load-error';
 import { initializeWordPressPlayground } from '../lib/initialize-playground';
 import { PlaygroundNotFoundError } from '../lib/playground-not-found-error';
 
-jest.mock( '../lib/initialize-playground' );
-jest.mock( '@wordpress/a11y', () => ( { speak: jest.fn() } ) );
-jest.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: jest.fn() } ) );
-jest.mock( 'calypso/lib/logstash', () => ( {
-	logToLogstash: jest.fn( () => Promise.resolve() ),
+vi.mock( '../lib/initialize-playground' );
+vi.mock( '@wordpress/a11y', () => ( { speak: vi.fn() } ) );
+vi.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: vi.fn() } ) );
+vi.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: vi.fn( () => Promise.resolve() ),
 } ) );
-jest.mock( 'calypso/data/php-versions', () => ( {
+vi.mock( 'calypso/data/php-versions', () => ( {
 	getPHPVersions: () => ( { recommendedValue: '8.3' } ),
 } ) );
 
 let mockSearchParams: URLSearchParams;
-const mockSetSearchParams = jest.fn();
-jest.mock( 'react-router-dom', () => ( {
+const mockSetSearchParams = vi.fn();
+vi.mock( 'react-router-dom', () => ( {
 	useSearchParams: () => [ mockSearchParams, mockSetSearchParams ],
 } ) );
 
@@ -33,7 +34,7 @@ const deferBoot = () => {
 		resolve: ( value: unknown ) => void;
 		reject: ( error: Error ) => void;
 	} = { resolve: () => {}, reject: () => {} };
-	jest.mocked( initializeWordPressPlayground ).mockReturnValue(
+	vi.mocked( initializeWordPressPlayground ).mockReturnValue(
 		new Promise( ( resolve, reject ) => {
 			boot.resolve = resolve as ( value: unknown ) => void;
 			boot.reject = reject;
@@ -44,17 +45,17 @@ const deferBoot = () => {
 
 describe( 'PlaygroundIframe acquisition retry', () => {
 	const locationDescriptor = Object.getOwnPropertyDescriptor( window, 'location' )!;
-	const reload = jest.fn();
+	const reload = vi.fn();
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		Object.defineProperty( window, 'location', {
 			configurable: true,
 			value: { href: 'http://localhost/', reload },
 		} );
-		jest
-			.mocked( initializeWordPressPlayground )
-			.mockRejectedValue( new TypeError( 'Failed to fetch dynamically imported module' ) );
+		vi.mocked( initializeWordPressPlayground ).mockRejectedValue(
+			new TypeError( 'Failed to fetch dynamically imported module' )
+		);
 	} );
 
 	afterEach( () => {
@@ -75,7 +76,7 @@ describe( 'PlaygroundIframe acquisition retry', () => {
 			const href = `http://localhost/setup/onboarding/playground?${ mockSearchParams }#preview`;
 			window.location.href = href;
 			const paramsBefore = mockSearchParams.toString();
-			const setPlaygroundClient = jest.fn();
+			const setPlaygroundClient = vi.fn();
 
 			render(
 				<PlaygroundIframe
@@ -101,19 +102,19 @@ describe( 'PlaygroundIframe acquisition retry', () => {
 
 describe( 'PlaygroundIframe intro', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockSearchParams = new URLSearchParams( { intent: 'woocommerce', blueprint: 'woocommerce' } );
 	} );
 
 	afterEach( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	const renderIframe = ( withIntro: boolean ) =>
 		render(
 			<PlaygroundIframe
 				hasPlaygroundClient={ false }
-				setPlaygroundClient={ jest.fn() }
+				setPlaygroundClient={ vi.fn() }
 				withIntro={ withIntro }
 			/>
 		);
@@ -123,7 +124,7 @@ describe( 'PlaygroundIframe intro', () => {
 
 	it( 'follows the boot progress and is removed once the Playground is ready', async () => {
 		let resolveBoot: ( value: unknown ) => void = () => {};
-		jest.mocked( initializeWordPressPlayground ).mockReturnValue(
+		vi.mocked( initializeWordPressPlayground ).mockReturnValue(
 			new Promise( ( resolve ) => {
 				resolveBoot = resolve as ( value: unknown ) => void;
 			} ) as ReturnType< typeof initializeWordPressPlayground >
@@ -138,7 +139,7 @@ describe( 'PlaygroundIframe intro', () => {
 			blueprint: expect.any( String ),
 		} );
 
-		const onBootProgress = jest.mocked( initializeWordPressPlayground ).mock.calls[ 0 ][ 4 ]!;
+		const onBootProgress = vi.mocked( initializeWordPressPlayground ).mock.calls[ 0 ][ 4 ]!;
 		act( () => onBootProgress( { stage: 'woocommerce' } ) );
 		expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'Downloading WooCommerce' );
 
@@ -157,7 +158,7 @@ describe( 'PlaygroundIframe intro', () => {
 	} );
 
 	it( 'gives way to the error screen when the boot fails', async () => {
-		jest.mocked( initializeWordPressPlayground ).mockRejectedValue( new Error( 'boot failed' ) );
+		vi.mocked( initializeWordPressPlayground ).mockRejectedValue( new Error( 'boot failed' ) );
 
 		renderIframe( true );
 
@@ -175,10 +176,9 @@ describe( 'PlaygroundIframe intro', () => {
 	} );
 
 	it( 'shows when the not-found countdown starts a new playground', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		mockSearchParams.set( 'playground', 'missing-id' );
-		jest
-			.mocked( initializeWordPressPlayground )
+		vi.mocked( initializeWordPressPlayground )
 			.mockRejectedValueOnce( new PlaygroundNotFoundError( 'missing-id', new Error() ) )
 			.mockReturnValue( new Promise( () => {} ) );
 
@@ -188,7 +188,7 @@ describe( 'PlaygroundIframe intro', () => {
 		await act( async () => {} );
 		// Each countdown second schedules the next one after it renders.
 		for ( let second = 0; second < 5; second++ ) {
-			await act( async () => jest.advanceTimersByTime( 1000 ) );
+			await act( async () => vi.advanceTimersByTime( 1000 ) );
 		}
 
 		expect( initializeWordPressPlayground ).toHaveBeenCalledTimes( 2 );
@@ -196,8 +196,7 @@ describe( 'PlaygroundIframe intro', () => {
 	} );
 
 	it( 'does not show when the default blueprint replaces one that failed to load', async () => {
-		jest
-			.mocked( initializeWordPressPlayground )
+		vi.mocked( initializeWordPressPlayground )
 			.mockRejectedValueOnce( new BlueprintLoadError( 'https://example.com', new Error() ) )
 			.mockReturnValue( new Promise( () => {} ) );
 
@@ -216,12 +215,12 @@ describe( 'PlaygroundIframe intro', () => {
 	} );
 
 	it( 'is not shown or fed progress without withIntro', () => {
-		jest.mocked( initializeWordPressPlayground ).mockReturnValue( new Promise( () => {} ) );
+		vi.mocked( initializeWordPressPlayground ).mockReturnValue( new Promise( () => {} ) );
 
 		renderIframe( false );
 
 		expect( getIntroHeading() ).not.toBeInTheDocument();
-		expect( jest.mocked( initializeWordPressPlayground ).mock.calls[ 0 ][ 4 ] ).toBeUndefined();
+		expect( vi.mocked( initializeWordPressPlayground ).mock.calls[ 0 ][ 4 ] ).toBeUndefined();
 		expect( recordTracksEvent ).not.toHaveBeenCalled();
 	} );
 } );
@@ -236,32 +235,32 @@ describe( 'PlaygroundIframe intro abandon', () => {
 		render(
 			<PlaygroundIframe
 				hasPlaygroundClient={ false }
-				setPlaygroundClient={ jest.fn() }
+				setPlaygroundClient={ vi.fn() }
 				withIntro={ withIntro }
 			/>
 		);
 
 	const abandonedCalls = () =>
-		jest
+		vi
 			.mocked( recordTracksEvent )
 			.mock.calls.filter( ( [ name ] ) => name === 'calypso_playground_woo_intro_abandoned' );
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockSearchParams = new URLSearchParams( { intent: 'woocommerce', blueprint: 'woocommerce' } );
 	} );
 
 	afterEach( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	it( 'is recorded once, with how long the visitor waited, when they leave mid-load', () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		mockSearchParams.set( 'blueprint', '123' );
 		deferBoot();
 		renderIframe();
 
-		jest.advanceTimersByTime( 12_000 );
+		vi.advanceTimersByTime( 12_000 );
 		leavePage();
 		leavePage();
 
@@ -307,17 +306,16 @@ describe( 'PlaygroundIframe intro abandon', () => {
 	} );
 
 	it( 'is recorded once when leaving a new playground started after the old one was not found', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		mockSearchParams.set( 'playground', 'missing-id' );
-		jest
-			.mocked( initializeWordPressPlayground )
+		vi.mocked( initializeWordPressPlayground )
 			.mockRejectedValueOnce( new PlaygroundNotFoundError( 'missing-id', new Error() ) )
 			.mockReturnValue( new Promise( () => {} ) );
 
 		renderIframe();
 		await act( async () => {} );
 		for ( let second = 0; second < 5; second++ ) {
-			await act( async () => jest.advanceTimersByTime( 1000 ) );
+			await act( async () => vi.advanceTimersByTime( 1000 ) );
 		}
 		expect( initializeWordPressPlayground ).toHaveBeenCalledTimes( 2 );
 
@@ -363,7 +361,7 @@ describe( 'PlaygroundIframe messages', () => {
 	) => (
 		<PlaygroundIframe
 			hasPlaygroundClient={ false }
-			setPlaygroundClient={ jest.fn() }
+			setPlaygroundClient={ vi.fn() }
 			withIntro={ withIntro }
 			onPlaygroundMessage={ onPlaygroundMessage }
 		/>
@@ -379,13 +377,13 @@ describe( 'PlaygroundIframe messages', () => {
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockSearchParams = new URLSearchParams();
-		jest.mocked( initializeWordPressPlayground ).mockReturnValue( new Promise( () => {} ) );
+		vi.mocked( initializeWordPressPlayground ).mockReturnValue( new Promise( () => {} ) );
 	} );
 
 	it( 'passes on messages from the Playground iframe', () => {
-		const onPlaygroundMessage = jest.fn();
+		const onPlaygroundMessage = vi.fn();
 		renderIframe( onPlaygroundMessage );
 
 		postMessage( { origin: PLAYGROUND_ORIGIN, source: getIframe().contentWindow } );
@@ -396,7 +394,7 @@ describe( 'PlaygroundIframe messages', () => {
 	it.each( [ PLAYGROUND_ORIGIN, 'https://wpsandbox.wordpress.net' ] )(
 		'passes on messages from the WordPress frame inside it on %s',
 		( origin ) => {
-			const onPlaygroundMessage = jest.fn();
+			const onPlaygroundMessage = vi.fn();
 			renderIframe( onPlaygroundMessage );
 			const wordPressFrame = appendFrame( getIframe().contentDocument! );
 
@@ -418,7 +416,7 @@ describe( 'PlaygroundIframe messages', () => {
 		],
 		[ 'no window', () => ( { origin: PLAYGROUND_ORIGIN, source: null } ) ],
 	] )( 'ignores messages from %s', ( _name, getInit ) => {
-		const onPlaygroundMessage = jest.fn();
+		const onPlaygroundMessage = vi.fn();
 		renderIframe( onPlaygroundMessage );
 
 		postMessage( getInit() );
@@ -429,7 +427,7 @@ describe( 'PlaygroundIframe messages', () => {
 	it( 'holds messages posted during the intro until the Playground is ready', async () => {
 		mockSearchParams = new URLSearchParams( { blueprint: 'woocommerce' } );
 		const boot = deferBoot();
-		const onPlaygroundMessage = jest.fn();
+		const onPlaygroundMessage = vi.fn();
 		renderIframe( onPlaygroundMessage, true );
 
 		postMessage( { origin: PLAYGROUND_ORIGIN, source: getIframe().contentWindow } );
@@ -446,7 +444,7 @@ describe( 'PlaygroundIframe messages', () => {
 	it( 'drops messages posted during the intro when the boot fails', async () => {
 		mockSearchParams = new URLSearchParams( { blueprint: 'woocommerce' } );
 		const boot = deferBoot();
-		const onPlaygroundMessage = jest.fn();
+		const onPlaygroundMessage = vi.fn();
 		renderIframe( onPlaygroundMessage, true );
 
 		postMessage( { origin: PLAYGROUND_ORIGIN, source: getIframe().contentWindow } );
@@ -457,7 +455,7 @@ describe( 'PlaygroundIframe messages', () => {
 	} );
 
 	it( 'logs the first message from an unknown origin inside the Playground', () => {
-		renderIframe( jest.fn() );
+		renderIframe( vi.fn() );
 
 		postMessage( { origin: 'https://example.com', source: getIframe().contentWindow } );
 		postMessage( { origin: 'https://example.org', source: getIframe().contentWindow } );
@@ -472,7 +470,7 @@ describe( 'PlaygroundIframe messages', () => {
 	} );
 
 	it( 'does not log messages from known origins or from outside the Playground', () => {
-		renderIframe( jest.fn() );
+		renderIframe( vi.fn() );
 
 		postMessage( { origin: PLAYGROUND_ORIGIN, source: getIframe().contentWindow } );
 		postMessage( { origin: 'https://example.com', source: appendFrame( document ).contentWindow } );
@@ -481,9 +479,9 @@ describe( 'PlaygroundIframe messages', () => {
 	} );
 
 	it( 'only passes messages on to the current callback', () => {
-		const addEventListener = jest.spyOn( window, 'addEventListener' );
-		const first = jest.fn();
-		const second = jest.fn();
+		const addEventListener = vi.spyOn( window, 'addEventListener' );
+		const first = vi.fn();
+		const second = vi.fn();
 		const { rerender } = renderIframe( first );
 
 		rerender( getIframeElement( second ) );
@@ -500,11 +498,10 @@ describe( 'PlaygroundIframe messages', () => {
 	} );
 
 	it( 'ignores the old iframe once a new playground replaces it', async () => {
-		jest
-			.mocked( initializeWordPressPlayground )
+		vi.mocked( initializeWordPressPlayground )
 			.mockRejectedValueOnce( new BlueprintLoadError( 'https://example.com', new Error() ) )
 			.mockReturnValue( new Promise( () => {} ) );
-		const onPlaygroundMessage = jest.fn();
+		const onPlaygroundMessage = vi.fn();
 		renderIframe( onPlaygroundMessage );
 		const oldSource = getIframe().contentWindow;
 

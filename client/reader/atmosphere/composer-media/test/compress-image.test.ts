@@ -1,26 +1,27 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { type MockInstance, vi } from 'vitest';
 import { compressImage, CompressionFailedError } from '../compress-image';
 
 describe( 'compressImage', () => {
-	let toBlobSpy: jest.SpyInstance;
+	let toBlobSpy: MockInstance;
 
 	beforeEach( () => {
-		// Force <canvas> fallback (jest-canvas-mock polyfills HTMLCanvasElement,
+		// Force <canvas> fallback (vitest-canvas-mock polyfills HTMLCanvasElement,
 		// not OffscreenCanvas).
 		// @ts-expect-error - intentional cleanup of any prior polyfill.
 		delete global.OffscreenCanvas;
 
 		// Polyfill createImageBitmap to return a fake bitmap whose dimensions
 		// are encoded in the source File's name (e.g. "synth-4000x2000.png").
-		global.createImageBitmap = jest.fn( async ( source: ImageBitmapSource ) => {
+		global.createImageBitmap = vi.fn( async ( source: ImageBitmapSource ) => {
 			const name = ( source as File ).name ?? '';
 			const match = name.match( /(\d+)x(\d+)/ );
 			const width = match ? parseInt( match[ 1 ], 10 ) : 1200;
 			const height = match ? parseInt( match[ 2 ], 10 ) : 800;
 			// `new ImageBitmap()` isn't constructible — fabricate an instance whose
-			// prototype satisfies `instanceof ImageBitmap` (jest-canvas-mock's
+			// prototype satisfies `instanceof ImageBitmap` (vitest-canvas-mock's
 			// `drawImage` checks via `instanceof`).
 			const bitmap = Object.assign( Object.create( ImageBitmap.prototype ) as ImageBitmap, {
 				width,
@@ -38,7 +39,7 @@ describe( 'compressImage', () => {
 	} );
 
 	function mockToBlobBySize( sizeFromQuality: ( quality: number ) => number ) {
-		toBlobSpy = jest.spyOn( HTMLCanvasElement.prototype, 'toBlob' ).mockImplementation( function (
+		toBlobSpy = vi.spyOn( HTMLCanvasElement.prototype, 'toBlob' ).mockImplementation( function (
 			this: HTMLCanvasElement,
 			cb: BlobCallback,
 			_type?: string,

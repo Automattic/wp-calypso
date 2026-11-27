@@ -1,4 +1,5 @@
 import { lazy } from 'react';
+import { vi } from 'vitest';
 import {
 	componentTypeOf,
 	describeStepMount,
@@ -21,7 +22,7 @@ describe( 'step mount registry', () => {
 	} );
 
 	it( 'reports the component type last handed to React and the time since the route mounted', () => {
-		const now = jest.spyOn( performance, 'now' );
+		const now = vi.spyOn( performance, 'now' );
 		now.mockReturnValue( 1000 );
 		recordStepRouteMount( 'processing' );
 		recordStepComponentType( 'processing', 'lazy' );
@@ -37,20 +38,18 @@ describe( 'step mount registry', () => {
 		now.mockRestore();
 	} );
 
-	it( 'tells whether a step is the only route mounted in the document', () => {
+	it( 'tells whether a step is the only route mounted in the document', async () => {
 		// A fresh copy, because the routes recorded by the tests above stay in module state.
-		jest.isolateModules( () => {
-			const registry =
-				jest.requireActual< typeof import( '../step-mount-registry' ) >( '../step-mount-registry' );
+		vi.resetModules();
+		const registry = await import( '../step-mount-registry' );
 
-			expect( registry.isOnlyStepMounted( 'error' ) ).toBe( false );
+		expect( registry.isOnlyStepMounted( 'error' ) ).toBe( false );
 
-			registry.recordStepRouteMount( 'error' );
-			expect( registry.isOnlyStepMounted( 'error' ) ).toBe( true );
-			expect( registry.isOnlyStepMounted( 'processing' ) ).toBe( false );
+		registry.recordStepRouteMount( 'error' );
+		expect( registry.isOnlyStepMounted( 'error' ) ).toBe( true );
+		expect( registry.isOnlyStepMounted( 'processing' ) ).toBe( false );
 
-			registry.recordStepRouteMount( 'processing' );
-			expect( registry.isOnlyStepMounted( 'error' ) ).toBe( false );
-		} );
+		registry.recordStepRouteMount( 'processing' );
+		expect( registry.isOnlyStepMounted( 'error' ) ).toBe( false );
 	} );
 } );

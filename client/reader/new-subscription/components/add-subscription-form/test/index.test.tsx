@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { getSiteSubscriptionsQueryKey } from '@automattic/api-queries';
@@ -7,6 +7,8 @@ import { SiteSubscriptionsQueryPropsProvider } from '@automattic/data-stores/src
 import { QueryClient } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
+import { SiteSubscriptionsList } from 'calypso/landing/subscriptions/components/site-subscriptions-list';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import AddSubscriptionForm from '../index';
@@ -16,8 +18,8 @@ interface AddSitesFormMockProps {
 	onChangeSubscribe: () => void;
 }
 
-jest.mock( 'calypso/landing/subscriptions/components/add-sites-form', () => ( {
-	AddSitesForm: jest.fn( ( { onChangeFeedPreview, onChangeSubscribe }: AddSitesFormMockProps ) => {
+vi.mock( 'calypso/landing/subscriptions/components/add-sites-form', () => ( {
+	AddSitesForm: vi.fn( ( { onChangeFeedPreview, onChangeSubscribe }: AddSitesFormMockProps ) => {
 		return (
 			<div>
 				<button type="button" onClick={ () => onChangeFeedPreview( true ) }>
@@ -31,23 +33,25 @@ jest.mock( 'calypso/landing/subscriptions/components/add-sites-form', () => ( {
 	} ),
 } ) );
 
-jest.mock( 'calypso/landing/subscriptions/components/site-subscriptions-list', () => ( {
-	SiteSubscriptionsList: jest.fn( () => <section aria-label="Site subscriptions list" /> ),
+vi.mock( 'calypso/landing/subscriptions/components/site-subscriptions-list', () => ( {
+	SiteSubscriptionsList: vi.fn( () => <section aria-label="Site subscriptions list" /> ),
 } ) );
 
-jest.mock( 'calypso/reader/site-subscriptions-manager/unsubscribed-feeds-search-list', () => ( {
-	UnsubscribedFeedsSearchList: jest.fn( () => <section aria-label="Related sites list" /> ),
+vi.mock( 'calypso/reader/site-subscriptions-manager/unsubscribed-feeds-search-list', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		UnsubscribedFeedsSearchList: vi.fn( () => <section aria-label="Related sites list" /> ),
+	} )
+);
+
+vi.mock( 'calypso/state/current-user/selectors', () => ( {
+	isCurrentUserEmailVerified: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/state/current-user/selectors', () => ( {
-	isCurrentUserEmailVerified: jest.fn(),
-} ) );
-
-const mockIsCurrentUserEmailVerified = jest.mocked( isCurrentUserEmailVerified );
+const mockIsCurrentUserEmailVerified = vi.mocked( isCurrentUserEmailVerified );
 
 describe( 'AddSubscriptionForm', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockIsCurrentUserEmailVerified.mockReturnValue( true );
 	} );
 
@@ -76,10 +80,6 @@ describe( 'AddSubscriptionForm', () => {
 
 	describe( 'add-new tab', () => {
 		it( 'shows the subscriptions list when there are no instructions', () => {
-			const { SiteSubscriptionsList } = jest.requireMock(
-				'calypso/landing/subscriptions/components/site-subscriptions-list'
-			);
-
 			renderWithProvider( <AddSubscriptionForm type="add-new" /> );
 
 			expect( screen.getByText( 'Your subscriptions' ) ).toBeVisible();
@@ -88,7 +88,7 @@ describe( 'AddSubscriptionForm', () => {
 			).toBeInTheDocument();
 			// Only assert on the props argument: React 18 calls function components
 			// with `( props, {} )` while React 19 passes `( props, undefined )`.
-			expect( SiteSubscriptionsList.mock.calls[ 0 ][ 0 ] ).toEqual(
+			expect( vi.mocked( SiteSubscriptionsList ).mock.calls[ 0 ][ 0 ] ).toEqual(
 				expect.objectContaining( { layout: 'compact' } )
 			);
 		} );
@@ -116,7 +116,7 @@ describe( 'AddSubscriptionForm', () => {
 		it( 'does not invalidate follows on subscribe toggle', async () => {
 			const user = userEvent.setup();
 			const queryClient = new QueryClient();
-			const invalidateQueries = jest.spyOn( queryClient, 'invalidateQueries' );
+			const invalidateQueries = vi.spyOn( queryClient, 'invalidateQueries' );
 			renderWithProvider( <AddSubscriptionForm type="add-new" />, { queryClient } );
 
 			await user.click( screen.getByRole( 'button', { name: 'Toggle subscription' } ) );
@@ -159,7 +159,7 @@ describe( 'AddSubscriptionForm', () => {
 		it( 'invalidates follows on subscribe toggle', async () => {
 			const user = userEvent.setup();
 			const queryClient = new QueryClient();
-			const invalidateQueries = jest.spyOn( queryClient, 'invalidateQueries' );
+			const invalidateQueries = vi.spyOn( queryClient, 'invalidateQueries' );
 			renderWithProvider( <AddSubscriptionForm type="youtube" />, { queryClient } );
 
 			await user.click( screen.getByRole( 'button', { name: 'Toggle subscription' } ) );

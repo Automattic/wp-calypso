@@ -1,17 +1,18 @@
 import { normalizeAbilityName } from '../abilities/ability-name';
 import {
-	APPLY_BLOCK_EDITS_ABILITY_NAME,
 	GET_BLOCK_TREE_ABILITY_NAME,
 	getWebMcpDescription,
 	getWebMcpInputSchema,
 	isWebMcpServerAbilityName,
 } from './contracts';
+import { isAbilityOnCurrentScreen } from './eligibility';
 import { adaptToolResult, prepareToolInput, rememberBlockClientIds } from './tool-calls';
 import type { ToolProvider } from '../extension-types';
 import type { ToolCallContext } from './tool-calls';
 import type { WebMcpAdapter, WebMcpModelContext, WebMcpTool } from './types';
 import type { Ability } from '@wordpress/abilities';
 
+export { withBlockEditCorrections } from './block-edit-correction-provider';
 export { withoutChatToolCalls } from './non-chat-call-provider';
 export { subscribeToRegistryAbilities, withRegistryAbilities } from './registry-ability-provider';
 export { withServerAbilities } from './server-ability-provider';
@@ -46,11 +47,53 @@ function getFlagRefusalReason( ability: Ability ): string | undefined {
 export function shouldExposeWebMcpAbility( ability: Ability ): boolean {
 	const annotations = ability.meta?.annotations;
 
+	if ( ! isAbilityOnCurrentScreen( ability ) ) {
+		return false;
+	}
+
 	if ( isWebMcpServerAbilityName( ability.name ) ) {
 		return annotations?.serverRegistered === true && annotations.readonly === true;
 	}
 
 	return ability.meta?.webmcp?.public === true && ! getFlagRefusalReason( ability );
+}
+
+type ExposedAbilities = {
+	exposed: Map< string, Ability >;
+	collisions: Map< string, string[] >;
+};
+
+/**
+ * `normalizeAbilityName()` isn't one-to-one: `demo/read--panel` and `demo/read/panel` both become
+ * `demo__read__panel`. Abilities that share a tool name would replace each other, so none of them
+ * is exposed.
+ */
+function selectExposedAbilities( abilities: Ability[] ): ExposedAbilities {
+	const exposed = new Map(
+		abilities
+			.filter( shouldExposeWebMcpAbility )
+			.map( ( ability ) => [ ability.name, ability ] as const )
+	);
+	const abilityNamesByToolName = new Map< string, string[] >();
+
+	for ( const abilityName of exposed.keys() ) {
+		const toolName = normalizeAbilityName( abilityName );
+
+		abilityNamesByToolName.set( toolName, [
+			...( abilityNamesByToolName.get( toolName ) ?? [] ),
+			abilityName,
+		] );
+	}
+
+	const collisions = new Map(
+		[ ...abilityNamesByToolName ].filter( ( [ , abilityNames ] ) => abilityNames.length > 1 )
+	);
+
+	for ( const abilityName of [ ...collisions.values() ].flat() ) {
+		exposed.delete( abilityName );
+	}
+
+	return { exposed, collisions };
 }
 
 export function normalizeInputSchema( schema: unknown ): Record< string, unknown > {
@@ -84,26 +127,29 @@ function createTool(
 		title: ability.label || ability.name,
 		description: getWebMcpDescription( ability ),
 		inputSchema: normalizeInputSchema( getWebMcpInputSchema( ability ) ),
+		// The WebMCP draft's `ToolAnnotations`, which has no MCP-style `destructiveHint` or
+		// `idempotentHint`.
 		annotations: {
 			readOnlyHint: ability.meta?.annotations?.readonly === true,
-			destructiveHint:
-				ability.name === APPLY_BLOCK_EDITS_ABILITY_NAME ||
-				ability.meta?.annotations?.destructive === true,
-			idempotentHint: ability.meta?.annotations?.idempotent === true,
+			// Results carry site content and other plugins' output, which Agents Manager can't
+			// vouch for.
+			untrustedContentHint: true,
+			consequentialHint:
+				ability.meta?.annotations?.destructive === true ||
+				ability.meta?.webmcp?.consequential === true,
+			debugging: ability.meta?.webmcp?.debugging === true,
 		},
 		execute: async ( input, options ) => {
 			// The ability can change before the next sync replaces this tool, e.g. an unflagged one
-			// registered under the same name.
-			const current = ( await toolProvider.getAbilities() ).find(
-				( item ) => item.name === ability.name
-			);
+			// registered under the same name, or one that now shares its tool name.
+			const { exposed } = selectExposedAbilities( await toolProvider.getAbilities() );
 
 			// Checked after the lookup, so a call cancelled while it was pending never edits.
 			if ( options?.signal?.aborted ) {
 				throw createAbortError();
 			}
 
-			if ( ! current || ! shouldExposeWebMcpAbility( current ) ) {
+			if ( ! exposed.has( ability.name ) ) {
 				throw new Error(
 					`WebMCP tool is no longer available: ${ normalizeAbilityName( ability.name ) }`
 				);
@@ -139,6 +185,7 @@ export function createWebMcpAdapter( {
 	const pendingControllers = new Set< AbortController >();
 	const toolCallContext: ToolCallContext = { knownBlockClientIds: new Set() };
 	const warnedAbilityNames = new Set< string >();
+	const warnedToolNames = new Set< string >();
 	let disposed = false;
 	let syncRequested = false;
 	let syncQueue = Promise.resolve();
@@ -167,6 +214,20 @@ export function createWebMcpAdapter( {
 		}
 	};
 
+	const warnAboutSharedToolNames = ( collisions: Map< string, string[] > ) => {
+		for ( const [ toolName, abilityNames ] of collisions ) {
+			if ( ! warnedToolNames.has( toolName ) ) {
+				warnedToolNames.add( toolName );
+				// eslint-disable-next-line no-console
+				console.warn(
+					`[AgentsManager] WebMCP doesn't expose ${ abilityNames.join(
+						', '
+					) }: they share the tool name ${ toolName }.`
+				);
+			}
+		}
+	};
+
 	const reconcile = async () => {
 		const abilities = await toolProvider.getAbilities();
 
@@ -174,14 +235,12 @@ export function createWebMcpAdapter( {
 			return;
 		}
 
-		warnAboutRefusedFlags( abilities );
+		warnAboutRefusedFlags( abilities.filter( isAbilityOnCurrentScreen ) );
 
-		const eligible = new Map(
-			abilities
-				.filter( shouldExposeWebMcpAbility )
-				.map( ( ability ) => [ ability.name, ability ] as const )
-		);
+		const { exposed: eligible, collisions } = selectExposedAbilities( abilities );
 		const registrationErrors: unknown[] = [];
+
+		warnAboutSharedToolNames( collisions );
 
 		for ( const [ abilityName, registration ] of registrations ) {
 			if ( ! eligible.has( abilityName ) ) {
@@ -192,8 +251,24 @@ export function createWebMcpAdapter( {
 
 		for ( const [ abilityName, ability ] of eligible ) {
 			const tool = createTool( ability, toolProvider, toolCallContext );
-			const fingerprint = fingerprintTool( tool );
 			const current = registrations.get( abilityName );
+			let fingerprint: string;
+
+			try {
+				fingerprint = fingerprintTool( tool );
+			} catch {
+				// A schema that can't be serialized, such as a cyclic one, is that ability's defect.
+				registrationErrors.push(
+					new Error( `The WebMCP tool for ${ abilityName } cannot be serialized.` )
+				);
+
+				if ( current ) {
+					await unregister( current );
+					registrations.delete( abilityName );
+				}
+
+				continue;
+			}
 
 			if ( current?.fingerprint === fingerprint ) {
 				continue;

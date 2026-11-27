@@ -1,7 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
+import { useThemeCollection } from 'calypso/my-sites/themes/collections/use-theme-collection';
 import ThemeSection from '../theme-section';
 
 const mockThemes = [
@@ -9,41 +11,45 @@ const mockThemes = [
 	{ id: 'theme-2', name: 'Theme Two', stylesheet: 'pub/theme-2' },
 ];
 
-jest.mock( 'calypso/components/data/query-themes', () => ( {
-	useQueryThemes: jest.fn(),
-} ) );
+vi.mock( 'calypso/components/data/query-themes', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		useQueryThemes: vi.fn(),
+	} )
+);
 
-jest.mock( 'calypso/my-sites/themes/collections/use-theme-collection', () => ( {
-	useThemeCollection: jest.fn( () => ( {
+vi.mock( 'calypso/my-sites/themes/collections/use-theme-collection', () => ( {
+	useThemeCollection: vi.fn( () => ( {
 		themes: mockThemes,
-		getPrice: jest.fn(),
-		isActive: jest.fn(),
-		isInstalling: jest.fn(),
-		isLivePreviewStarted: jest.fn(),
+		getPrice: vi.fn(),
+		isActive: vi.fn(),
+		isInstalling: vi.fn(),
+		isLivePreviewStarted: vi.fn(),
 		siteId: null,
-		getThemeType: jest.fn(),
-		getThemeTierForTheme: jest.fn(),
+		getThemeType: vi.fn(),
+		getThemeTierForTheme: vi.fn(),
 		filterString: '',
-		getThemeDetailsUrl: jest.fn(),
+		getThemeDetailsUrl: vi.fn(),
 	} ) ),
 } ) );
 
-jest.mock( 'calypso/my-sites/themes/events/theme-showcase-tracks', () => ( {
-	getThemeShowcaseEventRecorder: jest.fn( () => ( {
-		recordThemeClick: jest.fn(),
-		recordThemeStyleVariationClick: jest.fn(),
-		recordThemesStyleVariationMoreClick: jest.fn(),
+vi.mock( 'calypso/my-sites/themes/events/theme-showcase-tracks', () => ( {
+	getThemeShowcaseEventRecorder: vi.fn( () => ( {
+		recordThemeClick: vi.fn(),
+		recordThemeStyleVariationClick: vi.fn(),
+		recordThemesStyleVariationMoreClick: vi.fn(),
 	} ) ),
 } ) );
 
-jest.mock( 'calypso/components/themes-list', () => ( {
-	ThemeBlock: ( { theme }: { theme: { id: string; name: string } } ) => (
-		<div data-testid={ `theme-block-${ theme.id }` }>{ theme.name }</div>
-	),
-} ) );
+vi.mock( 'calypso/components/themes-list', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		ThemeBlock: ( { theme }: { theme: { id: string; name: string } } ) => (
+			<div data-testid={ `theme-block-${ theme.id }` }>{ theme.name }</div>
+		),
+	} )
+);
 
-jest.mock( 'calypso/my-sites/themes/helpers', () => ( {
-	trackClick: jest.fn(),
+vi.mock( 'calypso/my-sites/themes/helpers', () => ( {
+	trackClick: vi.fn(),
 } ) );
 
 const defaultProps = {
@@ -61,9 +67,9 @@ const defaultProps = {
 	},
 	sectionSlug: 'favorites',
 	sectionIndex: 0,
-	getActionLabel: jest.fn(),
-	getOptions: jest.fn(),
-	getScreenshotUrl: jest.fn(),
+	getActionLabel: vi.fn(),
+	getOptions: vi.fn(),
+	getScreenshotUrl: vi.fn(),
 };
 
 describe( 'ThemeSection', () => {
@@ -109,20 +115,17 @@ describe( 'ThemeSection', () => {
 	} );
 
 	test( 'renders empty grid when there are no themes', () => {
-		const { useThemeCollection } = jest.requireMock(
-			'calypso/my-sites/themes/collections/use-theme-collection'
-		);
-		useThemeCollection.mockReturnValueOnce( {
+		vi.mocked( useThemeCollection ).mockReturnValueOnce( {
 			themes: [],
-			getPrice: jest.fn(),
-			isActive: jest.fn(),
-			isInstalling: jest.fn(),
-			isLivePreviewStarted: jest.fn(),
+			getPrice: vi.fn(),
+			isActive: vi.fn(),
+			isInstalling: vi.fn(),
+			isLivePreviewStarted: vi.fn(),
 			siteId: null,
-			getThemeType: jest.fn(),
-			getThemeTierForTheme: jest.fn(),
+			getThemeType: vi.fn(),
+			getThemeTierForTheme: vi.fn(),
 			filterString: '',
-			getThemeDetailsUrl: jest.fn(),
+			getThemeDetailsUrl: vi.fn(),
 		} );
 
 		const { container } = render( <ThemeSection { ...defaultProps } /> );

@@ -1,16 +1,17 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { renderHook, act } from '@testing-library/react';
+import { vi } from 'vitest';
 import useCachedAnswers from '../use-cached-answers';
 
 const localStorageMock = {
-	getItem: jest.fn(),
-	setItem: jest.fn(),
-	removeItem: jest.fn(),
-	clear: jest.fn(),
+	getItem: vi.fn(),
+	setItem: vi.fn(),
+	removeItem: vi.fn(),
+	clear: vi.fn(),
 	length: 0,
-	key: jest.fn(),
+	key: vi.fn(),
 };
 
 describe( 'useCachedAnswers', () => {

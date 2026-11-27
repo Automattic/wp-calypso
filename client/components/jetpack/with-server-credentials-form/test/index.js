@@ -1,23 +1,24 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
+import { vi } from 'vitest';
 import withServerCredentialsForm from 'calypso/components/jetpack/with-server-credentials-form';
 import * as actions from 'calypso/state/jetpack/credentials/actions';
 
 /**
  * Mocks
  */
-jest.mock( 'calypso/components/data/query-site-credentials', () => {
+vi.mock( 'calypso/components/data/query-site-credentials', () => {
 	const QuerySiteCredentials = () => <div />;
-	return QuerySiteCredentials;
+	return { ...QuerySiteCredentials, default: QuerySiteCredentials };
 } );
 
-jest.mock( 'calypso/state/selectors/get-jetpack-credentials', () => ( {
+vi.mock( 'calypso/state/selectors/get-jetpack-credentials', () => ( {
 	__esModule: true,
 	default: () => ( {
 		user: 'jetpackUser',
@@ -27,18 +28,17 @@ jest.mock( 'calypso/state/selectors/get-jetpack-credentials', () => ( {
 	} ),
 } ) );
 
-jest.mock( 'calypso/state/sites/selectors', () => ( {
+vi.mock( 'calypso/state/sites/selectors', () => ( {
 	getSiteSlug: () => 'site-slug',
 } ) );
 
-jest.mock(
-	'calypso/state/selectors/get-jetpack-credentials-update-status',
-	() => () => 'unsubmitted'
-);
+vi.mock( 'calypso/state/selectors/get-jetpack-credentials-update-status', () => ( {
+	default: () => 'unsubmitted',
+} ) );
 
-jest.mock( 'calypso/state/jetpack/credentials/actions', () => ( {
-	updateCredentials: jest.fn( () => ( { type: 'update-credentials' } ) ),
-	deleteCredentials: jest.fn( () => ( { type: 'delete-credentials' } ) ),
+vi.mock( 'calypso/state/jetpack/credentials/actions', () => ( {
+	updateCredentials: vi.fn( () => ( { type: 'update-credentials' } ) ),
+	deleteCredentials: vi.fn( () => ( { type: 'delete-credentials' } ) ),
 } ) );
 
 /**
@@ -118,7 +118,7 @@ function setup( { role = 'main', siteId = 9999, siteUrl = 'siteUrl' } = {} ) {
 
 describe( 'useWithServerCredentials HOC', () => {
 	afterEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'should not update credentials (should display error messages)', async () => {

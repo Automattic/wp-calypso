@@ -100,7 +100,6 @@ const gitHubInitialState = {
 	login: {
 		isFormDisabled: false,
 		requestError: null,
-		requestSuccess: false,
 		magicLogin: {
 			isFetching: false,
 			isComplete: false,

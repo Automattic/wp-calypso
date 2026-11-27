@@ -1,32 +1,46 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
-jest.mock( '@automattic/calypso-router', () => ( {
+import { readConversationsQuery } from '@automattic/api-queries';
+import page from '@automattic/calypso-router';
+import { useBreakpoint } from '@automattic/viewport-react';
+import { QueryClient } from '@tanstack/react-query';
+import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import nock from 'nock';
+import { vi } from 'vitest';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
+import { ConversationsInbox } from '..';
+import { makeConversation, makeOwnComment } from '../test/helpers';
+
+vi.mock( '@automattic/calypso-router', () => ( {
 	__esModule: true,
-	default: { show: jest.fn(), replace: jest.fn() },
+	default: { show: vi.fn(), replace: vi.fn() },
 } ) );
 
 let mockIsNarrow = false;
 
-jest.mock( '@automattic/viewport-react', () => ( {
-	useBreakpoint: jest.fn( () => mockIsNarrow ),
+vi.mock( '@automattic/viewport-react', () => ( {
+	useBreakpoint: vi.fn( () => mockIsNarrow ),
 } ) );
 
-jest.mock( 'calypso/components/data/document-head', () => () => null );
+vi.mock( 'calypso/components/data/document-head', () => ( { default: () => null } ) );
 
-jest.mock( 'calypso/reader/stream/use-selected-post-commands', () => ( {
-	useSelectedPostCommands: () => ( { toggleSelectedLike: jest.fn() } ),
+vi.mock( 'calypso/reader/stream/use-selected-post-commands', () => ( {
+	useSelectedPostCommands: () => ( { toggleSelectedLike: vi.fn() } ),
 } ) );
 
-jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
-	recordReaderTracksEvent: jest.fn( () => ( { type: 'READER_TRACKS_EVENT_TEST' } ) ),
+vi.mock( 'calypso/state/reader/analytics/actions', () => ( {
+	recordReaderTracksEvent: vi.fn( () => ( { type: 'READER_TRACKS_EVENT_TEST' } ) ),
 } ) );
 
-jest.mock( 'calypso/state/notices/actions', () => ( {
-	errorNotice: jest.fn( () => ( { type: 'NOTICE_TEST' } ) ),
+vi.mock( 'calypso/state/notices/actions', () => ( {
+	errorNotice: vi.fn( () => ( { type: 'NOTICE_TEST' } ) ),
 } ) );
 
-jest.mock( '../conversation-list', () => ( {
+vi.mock( '../conversation-list', () => ( {
 	ConversationList: ( props: {
 		items: { key: string; unreadCount: number }[];
 		unreadCount: number;
@@ -62,7 +76,7 @@ jest.mock( '../conversation-list', () => ( {
 	),
 } ) );
 
-jest.mock( '../conversation-detail', () => ( {
+vi.mock( '../conversation-detail', () => ( {
 	ConversationDetail: ( props: {
 		siteId: number;
 		postId: number;
@@ -84,18 +98,6 @@ jest.mock( '../conversation-detail', () => ( {
 		</div>
 	),
 } ) );
-
-import page from '@automattic/calypso-router';
-import { useBreakpoint } from '@automattic/viewport-react';
-import { QueryClient } from '@tanstack/react-query';
-import { screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import nock from 'nock';
-import { errorNotice } from 'calypso/state/notices/actions';
-import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import { ConversationsInbox } from '..';
-import { makeConversation, makeOwnComment } from '../test/helpers';
 
 const BASE = 'https://public-api.wordpress.com';
 
@@ -119,13 +121,24 @@ const conversationsPage = ( items = conversations, nextCursor: string | null = n
 
 let requests: string[];
 let replyConversations: ( uri: string ) => object;
+let holdConversations: Promise< void > | undefined;
 let markReadStatus: number;
 let markReadBodies: { counts: Record< string, number > }[];
 
 let queryClient: QueryClient | undefined;
 
-const renderInbox = ( props: { siteId?: string; postId?: string } = {} ) => {
+const renderInbox = (
+	props: { siteId?: string; postId?: string } = {},
+	staleConversations?: typeof conversations
+) => {
 	queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+	if ( staleConversations ) {
+		queryClient.setQueryData(
+			readConversationsQuery().queryKey,
+			{ pages: [ conversationsPage( staleConversations ) ], pageParams: [ undefined ] },
+			{ updatedAt: 0 }
+		);
+	}
 	return renderWithProvider( <ConversationsInbox { ...props } />, { queryClient } );
 };
 
@@ -134,19 +147,21 @@ const findRow = ( key: string ) => screen.findByRole( 'button', { name: key } );
 
 beforeEach( () => {
 	mockIsNarrow = false;
-	jest.mocked( page.show ).mockReset();
-	jest.mocked( page.replace ).mockReset();
-	jest.mocked( recordReaderTracksEvent ).mockClear();
+	vi.mocked( page.show ).mockReset();
+	vi.mocked( page.replace ).mockReset();
+	vi.mocked( recordReaderTracksEvent ).mockClear();
 	requests = [];
 	replyConversations = () => conversationsPage();
+	holdConversations = undefined;
 	markReadStatus = 200;
 	markReadBodies = [];
 	nock( BASE )
 		.persist()
 		.get( '/wpcom/v2/read/conversations' )
 		.query( true )
-		.reply( 200, ( uri ) => {
+		.reply( 200, async ( uri ) => {
 			requests.push( uri );
+			await holdConversations;
 			return replyConversations( uri );
 		} )
 		.get( '/wpcom/v2/read/conversations/comments' )
@@ -211,6 +226,15 @@ describe( 'ConversationsInbox', () => {
 		expect( screen.getByText( 'Follows focus: yes' ) ).toBeVisible();
 	} );
 
+	it( 'auto-selects the latest conversation once a cached list is refreshed', async () => {
+		renderInbox( {}, [ conversations[ 2 ], conversations[ 0 ], conversations[ 1 ] ] );
+
+		await waitFor( () =>
+			expect( page.replace ).toHaveBeenCalledWith( '/reader/conversations/inbox/10/100' )
+		);
+		expect( page.replace ).toHaveBeenCalledTimes( 1 );
+	} );
+
 	it( 'selects the conversation from the URL without replacing it', async () => {
 		renderInbox( { siteId: '10', postId: '200' } );
 
@@ -268,6 +292,20 @@ describe( 'ConversationsInbox', () => {
 		await new Promise( ( resolve ) => setTimeout( resolve, 50 ) );
 
 		expect( requests ).toHaveLength( 1 );
+	} );
+
+	it( 'refetches a cached list whose refresh marking a conversation read cancelled', async () => {
+		mockIsNarrow = true;
+		let release = () => {};
+		holdConversations = new Promise( ( resolve ) => ( release = resolve ) );
+		const user = userEvent.setup();
+		renderInbox( {}, [ conversations[ 1 ] ] );
+
+		await waitFor( () => expect( requests ).toHaveLength( 1 ) );
+		await user.click( await findRow( '10-p-200' ) );
+		release();
+
+		expect( await findRow( '10-p-100' ) ).toBeVisible();
 	} );
 
 	it( 'refetches the list when a conversation has more unread notes than it lists', async () => {
@@ -436,7 +474,7 @@ describe( 'ConversationsInbox', () => {
 
 	describe( 'Tracks', () => {
 		const tracked = ( name: string ) =>
-			jest
+			vi
 				.mocked( recordReaderTracksEvent )
 				.mock.calls.filter( ( [ eventName ] ) => eventName === name )
 				.map( ( [ , properties ] ) => properties );

@@ -14,7 +14,7 @@ export function testOverlay() {
 			mainFields: [ 'module', 'main' ],
 			alias: [
 				{
-					find: /^@automattic\/calypso-config$/,
+					find: /^(@automattic\/calypso-config|calypso\/server\/config)$/,
 					replacement: path.join( setupDir, 'calypso-config.ts' ),
 				},
 				// Externalized, the CJS browser build `require()`s @emotion/react through Node, loading a
@@ -28,10 +28,7 @@ export function testOverlay() {
 				},
 				{
 					find: /^@mswjs\/interceptors\/presets\/node$/,
-					replacement: path.join(
-						root,
-						'packages/calypso-jest/src/mswjs-interceptors-node-preset.js'
-					),
+					replacement: path.join( setupDir, 'mswjs-interceptors-node-preset.js' ),
 				},
 			],
 		},

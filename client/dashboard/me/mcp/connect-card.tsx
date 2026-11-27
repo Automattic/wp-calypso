@@ -116,7 +116,7 @@ function AccessOffNotice( {
 			<Notice
 				variant="info"
 				title={ sprintf(
-					/* translators: %s is the formatted number of sites added under "Add MCP to specific sites" */
+					/* translators: %s is the formatted number of sites with MCP access */
 					_n(
 						'MCP access is read-only on %s site',
 						'MCP access is read-only on %s sites',

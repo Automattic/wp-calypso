@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { type Mock, vi } from 'vitest';
 import * as notices from 'calypso/state/notices/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SocialAnalyticsProvider } from '../../social/components/post-card/analytics-context';
@@ -16,8 +17,8 @@ import type { SocialPost } from '../../social/types';
 // `logToLogstash` fires a real HTTPS request — mute it so the
 // pipeline-level error log in the repost adapter doesn't trigger an
 // unmocked nock request during error-path tests.
-jest.mock( 'calypso/lib/logstash', () => ( {
-	logToLogstash: jest.fn(),
+vi.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: vi.fn(),
 } ) );
 
 const BASE = 'https://public-api.wordpress.com';
@@ -55,10 +56,7 @@ function makeQueryClient() {
 	return new QueryClient( { defaultOptions: { mutations: { retry: false } } } );
 }
 
-function renderRepostButton(
-	post = makePost(),
-	{ onClick = jest.fn() }: { onClick?: jest.Mock } = {}
-) {
+function renderRepostButton( post = makePost(), { onClick = vi.fn() }: { onClick?: Mock } = {} ) {
 	const useMastodonRepostAction = makeUseMastodonRepostAction( CONNECTION_ID );
 	return {
 		onClick,
@@ -82,7 +80,7 @@ function renderRepostButton(
 describe( 'makeUseMastodonRepostAction', () => {
 	afterEach( () => {
 		nock.cleanAll();
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	it( 'isReposted is false when viewer.repost is null', () => {
@@ -177,7 +175,7 @@ describe( 'makeUseMastodonRepostAction', () => {
 	} );
 
 	it( 'on repost() error fires _boost_error_shown Tracks with error_kind and direction', async () => {
-		const errorNoticeSpy = jest.spyOn( notices, 'errorNotice' );
+		const errorNoticeSpy = vi.spyOn( notices, 'errorNotice' );
 		nock( BASE )
 			.post( `/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/reposts`, {
 				status_id: STATUS_ID,
@@ -202,7 +200,7 @@ describe( 'makeUseMastodonRepostAction', () => {
 	} );
 
 	it( 'on unrepost() auth error fires _boost_error_shown Tracks with direction: unboost', async () => {
-		const errorNoticeSpy = jest.spyOn( notices, 'errorNotice' );
+		const errorNoticeSpy = vi.spyOn( notices, 'errorNotice' );
 		nock( BASE )
 			.delete( `/wpcom/v2/reader/mastodon/connections/${ CONNECTION_ID }/reposts/${ STATUS_ID }` )
 			.reply( 401, { error: 'not_authenticated' } );
@@ -245,14 +243,14 @@ describe( 'makeUseMastodonRepostAction', () => {
 
 	it( '"Quote post" menu item is enabled when onQuoteClick is provided', async () => {
 		const user = userEvent.setup();
-		const onQuoteClick = jest.fn();
+		const onQuoteClick = vi.fn();
 		const useMastodonRepostAction = makeUseMastodonRepostAction( CONNECTION_ID );
 		renderWithProvider(
 			<SocialAnalyticsProvider
 				value={ {
 					source: 'mastodon',
 					connectionId: CONNECTION_ID,
-					onClick: jest.fn(),
+					onClick: vi.fn(),
 					onQuoteClick,
 				} }
 			>
@@ -270,8 +268,8 @@ describe( 'makeUseMastodonRepostAction', () => {
 
 	it( 'clicking "Quote post" calls onQuoteClick(post) and fires _quote_clicked Tracks', async () => {
 		const user = userEvent.setup();
-		const onQuoteClick = jest.fn();
-		const onClick = jest.fn();
+		const onQuoteClick = vi.fn();
+		const onClick = vi.fn();
 		const post = makePost();
 		const useMastodonRepostAction = makeUseMastodonRepostAction( CONNECTION_ID );
 		renderWithProvider(

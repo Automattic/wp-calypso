@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { dispatch, select } from '@wordpress/data';
 import React from 'react';
+import { type Mock, vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ONBOARD_STORE } from '../../../../stores';
 import { STEPS } from '../../../internals/steps';
@@ -22,8 +23,8 @@ describe( 'Education Flow', () => {
 		Object.defineProperty( window, 'location', {
 			value: {
 				...originalLocation,
-				assign: jest.fn(),
-				replace: jest.fn(),
+				assign: vi.fn(),
+				replace: vi.fn(),
 				href: 'https://wordpress.com/setup/education',
 			},
 			writable: true,
@@ -40,7 +41,7 @@ describe( 'Education Flow', () => {
 	} );
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'initializes the education steps with required login and no plan in the cart yet', () => {
@@ -146,7 +147,7 @@ describe( 'Education Flow', () => {
 		} );
 
 		const checkoutUrl = new URL(
-			( window.location.replace as jest.Mock ).mock.calls[ 0 ][ 0 ],
+			( window.location.replace as Mock ).mock.calls[ 0 ][ 0 ],
 			'https://wordpress.com'
 		);
 
@@ -170,7 +171,7 @@ describe( 'Education Flow', () => {
 		} );
 
 		const checkoutUrl = new URL(
-			( window.location.replace as jest.Mock ).mock.calls[ 0 ][ 0 ],
+			( window.location.replace as Mock ).mock.calls[ 0 ][ 0 ],
 			'https://wordpress.com'
 		);
 
@@ -189,7 +190,7 @@ describe( 'Education Flow', () => {
 		} );
 
 		const checkoutUrl = new URL(
-			( window.location.replace as jest.Mock ).mock.calls[ 0 ][ 0 ],
+			( window.location.replace as Mock ).mock.calls[ 0 ][ 0 ],
 			'https://wordpress.com'
 		);
 
@@ -261,7 +262,7 @@ describe( 'Education Flow', () => {
 
 	describe( 'deep-link guard', () => {
 		const renderSideEffect = ( currentStepSlug: string ) => {
-			const navigate = jest.fn();
+			const navigate = vi.fn();
 			const SideEffect = () => {
 				educationFlow.useSideEffect?.(
 					currentStepSlug as Parameters< NonNullable< typeof educationFlow.useSideEffect > >[ 0 ],

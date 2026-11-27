@@ -20,11 +20,11 @@ export const statusField: Field< Email > = {
 			return (
 				<Tooltip
 					text={ __(
-						'This domain is no longer connected to WordPress.com, so this mailbox may not receive mail.'
+						'This domain is no longer on WordPress.com. Your mailbox keeps working as long as the domain’s email DNS records stay in place.'
 					) }
 				>
-					<Text intent="error" tabIndex={ 0 } className="emails-status-with-tooltip">
-						{ __( 'Disconnected' ) }
+					<Text intent="warning" tabIndex={ 0 } className="emails-status-with-tooltip">
+						{ __( 'Domain removed' ) }
 					</Text>
 				</Tooltip>
 			);
@@ -51,6 +51,16 @@ export const statusField: Field< Email > = {
 			return <Text intent="warning">{ __( 'Pending deletion' ) }</Text>;
 		}
 
+		if ( item.status === 'deletion_refused' ) {
+			return (
+				<Tooltip text={ item.deletionRefusedMessage }>
+					<Text intent="error" tabIndex={ 0 } className="emails-status-with-tooltip">
+						{ __( 'Action required' ) }
+					</Text>
+				</Tooltip>
+			);
+		}
+
 		return <Text>{ item.status }</Text>;
 	},
 	getValue: ( { item }: { item: Email } ) => item.status,
@@ -60,6 +70,6 @@ export const statusField: Field< Email > = {
 		{ value: 'unverified_forwards', label: __( 'Pending verification' ) },
 		{ value: 'google_pending_tos_acceptance', label: __( 'Finish setup' ) },
 		{ value: 'suspended', label: __( 'Expired' ) },
-		{ value: 'domain_not_connected', label: __( 'Disconnected' ) },
+		{ value: 'domain_not_connected', label: __( 'Domain removed' ) },
 	],
 };

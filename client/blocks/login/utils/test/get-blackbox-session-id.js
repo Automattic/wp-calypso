@@ -1,12 +1,13 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
+import { vi } from 'vitest';
 import { createBlackboxInstance } from '../__mocks__/blackbox-instance';
 import { loadBlackboxSdk } from '../blackbox-sdk';
 import { getBlackboxSessionId } from '../get-blackbox-session-id';
 
-jest.mock( '../blackbox-sdk', () => ( {
-	loadBlackboxSdk: jest.fn( () => Promise.resolve() ),
+vi.mock( '../blackbox-sdk', () => ( {
+	loadBlackboxSdk: vi.fn( () => Promise.resolve() ),
 } ) );
 
 const tick = async () => {
@@ -18,14 +19,14 @@ const tick = async () => {
 describe( 'getBlackboxSessionId', () => {
 	let sdk;
 	beforeEach( () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		loadBlackboxSdk.mockReset().mockResolvedValue( undefined );
 		sdk = createBlackboxInstance();
 		window.Blackbox = sdk.api;
 	} );
 	afterEach( () => {
 		delete window.Blackbox;
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	test( 'flushes before returning an ID and releases its subscription', async () => {
@@ -73,9 +74,9 @@ describe( 'getBlackboxSessionId', () => {
 		delete window.Blackbox;
 		loadBlackboxSdk.mockReturnValue( new Promise( () => {} ) );
 		const result = getBlackboxSessionId( 'login-key', undefined, 'login' );
-		await jest.advanceTimersByTimeAsync( 5000 );
+		await vi.advanceTimersByTimeAsync( 5000 );
 		await expect( result ).resolves.toBeUndefined();
-		expect( jest.getTimerCount() ).toBe( 0 );
+		expect( vi.getTimerCount() ).toBe( 0 );
 	} );
 
 	test( 'waits for a challenge without limiting user interaction time', async () => {
@@ -84,9 +85,9 @@ describe( 'getBlackboxSessionId', () => {
 			sdk.setState( { status: 'challenge', sessionId: 'sid' } );
 			return { sessionId: 'sid', challengePending: true, outcome: 'ok' };
 		} );
-		const submitted = jest.fn();
+		const submitted = vi.fn();
 		const result = getBlackboxSessionId( 'login-key', undefined, 'login' ).then( submitted );
-		await jest.advanceTimersByTimeAsync( 60000 );
+		await vi.advanceTimersByTimeAsync( 60000 );
 		expect( submitted ).not.toHaveBeenCalled();
 		sdk.setState( { status: 'ready', sessionId: 'sid' } );
 		await result;
@@ -129,7 +130,7 @@ describe( 'getBlackboxSessionId', () => {
 			controller.abort();
 			await expect( result ).resolves.toBeNull();
 			expect( sdk.listeners.size ).toBe( 0 );
-			expect( jest.getTimerCount() ).toBe( 0 );
+			expect( vi.getTimerCount() ).toBe( 0 );
 		}
 	);
 } );

@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { type Mock, type MockInstance, vi } from 'vitest';
 import * as noticeActions from 'calypso/state/notices/actions';
 import * as readerAnalytics from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -12,23 +13,21 @@ import { TIMELINE_TAB } from '../helper';
 import { MastodonAccountView } from '../mastodon-account-view';
 import type React from 'react';
 
-jest.mock(
-	'calypso/reader/components/reader-main',
-	() =>
-		function ReaderMain( { children }: { children: React.ReactNode } ) {
-			return <div>{ children }</div>;
-		}
-);
+vi.mock( 'calypso/reader/components/reader-main', () => ( {
+	default: function ReaderMain( { children }: { children: React.ReactNode } ) {
+		return <div>{ children }</div>;
+	},
+} ) );
 
-jest.mock( 'calypso/components/data/document-head', () => () => null );
+vi.mock( 'calypso/components/data/document-head', () => ( { default: () => null } ) );
 
-jest.mock( '../timeline-panel', () => ( {
+vi.mock( '../timeline-panel', () => ( {
 	TimelinePanel: () => <div>Mastodon timeline placeholder</div>,
 } ) );
 
-jest.mock( '@automattic/calypso-router', () => {
-	const replace = jest.fn();
-	const fn = jest.fn() as jest.Mock & { replace: jest.Mock };
+vi.mock( '@automattic/calypso-router', () => {
+	const replace = vi.fn();
+	const fn = vi.fn() as Mock & { replace: Mock };
 	fn.replace = replace;
 	return { __esModule: true, default: fn };
 } );
@@ -72,7 +71,7 @@ function mockConnectionDetails() {
 }
 
 describe( 'MastodonAccountView reauth gate', () => {
-	let assignMock: jest.Mock;
+	let assignMock: Mock;
 	let originalLocation: Location;
 
 	beforeAll( () => {
@@ -88,19 +87,19 @@ describe( 'MastodonAccountView reauth gate', () => {
 		delete global.IntersectionObserver;
 	} );
 
-	let trackSpy: jest.SpyInstance;
+	let trackSpy: MockInstance;
 	beforeEach( () => {
 		// recordReaderTracksEvent is a thunk that reads the follows query cache;
 		// the test store doesn't seed that slice. Replace with a no-op so
 		// dispatch() doesn't throw.
-		trackSpy = jest
+		trackSpy = vi
 			.spyOn( readerAnalytics, 'recordReaderTracksEvent' )
 			.mockImplementation( () => ( { type: '@@TEST/NOOP' } ) as never );
 
 		// Stub window.location so the reconnect button's window.location.assign()
 		// doesn't tear the JSDOM page down mid-test.
 		originalLocation = window.location;
-		assignMock = jest.fn();
+		assignMock = vi.fn();
 		Object.defineProperty( window, 'location', {
 			configurable: true,
 			writable: true,
@@ -116,7 +115,7 @@ describe( 'MastodonAccountView reauth gate', () => {
 
 	afterEach( () => {
 		nock.cleanAll();
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 		Object.defineProperty( window, 'location', {
 			configurable: true,
 			writable: true,
@@ -241,7 +240,7 @@ describe( 'MastodonAccountView reauth gate', () => {
 
 	it( 'refuses to follow an authorize_url whose host does not match the connection instance', async () => {
 		const user = userEvent.setup();
-		const errorSpy = jest.spyOn( noticeActions, 'errorNotice' );
+		const errorSpy = vi.spyOn( noticeActions, 'errorNotice' );
 
 		mockConnections();
 		mockConnectionDetails();
@@ -271,7 +270,7 @@ describe( 'MastodonAccountView reauth gate', () => {
 
 	it( 'refuses to follow a non-https authorize_url, surfaces an error notice, and leaves storage empty', async () => {
 		const user = userEvent.setup();
-		const errorSpy = jest.spyOn( noticeActions, 'errorNotice' );
+		const errorSpy = vi.spyOn( noticeActions, 'errorNotice' );
 
 		mockConnections();
 		mockConnectionDetails();
@@ -301,7 +300,7 @@ describe( 'MastodonAccountView reauth gate', () => {
 
 	it( 'surfaces an error notice when the authorize endpoint fails', async () => {
 		const user = userEvent.setup();
-		const errorSpy = jest.spyOn( noticeActions, 'errorNotice' );
+		const errorSpy = vi.spyOn( noticeActions, 'errorNotice' );
 
 		mockConnections();
 		mockConnectionDetails();
@@ -329,8 +328,8 @@ describe( 'MastodonAccountView reauth gate', () => {
 
 	it( 'surfaces an error notice and refuses to redirect when sessionStorage cannot persist the oauth state', async () => {
 		const user = userEvent.setup();
-		const errorSpy = jest.spyOn( noticeActions, 'errorNotice' );
-		const setItemSpy = jest.spyOn( Storage.prototype, 'setItem' ).mockImplementation( () => {
+		const errorSpy = vi.spyOn( noticeActions, 'errorNotice' );
+		const setItemSpy = vi.spyOn( Storage.prototype, 'setItem' ).mockImplementation( () => {
 			throw new DOMException( 'QuotaExceeded' );
 		} );
 

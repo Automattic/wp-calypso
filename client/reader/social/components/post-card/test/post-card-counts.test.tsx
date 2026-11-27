@@ -1,8 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { makeUseAtmosphereLikeAction } from 'calypso/reader/atmosphere/use-atmosphere-like-action';
 import { makeUseAtmosphereRepostAction } from 'calypso/reader/atmosphere/use-atmosphere-repost-action';
 import { makeUseMastodonLikeAction } from 'calypso/reader/mastodon/use-mastodon-like-action';
@@ -41,7 +42,7 @@ const post: SocialPost = {
 function wrap(
 	ui: React.ReactNode,
 	getThreadUrl?: ( uri: string ) => string | null,
-	onClick = jest.fn(),
+	onClick = vi.fn(),
 	onReplyClick?: ( post: SocialPost ) => void
 ) {
 	return (
@@ -79,7 +80,7 @@ describe( 'PostCardCounts', () => {
 	} );
 
 	it( 'fires _replies_count_clicked when the replies link is clicked', async () => {
-		const onClick = jest.fn();
+		const onClick = vi.fn();
 		const getThreadUrl = () => '/reader/atmosphere/7/thread/did:plc:abc/3kabc';
 		render( wrap( <PostCardCounts post={ post } />, getThreadUrl, onClick ) );
 		const user = userEvent.setup();
@@ -115,8 +116,8 @@ describe( 'PostCardCounts', () => {
 	} );
 
 	it( 'renders replies count as a button that calls onReplyClick when bound', async () => {
-		const onReplyClick = jest.fn();
-		const onClick = jest.fn();
+		const onReplyClick = vi.fn();
+		const onClick = vi.fn();
 		const user = userEvent.setup();
 		render( wrap( <PostCardCounts post={ post } />, undefined, onClick, onReplyClick ) );
 		const button = screen.getByRole( 'button', { name: /^reply, 5 replies$/i } );
@@ -140,9 +141,9 @@ describe( 'PostCardCounts', () => {
 		// otherwise the composer entry point silently disappears on
 		// Mastodon — the very protocol that needs it.
 		const cidlessPost: SocialPost = { ...post, cid: undefined };
-		const onReplyClick = jest.fn();
+		const onReplyClick = vi.fn();
 		const user = userEvent.setup();
-		render( wrap( <PostCardCounts post={ cidlessPost } />, undefined, jest.fn(), onReplyClick ) );
+		render( wrap( <PostCardCounts post={ cidlessPost } />, undefined, vi.fn(), onReplyClick ) );
 		const button = screen.getByRole( 'button', { name: /reply/i } );
 		await user.click( button );
 		expect( onReplyClick ).toHaveBeenCalledWith( cidlessPost );
@@ -156,11 +157,9 @@ describe( 'PostCardCounts', () => {
 	} );
 
 	it( 'omits the zero-count clause from the reply accessible label when there are no replies', () => {
-		const onReplyClick = jest.fn();
+		const onReplyClick = vi.fn();
 		const zeroRepliesPost = { ...post, counts: { ...post.counts, replies: 0 } };
-		render(
-			wrap( <PostCardCounts post={ zeroRepliesPost } />, undefined, jest.fn(), onReplyClick )
-		);
+		render( wrap( <PostCardCounts post={ zeroRepliesPost } />, undefined, vi.fn(), onReplyClick ) );
 		expect( screen.getByRole( 'button', { name: /^reply$/i } ) ).toBeVisible();
 	} );
 
@@ -181,10 +180,10 @@ describe( 'PostCardCounts', () => {
 	} );
 
 	it( 'does not render a quote button or quote count even when onQuoteClick is wired', () => {
-		const onQuoteClick = jest.fn();
+		const onQuoteClick = vi.fn();
 		renderWithProvider(
 			<SocialAnalyticsProvider
-				value={ { source: 'atmosphere', connectionId: 42, onClick: jest.fn(), onQuoteClick } }
+				value={ { source: 'atmosphere', connectionId: 42, onClick: vi.fn(), onQuoteClick } }
 			>
 				<PostCardCounts post={ post } />
 			</SocialAnalyticsProvider>
@@ -334,7 +333,7 @@ describe( 'PostCardCounts prominentTimestamp variant', () => {
 			<RepostProvider value={ makeUseMastodonRepostAction( 7 ) }>
 				<LikeProvider value={ makeUseMastodonLikeAction( 7 ) }>
 					<SocialAnalyticsProvider
-						value={ { source: 'mastodon', connectionId: 7, onClick: jest.fn() } }
+						value={ { source: 'mastodon', connectionId: 7, onClick: vi.fn() } }
 					>
 						<PostCardCounts post={ post } prominentTimestamp />
 					</SocialAnalyticsProvider>

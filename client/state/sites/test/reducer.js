@@ -1,4 +1,5 @@
 import deepFreeze from 'deep-freeze';
+import { vi } from 'vitest';
 import {
 	SITE_DELETE_RECEIVE,
 	JETPACK_DISCONNECT_RECEIVE,
@@ -22,11 +23,11 @@ import reducer, { items, requestingAll, requesting, hasAllSitesList } from '../r
 
 describe( 'reducer', () => {
 	beforeAll( () => {
-		jest.spyOn( console, 'warn' ).mockImplementation( () => {} );
+		vi.spyOn( console, 'warn' ).mockImplementation( () => {} );
 	} );
 
 	afterAll( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'should export expected reducer keys', () => {

@@ -1,16 +1,17 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { SocialAnalyticsProvider } from '../analytics-context';
 import { BlogAboutButton } from '../blog-about-button';
 import type { SocialPost } from '../../../types';
 
-jest.mock( 'calypso/lib/logstash', () => ( { logToLogstash: jest.fn() } ) );
+vi.mock( 'calypso/lib/logstash', () => ( { logToLogstash: vi.fn() } ) );
 
 const ORIGIN = 'https://public-api.wordpress.com';
 
@@ -53,7 +54,7 @@ describe( 'BlogAboutButton', () => {
 
 	it( 'fires _blog_about_clicked and opens the modal on click', async () => {
 		const user = userEvent.setup();
-		const onClick = jest.fn();
+		const onClick = vi.fn();
 		nock( ORIGIN )
 			.get( /\/rest\/v1\.\d+\/me\/sites/ )
 			.reply( 200, { sites: [] } );

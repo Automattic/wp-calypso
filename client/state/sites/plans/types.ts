@@ -23,6 +23,7 @@ export interface SitePlanData {
 	interval: number;
 	isDelayedDowngradeAvailable?: boolean;
 	isInstantDowngradeAvailable?: boolean;
+	isTermChangeLimited?: boolean;
 	productName: string;
 	productSlug: string;
 	rawDiscount: string;

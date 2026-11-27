@@ -1,27 +1,28 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
-
-jest.mock( '@wordpress/compose', () => ( {
-	...jest.requireActual( '@wordpress/compose' ),
-	useViewportMatch: jest.fn(),
-} ) );
-
-jest.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
-	useQuery: jest.fn(),
-} ) );
 
 import { renderHook } from '@testing-library/react';
 import { useViewportMatch } from '@wordpress/compose';
+import { type Mock, vi } from 'vitest';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import useBrandedAccountLayout from '../use-branded-account-layout';
 
-const mockUseViewportMatch = useViewportMatch as unknown as jest.Mock;
-const mockUseQuery = useQuery as jest.Mock;
+vi.mock( '@wordpress/compose', async () => ( {
+	...( await vi.importActual< typeof import( '@wordpress/compose' ) >( '@wordpress/compose' ) ),
+	useViewportMatch: vi.fn(),
+} ) );
+
+vi.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
+	useQuery: vi.fn(),
+} ) );
+
+const mockUseViewportMatch = useViewportMatch as unknown as Mock;
+const mockUseQuery = useQuery as Mock;
 
 describe( 'useBrandedAccountLayout', () => {
 	beforeEach( () => {
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 		mockUseQuery.mockReturnValue( new URLSearchParams() );
 		mockUseViewportMatch.mockReturnValue( false );
 	} );

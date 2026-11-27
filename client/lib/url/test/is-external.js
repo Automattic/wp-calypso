@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import isExternal from '../is-external';
@@ -19,6 +19,10 @@ describe( 'isExternal', () => {
 		const actual = isExternal( source );
 
 		expect( actual ).toBe( false );
+	} );
+
+	test( 'should return false for an empty url', () => {
+		expect( isExternal( '' ) ).toBe( false );
 	} );
 
 	test( 'should return true for url without http', () => {
@@ -43,6 +47,16 @@ describe( 'isExternal', () => {
 		const urlWithoutHttp = '//manage';
 		const actual = isExternal( urlWithoutHttp );
 		expect( actual ).toBe( true );
+	} );
+
+	test.each( [
+		'javascript:alert(1)',
+		'JaVa\tScRiPt:alert(1)',
+		"javascript:x='@example.com/';alert(1)",
+		'data:text/html,x',
+		'not a host.example',
+	] )( 'should return true for %s', ( source ) => {
+		expect( isExternal( source ) ).toBe( true );
 	} );
 
 	describe( 'with global.window (test against window.location.hostname)', () => {

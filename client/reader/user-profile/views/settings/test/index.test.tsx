@@ -1,31 +1,40 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
+import { useSelector } from 'calypso/state';
 import UserProfileSettings from '..';
 import type { ReaderUser } from '@automattic/api-core';
 
-jest.mock( 'calypso/state', () => ( {
-	useSelector: jest.fn(),
+vi.mock( 'calypso/state', () => ( {
+	useSelector: vi.fn(),
 } ) );
 
-jest.mock( '../profile-identity-card', () => () => <div data-testid="identity-card" /> );
-jest.mock( '../preferences-card', () => () => <div data-testid="preferences-card" /> );
-jest.mock( '../profile-visibility-card', () => () => <div data-testid="visibility-card" /> );
-jest.mock( '../sites-visibility-card', () => () => <div data-testid="sites-card" /> );
-
-jest.mock( 'calypso/reader/data/user-profile/use-set-profile-tab-visibility', () => ( {
-	useSetProfileTabVisibility: () => ( { setVisibility: jest.fn(), isPending: false } ),
+vi.mock( '../profile-identity-card', () => ( {
+	default: () => <div data-testid="identity-card" />,
+} ) );
+vi.mock( '../preferences-card', () => ( {
+	default: () => <div data-testid="preferences-card" />,
+} ) );
+vi.mock( '../profile-visibility-card', () => ( {
+	default: () => <div data-testid="visibility-card" />,
+} ) );
+vi.mock( '../sites-visibility-card', () => ( {
+	default: () => <div data-testid="sites-card" />,
 } ) );
 
-jest.mock( 'calypso/reader/components/achievements/use-set-achievements-visibility', () => ( {
+vi.mock( 'calypso/reader/data/user-profile/use-set-profile-tab-visibility', () => ( {
+	useSetProfileTabVisibility: () => ( { setVisibility: vi.fn(), isPending: false } ),
+} ) );
+
+vi.mock( 'calypso/reader/components/achievements/use-set-achievements-visibility', () => ( {
 	__esModule: true,
-	default: () => ( { setVisibility: jest.fn(), isPending: false } ),
+	default: () => ( { setVisibility: vi.fn(), isPending: false } ),
 } ) );
 
 describe( 'UserProfileSettings', () => {
-	const { useSelector } = jest.requireMock( 'calypso/state' );
 	const user: ReaderUser = {
 		ID: 123,
 		user_login: 'test_user',
@@ -41,7 +50,7 @@ describe( 'UserProfileSettings', () => {
 	let queryClient: QueryClient;
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 	} );
 
@@ -50,7 +59,7 @@ describe( 'UserProfileSettings', () => {
 	}
 
 	test( 'renders the settings cards for the profile owner', () => {
-		useSelector.mockReturnValue( { username: 'test_user' } );
+		vi.mocked( useSelector ).mockReturnValue( { username: 'test_user' } );
 
 		renderWithClient( <UserProfileSettings user={ user } /> );
 
@@ -61,7 +70,7 @@ describe( 'UserProfileSettings', () => {
 	} );
 
 	test( 'renders nothing when viewing another user profile', () => {
-		useSelector.mockReturnValue( { username: 'someone_else' } );
+		vi.mocked( useSelector ).mockReturnValue( { username: 'someone_else' } );
 
 		const { container } = renderWithClient( <UserProfileSettings user={ user } /> );
 

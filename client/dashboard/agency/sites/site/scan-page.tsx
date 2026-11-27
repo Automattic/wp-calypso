@@ -2,7 +2,7 @@ import { siteBySlugQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { agencySiteRoute } from '../../../app/router/agency';
 import { useSiteTimezone } from '../../../sites/hooks/use-site-timezone';
-import { ScanContent } from '../../../sites/scan/scan-content';
+import { ScanContent } from '../../../sites/scan/components/scan-content';
 
 export default function AgencySiteScanPage( { scanTab }: { scanTab: 'active' | 'history' } ) {
 	const { siteSlug } = agencySiteRoute.useParams();

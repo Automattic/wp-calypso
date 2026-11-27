@@ -1,5 +1,6 @@
-@import "@wordpress/base-styles/breakpoints";
-@import "@wordpress/base-styles/colors";
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/colors';
+@import '../components/showcase/edge-fade';
 
 :root {
 	--color-gray-100: #{$gray-100};
@@ -8,60 +9,32 @@
 
 .agency-tiers-influenced-revenue-bar {
 	width: 100%;
-	--wp-components-color-foreground: var(--wp-admin-theme-color);
-	// Progress paints its indicator and track with these tokens; mix them from the
-	// foreground color, as ProgressBar did before.
-	--wpds-color-background-indicator-neutral: color-mix(in srgb, var(--wp-components-color-foreground) 90%, transparent);
-	--wpds-color-background-track-neutral: color-mix(in srgb, var(--wp-components-color-foreground) 10%, transparent);
 }
 
-// Wrapper provides the gradient fade — must sit outside the scroll container
-// because overflow clips pseudo-elements.
-.tier-cards-scroll-wrapper {
-	position: relative;
-	margin-inline-start: -4px;
-
-	// Gradient fade hinting there's more content to scroll
-	&::after {
-		content: '';
-		position: absolute;
-		inset-block-start: 0;
-		inset-inline-end: 0;
-		width: 80px;
-		height: 100%;
-		background: linear-gradient( to right, transparent, var(--color-surface) );
-		pointer-events: none;
-		z-index: 1;
-	}
-
-	html[dir="rtl"] &::after {
-		background: linear-gradient( to left, transparent, var(--color-surface) ) #{"/*rtl:ignore*/"};
-	}
+.agency-tiers-influenced-revenue-bar .agency-tiers-influenced-revenue-bar__track {
+	background-color: color-mix( in srgb, var( --wp-admin-theme-color ) 10%, transparent );
 }
 
 // Tier cards horizontal scroll container
 .tier-cards-container {
 	--tier-card-width: max( 260px, 72vw );
 
+	@include edge-fade;
+
 	display: flex;
 	flex-direction: row;
 	gap: 24px;
 	overflow-x: auto;
 	scroll-behavior: smooth;
-	// 4px block padding so box-shadows/borders aren't clipped top/bottom.
-	// 4px inline-start padding so box-shadows/borders aren't clipped.
-	padding-block: 4px;
-	padding-inline: 4px 0;
+	// 4px padding so box-shadows/borders aren't clipped, offset by the margin so
+	// the cards still line up with the page.
+	margin-inline: -4px;
+	padding: 4px;
 	// Hide scrollbar visually but keep functionality
 	scrollbar-width: none;
 	-ms-overflow-style: none;
 	&::-webkit-scrollbar {
 		display: none;
-	}
-
-	&::after {
-		content: '';
-		flex: 0 0 max( 80px, calc( 100% - var(--tier-card-width) ) );
 	}
 
 	@media ( min-width: #{ $break-small } ) {
@@ -73,7 +46,7 @@
 // On small screens: 72vw shows the current card fully with the next peeking in.
 // On larger screens: dynamic ~30% width shows ~3 cards with a peek.
 .tier-card-wrapper {
-	width: var(--tier-card-width);
+	width: var( --tier-card-width );
 	min-height: 250px;
 	flex-shrink: 0;
 

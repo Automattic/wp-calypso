@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { act, screen, waitFor } from '@testing-library/react';
@@ -9,6 +9,7 @@ import nock from 'nock';
 import { useState } from 'react';
 import { applyMiddleware, createStore } from 'redux';
 import { thunk } from 'redux-thunk';
+import { type Mock, vi } from 'vitest';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import initialReducer from 'calypso/state/reducer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -20,67 +21,74 @@ import KnownThreatsNotice, {
 } from '../known-threats-notice';
 import BackupRestoreFlow from '../restore';
 
-jest.mock( 'calypso/state/selectors/site-has-feature' );
-jest.mock( '@wordpress/a11y', () => ( {
-	...jest.requireActual( '@wordpress/a11y' ),
-	speak: jest.fn(),
+vi.mock( 'calypso/state/selectors/site-has-feature' );
+vi.mock( '@wordpress/a11y', async () => ( {
+	...( await vi.importActual< typeof import( '@wordpress/a11y' ) >( '@wordpress/a11y' ) ),
+	speak: vi.fn(),
 } ) );
-jest.mock( 'calypso/state/analytics/actions/record', () => ( {
-	recordTracksEvent: jest.fn( () => ( { type: 'TEST_NOOP' } ) ),
+vi.mock( 'calypso/state/analytics/actions/record', async ( importOriginal ) => ( {
+	...( await importOriginal< typeof import( 'calypso/state/analytics/actions/record' ) >() ),
+	recordTracksEvent: vi.fn( () => ( { type: 'TEST_NOOP' } ) ),
 } ) );
-jest.mock( 'calypso/state/selectors/get-rewind-state', () => {
+vi.mock( 'calypso/state/selectors/get-rewind-state', () => {
 	// The same object every time, as the real selector returns from the store.
 	const rewindState = { state: 'active', canAutoconfigure: false };
 	return { __esModule: true, default: () => rewindState };
 } );
 function mockSelector( value: unknown ) {
-	return { __esModule: true, default: () => value };
+	return () => value;
 }
-jest.mock( 'calypso/state/jetpack/credentials/selectors', () => ( {
+vi.mock( 'calypso/state/jetpack/credentials/selectors', () => ( {
 	areJetpackCredentialsInvalid: () => false,
 	hasJetpackCredentials: () => true,
 } ) );
-jest.mock( 'calypso/state/rewind/preflight/hooks', () => ( {
-	usePreflightStatusQuery: () => ( { refetch: jest.fn() } ),
-	useEnqueuePreflightCheck: () => ( { mutate: jest.fn() } ),
+vi.mock( 'calypso/state/rewind/preflight/hooks', () => ( {
+	usePreflightStatusQuery: () => ( { refetch: vi.fn() } ),
+	useEnqueuePreflightCheck: () => ( { mutate: vi.fn() } ),
 } ) );
-jest.mock( 'calypso/state/rewind/preflight/selectors', () => ( {
+vi.mock( 'calypso/state/rewind/preflight/selectors', () => ( {
 	getPreflightStatus: () => null,
 } ) );
-jest.mock( 'calypso/state/rewind/selectors', () => ( { getInProgressBackupForSite: () => null } ) );
-jest.mock( 'calypso/state/selectors/get-does-rewind-need-credentials', () =>
-	mockSelector( false )
-);
-jest.mock( 'calypso/state/selectors/get-in-progress-rewind-status', () => mockSelector( null ) );
-jest.mock( 'calypso/state/selectors/get-is-restore-in-progress', () => mockSelector( false ) );
+vi.mock( 'calypso/state/rewind/selectors', () => ( { getInProgressBackupForSite: () => null } ) );
+vi.mock( 'calypso/state/selectors/get-does-rewind-need-credentials', () => ( {
+	default: mockSelector( false ),
+} ) );
+vi.mock( 'calypso/state/selectors/get-in-progress-rewind-status', () => ( {
+	default: mockSelector( null ),
+} ) );
+vi.mock( 'calypso/state/selectors/get-is-restore-in-progress', () => ( {
+	default: mockSelector( false ),
+} ) );
 let mockRestoreProgress: unknown = null;
-jest.mock( 'calypso/state/selectors/get-restore-progress', () => ( {
-	__esModule: true,
+vi.mock( 'calypso/state/selectors/get-restore-progress', () => ( {
 	default: () => mockRestoreProgress,
 } ) );
-jest.mock( 'calypso/state/selectors/is-site-automated-transfer', () => mockSelector( true ) );
-jest.mock( 'calypso/blocks/jetpack-review-prompt', () => () => null );
-jest.mock( 'calypso/components/data/query-jetpack-credentials-status', () => () => null );
-jest.mock( 'calypso/components/data/query-rewind-backups', () => () => null );
-jest.mock( 'calypso/components/data/query-rewind-restore-status', () => () => null );
-jest.mock( 'calypso/components/data/query-rewind-state', () => () => null );
-jest.mock(
-	'calypso/my-sites/backup/backup-contents-page/file-browser/file-browser-context',
-	() => ( {
-		useFileBrowserContext: () => ( {
-			fileBrowserState: {
-				getCheckList: () => ( {
-					includeList: [ { id: 'f1', path: '/wp-content/a.php' } ],
-					excludeList: [],
-					totalItems: 1,
-				} ),
-				getSelectedList: () => [ { id: 'f1', type: 'file', path: '/wp-content/a.php' } ],
-			},
-		} ),
-	} )
-);
-jest.mock( 'calypso/state/ui/selectors', () => ( {
-	...jest.requireActual( 'calypso/state/ui/selectors' ),
+vi.mock( 'calypso/state/selectors/is-site-automated-transfer', () => ( {
+	default: mockSelector( true ),
+} ) );
+vi.mock( 'calypso/blocks/jetpack-review-prompt', () => ( { default: () => null } ) );
+vi.mock( 'calypso/components/data/query-jetpack-credentials-status', () => ( {
+	default: () => null,
+} ) );
+vi.mock( 'calypso/components/data/query-rewind-backups', () => ( { default: () => null } ) );
+vi.mock( 'calypso/components/data/query-rewind-restore-status', () => ( { default: () => null } ) );
+vi.mock( 'calypso/components/data/query-rewind-state', () => ( { default: () => null } ) );
+vi.mock( 'calypso/my-sites/backup/backup-contents-page/file-browser/file-browser-context', () => ( {
+	useFileBrowserContext: () => ( {
+		fileBrowserState: {
+			getCheckList: () => ( {
+				includeList: [ { id: 'f1', path: '/wp-content/a.php' } ],
+				excludeList: [],
+				totalItems: 1,
+			} ),
+			getSelectedList: () => [ { id: 'f1', type: 'file', path: '/wp-content/a.php' } ],
+		},
+	} ),
+} ) );
+vi.mock( 'calypso/state/ui/selectors', async () => ( {
+	...( await vi.importActual< typeof import( 'calypso/state/ui/selectors' ) >(
+		'calypso/state/ui/selectors'
+	) ),
 	getSelectedSiteSlug: () => 'example.wordpress.com',
 } ) );
 
@@ -175,13 +183,13 @@ function Harness( { onChange }: { onChange?: ( value: boolean ) => void } ) {
 
 describe( 'KnownThreatsNotice', () => {
 	beforeEach( () => {
-		( siteHasFeature as jest.Mock ).mockReturnValue( true );
+		( siteHasFeature as Mock ).mockReturnValue( true );
 	} );
 	afterEach( () => nock.cleanAll() );
 
 	it( 'shows the warning and a checkbox that reports changes', async () => {
 		mockList( counts( 3 ) );
-		const onChange = jest.fn();
+		const onChange = vi.fn();
 		renderWithProvider( <Harness onChange={ onChange } /> );
 
 		expect( await screen.findByText( NOTICE ) ).toBeVisible();
@@ -215,7 +223,7 @@ describe( 'KnownThreatsNotice', () => {
 
 	it( 'renders nothing and reports false before VaultPress ships', async () => {
 		const scope = mockList();
-		const onChange = jest.fn();
+		const onChange = vi.fn();
 		const { container } = renderWithProvider( <Harness onChange={ onChange } /> );
 		await new Promise( ( resolve ) => setTimeout( resolve, 50 ) );
 		expect( scope.isDone() ).toBe( true );
@@ -226,7 +234,7 @@ describe( 'KnownThreatsNotice', () => {
 
 	it( 'renders nothing on errors', async () => {
 		nock( BASE ).get( LIST_PATH ).query( true ).reply( 500, {} );
-		const onChange = jest.fn();
+		const onChange = vi.fn();
 		const { container } = renderWithProvider( <Harness onChange={ onChange } /> );
 		await new Promise( ( resolve ) => setTimeout( resolve, 50 ) );
 		expect( container ).toBeEmptyDOMElement();
@@ -317,7 +325,7 @@ describe( 'KnownThreatsNotice', () => {
 	} );
 
 	it( 'has no expander and no details request without Scan, but keeps the checkbox', async () => {
-		( siteHasFeature as jest.Mock ).mockReturnValue( false );
+		( siteHasFeature as Mock ).mockReturnValue( false );
 		mockList( counts( 3 ) );
 		const details = nock( BASE ).get( THREATS_PATH ).query( true ).reply( 200, threatsBody );
 		renderWithProvider( <Harness /> );
@@ -364,8 +372,8 @@ describe( 'getKnownThreatsTracksProps', () => {
 describe( 'BackupRestoreFlow known threats gating', () => {
 	beforeEach( () => {
 		mockRestoreProgress = null;
-		( siteHasFeature as jest.Mock ).mockReturnValue( true );
-		( recordTracksEvent as jest.Mock ).mockClear();
+		( siteHasFeature as Mock ).mockReturnValue( true );
+		( recordTracksEvent as Mock ).mockClear();
 	} );
 	afterEach( () => nock.cleanAll() );
 
@@ -478,8 +486,8 @@ describe( 'BackupRestoreFlow known threats gating', () => {
 describe( 'BackupGranularRestoreFlow known threats gating', () => {
 	beforeEach( () => {
 		mockRestoreProgress = null;
-		( siteHasFeature as jest.Mock ).mockReturnValue( true );
-		( recordTracksEvent as jest.Mock ).mockClear();
+		( siteHasFeature as Mock ).mockReturnValue( true );
+		( recordTracksEvent as Mock ).mockClear();
 	} );
 	afterEach( () => nock.cleanAll() );
 

@@ -4,6 +4,7 @@
 
 import { screen } from '@testing-library/react';
 import { vi } from 'vitest';
+import { BLACK_FRIDAY_2026_COUPON } from 'calypso/lib/promotions/black-friday-2026';
 import { render } from '../../../test-utils';
 import { AppProvider, APP_CONTEXT_DEFAULT_CONFIG } from '../../context';
 import { BlackFridaySidebarPromo } from '../black-friday-sidebar-promo';
@@ -11,9 +12,12 @@ import type { AgencyClientSupports, AgencySupports } from '../../context';
 
 const mockConfig = vi.hoisted( () => {
 	const state = { flag: false };
-	const config = Object.assign( () => undefined, {
-		isEnabled: ( key: string ) => key === 'black-friday-2026' && state.flag,
-	} );
+	const config = Object.assign(
+		( key: string ) => ( key === 'wpcom_url' ? 'https://wordpress.com' : undefined ),
+		{
+			isEnabled: ( key: string ) => key === 'black-friday-2026' && state.flag,
+		}
+	);
 	return { state, config };
 } );
 
@@ -59,13 +63,16 @@ describe( '<BlackFridaySidebarPromo>', () => {
 		vi.useRealTimers();
 	} );
 
-	test( 'shows the offer and links to the landing page during the sale', () => {
+	test( 'shows the offer and links to onboarding with the sale coupon during the sale', () => {
 		vi.setSystemTime( insideSale );
 		renderPromo();
 
 		const link = screen.getByRole( 'link', { name: /25% off annual and multi-year plans/ } );
 		expect( link ).toBeVisible();
-		expect( link ).toHaveAttribute( 'href', 'https://wordpress.com/black-friday-2026/' );
+		expect( link ).toHaveAttribute(
+			'href',
+			`https://wordpress.com/setup/onboarding?coupon=${ BLACK_FRIDAY_2026_COUPON }`
+		);
 		expect(
 			screen.getByText( 'That’s up to 66% less than paying monthly. Sale ends December 1.' )
 		).toBeVisible();

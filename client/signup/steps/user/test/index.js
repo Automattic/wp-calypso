@@ -1,19 +1,20 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { createElement } from 'react';
+import { vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { UserStep as User } from '../';
 
 const noop = () => {};
 const translate = ( string ) => string;
 
-jest.mock( 'calypso/blocks/signup-form', () => require( 'calypso/components/empty-component' ) );
-jest.mock( 'calypso/signup/step-wrapper', () => require( 'calypso/components/empty-component' ) );
-jest.mock( 'calypso/signup/utils', () => ( {
+vi.mock( 'calypso/blocks/signup-form', () => import( 'calypso/components/empty-component' ) );
+vi.mock( 'calypso/signup/step-wrapper', () => import( 'calypso/components/empty-component' ) );
+vi.mock( 'calypso/signup/utils', () => ( {
 	getFlowSteps: ( flow ) => {
-		let flowSteps = null;
+		let flowSteps;
 
 		if ( 'userAsFirstStepInFlow' === flow ) {
 			flowSteps = [ 'user' ];

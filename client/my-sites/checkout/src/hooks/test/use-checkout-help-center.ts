@@ -1,16 +1,17 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { useProductsWithPremiumSupport } from '@automattic/help-center/src/hooks';
 import { act, renderHook } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import { loadCheckoutSupportAssignment } from '../../lib/checkout-support-routing';
 import { useCheckoutHelpCenter } from '../use-checkout-help-center';
 
-const mockSetShowHelpCenter = jest.fn();
-const mockSetNavigateToRoute = jest.fn();
-const mockSetIsMinimized = jest.fn();
+const mockSetShowHelpCenter = vi.fn();
+const mockSetNavigateToRoute = vi.fn();
+const mockSetIsMinimized = vi.fn();
 let mockIsHelpCenterShown = false;
 let mockIsMinimized = false;
 let mockStoredVariation: string | undefined;
@@ -23,17 +24,17 @@ let mockCartProducts: { product_slug: string; is_renewal?: boolean }[] = [];
 let mockIsCartLoading = false;
 let mockIsCartUpdating = false;
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( '@automattic/calypso-analytics', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
-jest.mock( '@automattic/calypso-config', () => ( {
+vi.mock( '@automattic/calypso-config', () => ( {
 	__esModule: true,
-	default: { isEnabled: jest.fn() },
+	default: { isEnabled: vi.fn() },
 } ) );
 
 // The package's UI imports don't load with the mocked data module, so stand in for its slug checks.
-jest.mock( '@automattic/calypso-products', () => ( {
+vi.mock( '@automattic/calypso-products', () => ( {
 	isWpComPlan: ( slug: string ) => slug === 'personal-bundle',
 	isDomainProduct: ( { product_slug }: { product_slug: string } ) => product_slug === 'domain_reg',
 	isDomainTransfer: ( { product_slug }: { product_slug: string } ) =>
@@ -44,20 +45,20 @@ jest.mock( '@automattic/calypso-products', () => ( {
 		product_slug === 'wp_titan_mail_yearly',
 } ) );
 
-jest.mock( '@automattic/data-stores', () => ( {
+vi.mock( '@automattic/data-stores', () => ( {
 	HelpCenter: { register: () => 'automattic/help-center' },
 } ) );
 
-jest.mock( '@automattic/help-center/src/hooks', () => ( {
-	useProductsWithPremiumSupport: jest.fn(),
+vi.mock( '@automattic/help-center/src/hooks', () => ( {
+	useProductsWithPremiumSupport: vi.fn(),
 	useProductsCustomOptions: () => ( {} ),
 } ) );
 
-jest.mock( '@automattic/onboarding', () => ( {
+vi.mock( '@automattic/onboarding', () => ( {
 	ONBOARDING_FLOW: 'onboarding',
 } ) );
 
-jest.mock( '@automattic/shopping-cart', () => ( {
+vi.mock( '@automattic/shopping-cart', () => ( {
 	useShoppingCart: () => ( {
 		responseCart: { products: mockCartProducts },
 		isLoading: mockIsCartLoading,
@@ -65,7 +66,7 @@ jest.mock( '@automattic/shopping-cart', () => ( {
 	} ),
 } ) );
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		setShowHelpCenter: mockSetShowHelpCenter,
 		setNavigateToRoute: mockSetNavigateToRoute,
@@ -79,41 +80,41 @@ jest.mock( '@wordpress/data', () => ( {
 		} ) ),
 } ) );
 
-jest.mock( 'calypso/my-sites/checkout/use-cart-key', () => ( {
+vi.mock( 'calypso/my-sites/checkout/use-cart-key', () => ( {
 	__esModule: true,
 	default: () => 'cart-key',
 } ) );
 
-jest.mock( 'calypso/state', () => ( {
+vi.mock( 'calypso/state', () => ( {
 	useSelector: ( selector: () => unknown ) => selector(),
 } ) );
 
-jest.mock( 'calypso/state/current-user/selectors', () => ( {
+vi.mock( 'calypso/state/current-user/selectors', () => ( {
 	isUserLoggedIn: () => mockIsLoggedIn,
 } ) );
 
-jest.mock( 'calypso/state/selectors/is-site-automated-transfer', () => ( {
+vi.mock( 'calypso/state/selectors/is-site-automated-transfer', () => ( {
 	__esModule: true,
 	default: () => mockIsAtomicSite,
 } ) );
 
-jest.mock( 'calypso/state/sites/selectors', () => ( {
+vi.mock( 'calypso/state/sites/selectors', () => ( {
 	isJetpackSite: () => mockIsJetpackSite,
 } ) );
 
-jest.mock( 'calypso/state/ui/selectors', () => ( {
+vi.mock( 'calypso/state/ui/selectors', () => ( {
 	getSectionName: () => mockSectionName,
 	getSelectedSiteId: () => mockSiteId,
 	getSelectedSiteSlug: () => 'example.wordpress.com',
 } ) );
 
-jest.mock( '../../lib/checkout-support-routing', () => ( {
-	loadCheckoutSupportAssignment: jest.fn(),
+vi.mock( '../../lib/checkout-support-routing', () => ( {
+	loadCheckoutSupportAssignment: vi.fn(),
 } ) );
 
-const mockIsEnabled = config.isEnabled as jest.Mock;
-const mockUseProductsWithPremiumSupport = useProductsWithPremiumSupport as jest.Mock;
-const mockLoadCheckoutSupportAssignment = loadCheckoutSupportAssignment as jest.Mock;
+const mockIsEnabled = config.isEnabled as Mock;
+const mockUseProductsWithPremiumSupport = useProductsWithPremiumSupport as Mock;
+const mockLoadCheckoutSupportAssignment = loadCheckoutSupportAssignment as Mock;
 
 // The result of assigning the user to the checkout support experiment.
 const assigned = ( variation?: string, { timedOut = false, durationMs = 150 } = {} ) => ( {
@@ -141,7 +142,7 @@ const route = () => mockSetNavigateToRoute.mock.calls.at( -1 )?.[ 0 ];
 
 describe( 'useCheckoutHelpCenter – checkout support experiment', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockIsHelpCenterShown = false;
 		mockIsMinimized = false;
 		mockStoredVariation = undefined;
@@ -168,7 +169,9 @@ describe( 'useCheckoutHelpCenter – checkout support experiment', () => {
 		await openHelpCenter();
 
 		expect( shownWith() ).toMatchObject( { checkoutSupportVariation: 'human_only' } );
-		expect( route() ).toBe( '/odie?provider=zendesk&siteUrl=example.wordpress.com&siteId=123' );
+		expect( route() ).toBe(
+			'/odie?provider=zendesk&siteUrl=example.wordpress.com&siteId=123&start-on-message=1'
+		);
 	} );
 
 	it.each( [ 'hybrid', 'control' ] )( 'sends the %s variation to Odie', async ( variation ) => {
@@ -367,7 +370,9 @@ describe( 'useCheckoutHelpCenter – checkout support experiment', () => {
 				true,
 				expect.objectContaining( { checkoutSupportVariation: 'human_only' } )
 			);
-			expect( route() ).toBe( '/odie?provider=zendesk&siteUrl=example.wordpress.com&siteId=123' );
+			expect( route() ).toBe(
+				'/odie?provider=zendesk&siteUrl=example.wordpress.com&siteId=123&start-on-message=1'
+			);
 		} );
 	} );
 
@@ -432,7 +437,7 @@ describe( 'useCheckoutHelpCenter – checkout support experiment', () => {
 
 	describe( 'the checkout entry event', () => {
 		const openEvents = () =>
-			( recordTracksEvent as jest.Mock ).mock.calls.filter(
+			( recordTracksEvent as Mock ).mock.calls.filter(
 				( [ name ] ) => name === 'calypso_checkout_support_open'
 			);
 

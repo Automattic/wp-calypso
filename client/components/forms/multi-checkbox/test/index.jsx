@@ -1,9 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import MultiCheckbox from '../';
 
 describe( 'index', () => {
@@ -53,7 +54,7 @@ describe( 'index', () => {
 		} );
 
 		test( 'should accept an onChange event handler', async () => {
-			const onChange = jest.fn();
+			const onChange = vi.fn();
 			render( <MultiCheckbox name="favorite_colors" options={ options } onChange={ onChange } /> );
 
 			await userEvent.click( screen.getByRole( 'checkbox', { name: 'One' } ) );

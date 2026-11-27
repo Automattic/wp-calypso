@@ -1,20 +1,10 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 /**
  * Default mock implementations
  */
-jest.mock( 'react-redux', () => ( {
-	useSelector: jest.fn(),
-} ) );
-jest.mock( '@automattic/data-stores', () => ( {
-	...jest.requireActual( '@automattic/data-stores' ),
-	Plans: {
-		useCurrentPlan: jest.fn(),
-	},
-} ) );
-
 import {
 	PLAN_FREE,
 	PLAN_PREMIUM,
@@ -24,12 +14,26 @@ import {
 import { Plans } from '@automattic/data-stores';
 import { renderHook } from '@testing-library/react';
 import { useSelector } from 'react-redux';
+import { type Mock, vi } from 'vitest';
 import useCheckPlanAvailabilityForPurchase from '../use-check-plan-availability-for-purchase';
+
+vi.mock( 'react-redux', async ( importOriginal ) => ( {
+	...( await importOriginal< typeof import( 'react-redux' ) >() ),
+	useSelector: vi.fn(),
+} ) );
+vi.mock( '@automattic/data-stores', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/data-stores' ) >(
+		'@automattic/data-stores'
+	) ),
+	Plans: {
+		useCurrentPlan: vi.fn(),
+	},
+} ) );
 
 describe( 'useCheckPlanAvailabilityForPurchase', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
-		( Plans.useCurrentPlan as jest.Mock ).mockImplementation( () => ( { [ PLAN_PREMIUM ]: {} } ) );
+		vi.clearAllMocks();
+		( Plans.useCurrentPlan as Mock ).mockImplementation( () => ( { [ PLAN_PREMIUM ]: {} } ) );
 	} );
 
 	describe( 'when a site is selected', () => {
@@ -47,7 +51,7 @@ describe( 'useCheckPlanAvailabilityForPurchase', () => {
 
 			describe( 'and the plan being evaluated is a higher tier plan', () => {
 				it( 'marks the plan as available for purchase', () => {
-					( useSelector as jest.Mock ).mockImplementation( ( selector ) =>
+					( useSelector as Mock ).mockImplementation( ( selector ) =>
 						selector( {
 							ui: { selectedSiteId },
 							sites: {
@@ -97,7 +101,7 @@ describe( 'useCheckPlanAvailabilityForPurchase', () => {
 
 			describe( 'and the shouldIgnorePlanOwnership arg is passed as true', () => {
 				it( 'marks the plan as available for purchase', () => {
-					( useSelector as jest.Mock ).mockImplementation( ( selector ) =>
+					( useSelector as Mock ).mockImplementation( ( selector ) =>
 						selector( {
 							ui: { selectedSiteId },
 							sites: {
@@ -145,7 +149,7 @@ describe( 'useCheckPlanAvailabilityForPurchase', () => {
 
 			describe( 'and the shouldIgnorePlanOwnership arg is passed as false', () => {
 				it( 'marks the plan as available for purchase', () => {
-					( useSelector as jest.Mock ).mockImplementation( ( selector ) =>
+					( useSelector as Mock ).mockImplementation( ( selector ) =>
 						selector( {
 							ui: { selectedSiteId },
 							sites: {
@@ -204,7 +208,7 @@ describe( 'useCheckPlanAvailabilityForPurchase', () => {
 
 			describe( 'and the plan being evaluated is a lower tier plan', () => {
 				it( 'marks the plan as not purchasable', () => {
-					( useSelector as jest.Mock ).mockImplementation( ( selector ) =>
+					( useSelector as Mock ).mockImplementation( ( selector ) =>
 						selector( {
 							ui: { selectedSiteId },
 							sites: {
@@ -244,7 +248,7 @@ describe( 'useCheckPlanAvailabilityForPurchase', () => {
 
 	describe( 'when a site is not selected', () => {
 		it( 'assumes that the hook is being called from onboarding or signup and marks the plan as purchasable', () => {
-			( useSelector as jest.Mock ).mockImplementation( ( selector ) =>
+			( useSelector as Mock ).mockImplementation( ( selector ) =>
 				selector( {
 					ui: { selectedSiteId: undefined },
 					sites: { items: [], plans: {} },

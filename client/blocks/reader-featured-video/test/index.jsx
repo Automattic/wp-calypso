@@ -1,15 +1,16 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import ReaderFeaturedVideo from '..';
 
-jest.mock( '@automattic/api-core', () => ( {
+vi.mock( '@automattic/api-core', () => ( {
 	POCKETCAST_DEFAULT_HEIGHT: 400,
 	POCKETCAST_DEFAULT_WIDTH: 400,
 } ) );
 
-jest.mock( '@automattic/api-queries', () => ( {
+vi.mock( '@automattic/api-queries', () => ( {
 	readerThumbnailQuery: () => ( {
 		queryKey: [ 'read', 'thumbnail' ],
 		queryFn: () => 'https://example.com/thumbnail.jpg',
@@ -18,7 +19,7 @@ jest.mock( '@automattic/api-queries', () => ( {
 	} ),
 } ) );
 
-jest.mock( 'calypso/blocks/reader-featured-image', () => () => null );
+vi.mock( 'calypso/blocks/reader-featured-image', () => ( { default: () => null } ) );
 
 const iframe = '<iframe src="https://example.com/embed/first" title="Video player"></iframe>';
 const props = {

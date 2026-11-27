@@ -1,65 +1,70 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import SearchResultsModern from '../index';
 
 let mockWpcomThemes: Array< { id: string; name: string } > = [];
 let mockWporgThemes: Array< { id: string; name: string } > = [];
 let mockIsRequesting = false;
 
-jest.mock( 'calypso/components/data/query-themes', () => ( {
-	useQueryThemes: jest.fn(),
-} ) );
+vi.mock( 'calypso/components/data/query-themes', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		useQueryThemes: vi.fn(),
+	} )
+);
 
-jest.mock( 'calypso/my-sites/themes/collections/use-theme-collection', () => ( {
+vi.mock( 'calypso/my-sites/themes/collections/use-theme-collection', () => ( {
 	useThemeCollection: () => ( {
-		getPrice: jest.fn(),
+		getPrice: vi.fn(),
 		themes: mockWpcomThemes,
-		isActive: jest.fn(),
-		isInstalling: jest.fn(),
-		isLivePreviewStarted: jest.fn(),
+		isActive: vi.fn(),
+		isInstalling: vi.fn(),
+		isLivePreviewStarted: vi.fn(),
 		siteId: null,
-		getThemeType: jest.fn(),
-		getThemeTierForTheme: jest.fn(),
+		getThemeType: vi.fn(),
+		getThemeTierForTheme: vi.fn(),
 		filterString: '',
-		getThemeDetailsUrl: jest.fn(),
+		getThemeDetailsUrl: vi.fn(),
 	} ),
 } ) );
 
-jest.mock( 'calypso/state/themes/selectors', () => ( {
+vi.mock( 'calypso/state/themes/selectors', () => ( {
 	getThemesForQueryIgnoringPage: () => mockWporgThemes,
 	isRequestingThemesForQuery: () => mockIsRequesting,
 } ) );
 
-jest.mock( 'calypso/my-sites/themes/events/theme-showcase-tracks', () => ( {
-	getThemeShowcaseEventRecorder: jest.fn( () => ( {
-		recordThemeClick: jest.fn(),
-		recordThemeStyleVariationClick: jest.fn(),
-		recordThemesStyleVariationMoreClick: jest.fn(),
+vi.mock( 'calypso/my-sites/themes/events/theme-showcase-tracks', () => ( {
+	getThemeShowcaseEventRecorder: vi.fn( () => ( {
+		recordThemeClick: vi.fn(),
+		recordThemeStyleVariationClick: vi.fn(),
+		recordThemesStyleVariationMoreClick: vi.fn(),
 	} ) ),
 } ) );
 
-jest.mock( 'calypso/components/themes-list', () => ( {
-	ThemeBlock: ( { theme }: { theme: { id: string; name: string } } ) => (
-		<div data-testid={ `theme-block-${ theme.id }` }>{ theme.name }</div>
-	),
+vi.mock( 'calypso/components/themes-list', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		ThemeBlock: ( { theme }: { theme: { id: string; name: string } } ) => (
+			<div data-testid={ `theme-block-${ theme.id }` }>{ theme.name }</div>
+		),
+	} )
+);
+
+vi.mock( 'calypso/my-sites/themes/helpers', () => ( {
+	trackClick: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/my-sites/themes/helpers', () => ( {
-	trackClick: jest.fn(),
-} ) );
-
-jest.mock( 'calypso/state', () => ( {
+vi.mock( 'calypso/state', () => ( {
 	useSelector: ( selector: ( state: unknown ) => unknown ) => selector( {} ),
-	useDispatch: () => jest.fn(),
+	useDispatch: () => vi.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/build-url', () => ( {
+vi.mock( 'calypso/lib/build-url', () => ( {
 	buildRelativeSearchUrl: ( url: string, search: string ) =>
 		search ? `${ url }?s=${ search }` : url,
 } ) );

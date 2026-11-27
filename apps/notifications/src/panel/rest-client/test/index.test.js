@@ -11,6 +11,7 @@ import getFilteredLoading from '../../state/selectors/get-filtered-loading';
 import getFilteredNoteIds from '../../state/selectors/get-filtered-note-ids';
 import getIsLoading from '../../state/selectors/get-is-loading';
 import getIsNoteRead from '../../state/selectors/get-is-note-read';
+import hasLoadFailed from '../../state/selectors/has-load-failed';
 import Client from '../index';
 import { init } from '../wpcom';
 
@@ -212,6 +213,7 @@ describe( 'RestClient', () => {
 			// the anchor back, so the page is sized to the slot plus one for that anchor
 			// (number=2). ids (MAX_LIMIT)..2, oldest is id 2.
 			store.dispatch( actions.notes.addNotes( fullPage( MAX_LIMIT - 1, MAX_LIMIT ) ) );
+			client.listLoaded = true;
 
 			client.loadMore();
 			expect( getCalls ).toHaveLength( 1 );
@@ -232,6 +234,7 @@ describe( 'RestClient', () => {
 			// just the anchor. The no-new guard must latch instead of refetching.
 			// ids (MAX_LIMIT)..2, oldest is id 2.
 			store.dispatch( actions.notes.addNotes( fullPage( MAX_LIMIT - 1, MAX_LIMIT ) ) );
+			client.listLoaded = true;
 
 			client.loadMore();
 			expect( getCalls ).toHaveLength( 1 );
@@ -964,6 +967,229 @@ describe( 'RestClient', () => {
 			expect( getIsLoading( store.getState() ) ).toBe( false );
 			expect( getFilteredLoading( store.getState() ) ).toBe( 'unread' );
 			expect( client.gettingFilteredNotes ).toBe( true );
+		} );
+	} );
+
+	describe( 'a first load that fails', () => {
+		const SERVER_ERROR = { status: 504 };
+
+		it( 'shows an error on the All tab instead of loading forever', () => {
+			client.getNotes();
+			expect( getIsLoading( store.getState() ) ).toBe( true );
+
+			getCalls[ 0 ].callback( SERVER_ERROR );
+
+			expect( getIsLoading( store.getState() ) ).toBe( false );
+			expect( hasLoadFailed( store.getState(), 'all' ) ).toBe( true );
+			expect( hasLoadFailed( store.getState(), UNREAD_KEY ) ).toBe( false );
+		} );
+
+		it( 'keeps the notes and ends the loading state when a refresh fails after the list loaded', () => {
+			// A short list, so each refresh shows the loading state.
+			client.getNotes();
+			getCalls[ 0 ].callback( null, { notes: fullPage( 3, 100 ), last_seen_time: 0 } );
+			getCalls.length = 0;
+
+			client.getNotes();
+			expect( getIsLoading( store.getState() ) ).toBe( true );
+			getCalls[ 0 ].callback( SERVER_ERROR );
+
+			expect( getIsLoading( store.getState() ) ).toBe( false );
+			expect( hasLoadFailed( store.getState(), 'all' ) ).toBe( false );
+			expect( getAllNotes( store.getState() ) ).toHaveLength( 3 );
+		} );
+
+		it( 'keeps the error up while the timer retries, and clears it once a retry succeeds', () => {
+			client.getNotes();
+			getCalls[ 0 ].callback( SERVER_ERROR );
+			getCalls.length = 0;
+
+			// The first failure backs off for 60 s.
+			vi.advanceTimersByTime( 60000 );
+			expect( getCalls ).toHaveLength( 1 );
+			expect( hasLoadFailed( store.getState(), 'all' ) ).toBe( true );
+
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 100 ), last_seen_time: 0 } );
+			expect( hasLoadFailed( store.getState(), 'all' ) ).toBe( false );
+			expect( getIsLoading( store.getState() ) ).toBe( false );
+		} );
+
+		it( 'sends one request when the person tries again, and none while it is in flight', () => {
+			client.getNotes();
+			getCalls[ 0 ].callback( SERVER_ERROR );
+			getCalls.length = 0;
+
+			client.retryLoad();
+			expect( getCalls ).toHaveLength( 1 );
+			expect( getCalls[ 0 ].query ).not.toHaveProperty( 'before' );
+			expect( getIsLoading( store.getState() ) ).toBe( true );
+			expect( hasLoadFailed( store.getState(), 'all' ) ).toBe( true );
+
+			client.retryLoad();
+			expect( getCalls ).toHaveLength( 1 );
+
+			getCalls[ 0 ].callback( SERVER_ERROR );
+			expect( getIsLoading( store.getState() ) ).toBe( false );
+			expect( hasLoadFailed( store.getState(), 'all' ) ).toBe( true );
+		} );
+
+		it( 'ends a retry that a poll answers, when other tabs put notes in the store', () => {
+			client.getNotes();
+			getCalls[ 0 ].callback( SERVER_ERROR );
+			getCalls.length = 0;
+			// The Comments tab loaded, so the timer polls the id list rather than the list.
+			store.dispatch( actions.notes.addNotes( fullPage( 10, 100 ) ) );
+			client.getNotesList();
+
+			client.retryLoad();
+			// The poll holds the lock, so trying again waits for its answer.
+			expect( getCalls ).toHaveLength( 1 );
+			expect( getIsLoading( store.getState() ) ).toBe( true );
+
+			getCalls[ 0 ].callback( SERVER_ERROR );
+			expect( getIsLoading( store.getState() ) ).toBe( false );
+			expect( hasLoadFailed( store.getState(), 'all' ) ).toBe( true );
+		} );
+
+		it( 'does not page older notes before the list has loaded', () => {
+			client.getNotes();
+			getCalls[ 0 ].callback( SERVER_ERROR );
+			getCalls.length = 0;
+			// The Comments tab loaded, but those notes aren't the list.
+			store.dispatch( actions.notes.addNotes( fullPage( 10, 100 ) ) );
+
+			client.loadMore();
+
+			expect( getCalls ).toHaveLength( 0 );
+		} );
+
+		it( 'keeps retrying on the timer while live updates are connected, until the list loads', () => {
+			pinghubCallback( null, { response: { type: 'open' } } );
+			client.getNotes();
+			getCalls[ 0 ].callback( SERVER_ERROR );
+			getCalls.length = 0;
+
+			vi.advanceTimersByTime( 60000 );
+			expect( getCalls ).toHaveLength( 1 );
+
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 100 ), last_seen_time: 0 } );
+			getCalls.length = 0;
+
+			// Loaded: live updates take over from the timer.
+			vi.advanceTimersByTime( 180000 );
+			expect( getCalls ).toHaveLength( 0 );
+		} );
+
+		it( 'shows an error on a filtered tab whose first fetch fails, and not on the All tab', () => {
+			seedFirstWindow();
+			client.setFilter( 'unread' );
+
+			getCalls[ 0 ].callback( SERVER_ERROR );
+
+			expect( hasLoadFailed( store.getState(), UNREAD_KEY ) ).toBe( true );
+			expect( hasLoadFailed( store.getState(), 'all' ) ).toBe( false );
+			expect( getFilteredLoading( store.getState() ) ).toBe( null );
+		} );
+
+		it( 'keeps a filtered tab’s notes when a refresh of it fails', () => {
+			client.setFilter( 'unread' );
+			getCalls[ 0 ].callback( null, { notes: fullPage( 3, 50 ), last_seen_time: 0 } );
+			getCalls.length = 0;
+
+			client.getFilteredNotes();
+			getCalls[ 0 ].callback( SERVER_ERROR );
+
+			expect( hasLoadFailed( store.getState(), UNREAD_KEY ) ).toBe( false );
+			expect( getFilteredNoteIds( store.getState(), UNREAD_KEY ) ).toHaveLength( 3 );
+		} );
+
+		it( 'fetches the failed filtered tab once when the person tries again', () => {
+			client.setFilter( 'unread' );
+			getCalls[ 0 ].callback( SERVER_ERROR );
+			getCalls.length = 0;
+
+			client.retryLoad( UNREAD_KEY );
+			expect( getCalls ).toHaveLength( 1 );
+			expect( getCalls[ 0 ].query ).toMatchObject( { unread: 1 } );
+			expect( getFilteredLoading( store.getState() ) ).toBe( UNREAD_KEY );
+
+			getCalls[ 0 ].callback( null, { notes: fullPage( 3, 50 ), last_seen_time: 0 } );
+			expect( hasLoadFailed( store.getState(), UNREAD_KEY ) ).toBe( false );
+			expect( getFilteredNoteIds( store.getState(), UNREAD_KEY ) ).toHaveLength( 3 );
+		} );
+		it( 'tries again on the tab that was pressed, after another surface made All active', () => {
+			seedFirstWindow();
+			client.setFilter( 'unread' );
+			getCalls[ 0 ].callback( SERVER_ERROR );
+			getCalls.length = 0;
+			// The panel opened over the full page, on the All tab.
+			client.setFilter( 'all' );
+
+			client.retryLoad( UNREAD_KEY );
+
+			expect( getCalls ).toHaveLength( 1 );
+			expect( getCalls[ 0 ].query ).toMatchObject( { unread: 1 } );
+			expect( getFilteredLoading( store.getState() ) ).toBe( UNREAD_KEY );
+			getCalls[ 0 ].callback( null, { notes: fullPage( 3, 50 ), last_seen_time: 0 } );
+			expect( hasLoadFailed( store.getState(), UNREAD_KEY ) ).toBe( false );
+		} );
+
+		it( 'tries again on the All tab while a filtered tab is active', () => {
+			client.getNotes();
+			getCalls[ 0 ].callback( SERVER_ERROR );
+			getCalls.length = 0;
+			client.setFilter( 'unread' );
+			getCalls[ 0 ].callback( null, { notes: fullPage( 3, 50 ), last_seen_time: 0 } );
+			getCalls.length = 0;
+
+			client.retryLoad( 'all' );
+
+			expect( getCalls ).toHaveLength( 1 );
+			expect( getCalls[ 0 ].query ).not.toHaveProperty( 'unread' );
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 100 ), last_seen_time: 0 } );
+			expect( hasLoadFailed( store.getState(), 'all' ) ).toBe( false );
+		} );
+
+		it( 'keeps a filtered tab’s error when the All list loads', () => {
+			seedFirstWindow();
+			client.setFilter( 'unread' );
+			getCalls[ 0 ].callback( SERVER_ERROR );
+			getCalls.length = 0;
+
+			client.getNotes();
+			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 100 ), last_seen_time: 0 } );
+
+			expect( hasLoadFailed( store.getState(), UNREAD_KEY ) ).toBe( true );
+		} );
+
+		it( 'keeps retrying with live updates connected when other tabs put notes in the store', () => {
+			pinghubCallback( null, { response: { type: 'open' } } );
+			client.getNotes();
+			getCalls[ 0 ].callback( SERVER_ERROR );
+			getCalls.length = 0;
+			// The Comments tab loaded, but those notes aren't the list.
+			store.dispatch( actions.notes.addNotes( fullPage( 10, 100 ) ) );
+
+			vi.advanceTimersByTime( 60000 );
+			expect( getCalls ).toHaveLength( 1 );
+
+			getCalls[ 0 ].callback( SERVER_ERROR );
+			getCalls.length = 0;
+			vi.advanceTimersByTime( 180000 );
+			expect( getCalls.length ).toBeGreaterThan( 0 );
+		} );
+
+		it( 'stops polling once the first load succeeds after live updates connected', () => {
+			client.getNotes();
+			// Live updates connect while the first load is in flight.
+			pinghubCallback( null, { response: { type: 'open' } } );
+			// An empty inbox, so a stray timer would fetch the list again.
+			getCalls[ 0 ].callback( null, { notes: [], last_seen_time: 0 } );
+			getCalls.length = 0;
+
+			vi.advanceTimersByTime( 180000 );
+
+			expect( getCalls ).toHaveLength( 0 );
 		} );
 	} );
 

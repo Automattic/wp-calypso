@@ -1,16 +1,17 @@
+import { vi } from 'vitest';
 import { getPluginStatusesByType } from 'calypso/state/plugins/installed/selectors';
 import { getPluginActionStatuses } from '../get-plugin-action-statuses';
 
-jest.mock( 'calypso/state/plugins/installed/selectors', () => ( {
-	...jest.requireActual( 'calypso/state/plugins/installed/selectors' ),
-	getPluginStatusesByType: jest.fn(),
+vi.mock( 'calypso/state/plugins/installed/selectors', async () => ( {
+	...( await vi.importActual( 'calypso/state/plugins/installed/selectors' ) ),
+	getPluginStatusesByType: vi.fn(),
 } ) );
 
 const FAKE_RESULT = { siteId: '', pluginId: '' };
 
 describe( 'getPluginActionStatuses', () => {
 	beforeEach( () => {
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 	} );
 
 	it.each( [ [ 'inProgress' ], [ 'completed' ], [ 'error' ], [ 'up-to-date' ] ] )(

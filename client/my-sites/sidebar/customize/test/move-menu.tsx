@@ -1,10 +1,11 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 
 import { fireEvent, render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import { CustomizeProvider, useCustomizeContext } from '../index';
 import { MoveMenu } from '../move-menu';
 import type { LayoutDelta } from 'calypso/state/admin-sidebar/layout/types';
@@ -65,7 +66,7 @@ describe( '<MoveMenu>', () => {
 		renderInProvider(
 			<CustomizeProvider>
 				<ExposeContext />
-				<MoveMenu itemId="stats" itemLabel="Stats" triggerEl={ trigger } onClose={ jest.fn() } />
+				<MoveMenu itemId="stats" itemLabel="Stats" triggerEl={ trigger } onClose={ vi.fn() } />
 			</CustomizeProvider>
 		);
 
@@ -80,12 +81,12 @@ describe( '<MoveMenu>', () => {
 
 	it( 'offers a top-level destination for grouped items', () => {
 		const trigger = setupSidebar( 'plugins' );
-		const saveLayoutImpl = jest.fn( () => new Promise< LayoutDelta >( () => {} ) );
+		const saveLayoutImpl = vi.fn( () => new Promise< LayoutDelta >( () => {} ) );
 
 		renderInProvider(
 			<CustomizeProvider saveLayoutImpl={ saveLayoutImpl }>
 				<ExposeContext />
-				<MoveMenu itemId="stats" itemLabel="Stats" triggerEl={ trigger } onClose={ jest.fn() } />
+				<MoveMenu itemId="stats" itemLabel="Stats" triggerEl={ trigger } onClose={ vi.fn() } />
 			</CustomizeProvider>
 		);
 
@@ -106,7 +107,7 @@ describe( '<MoveMenu>', () => {
 
 	it( 'closes on pointerdown outside the menu and trigger', () => {
 		const trigger = setupSidebar( 'plugins' );
-		const onClose = jest.fn();
+		const onClose = vi.fn();
 
 		renderInProvider(
 			<CustomizeProvider>

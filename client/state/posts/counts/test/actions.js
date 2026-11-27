@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	POST_COUNTS_RECEIVE,
 	POST_COUNTS_REQUEST,
@@ -11,7 +12,7 @@ describe( 'actions', () => {
 	let spy;
 
 	beforeEach( () => {
-		spy = jest.fn();
+		spy = vi.fn();
 	} );
 
 	describe( '#receivePostCounts()', () => {

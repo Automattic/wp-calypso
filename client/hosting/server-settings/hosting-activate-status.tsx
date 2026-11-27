@@ -10,7 +10,6 @@ import {
 	transferStates,
 } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
-import { initiateThemeTransfer } from 'calypso/state/themes/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { AppState } from 'calypso/types';
 import { activateContext } from './components/activate-context';
@@ -118,7 +117,6 @@ const mapStateToProps = ( state: AppState ) => {
 };
 
 const mapDispatchToProps = {
-	initiateTransfer: initiateThemeTransfer,
 	fetchAutomatedTransferStatus,
 };
 

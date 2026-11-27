@@ -8,17 +8,16 @@ import { send } from '@wordpress/icons';
 import { IconButton } from '@wordpress/ui';
 import debugModule from 'debug';
 import { useRef, useState, useEffect, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import repliesCache from '../../panel/comment-replies-cache';
-import { modifierKeyIsActive } from '../../panel/helpers/input';
 import { reportRequestError } from '../../panel/helpers/log-error';
 import { recordTracksEvent } from '../../panel/helpers/stats';
 import { bumpStat } from '../../panel/rest-client/bump-stat';
 import { wpcom } from '../../panel/rest-client/wpcom';
 import actions from '../../panel/state/actions';
-import getKeyboardShortcutsEnabled from '../../panel/state/selectors/get-keyboard-shortcuts-enabled';
 import Suggestions from '../../panel/suggestions';
 import { useAppContext } from '../context';
+import HotkeyContainer from './container-hotkey';
 import type { Note } from '../types';
 import type { FormEvent } from 'react';
 
@@ -54,9 +53,6 @@ function getRowCount( textareaElement: HTMLTextAreaElement | null ) {
 const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: string } ) => {
 	const dispatch = useDispatch();
 	const { client } = useAppContext();
-	const keyboardShortcutsAreEnabled = useSelector( ( state ) =>
-		getKeyboardShortcutsEnabled( state )
-	);
 
 	const formRef = useRef< HTMLFormElement | null >( null );
 	const replyInputRef = useRef< HTMLTextAreaElement | null >( null );
@@ -183,23 +179,9 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 		setTimeout( () => element?.setSelectionRange( insertPosition, insertPosition ), 0 );
 	};
 
+	const focusReply = () => replyInputRef.current?.focus();
+
 	useEffect( () => {
-		const handleKeyDown = ( event: KeyboardEvent ) => {
-			if ( ! keyboardShortcutsAreEnabled ) {
-				return;
-			}
-
-			if ( modifierKeyIsActive( event ) ) {
-				return;
-			}
-
-			if ( 'r' === event.key.toLowerCase() ) {
-				/* 'r' key */
-				replyInputRef.current?.focus();
-				stopEvent( event );
-			}
-		};
-
 		const handleCtrlEnter = ( event: KeyboardEvent ) => {
 			// Only from inside the form: the full page keeps a note open while the person types elsewhere.
 			if ( ! formRef.current?.contains( event.target as Node ) ) {
@@ -212,49 +194,54 @@ const CommentReplyInput = ( { note, defaultValue }: { note: Note; defaultValue: 
 			}
 		};
 
-		window.addEventListener( 'keydown', handleKeyDown, false );
 		window.addEventListener( 'keydown', handleCtrlEnter, false );
 
 		return () => {
-			window.removeEventListener( 'keydown', handleKeyDown, false );
 			window.removeEventListener( 'keydown', handleCtrlEnter, false );
 		};
-	}, [ keyboardShortcutsAreEnabled, handleSubmit ] );
+	}, [ handleSubmit ] );
 
 	return (
-		<VStack style={ { width: '100%' } }>
-			<form ref={ formRef } onSubmit={ handleSubmit }>
-				<HStack spacing={ 2 } alignment="flex-start">
-					<TextareaControl
-						className="comment-reply-input__textarea"
-						ref={ replyInputRef }
-						rows={ getRowCount( replyInputRef.current ) }
-						value={ value }
-						placeholder={ defaultValue }
-						__nextHasNoMarginBottom
-						onFocus={ handleFocus }
-						onBlur={ handleBlur }
-						onChange={ handleChange }
-					/>
-					<IconButton
-						ref={ submitButtonRef }
-						type="submit"
-						tone={ value.length ? 'brand' : 'neutral' }
-						label={
-							value.length ? __( 'Submit reply' ) : __( 'Write your response in order to submit' )
-						}
-						icon={ send }
-						loading={ isSubmitting }
-						disabled={ ! value.length }
-					/>
-				</HStack>
-			</form>
-			<Suggestions
-				site={ note.meta?.ids?.site }
-				onInsertSuggestion={ insertSuggestion }
-				getContextEl={ () => replyInputRef.current }
-			/>
-		</VStack>
+		<HotkeyContainer
+			shortcuts={ [
+				{ hotkey: 'r', action: focusReply },
+				{ hotkey: 'R', action: focusReply },
+			] }
+		>
+			<VStack style={ { width: '100%' } }>
+				<form ref={ formRef } onSubmit={ handleSubmit }>
+					<HStack spacing={ 2 } alignment="flex-start">
+						<TextareaControl
+							className="comment-reply-input__textarea"
+							ref={ replyInputRef }
+							rows={ getRowCount( replyInputRef.current ) }
+							value={ value }
+							placeholder={ defaultValue }
+							__nextHasNoMarginBottom
+							onFocus={ handleFocus }
+							onBlur={ handleBlur }
+							onChange={ handleChange }
+						/>
+						<IconButton
+							ref={ submitButtonRef }
+							type="submit"
+							tone={ value.length ? 'brand' : 'neutral' }
+							label={
+								value.length ? __( 'Submit reply' ) : __( 'Write your response in order to submit' )
+							}
+							icon={ send }
+							loading={ isSubmitting }
+							disabled={ ! value.length }
+						/>
+					</HStack>
+				</form>
+				<Suggestions
+					site={ note.meta?.ids?.site }
+					onInsertSuggestion={ insertSuggestion }
+					getContextEl={ () => replyInputRef.current }
+				/>
+			</VStack>
+		</HotkeyContainer>
 	);
 };
 

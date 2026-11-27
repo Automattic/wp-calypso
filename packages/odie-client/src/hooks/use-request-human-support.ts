@@ -17,6 +17,7 @@ export const useRequestHumanSupport = () => {
 				created_from: request.createdFrom,
 				is_emergency: request.flags.isEmergency,
 				route_to_email: request.flags.routeToEmail,
+				is_unknown_charge: request.flags.isUnknownCharge,
 			} );
 			setPendingHumanSupportRequest( request );
 			// Starting a chat would end the bot's "sending" state, so end it here while the step decides.

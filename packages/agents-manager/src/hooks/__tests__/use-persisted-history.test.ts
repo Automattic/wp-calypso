@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { render, renderHook, act } from '@testing-library/react';
 import { Action, type Location } from 'history';
 import { createElement, useLayoutEffect } from 'react';

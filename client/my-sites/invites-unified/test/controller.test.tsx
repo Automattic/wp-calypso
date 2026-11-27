@@ -1,28 +1,31 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { getQueryArg } from '@wordpress/url';
+import { type Mock, vi } from 'vitest';
 import wpcom from 'calypso/lib/wp';
 import { maybeUseUnifiedInvite } from '../controller';
 
-jest.mock( '@wordpress/url', () => ( {
-	getQueryArg: jest.fn(),
+vi.mock( '@wordpress/url', () => ( {
+	getQueryArg: vi.fn(),
 } ) );
 
-jest.mock( 'calypso/lib/wp', () => ( {
-	req: {
-		get: jest.fn(),
-	},
-} ) );
+vi.mock( 'calypso/lib/wp', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		req: {
+			get: vi.fn(),
+		},
+	} )
+);
 
 // Mock the UnifiedInviteAccept component
-jest.mock( '../index', () => ( {
+vi.mock( '../index', () => ( {
 	__esModule: true,
 	default: () => <div data-testid="unified-invite">UnifiedInviteAccept</div>,
 } ) );
 
-const mockGetQueryArg = getQueryArg as jest.Mock;
-const mockWpcomGet = wpcom.req.get as jest.Mock;
+const mockGetQueryArg = getQueryArg as Mock;
+const mockWpcomGet = wpcom.req.get as Mock;
 
 describe( 'maybeUseUnifiedInvite', () => {
 	let context: {
@@ -32,10 +35,10 @@ describe( 'maybeUseUnifiedInvite', () => {
 		useUnifiedInvite?: boolean;
 		primary?: React.ReactNode;
 	};
-	let next: jest.Mock;
+	let next: Mock;
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockGetQueryArg.mockReturnValue( undefined );
 
 		context = {
@@ -44,7 +47,7 @@ describe( 'maybeUseUnifiedInvite', () => {
 				invitation_key: 'abc123',
 			},
 		};
-		next = jest.fn();
+		next = vi.fn();
 	} );
 
 	test( 'calls next() immediately when legacy=1 query param is present', async () => {

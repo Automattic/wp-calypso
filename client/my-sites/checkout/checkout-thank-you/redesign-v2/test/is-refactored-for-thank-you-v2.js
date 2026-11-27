@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { domainProductSlugs } from 'calypso/lib/domains/constants';
 import { isRefactoredForThankYouV2 } from '../utils';

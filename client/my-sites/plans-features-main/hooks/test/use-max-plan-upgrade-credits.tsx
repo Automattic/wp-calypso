@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import {
@@ -10,22 +10,29 @@ import {
 	PLAN_FREE,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
+import { vi } from 'vitest';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import { useMaxPlanUpgradeCredits } from '../use-max-plan-upgrade-credits';
 import type { PlanSlug } from '@automattic/calypso-products';
 
-jest.mock(
+vi.mock(
 	'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase',
-	() => jest.fn()
+	() => ( { default: vi.fn() } )
 );
 
-jest.mock( '@automattic/data-stores', () => ( {
-	...jest.requireActual( '@automattic/data-stores' ),
+vi.mock( '@automattic/data-stores', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/data-stores' ) >(
+		'@automattic/data-stores'
+	) ),
 	Plans: {
-		...jest.requireActual( '@automattic/data-stores' ).Plans,
-		usePricingMetaForGridPlans: jest.fn(),
-		useSitePlans: jest.fn(),
+		...(
+			await vi.importActual< typeof import( '@automattic/data-stores' ) >(
+				'@automattic/data-stores'
+			)
+		).Plans,
+		usePricingMetaForGridPlans: vi.fn(),
+		useSitePlans: vi.fn(),
 	},
 } ) );
 
@@ -34,7 +41,7 @@ const plans: PlanSlug[] = [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINES
 
 describe( 'useCalculateMaxPlanUpgradeCredit hook', () => {
 	beforeEach( () => {
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 		Plans.useSitePlans.mockImplementation( () => ( { data: {} } ) );
 		Plans.usePricingMetaForGridPlans.mockImplementation( () => ( {
 			[ PLAN_FREE ]: {

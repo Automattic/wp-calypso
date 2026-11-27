@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { mergeHandlers } from 'calypso/state/action-watchers/utils';
 import { bypassDataLayer } from '../utils';
 import { middleware } from '../wpcom-api-middleware';
@@ -7,13 +8,13 @@ describe( 'WordPress.com API Middleware', () => {
 	let store;
 
 	beforeEach( () => {
-		next = jest.fn();
+		next = vi.fn();
 
 		store = {
-			dispatch: jest.fn(),
-			getState: jest.fn(),
-			replaceReducers: jest.fn(),
-			subscribe: jest.fn(),
+			dispatch: vi.fn(),
+			getState: vi.fn(),
+			replaceReducers: vi.fn(),
+			subscribe: vi.fn(),
 		};
 
 		store.getState.mockReturnValue( Object.create( null ) );
@@ -30,7 +31,7 @@ describe( 'WordPress.com API Middleware', () => {
 	} );
 
 	test( 'should pass along local actions untouched', () => {
-		const adder = jest.fn();
+		const adder = vi.fn();
 		const handlers = mergeHandlers( {
 			[ 'ADD' ]: [ adder ],
 		} );
@@ -43,7 +44,7 @@ describe( 'WordPress.com API Middleware', () => {
 	} );
 
 	test( 'should pass along non-local actions with non data-layer meta', () => {
-		const adder = jest.fn();
+		const adder = vi.fn();
 		const handlers = mergeHandlers( {
 			[ 'ADD' ]: [ adder ],
 		} );
@@ -56,7 +57,7 @@ describe( 'WordPress.com API Middleware', () => {
 	} );
 
 	test( 'should pass non-local actions with data-layer meta but no bypass', () => {
-		const adder = jest.fn();
+		const adder = vi.fn();
 		const handlers = mergeHandlers( {
 			[ 'ADD' ]: [ adder ],
 		} );
@@ -69,7 +70,7 @@ describe( 'WordPress.com API Middleware', () => {
 	} );
 
 	test( 'should intercept actions in appropriate handler', () => {
-		const adder = jest.fn();
+		const adder = vi.fn();
 		const handlers = mergeHandlers( {
 			[ 'ADD' ]: [ adder ],
 		} );
@@ -82,7 +83,7 @@ describe( 'WordPress.com API Middleware', () => {
 	} );
 
 	test( 'should allow continuing the action down the chain', () => {
-		const adder = jest.fn( () => {} );
+		const adder = vi.fn( () => {} );
 		const handlers = mergeHandlers( {
 			[ 'ADD' ]: [ adder ],
 		} );
@@ -96,8 +97,8 @@ describe( 'WordPress.com API Middleware', () => {
 	} );
 
 	test( 'should call all given handlers (same list)', () => {
-		const adder = jest.fn();
-		const doubler = jest.fn();
+		const adder = vi.fn();
+		const doubler = vi.fn();
 		const handlers = mergeHandlers( {
 			[ 'MATHS' ]: [ adder, doubler ],
 		} );
@@ -111,8 +112,8 @@ describe( 'WordPress.com API Middleware', () => {
 	} );
 
 	test( 'should call all given handlers (different lists)', () => {
-		const adder = jest.fn();
-		const doubler = jest.fn();
+		const adder = vi.fn();
+		const doubler = vi.fn();
 		const handlers = mergeHandlers(
 			{
 				[ 'MATHS' ]: [ adder ],
@@ -136,7 +137,7 @@ describe( 'WordPress.com API Middleware', () => {
 		const action = { type: 'ADD' };
 
 		beforeEach( () => {
-			adder = jest.fn();
+			adder = vi.fn();
 			handlers = mergeHandlers( {
 				[ 'ADD' ]: [ adder ],
 			} );

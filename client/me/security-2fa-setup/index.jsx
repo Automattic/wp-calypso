@@ -74,8 +74,8 @@ class Security2faSetup extends Component {
 			);
 		}
 
-		let title = '';
-		let content = null;
+		let title;
+		let content;
 
 		switch ( step ) {
 			case SMS_BASED_2FA_SETUP_ENTER_PHONE_STEP:

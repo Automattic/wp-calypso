@@ -1,0 +1,15 @@
+@import '@wordpress/base-styles/colors';
+
+.deployment-logs-modal__log-output {
+	background-color: $gray-900;
+	box-shadow: inset 0 0 0 1px var( --dashboard-surface__border-color );
+
+	.deployment-logs-entry__text,
+	.deployment-logs-entry__text.components-button.is-link {
+		color: $gray-100;
+	}
+
+	.deployment-logs-entry__timestamp {
+		color: $gray-600;
+	}
+}

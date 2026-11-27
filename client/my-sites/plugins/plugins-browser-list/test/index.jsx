@@ -1,22 +1,23 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 
 import { PLAN_FREE } from '@automattic/calypso-products';
 import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import productsList from 'calypso/state/products-list/reducer';
 import { reducer as ui } from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import PluginsBrowserList from '../';
 import { PluginsBrowserListVariant } from '../types';
 
-jest.mock( 'calypso/lib/route/path', () => ( {
-	getMessagePathForJITM: jest.fn( () => '/plugins/' ),
+vi.mock( 'calypso/lib/route/path', () => ( {
+	getMessagePathForJITM: vi.fn( () => '/plugins/' ),
 } ) );
 
-jest.mock( 'calypso/my-sites/plugins/use-preinstalled-premium-plugin', () =>
-	jest.fn( () => ( { usePreinstalledPremiumPlugin: jest.fn() } ) )
-);
+vi.mock( 'calypso/my-sites/plugins/use-preinstalled-premium-plugin', () => ( {
+	default: vi.fn( () => ( { usePreinstalledPremiumPlugin: vi.fn() } ) ),
+} ) );
 
-jest.mock( 'calypso/state/plugins/last-visited/selectors', () => ( {
+vi.mock( 'calypso/state/plugins/last-visited/selectors', () => ( {
 	isLastVisitedPlugin: () => {},
 } ) );
 

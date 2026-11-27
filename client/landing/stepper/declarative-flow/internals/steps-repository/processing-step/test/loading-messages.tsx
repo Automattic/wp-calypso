@@ -1,28 +1,29 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { ONBOARDING_FLOW } from '@automattic/onboarding';
 import { act, screen } from '@testing-library/react';
 import { dispatch } from '@wordpress/data';
 import React from 'react';
+import { vi } from 'vitest';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import ProcessingStep from '../';
 import { mockStepProps, renderStep } from '../../test/helpers/index';
 import type { OnboardActions } from '@automattic/data-stores';
 
-jest.mock( 'calypso/landing/stepper/hooks/use-record-signup-complete', () => ( {
-	useRecordSignupComplete: () => jest.fn(),
+vi.mock( 'calypso/landing/stepper/hooks/use-record-signup-complete', () => ( {
+	useRecordSignupComplete: () => vi.fn(),
 } ) );
-jest.mock( 'calypso/lib/analytics/signup', () => ( {
-	recordSignupProcessingScreen: jest.fn(),
+vi.mock( 'calypso/lib/analytics/signup', () => ( {
+	recordSignupProcessingScreen: vi.fn(),
 } ) );
-jest.mock( 'calypso/lib/analytics/tracks', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
-jest.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
+vi.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
 	useSiteData: () => ( { siteSlug: 'example.wordpress.com' } ),
 } ) );
-jest.mock( '../hooks/use-processing-loading-messages', () => ( {
+vi.mock( '../hooks/use-processing-loading-messages', () => ( {
 	useProcessingLoadingMessages: () => [
 		{ title: 'Default first step', duration: 2000 },
 		{ title: 'Default second step', duration: 3000 },
@@ -37,12 +38,12 @@ describe( 'ProcessingStep loading-carousel accepts-props', () => {
 	// The onboard store is shared across tests in this file; a completed run would
 	// otherwise leave the next render with nothing to show.
 	beforeEach( () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		( dispatch( ONBOARD_STORE ) as OnboardActions ).resetOnboardStore();
 	} );
 
 	afterEach( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	const render = ( props = {} ) => {
@@ -52,7 +53,7 @@ describe( 'ProcessingStep loading-carousel accepts-props', () => {
 			/>
 		);
 
-		act( () => void jest.advanceTimersByTime( TITLE_DELAY_MS ) );
+		act( () => void vi.advanceTimersByTime( TITLE_DELAY_MS ) );
 
 		return rendered;
 	};

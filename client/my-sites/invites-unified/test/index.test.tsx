@@ -1,16 +1,17 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
+import { vi } from 'vitest';
 import { UnifiedInviteAccept } from '../index';
 
-const mockNormalizeInvite = jest.fn();
-const mockTopBar = jest.fn();
+const mockNormalizeInvite = vi.fn();
+const mockTopBar = vi.fn();
 
-jest.mock( '@automattic/onboarding', () => ( {
+vi.mock( '@automattic/onboarding', () => ( {
 	Step: {
 		TopBar: ( props: { logo?: React.ReactNode } ) => {
 			mockTopBar( props );
@@ -23,7 +24,7 @@ jest.mock( '@automattic/onboarding', () => ( {
 	},
 } ) );
 
-jest.mock( 'calypso/lib/partner-branding', () => ( {
+vi.mock( 'calypso/lib/partner-branding', () => ( {
 	detectPartnerConfig: () => null,
 	getPartnerConfigFromGarden: () => ( {
 		windowTitleSuffix: 'Woo',
@@ -46,16 +47,16 @@ jest.mock( 'calypso/lib/partner-branding', () => ( {
 	) => `${ title } — ${ partnerConfig?.windowTitleSuffix || 'WordPress.com' }`,
 } ) );
 
-jest.mock( 'calypso/my-sites/invites/invite-accept/utils/normalize-invite', () => ( {
+vi.mock( 'calypso/my-sites/invites/invite-accept/utils/normalize-invite', () => ( {
 	__esModule: true,
 	default: ( inviteData: unknown ) => mockNormalizeInvite( inviteData ),
 } ) );
 
-const mockLoggedOutInviteAccept = jest.fn();
-const mockAlreadyMemberScreen = jest.fn();
-const mockInvalidInviteScreen = jest.fn();
+const mockLoggedOutInviteAccept = vi.fn();
+const mockAlreadyMemberScreen = vi.fn();
+const mockInvalidInviteScreen = vi.fn();
 
-jest.mock( 'calypso/my-sites/invites/invite-accept-logged-out', () => ( {
+vi.mock( 'calypso/my-sites/invites/invite-accept-logged-out', () => ( {
 	__esModule: true,
 	default: ( props: unknown ) => {
 		mockLoggedOutInviteAccept( props );
@@ -64,12 +65,12 @@ jest.mock( 'calypso/my-sites/invites/invite-accept-logged-out', () => ( {
 } ) );
 
 // Mock AcceptInviteScreen to simplify testing
-jest.mock( '../screens/accept-invite-screen', () => ( {
+vi.mock( '../screens/accept-invite-screen', () => ( {
 	__esModule: true,
 	default: () => <div data-testid="accept-invite-screen">AcceptInviteScreen</div>,
 } ) );
 
-jest.mock( '../screens/already-member-screen', () => ( {
+vi.mock( '../screens/already-member-screen', () => ( {
 	__esModule: true,
 	default: ( props: unknown ) => {
 		mockAlreadyMemberScreen( props );
@@ -77,7 +78,7 @@ jest.mock( '../screens/already-member-screen', () => ( {
 	},
 } ) );
 
-jest.mock( '../screens/invalid-invite-screen', () => ( {
+vi.mock( '../screens/invalid-invite-screen', () => ( {
 	__esModule: true,
 	default: ( props: unknown ) => {
 		mockInvalidInviteScreen( props );
@@ -85,7 +86,7 @@ jest.mock( '../screens/invalid-invite-screen', () => ( {
 	},
 } ) );
 
-jest.mock( '../style.scss', () => ( {} ) );
+vi.mock( '../style.scss', () => ( {} ) );
 
 const mockStore = configureStore();
 

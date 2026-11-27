@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import {
 	NOTICE_CREATE,
 	PUBLICIZE_CONNECTION_CREATE,
@@ -18,7 +19,7 @@ describe( 'actions', () => {
 	let spy;
 
 	beforeEach( () => {
-		spy = jest.fn();
+		spy = vi.fn();
 	} );
 
 	describe( 'fetchConnection()', () => {
