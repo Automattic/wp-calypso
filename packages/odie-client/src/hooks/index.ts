@@ -5,6 +5,7 @@ export { useCreateZendeskConversation } from './use-create-zendesk-conversation'
 export { useRequestHumanSupport } from './use-request-human-support';
 export { useGetCombinedChat } from './use-get-combined-chat';
 export { useRefreshChatOnFocus } from './use-refresh-chat-on-focus';
+export { usePollForDelayedReplies } from './use-poll-for-delayed-replies';
 export { useOdieUserTracking } from './use-odie-user-tracking';
 export { useSendZendeskMessage, useSendZendeskMessageOnce } from './use-send-zendesk-message';
 export { useUpdateDocumentTitle } from './use-update-document-title';
