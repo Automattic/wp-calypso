@@ -12,7 +12,7 @@ import PageLayout from '../../../../../components/page-layout';
 import { SitesNoticeArbiter } from '../../../../../sites/components/notice-arbiter';
 import HostingFeatureGatedWithCallout from '../../../../../sites/hosting-features/components/hosting-feature-gated-with-callout';
 import { getPerformanceCalloutProps } from '../../../../../sites/performance/components/performance-callout';
-import { SiteLaunchButton } from '../../../../../sites/site-launch-button';
+import { SiteLaunchButton } from '../../../../../sites/site-launch/components/site-launch-button';
 
 export function SitePerformanceContent( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );

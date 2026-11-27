@@ -31,7 +31,7 @@ import { hasHostingFeature, hasJetpackModule } from '../../utils/site-features';
 import { getStorageUsagePercent } from '../../utils/site-storage';
 import { canManageSite } from '../features';
 import { useAiLaunchpad } from '../hooks/use-ai-launchpad';
-import SitePreview from '../site-preview';
+import SitePreview from '../site-preview/components/site-preview';
 import { getVisibilityLabels } from '../visibility/utils';
 import {
 	PlanAwaitingCheckout,

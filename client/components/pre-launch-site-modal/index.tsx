@@ -5,7 +5,7 @@ import { QueryClientProvider, useQuery } from '@tanstack/react-query';
 import { useResizeObserver } from '@wordpress/compose';
 import { useEffect, useState } from 'react';
 import { isSitePlanPaid } from 'calypso/dashboard/sites/plans';
-import SitePreview from 'calypso/dashboard/sites/site-preview';
+import SitePreview from 'calypso/dashboard/sites/site-preview/components/site-preview';
 import { getSitePlanDisplayName } from 'calypso/dashboard/utils/site-plan';
 
 import './style.scss';

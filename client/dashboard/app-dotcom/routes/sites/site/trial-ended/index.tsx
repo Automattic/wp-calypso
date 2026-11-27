@@ -17,7 +17,7 @@ import { Card, CardBody } from '../../../../../components/card';
 import { PageHeader } from '../../../../../components/page-header';
 import PageLayout from '../../../../../components/page-layout';
 import UpsellCTAButton from '../../../../../components/upsell-cta-button';
-import SiteDeleteModal from '../../../../../sites/site-delete-modal';
+import SiteDeleteModal from '../../../../../sites/site-actions/components/site-delete-modal';
 import { redirectToDashboardLink, wpcomLink } from '../../../../../utils/link';
 import { wasEcommerceTrial } from '../../../../../utils/site-trial';
 import type { Site } from '@automattic/api-core';

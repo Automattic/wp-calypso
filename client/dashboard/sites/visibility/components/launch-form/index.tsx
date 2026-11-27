@@ -17,8 +17,8 @@ import Notice, {
 	RouterNoticeActionLinkButton,
 } from '../../../../components/notice';
 import { a4aLink } from '../../../../utils/link';
-import { SiteLaunchButton } from '../../../site-launch-button';
-import AgencyDevelopmentSiteLaunchModal from '../../../site-launch-button/agency-development-site-launch-modal';
+import AgencyDevelopmentSiteLaunchModal from '../../../site-launch/components/agency-development-site-launch-modal';
+import { SiteLaunchButton } from '../../../site-launch/components/site-launch-button';
 import TrialUpsellNotice from './trial-upsell-notice';
 import type { AgencyBlog, Site } from '@automattic/api-core';
 

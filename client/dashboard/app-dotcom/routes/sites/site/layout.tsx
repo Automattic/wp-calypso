@@ -7,7 +7,7 @@ import { useAuth } from '../../../../app/auth';
 import { siteRoute } from '../../../../app/router/sites';
 import FlashMessage from '../../../../components/flash-message';
 import { canManageSite, isSiteMember } from '../../../../sites/features';
-import SiteLaunchCelebrationModal from '../../../../sites/site-launch-modal/celebration-modal';
+import SiteLaunchCelebrationModal from '../../../../sites/site-launch/components/site-launch-celebration-modal';
 import StagingSiteSyncMonitor from '../../../../sites/staging-site/components/staging-site-sync-monitor';
 import { hasStagingSite } from '../../../../sites/staging-site/utils';
 import {
