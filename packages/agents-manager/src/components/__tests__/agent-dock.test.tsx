@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { type Mock, vi } from 'vitest';

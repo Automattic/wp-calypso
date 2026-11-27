@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { PLAN_BUSINESS } from '@automattic/calypso-products';
 import { AddOns } from '@automattic/data-stores';

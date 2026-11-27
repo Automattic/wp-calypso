@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { createOdieBotId } from '@automattic/agenttic-client';
 import { type Mock, vi } from 'vitest';
 import { getConversationBotId } from '../conversation-bot-id';

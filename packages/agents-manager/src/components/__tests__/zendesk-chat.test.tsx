@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { act, render } from '@testing-library/react';
 import { vi } from 'vitest';
 import ZendeskChat from '../zendesk-chat';

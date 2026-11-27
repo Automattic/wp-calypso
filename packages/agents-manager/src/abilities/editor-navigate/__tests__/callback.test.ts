@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { dispatch, select, subscribe } from '@wordpress/data';
 import { type Mock, type Mocked, vi } from 'vitest';
 import { getEditorHistory } from '../../../utils/editor-history';

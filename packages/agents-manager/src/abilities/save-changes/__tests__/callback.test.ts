@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { dispatch, select } from '@wordpress/data';
 import { vi } from 'vitest';
 import { isEditorPage } from '../../../utils/is-editor-page';

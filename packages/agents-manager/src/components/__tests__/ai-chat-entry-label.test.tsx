@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { render, screen } from '@testing-library/react';
 import { type MockedFunction, vi } from 'vitest';
 import { useAiChatEntryState } from '../../hooks/use-ai-chat-entry-state';

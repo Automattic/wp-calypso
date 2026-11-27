@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { select, subscribe } from '@wordpress/data';
 import { type Mock, vi } from 'vitest';
 import { isEditorPage } from '../../../utils/is-editor-page';

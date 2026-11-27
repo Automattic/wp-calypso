@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { fireEvent, render, screen } from '@testing-library/react';
 import { type Mock, vi } from 'vitest';
 import { setCheckpoint } from '../../utils/checkpoints';

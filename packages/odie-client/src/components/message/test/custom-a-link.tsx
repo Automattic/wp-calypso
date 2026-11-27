@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 /// <reference types="vitest/jsdom" />
 import { render, screen } from '@testing-library/react';
 import { vi } from 'vitest';

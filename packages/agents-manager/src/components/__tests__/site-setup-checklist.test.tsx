@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { act, render, screen } from '@testing-library/react';
 import { vi } from 'vitest';
 import SiteSetupChecklist from '../site-setup-checklist';
