@@ -1,9 +1,8 @@
-import { defineConfig } from 'vitest/config';
+import { mergeConfig } from 'vitest/config';
+import base from '../../test/packages/vitest.config.mjs';
 
-export default defineConfig( {
+export default mergeConfig( base, {
 	test: {
-		globals: true,
 		environment: 'node',
-		include: [ 'test/*.js' ],
 	},
 } );
