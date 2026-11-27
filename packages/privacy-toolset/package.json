@@ -58,7 +58,7 @@
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@storybook/react": "^10.6.8",
 		"@testing-library/dom": "^10.4.2",
-		"@testing-library/jest-dom": "^7.0.1",
+		"@testing-library/jest-dom": "^8.0.0",
 		"@testing-library/react": "^16.3.3",
 		"jsdom": "^20.0.3",
 		"postcss": "^8.5.32",
