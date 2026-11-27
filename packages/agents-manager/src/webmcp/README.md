@@ -59,10 +59,13 @@ here: they scope only the agent's own tools.
 A tool's description is its ability's own `description`, the text the Agents Manager agent also
 reads when its route allows the ability. A client ability's `meta.instructions` stay with the chat.
 
-Every tool sets the WebMCP draft's `untrustedContentHint`, because results carry site content and
-other plugins' output, which Agents Manager can't vouch for. A tool sets `consequentialHint` when
-its ability is annotated `destructive` or sets `meta.webmcp.consequential: true`. No tool listed
-below does: their changes stay unsaved for review.
+A tool's annotations follow the WebMCP draft's `ToolAnnotations`. `readOnlyHint` comes from the
+ability's `readonly` annotation. Every tool sets `untrustedContentHint`, because results carry site
+content and other plugins' output, which Agents Manager can't vouch for. A tool sets
+`consequentialHint` when its ability is annotated `destructive` or sets
+`meta.webmcp.consequential: true`. No tool listed below does: their changes stay unsaved for review.
+The draft has no MCP-style `destructiveHint` or `idempotentHint`, so the `idempotent` annotation
+isn't sent, and its `debugging` hint isn't used.
 
 Eligibility is checked once the providers load and whenever the scope or the loaded providers
 change; such a change, or unmounting, aborts all registrations. While eligible, the adapter syncs

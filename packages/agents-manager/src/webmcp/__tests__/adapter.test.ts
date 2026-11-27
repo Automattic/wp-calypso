@@ -307,7 +307,7 @@ describe( 'WebMCP adapter', () => {
 		expect( tool ).toMatchObject( {
 			description: expect.stringContaining( 'Instructions for wpcom/get-block-schemas' ),
 			inputSchema: ability.input_schema,
-			annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true },
+			annotations: { readOnlyHint: true, untrustedContentHint: true, consequentialHint: false },
 		} );
 
 		await tool?.execute( { fields: 'summary' } );
@@ -334,7 +334,7 @@ describe( 'WebMCP adapter', () => {
 		const tool = harness.tools.get( 'big_sky__show_template' );
 		expect( tool ).toMatchObject( {
 			inputSchema: { type: 'object', properties: {}, additionalProperties: false },
-			annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true },
+			annotations: { readOnlyHint: false, untrustedContentHint: true, consequentialHint: false },
 		} );
 
 		await expect( tool?.execute( {} ) ).resolves.toEqual( {
@@ -376,7 +376,7 @@ describe( 'WebMCP adapter', () => {
 				},
 				additionalProperties: false,
 			},
-			annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false },
+			annotations: { readOnlyHint: false, untrustedContentHint: true, consequentialHint: false },
 		} );
 
 		const input = {
@@ -398,22 +398,15 @@ describe( 'WebMCP adapter', () => {
 		);
 	} );
 
-	it( "marks every tool's results as untrusted, and no tool as consequential by default", async () => {
-		const harness = createHarness( [
-			createAbility(),
-			createBlockTreeAbility(),
-			createServerAbility( 'wpcom/get-block-schemas' ),
-		] );
+	it( 'sends only the hints the WebMCP draft defines', async () => {
+		const harness = createHarness( [ createBlockTreeAbility() ] );
 		await harness.adapter.sync();
 
-		expect( harness.tools.size ).toBe( 3 );
-
-		for ( const tool of harness.tools.values() ) {
-			expect( tool.annotations ).toMatchObject( {
-				untrustedContentHint: true,
-				consequentialHint: false,
-			} );
-		}
+		expect( harness.tools.get( 'agents_manager__get_block_tree' )?.annotations ).toEqual( {
+			readOnlyHint: true,
+			untrustedContentHint: true,
+			consequentialHint: false,
+		} );
 	} );
 
 	it.each< [ string, Ability[ 'meta' ] ] >( [
@@ -456,7 +449,7 @@ describe( 'WebMCP adapter', () => {
 
 		const readTool = harness.tools.get( 'agents_manager__get_block_tree' );
 		expect( readTool ).toMatchObject( {
-			annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true },
+			annotations: { readOnlyHint: true, untrustedContentHint: true, consequentialHint: false },
 		} );
 
 		await readTool?.execute( {} );
