@@ -20,6 +20,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { SettingsOption, SettingsPanel } from '../../../../../components/settings-panel';
 import { useAnalytics } from '../../../../app/analytics';
+import { withSnackbar } from '../../../../app/snackbars/with-snackbar';
 import { useSiteSettings } from '../../hooks';
 import { getFieldLabel } from '../../utils/translations';
 import { ApplySettingsToAllSitesConfirmationModal } from '../apply-settings-to-all-sites-confirmation-modal';
@@ -28,11 +29,15 @@ export const DevicesSettings = ( { siteId }: { siteId: number } ) => {
 	const { data: blogSettings } = useSiteSettings( siteId );
 	const { data: devices } = useSuspenseQuery( userNotificationsDevicesQuery() );
 	const { mutate: updateSettings, isPending: isUpdating } = useMutation(
-		userNotificationsSettingsMutation()
+		withSnackbar( userNotificationsSettingsMutation(), {
+			success: ( _data, { applyToAll } ) =>
+				applyToAll ? __( 'Settings saved successfully.' ) : undefined,
+			error: __( 'There was a problem saving your changes. Please, try again.' ),
+		} )
 	);
 	const [ isConfirmDialogOpen, setIsConfirmDialogOpen ] = useState( false );
 	const { recordTracksEvent } = useAnalytics();
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { createSuccessNotice } = useDispatch( noticesStore );
 	const [ selectedDeviceId, setSelectedDeviceId ] = useState< string | undefined >(
 		devices?.[ 0 ]?.device_id
 	);
@@ -65,6 +70,7 @@ export const DevicesSettings = ( { siteId }: { siteId: number } ) => {
 						setting_value: item.value,
 						site_id: siteId,
 					} );
+					// eslint-disable-next-line no-restricted-syntax -- It names the setting from the change handler, and the mutation variables don't say which one changed.
 					createSuccessNotice(
 						sprintf(
 							/* translators: %s is the name of the setting */
@@ -75,11 +81,6 @@ export const DevicesSettings = ( { siteId }: { siteId: number } ) => {
 							type: 'snackbar',
 						}
 					);
-				},
-				onError: () => {
-					createErrorNotice( __( 'There was a problem saving your changes. Please, try again.' ), {
-						type: 'snackbar',
-					} );
 				},
 			}
 		);
@@ -159,7 +160,6 @@ export const DevicesSettings = ( { siteId }: { siteId: number } ) => {
 						device_to_be_used_as_template: siteId,
 						site_to_be_used_as_template: siteId,
 					} );
-					createSuccessNotice( __( 'Settings saved successfully.' ), { type: 'snackbar' } );
 					setIsConfirmDialogOpen( false );
 				},
 			}

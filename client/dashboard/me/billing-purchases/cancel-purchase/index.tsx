@@ -40,6 +40,7 @@ import { useAnalytics } from '../../../app/analytics';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { useLocale } from '../../../app/locale';
 import { cancelPurchaseRoute, purchaseSettingsRoute, purchasesRoute } from '../../../app/router/me';
+import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import { Card, CardBody } from '../../../components/card';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
@@ -318,7 +319,9 @@ function CancelPurchaseInner() {
 	const userHasCompletedCancelSurveyForPurchase = Boolean( userPreferenceForSurveyComplete );
 
 	// Mutations (continued)
-	const extendWithFreeMonthMutation = useMutation( extendPurchaseWithFreeMonthMutation() );
+	const extendWithFreeMonthMutation = useMutation(
+		withSnackbar( extendPurchaseWithFreeMonthMutation(), { error: { source: 'server' } } )
+	);
 	const surveyCompletedMutator = useMutation(
 		userPreferenceMutation( getCancelPurchaseSurveyCompletedPreferenceKey( purchase.ID ) )
 	);
@@ -622,8 +625,7 @@ function CancelPurchaseInner() {
 					}
 					setState( ( state ) => ( { ...state, isLoading: false } ) );
 				},
-				onError: ( error ) => {
-					createErrorNotice( ( error as Error ).message, { type: 'snackbar' } );
+				onError: () => {
 					setState( ( state ) => ( { ...state, isLoading: false, isSubmitting: false } ) );
 				},
 			} );
@@ -661,6 +663,7 @@ function CancelPurchaseInner() {
 				},
 				{
 					onError: ( error: Error ) => {
+						// eslint-disable-next-line no-restricted-syntax -- The same mutation also runs through `mutateAsync()`, whose caller shows its own notice.
 						createErrorNotice( ( error as Error ).message, { type: 'snackbar' } );
 					},
 				}
@@ -672,6 +675,7 @@ function CancelPurchaseInner() {
 				{
 					onError: () => {
 						const purchaseName = marketplaceSubscription.product_name;
+						// eslint-disable-next-line no-restricted-syntax -- The purchase name comes from the loop, not the mutation variables.
 						createErrorNotice(
 							sprintf(
 								/* translators: %(purchaseName)s is the name of the product that was purchased. */
@@ -929,6 +933,7 @@ function CancelPurchaseInner() {
 					isSubmitting: false,
 				} ) );
 				removeNotice( 'submit_marketing_survey_notice' );
+				// eslint-disable-next-line no-restricted-syntax -- It uses a custom notice `id`.
 				createErrorNotice( error.message, {
 					type: 'snackbar',
 					id: 'submit_marketing_survey_notice',
@@ -965,6 +970,7 @@ function CancelPurchaseInner() {
 						);
 					},
 					onError: ( error: Error ) => {
+						// eslint-disable-next-line no-restricted-syntax -- The same mutation also runs through `mutateAsync()`, whose caller shows its own notice.
 						createErrorNotice( ( error as Error ).message, { type: 'snackbar' } );
 					},
 				}
@@ -984,6 +990,7 @@ function CancelPurchaseInner() {
 				},
 				onError: () => {
 					const purchaseName = ( purchase.is_domain ? purchase.meta : purchase.product_name ) ?? '';
+					// eslint-disable-next-line no-restricted-syntax -- The purchase name comes from the handler, not the mutation variables.
 					createErrorNotice(
 						sprintf(
 							/* translators: %(purchaseName)s is the name of the product that was purchased. */
@@ -1128,6 +1135,7 @@ function CancelPurchaseInner() {
 				},
 				onError: () => {
 					const purchaseName = ( purchase.is_domain ? purchase.meta : purchase.product_name ) ?? '';
+					// eslint-disable-next-line no-restricted-syntax -- The purchase name comes from the handler, not the mutation variables.
 					createErrorNotice(
 						sprintf(
 							/* translators: %(purchaseName)s is the name of the product that was purchased. */

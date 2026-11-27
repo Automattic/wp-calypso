@@ -6,12 +6,11 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataForm, Field, NormalizedField } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { CodeDeploymentData } from '../../../../../sites/deployments/deployments/use-code-deployments-query';
+import { withSnackbar } from '../../../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../../../components/button-stack';
 import { getDeploymentTypeFromPath } from '../../utils/deployment-tracks';
 
@@ -61,7 +60,6 @@ export function TriggerDeploymentModalForm( {
 	repositoryId,
 	onSuccess,
 }: TriggerDeploymentModalFormProps ) {
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const [ deploymentFormData, setDeploymentFormData ] = useState< DeploymentFormData >( {
 		selectedDeploymentId: repositoryId ?? '',
 	} );
@@ -79,7 +77,10 @@ export function TriggerDeploymentModalForm( {
 	}, [ deploymentFormData.selectedDeploymentId, deployments ] );
 
 	const { mutate: createCodeDeploymentRun, isPending: isCreatingCodeDeploymentRun } = useMutation(
-		createCodeDeploymentRunMutation()
+		withSnackbar( createCodeDeploymentRunMutation(), {
+			success: __( 'Deployment run created.' ),
+			error: { source: 'server' },
+		} )
 	);
 
 	const fields: Field< DeploymentFormData >[] = [
@@ -108,12 +109,8 @@ export function TriggerDeploymentModalForm( {
 			},
 			{
 				onSuccess: () => {
-					createSuccessNotice( __( 'Deployment run created.' ), { type: 'snackbar' } );
 					onClose?.();
 					onSuccess?.();
-				},
-				onError: ( error ) => {
-					createErrorNotice( error.message, { type: 'snackbar' } );
 				},
 			}
 		);

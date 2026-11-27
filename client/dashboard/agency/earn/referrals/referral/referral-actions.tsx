@@ -15,22 +15,21 @@ import { Text } from '../../../../components/text';
 import type { ReferralApiResponse } from '@automattic/api-core';
 import type { Action } from '@wordpress/dataviews';
 
-// The server explains why a referral cannot be archived or its email resent
-// (an order already paid for, a bounced address), so its message wins.
-const getErrorMessage = ( error: unknown, fallback: string ) =>
-	( error instanceof Error && error.message ) || fallback;
-
 export function useReferralActions( agencyId: number ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { mutate: archiveReferral, isPending: isArchiving } = useMutation(
 		withSnackbar( archiveReferralMutation( agencyId ), {
 			success: __( 'The referral has been archived.' ),
+			// The server explains why a referral cannot be archived or its email resent
+			// (an order already paid for, a bounced address), so its message wins.
+			error: { source: 'server' },
 		} )
 	);
 	const { mutate: resendReferralEmail, isPending: isResending } = useMutation(
 		withSnackbar( resendReferralEmailMutation( agencyId ), {
 			success: __( 'The referral email has been resent.' ),
+			error: { source: 'server' },
 		} )
 	);
 
@@ -48,13 +47,7 @@ export function useReferralActions( agencyId: number ) {
 						return;
 					}
 					recordTracksEvent( 'calypso_a4a_referrals_resend_email_button_click' );
-					resendReferralEmail( order.id, {
-						onError: ( error ) =>
-							createErrorNotice(
-								getErrorMessage( error, __( 'Failed to resend the referral email.' ) ),
-								{ type: 'snackbar' }
-							),
-					} );
+					resendReferralEmail( order.id );
 				},
 			},
 			{
@@ -94,11 +87,6 @@ export function useReferralActions( agencyId: number ) {
 						// The modal stays up until the request settles, so the confirm
 						// button can show that something is happening.
 						archiveReferral( order.id, {
-							onError: ( error ) =>
-								createErrorNotice(
-									getErrorMessage( error, __( 'Failed to archive the referral.' ) ),
-									{ type: 'snackbar' }
-								),
 							onSettled: () => closeModal?.(),
 						} );
 					};

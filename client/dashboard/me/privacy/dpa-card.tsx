@@ -6,31 +6,32 @@ import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { envelope } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
 import { Text } from '../../components/text';
 
 export default function DpaCard() {
-	const mutation = useMutation( requestDpaMutation() );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const mutation = useMutation(
+		withSnackbar( requestDpaMutation(), {
+			error: ( error ) =>
+				isWpError( error ) && error.error === 'too_many_requests'
+					? error.message
+					: __( 'There was an error requesting a DPA.' ),
+		} )
+	);
+	const { createSuccessNotice } = useDispatch( noticesStore );
 
 	const handleClick = () => {
 		mutation.mutate( undefined, {
 			onSuccess: () => {
+				// eslint-disable-next-line no-restricted-syntax -- It has a custom `icon`.
 				createSuccessNotice( __( 'We’ve sent you our DPA via email.' ), {
 					// @wordpress/notices types `icon` as `string | null`, but the runtime (and the Dashboard snackbar) accepts a ReactNode.
 					icon: ( <Icon icon={ envelope } /> ) as unknown as string,
 					type: 'snackbar',
 				} );
-			},
-			onError: ( e: Error ) => {
-				createErrorNotice(
-					isWpError( e ) && e.error === 'too_many_requests'
-						? e.message
-						: __( 'There was an error requesting a DPA.' ),
-					{ type: 'snackbar' }
-				);
 			},
 		} );
 	};

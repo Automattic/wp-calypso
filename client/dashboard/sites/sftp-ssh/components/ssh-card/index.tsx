@@ -30,6 +30,7 @@ import { useAuth } from '../../../../app/auth';
 import { useAppContext } from '../../../../app/context';
 import { useIntlLocale } from '../../../../app/locale';
 import { securitySshKeyRoute } from '../../../../app/router/me';
+import { withSnackbar } from '../../../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../../../components/button-stack';
 import { Card, CardBody } from '../../../../components/card';
 import ClipboardInputControl from '../../../../components/clipboard-input-control';
@@ -156,11 +157,33 @@ export default function SshCard( {
 		enabled: sshEnabled,
 	} );
 	const toggleSshAccessMutation = useMutation(
-		! sshEnabled ? siteSshAccessEnableMutation( siteId ) : siteSshAccessDisableMutation( siteId )
+		! sshEnabled
+			? withSnackbar( siteSshAccessEnableMutation( siteId ), {
+					error: __(
+						'Sorry, we had a problem enabling SSH access for this site. Please refresh the page and try again.'
+					),
+				} )
+			: withSnackbar( siteSshAccessDisableMutation( siteId ), {
+					error: __(
+						'Sorry, we had a problem disabling SSH access for this site. Please refresh the page and try again.'
+					),
+				} )
 	);
-	const attachSshKeyMutation = useMutation( siteSshKeysAttachMutation( siteId ) );
-	const detachSshKeyMutation = useMutation( siteSshKeysDetachMutation( siteId ) );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const attachSshKeyMutation = useMutation(
+		withSnackbar( siteSshKeysAttachMutation( siteId ), {
+			error: __(
+				'Sorry, we had a problem attaching SSH key to this site. Please refresh the page and try again.'
+			),
+		} )
+	);
+	const detachSshKeyMutation = useMutation(
+		withSnackbar( siteSshKeysDetachMutation( siteId ), {
+			error: __(
+				'Sorry, we had a problem detaching SSH key from this site. Please refresh the page and try again.'
+			),
+		} )
+	);
+	const { createSuccessNotice } = useDispatch( noticesStore );
 	const userLocale = useIntlLocale();
 	const hasUserSshKeys = userSshKeys && userSshKeys.length > 0;
 	// Take opportunity while showing the sshEnabled loading state to also fetch the user SSH keys.
@@ -218,60 +241,26 @@ export default function SshCard( {
 							return;
 						}
 					}
+					// eslint-disable-next-line no-restricted-syntax -- It waits for the SSH keys to load, and is skipped when the user is sent to reauthorize.
 					createSuccessNotice( __( 'SSH access has been successfully enabled for this site.' ), {
 						type: 'snackbar',
 					} );
 				} else {
+					// eslint-disable-next-line no-restricted-syntax -- It waits for the SSH keys to load, and is skipped when the user is sent to reauthorize.
 					createSuccessNotice( __( 'SSH access has been successfully disabled for this site.' ), {
 						type: 'snackbar',
 					} );
 				}
 			},
-			onError: () => {
-				createErrorNotice(
-					sshEnabled
-						? __(
-								'Sorry, we had a problem disabling SSH access for this site. Please refresh the page and try again.'
-							)
-						: __(
-								'Sorry, we had a problem enabling SSH access for this site. Please refresh the page and try again.'
-							),
-					{
-						type: 'snackbar',
-					}
-				);
-			},
 		} );
 	};
 
 	const handleAttachSshKey = () => {
-		attachSshKeyMutation.mutate( selectedSshKey, {
-			onError: () => {
-				createErrorNotice(
-					__(
-						'Sorry, we had a problem attaching SSH key to this site. Please refresh the page and try again.'
-					),
-					{
-						type: 'snackbar',
-					}
-				);
-			},
-		} );
+		attachSshKeyMutation.mutate( selectedSshKey );
 	};
 
 	const handleDetachSshKey = ( siteSshKey: SiteSshKey ) => {
-		detachSshKeyMutation.mutate( siteSshKey, {
-			onError: () => {
-				createErrorNotice(
-					__(
-						'Sorry, we had a problem detaching SSH key from this site. Please refresh the page and try again.'
-					),
-					{
-						type: 'snackbar',
-					}
-				);
-			},
-		} );
+		detachSshKeyMutation.mutate( siteSshKey );
 	};
 
 	const SshKeysControl = < Item, >( { field }: DataFormControlProps< Item > ) => (

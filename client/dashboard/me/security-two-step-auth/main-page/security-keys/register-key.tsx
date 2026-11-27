@@ -11,12 +11,11 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../../../app/analytics';
+import { withSnackbar } from '../../../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../../../components/button-stack';
 import { getSecurityKeyHostname } from '../../utils';
 import type { Field } from '@wordpress/dataviews';
@@ -32,10 +31,28 @@ export default function RegisterKey( { onClose }: { onClose: () => void } ) {
 		keyName: '',
 	} );
 
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-
 	const { mutateAsync: registerSecurityKey, isPending: isRegisteringSecurityKey } = useMutation(
-		registerTwoStepAuthSecurityKeyMutation( getSecurityKeyHostname() )
+		withSnackbar( registerTwoStepAuthSecurityKeyMutation( getSecurityKeyHostname() ), {
+			success: ( _data, keyName ) =>
+				/* translators: %s is the security key name */
+				sprintf( __( 'Security key "%s" added.' ), keyName ),
+			error: ( error ) => {
+				// WebAuthn errors carry no text fit for users.
+				switch ( error.name ) {
+					case 'InvalidStateError':
+						return __( 'Security key has already been registered.' );
+					case 'NotAllowedError':
+						return __( 'Security key interaction timed out or canceled.' );
+					case 'AbortError':
+						return __( 'Security key interaction canceled.' );
+					case 'NotSupportedError':
+					case 'SecurityError':
+						return __( 'Security key registration error.' );
+					default:
+						return error.message || __( 'Failed to add security key. Please try again.' );
+				}
+			},
+		} )
 	);
 
 	const { data: isReregisterRequired } = useQuery(
@@ -55,42 +72,9 @@ export default function RegisterKey( { onClose }: { onClose: () => void } ) {
 				if ( isReregisterRequired ) {
 					setReregisterRequired( false );
 				}
-				createSuccessNotice(
-					/* translators: %s is the security key name */
-					sprintf( __( 'Security key "%s" added.' ), formData.keyName ),
-					{
-						type: 'snackbar',
-					}
-				);
 				onClose();
 			},
-			onError: ( err ) => {
-				let errorMessage: string = __( 'Failed to add security key. Please try again.' );
-
-				// Handle WebAuthn specific errors with user-friendly messages
-				if ( err instanceof Error ) {
-					switch ( err.name ) {
-						case 'InvalidStateError':
-							errorMessage = __( 'Security key has already been registered.' );
-							break;
-						case 'NotAllowedError':
-							errorMessage = __( 'Security key interaction timed out or canceled.' );
-							break;
-						case 'AbortError':
-							errorMessage = __( 'Security key interaction canceled.' );
-							break;
-						case 'NotSupportedError':
-						case 'SecurityError':
-							errorMessage = __( 'Security key registration error.' );
-							break;
-						default:
-							errorMessage = err.message;
-					}
-				}
-
-				createErrorNotice( errorMessage, {
-					type: 'snackbar',
-				} );
+			onError: () => {
 				onClose();
 			},
 		} );

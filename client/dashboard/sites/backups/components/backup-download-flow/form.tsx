@@ -1,12 +1,11 @@
 import { siteBackupDownloadInitiateMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { Button, __experimentalVStack as VStack } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
+import { withSnackbar } from '../../../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../../../components/button-stack';
 import type { DownloadConfig } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
@@ -60,9 +59,10 @@ function SiteBackupDownloadForm( {
 	onDownloadInitiate: ( downloadId: number ) => void;
 } ) {
 	const { mutate: downloadMutation, isPending: isDownloadMutationPending } = useMutation(
-		siteBackupDownloadInitiateMutation( siteId )
+		withSnackbar( siteBackupDownloadInitiateMutation( siteId ), {
+			error: __( 'Failed to initiate download. Please try again.' ),
+		} )
 	);
-	const { createErrorNotice } = useDispatch( noticesStore );
 
 	const [ formData, setFormData ] = useState< DownloadConfig >( {
 		themes: true,
@@ -91,11 +91,6 @@ function SiteBackupDownloadForm( {
 			{
 				onSuccess: ( downloadId ) => {
 					onDownloadInitiate( downloadId );
-				},
-				onError: () => {
-					createErrorNotice( __( 'Failed to initiate download. Please try again.' ), {
-						type: 'snackbar',
-					} );
 				},
 			}
 		);

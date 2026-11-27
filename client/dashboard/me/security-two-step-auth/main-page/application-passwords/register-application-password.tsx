@@ -14,6 +14,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../../../app/analytics';
+import { withSnackbar } from '../../../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../../../components/button-stack';
 import ClipboardInputControl from '../../../../components/clipboard-input-control';
 import type { Field } from '@wordpress/dataviews';
@@ -25,7 +26,7 @@ type ApplicationPasswordFormData = {
 export default function RegisterApplicationPassword( { onClose }: { onClose: () => void } ) {
 	const { recordTracksEvent } = useAnalytics();
 
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { createSuccessNotice } = useDispatch( noticesStore );
 
 	const [ formData, setFormData ] = useState< ApplicationPasswordFormData >( {
 		applicationName: '',
@@ -33,7 +34,11 @@ export default function RegisterApplicationPassword( { onClose }: { onClose: () 
 	const [ applicationPassword, setApplicationPassword ] = useState< string | null >( '' );
 
 	const { mutate: registerApplicationPassword, isPending: isRegisteringApplicationPassword } =
-		useMutation( createTwoStepAuthApplicationPasswordMutation() );
+		useMutation(
+			withSnackbar( createTwoStepAuthApplicationPasswordMutation(), {
+				error: __( 'Failed to add application password. Please try again.' ),
+			} )
+		);
 
 	const handleSubmit = async ( e: React.FormEvent< HTMLFormElement > ) => {
 		e.preventDefault();
@@ -45,9 +50,6 @@ export default function RegisterApplicationPassword( { onClose }: { onClose: () 
 					setApplicationPassword( data.application_password );
 				},
 				onError: () => {
-					createErrorNotice( __( 'Failed to add application password. Please try again.' ), {
-						type: 'snackbar',
-					} );
 					onClose();
 				},
 			}

@@ -183,6 +183,7 @@ export default function UserTaxForm() {
 			onSuccess() {
 				recordTracksEvent( 'calypso_dashboard_vat_details_validation_success' );
 				removeNotice( 'vat_info_notice' );
+				// eslint-disable-next-line no-restricted-syntax -- It uses a custom notice `id`.
 				createSuccessNotice(
 					sprintf(
 						/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
@@ -203,9 +204,11 @@ export default function UserTaxForm() {
 				}
 				removeNotice( 'vat_info_notice' );
 				if ( error?.message?.length > 0 ) {
+					// eslint-disable-next-line no-restricted-syntax -- It uses a custom notice `id`.
 					createErrorNotice( error.message, { type: 'snackbar', id: 'vat_info_notice' } );
 					return;
 				}
+				// eslint-disable-next-line no-restricted-syntax -- It uses a custom notice `id`.
 				createErrorNotice(
 					sprintf(
 						/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */

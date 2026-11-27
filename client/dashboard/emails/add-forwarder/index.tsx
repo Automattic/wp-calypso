@@ -25,6 +25,7 @@ import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { useAppContext } from '../../app/context';
 import { emailsRoute } from '../../app/router/emails';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import Notice from '../../components/notice';
@@ -50,11 +51,11 @@ export interface FormData {
 
 function AddEmailForwarder() {
 	const { basePath } = useAppContext();
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { createErrorNotice } = useDispatch( noticesStore );
 	const { recordTracksEvent } = useAnalytics();
 
 	const { mutate: addEmailForwarder, isPending: isAddingEmailForwarder } = useMutation(
-		addEmailForwarderMutation()
+		withSnackbar( addEmailForwarderMutation(), { success: __( 'Email forwarder added.' ) } )
 	);
 	const navigate = useNavigate();
 
@@ -210,7 +211,6 @@ function AddEmailForwarder() {
 			{
 				onSuccess: () => {
 					recordTracksEvent( 'calypso_dashboard_emails_add_forwarder_save_success' );
-					createSuccessNotice( __( 'Email forwarder added.' ), { type: 'snackbar' } );
 					navigate( {
 						to: '/emails',
 					} );
@@ -221,6 +221,7 @@ function AddEmailForwarder() {
 						const message =
 							typeof resp.message === 'object' ? resp.message.error_message : resp.message;
 
+						// eslint-disable-next-line no-restricted-syntax -- It has `actions`, which `withSnackbar()` can't show.
 						createErrorNotice(
 							sprintf(
 								/* Translators: %(emailAddress)s is the email address the user was attempting to add a forwarder for, %(message)s is the error message returned by the API. */
@@ -238,6 +239,7 @@ function AddEmailForwarder() {
 							}
 						);
 					} else {
+						// eslint-disable-next-line no-restricted-syntax -- It has `actions`, which `withSnackbar()` can't show.
 						createErrorNotice(
 							sprintf(
 								/* Translators: %(emailAddress)s is the email address the user was attempting to add a forwarder for. */

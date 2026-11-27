@@ -10,6 +10,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
 import { useAnalytics } from '../../../app/analytics';
+import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import { Text } from '../../../components/text';
 import type { Email } from '../../types';
 import type { Action } from '@wordpress/dataviews';
@@ -20,10 +21,18 @@ export const useDeleteEmailForwardAction = (): Action< Email > => {
 		label: __( 'Delete forwarder' ),
 		callback: () => {},
 		RenderModal: ( { items, closeModal, onActionPerformed } ) => {
+			const email = items[ 0 ];
 			const { mutateAsync: deleteEmailForward, isPending } = useMutation(
-				deleteEmailForwardMutation()
+				withSnackbar( deleteEmailForwardMutation(), {
+					success: sprintf(
+						/* translators: %1$s is the email and %2$s is the forwarding destination address. */
+						__( 'Forwarder from %1$s to %2$s has been removed.' ),
+						email.emailAddress,
+						email.forwardingTo as string
+					),
+				} )
 			);
-			const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+			const { createErrorNotice } = useDispatch( noticesStore );
 			const { recordTracksEvent } = useAnalytics();
 
 			useEffect( () => {
@@ -31,7 +40,6 @@ export const useDeleteEmailForwardAction = (): Action< Email > => {
 					action_id: 'delete-email-forward',
 				} );
 			}, [ recordTracksEvent ] );
-			const email = items[ 0 ];
 
 			const mailbox = email.emailAddress.split( '@' )[ 0 ];
 			const onConfirm = async () => {
@@ -44,15 +52,6 @@ export const useDeleteEmailForwardAction = (): Action< Email > => {
 						mailbox,
 						destination: email.forwardingTo as string,
 					} );
-					createSuccessNotice(
-						sprintf(
-							/* translators: %1$s is the email and %2$s is the forwarding destination address. */
-							__( 'Forwarder from %1$s to %2$s has been removed.' ),
-							email.emailAddress,
-							email.forwardingTo as string
-						),
-						{ type: 'snackbar' }
-					);
 					onActionPerformed?.( items );
 					closeModal?.();
 				} catch ( _e ) {

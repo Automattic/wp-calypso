@@ -13,14 +13,19 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useMemo } from 'react';
 import { SettingsPanel, type SettingsOption } from '../../../../components/settings-panel';
 import { useAnalytics } from '../../../app/analytics';
+import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import { Card, CardBody } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
 
 export const EmailSettings = () => {
 	const { data } = useSuspenseQuery( userNotificationsSettingsQuery() );
 	const { recordTracksEvent } = useAnalytics();
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const { mutate: updateSettings } = useMutation( userNotificationsSettingsMutation() );
+	const { createSuccessNotice } = useDispatch( noticesStore );
+	const { mutate: updateSettings } = useMutation(
+		withSnackbar( userNotificationsSettingsMutation(), {
+			error: __( 'There was a problem saving your changes. Please, try again.' ),
+		} )
+	);
 
 	const settings = data.other.email;
 	const isMutating =
@@ -44,6 +49,7 @@ export const EmailSettings = () => {
 			},
 			{
 				onSuccess: () => {
+					// eslint-disable-next-line no-restricted-syntax -- It names the setting from the change handler, and the mutation variables don't say which one changed.
 					createSuccessNotice(
 						sprintf(
 							/* translators: %s is the name of the setting */
@@ -54,11 +60,6 @@ export const EmailSettings = () => {
 							type: 'snackbar',
 						}
 					);
-				},
-				onError: () => {
-					createErrorNotice( __( 'There was a problem saving your changes. Please, try again.' ), {
-						type: 'snackbar',
-					} );
 				},
 			}
 		);

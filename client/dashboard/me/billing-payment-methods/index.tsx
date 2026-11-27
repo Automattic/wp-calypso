@@ -15,16 +15,15 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
-import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { info, caution as warning } from '@wordpress/icons';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState, useMemo } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { addPaymentMethodRoute } from '../../app/router/me';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { DataViewsCard } from '../../components/dataviews';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -108,14 +107,21 @@ export default function PaymentMethods() {
 			expired: true,
 		} )
 	);
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { mutate: setPaymentMethodBackup, isPending: isSettingPaymentMethodBackup } = useMutation(
 		userPaymentMethodSetBackupMutation()
 	);
 	const { mutate: deletePaymentMethod, isPending: isDeletingPaymentMethod } = useMutation(
-		userPaymentMethodDeleteMutation()
+		withSnackbar( userPaymentMethodDeleteMutation(), {
+			success: __( 'Payment method deleted.' ),
+			error: __( 'Failed to delete payment method.' ),
+		} )
 	);
-	const { mutate: setPaymentMethodTaxInfo } = useMutation( userPaymentMethodSetTaxInfoMutation() );
+	const { mutate: setPaymentMethodTaxInfo } = useMutation(
+		withSnackbar( userPaymentMethodSetTaxInfoMutation(), {
+			success: __( 'Billing address updated.' ),
+			error: { source: 'server' },
+		} )
+	);
 	const { recordTracksEvent } = useAnalytics();
 	const recordActionClick = (
 		paymentMethod: StoredPaymentMethod,
@@ -290,16 +296,12 @@ export default function PaymentMethods() {
 										'calypso_dashboard_payment_method_edit_billing_address',
 										eventProperties
 									);
-									createSuccessNotice( __( 'Billing address updated.' ), { type: 'snackbar' } );
 								},
 								onError: ( error ) => {
 									recordTracksEvent(
 										'calypso_dashboard_payment_method_edit_billing_address_failure',
 										{ ...eventProperties, error_message: error.message }
 									);
-									createErrorNotice( error?.message || __( 'Failed to update billing address.' ), {
-										type: 'snackbar',
-									} );
 								},
 							} );
 							setEditDialogPaymentMethod( undefined );
@@ -319,15 +321,11 @@ export default function PaymentMethods() {
 							deletePaymentMethod( removeDialogPaymentMethod.stored_details_id, {
 								onSuccess: () => {
 									recordTracksEvent( 'calypso_dashboard_payment_method_delete', eventProperties );
-									createSuccessNotice( __( 'Payment method deleted.' ), { type: 'snackbar' } );
 								},
 								onError: ( error ) => {
 									recordTracksEvent( 'calypso_dashboard_payment_method_delete_failure', {
 										...eventProperties,
 										error_message: error.message,
-									} );
-									createErrorNotice( __( 'Failed to delete payment method.' ), {
-										type: 'snackbar',
 									} );
 								},
 							} );

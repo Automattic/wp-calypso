@@ -3,14 +3,13 @@ import config from '@automattic/calypso-config';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { Icon } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { securitySocialLoginsRoute } from '../../app/router/me';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ActionList } from '../../components/action-list';
 import ConfirmModal from '../../components/confirm-modal';
 import { PageHeader } from '../../components/page-header';
@@ -71,13 +70,25 @@ const SocialLoginItem = ( {
 	const router = useRouter();
 	const { recordTracksEvent } = useAnalytics();
 
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-
 	const { mutate: disconnectSocialUser, isPending: isDisconnectingSocialUser } = useMutation(
-		disconnectSocialUserMutation()
+		withSnackbar( disconnectSocialUserMutation(), {
+			success: sprintf(
+				/* translators: %s is the name of the social login */
+				__( '%s login disconnected.' ),
+				service
+			),
+			error: __( 'Failed to disconnect social login.' ),
+		} )
 	);
 	const { mutate: connectSocialUser, isPending: isConnectingSocialUser } = useMutation(
-		connectSocialUserMutation()
+		withSnackbar( connectSocialUserMutation(), {
+			success: sprintf(
+				/* translators: %s is the name of the social login */
+				__( '%s login connected.' ),
+				service
+			),
+			error: __( 'Failed to connect social login.' ),
+		} )
 	);
 
 	const [ isRemoveDialogOpen, setIsRemoveDialogOpen ] = useState( false );
@@ -94,46 +105,11 @@ const SocialLoginItem = ( {
 		router.navigate( {
 			to: securitySocialLoginsRoute.fullPath,
 		} );
-		connectSocialUser( data, {
-			onSuccess: () => {
-				createSuccessNotice(
-					sprintf(
-						/* translators: %s is the name of the social login */
-						__( '%s login connected.' ),
-						service
-					),
-					{
-						type: 'snackbar',
-					}
-				);
-			},
-			onError: () => {
-				createErrorNotice( __( 'Failed to connect social login.' ), {
-					type: 'snackbar',
-				} );
-			},
-		} );
+		connectSocialUser( data );
 	};
 
 	const disconnectSocialLogin = () => {
 		disconnectSocialUser( lowerCaseService, {
-			onSuccess: () => {
-				createSuccessNotice(
-					sprintf(
-						/* translators: %s is the name of the social login */
-						__( '%s login disconnected.' ),
-						service
-					),
-					{
-						type: 'snackbar',
-					}
-				);
-			},
-			onError: () => {
-				createErrorNotice( __( 'Failed to disconnect social login.' ), {
-					type: 'snackbar',
-				} );
-			},
 			onSettled: () => {
 				setIsRemoveDialogOpen( false );
 			},

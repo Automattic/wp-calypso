@@ -11,14 +11,13 @@ import {
 	ComboboxControl,
 	CheckboxControl,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { NavigationBlocker } from '../../app/navigation-blocker';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { Card, CardBody } from '../../components/card';
 import FlashMessage, { reloadWithFlashMessage } from '../../components/flash-message';
 import { PageHeader } from '../../components/page-header';
@@ -33,13 +32,14 @@ import type { UserSettings } from '@automattic/api-core';
 import type { Field, Form } from '@wordpress/dataviews';
 
 export default function Language() {
-	const { createErrorNotice } = useDispatch( noticesStore );
 	const { data: serverData } = useQuery( {
 		...userSettingsQuery(),
 		meta: { persist: false },
 	} );
 	const [ formData, setFormData ] = useState< Partial< UserSettings > | undefined >();
-	const mutation = useMutation( userSettingsMutation() );
+	const mutation = useMutation(
+		withSnackbar( userSettingsMutation(), { error: { source: 'server' } } )
+	);
 	const router = useRouter();
 
 	/**
@@ -75,12 +75,9 @@ export default function Language() {
 				router.history.destroy(); // Ignore any navigation blocker
 				reloadWithFlashMessage( 'language' );
 			},
-			onError: ( error ) => {
+			onError: () => {
 				// Prepend previous attempted data back into local edits
 				setFormData( ( current ) => ( { ...mutationData, ...current } ) );
-				createErrorNotice( error.message ?? __( 'Failed to save language.' ), {
-					type: 'snackbar',
-				} );
 			},
 		} );
 	};

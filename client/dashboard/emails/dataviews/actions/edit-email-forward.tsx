@@ -13,6 +13,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import emailValidator from 'email-validator';
 import { useEffect, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
+import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import { Text } from '../../../components/text';
 import { wpcomLink } from '../../../utils/link';
 import type { Email } from '../../types';
@@ -25,9 +26,16 @@ export const useEditEmailForwardAction = (): Action< Email > => {
 		callback: () => {},
 		RenderModal: ( { items, closeModal, onActionPerformed } ) => {
 			const { mutateAsync: updateEmailForward, isPending } = useMutation(
-				updateEmailForwardMutation()
+				withSnackbar( updateEmailForwardMutation(), {
+					success: ( _data, variables ) =>
+						sprintf(
+							/* translators: %s is the new forwarding destination email. */
+							__( 'Email forward updated. Please check %s to verify the new address.' ),
+							variables.newDestination
+						),
+				} )
 			);
-			const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+			const { createErrorNotice } = useDispatch( noticesStore );
 			const { recordTracksEvent } = useAnalytics();
 
 			const email = items[ 0 ];
@@ -56,14 +64,6 @@ export const useEditEmailForwardAction = (): Action< Email > => {
 						destination: currentDestination,
 						newDestination: newDestination.trim(),
 					} );
-					createSuccessNotice(
-						sprintf(
-							/* translators: %s is the new forwarding destination email. */
-							__( 'Email forward updated. Please check %s to verify the new address.' ),
-							newDestination.trim()
-						),
-						{ type: 'snackbar' }
-					);
 					onActionPerformed?.( items );
 					closeModal?.();
 				} catch ( e ) {

@@ -7,6 +7,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useCallback, useMemo } from 'react';
 import { useAnalytics } from '../../../app/analytics';
+import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import { wpcomLink } from '../../../utils/link';
 import { urlToSlug } from '../../../utils/url';
 import { leaveDashboard } from '../../crossover/store';
@@ -270,7 +271,9 @@ export function useLicenseActions( {
 	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { mutate: fetchDownloadUrl } = useMutation(
-		jetpackAgencyLicenseDownloadUrlMutation( agencyId )
+		withSnackbar( jetpackAgencyLicenseDownloadUrlMutation( agencyId ), {
+			error: { source: 'server' },
+		} )
 	);
 
 	const onCopyKey = useCallback(
@@ -289,14 +292,9 @@ export function useLicenseActions( {
 			recordTracksEvent( 'calypso_a4a_license_details_download' );
 			fetchDownloadUrl( license.license_key, {
 				onSuccess: ( { download_url } ) => window.location.assign( download_url ),
-				onError: ( error: Error ) =>
-					createErrorNotice(
-						error.message || __( 'Failed to download the product. Please try again.' ),
-						{ type: 'snackbar' }
-					),
 			} );
 		},
-		[ recordTracksEvent, fetchDownloadUrl, createErrorNotice ]
+		[ recordTracksEvent, fetchDownloadUrl ]
 	);
 
 	const onNavigate = useCallback( ( to: string ) => navigate( { to } ), [ navigate ] );

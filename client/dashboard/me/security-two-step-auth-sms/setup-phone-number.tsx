@@ -36,7 +36,14 @@ export default function SetupPhoneNumber( { userSettings }: { userSettings: User
 	const { data: smsCountryCodes } = useSuspenseQuery( smsCountryCodesQuery() );
 
 	const { mutate: setupTwoStepAuthSMS, isPending: isSetupSMSPending } = useMutation(
-		setupTwoStepAuthSMSMutation()
+		withSnackbar( setupTwoStepAuthSMSMutation(), {
+			error: ( error ) => {
+				const cause = error.cause as { error?: string; message?: string } | undefined;
+				return cause?.error === 'rate_limited'
+					? __( 'Unable to request a code via SMS right now. Please try again after one minute.' )
+					: cause?.message || __( 'Failed to save phone number. Please try again.' );
+			},
+		} )
 	);
 	const { mutate: resendTwoStepAuthSMSCode, isPending: isResending } = useMutation(
 		withSnackbar( resendTwoStepAuthSMSCodeMutation(), {
@@ -96,18 +103,7 @@ export default function SetupPhoneNumber( { userSettings }: { userSettings: User
 					setShowVerifyCode( true );
 					handleThrottleSMSRequests();
 				},
-				onError: ( e: Error ) => {
-					const cause = e?.cause as { error?: string; message?: string };
-					const error = cause?.error;
-					const errorMessage =
-						error === 'rate_limited'
-							? __(
-									'Unable to request a code via SMS right now. Please try again after one minute.'
-								)
-							: cause?.message || __( 'Failed to save phone number. Please try again.' );
-					createErrorNotice( errorMessage, {
-						type: 'snackbar',
-					} );
+				onError: () => {
 					setIsSMSResendThrottled( false );
 				},
 			}

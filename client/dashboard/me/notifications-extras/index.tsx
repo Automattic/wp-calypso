@@ -10,6 +10,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
@@ -31,10 +32,12 @@ import type { WpcomNotificationSettings } from '@automattic/api-core';
 export default function NotificationsExtras() {
 	const { data } = useSuspenseQuery( userNotificationsSettingsQuery() );
 	const { recordTracksEvent } = useAnalytics();
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { createSuccessNotice } = useDispatch( noticesStore );
 
 	const { mutate: updateSettings, isPending: isSaving } = useMutation(
-		userNotificationsSettingsMutation()
+		withSnackbar( userNotificationsSettingsMutation(), {
+			error: __( 'Failed to save subscription settings.' ),
+		} )
 	);
 
 	const extraSettings: WpcomNotificationSettings = data.wpcom;
@@ -70,6 +73,7 @@ export default function NotificationsExtras() {
 				{
 					onSuccess: () => {
 						if ( origin === 'single' ) {
+							// eslint-disable-next-line no-restricted-syntax -- It names the setting from the change handler, and the mutation variables don't say which one changed.
 							createSuccessNotice(
 								sprintf(
 									/* translators: %s is the name of the settings */ __( '"%s" settings saved.' ),
@@ -80,15 +84,11 @@ export default function NotificationsExtras() {
 						}
 
 						if ( origin === 'subscribe-all' || origin === 'unsubscribe-all' ) {
+							// eslint-disable-next-line no-restricted-syntax -- The text depends on which control the change came from, which the mutation variables don't say.
 							createSuccessNotice( __( 'Subscriptions settings saved.' ), {
 								type: 'snackbar',
 							} );
 						}
-					},
-					onError: () => {
-						createErrorNotice( __( 'Failed to save subscription settings.' ), {
-							type: 'snackbar',
-						} );
 					},
 				}
 			);

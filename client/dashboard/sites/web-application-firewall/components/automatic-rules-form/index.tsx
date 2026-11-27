@@ -2,12 +2,11 @@ import { HostingFeatures, JetpackModules } from '@automattic/api-core';
 import { siteJetpackSettingsQuery, siteJetpackSettingsMutation } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { NavigationBlocker } from '../../../../app/navigation-blocker';
+import { withSnackbar } from '../../../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../../../components/button-stack';
 import { Card, CardBody } from '../../../../components/card';
 import { SectionHeader } from '../../../../components/section-header';
@@ -31,8 +30,18 @@ const form = {
 
 export default function AutomaticRulesForm( { site }: { site: Site } ) {
 	const { data: jetpackSettings } = useSuspenseQuery( siteJetpackSettingsQuery( site.ID ) );
-	const mutation = useMutation( siteJetpackSettingsMutation( site.ID ) );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const mutation = useMutation(
+		withSnackbar( siteJetpackSettingsMutation( site.ID ), {
+			success: ( _data, { jetpack_waf_automatic_rules } ) =>
+				jetpack_waf_automatic_rules
+					? __( 'Automatic firewall protection enabled.' )
+					: __( 'Automatic firewall protection disabled.' ),
+			error: ( _error, { jetpack_waf_automatic_rules } ) =>
+				jetpack_waf_automatic_rules
+					? __( 'Failed to enable automatic firewall protection.' )
+					: __( 'Failed to disable automatic firewall protection.' ),
+		} )
+	);
 
 	// The WAF module is only supported on self-hosted Jetpack sites, and not supported on VIP
 	const isFirewallModuleSupported =
@@ -52,27 +61,7 @@ export default function AutomaticRulesForm( { site }: { site: Site } ) {
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		mutation.mutate(
-			{ ...formData },
-			{
-				onSuccess: () => {
-					createSuccessNotice(
-						formData.jetpack_waf_automatic_rules
-							? __( 'Automatic firewall protection enabled.' )
-							: __( 'Automatic firewall protection disabled.' ),
-						{ type: 'snackbar' }
-					);
-				},
-				onError: () => {
-					createErrorNotice(
-						formData.jetpack_waf_automatic_rules
-							? __( 'Failed to enable automatic firewall protection.' )
-							: __( 'Failed to disable automatic firewall protection.' ),
-						{ type: 'snackbar' }
-					);
-				},
-			}
-		);
+		mutation.mutate( { ...formData } );
 	};
 
 	const isDirty = formData.jetpack_waf_automatic_rules !== currentEnabled;

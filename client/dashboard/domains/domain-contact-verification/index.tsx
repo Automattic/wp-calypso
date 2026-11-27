@@ -14,6 +14,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { domainContactInfoRoute, domainRoute } from '../../app/router/domains';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { Card, CardBody } from '../../components/card';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
@@ -32,9 +33,12 @@ export default function DomainContactVerification() {
 	const [ submitted, setSubmitted ] = useState( false );
 	const [ error, setError ] = useState( false );
 	const { mutate: domainContactVerification, isPending: isSubmitting } = useMutation(
-		domainContactVerificationMutation( domainName )
+		withSnackbar( domainContactVerificationMutation( domainName ), {
+			success: __( 'Files submitted successfully.' ),
+			error: __( 'Failed to submit files.' ),
+		} )
 	);
-	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
+	const { createErrorNotice } = useDispatch( noticesStore );
 
 	if ( ! registrantWhoisData ) {
 		return null;
@@ -91,11 +95,9 @@ export default function DomainContactVerification() {
 		} );
 		domainContactVerification( formData, {
 			onSuccess: () => {
-				createSuccessNotice( __( 'Files submitted successfully.' ), { type: 'snackbar' } );
 				setSubmitted( true );
 			},
 			onError: () => {
-				createErrorNotice( __( 'Failed to submit files.' ), { type: 'snackbar' } );
 				setError( true );
 			},
 		} );

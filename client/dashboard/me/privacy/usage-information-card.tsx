@@ -2,42 +2,31 @@ import { userSettingsMutation, userSettingsQuery } from '@automattic/api-queries
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, ExternalLink, ToggleControl } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataForm, Field } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { Card, CardBody } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
 import { Text } from '../../components/text';
 
 export default function UsageInformationCard() {
 	const { data: userSettings } = useQuery( userSettingsQuery() );
-	const mutation = useMutation( userSettingsMutation() );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const mutation = useMutation(
+		withSnackbar( userSettingsMutation(), {
+			success: ( _data, { tracks_opt_out } ) =>
+				tracks_opt_out
+					? __( 'Usage information sharing disabled.' )
+					: __( 'Usage information sharing enabled.' ),
+			error: ( _error, { tracks_opt_out } ) =>
+				tracks_opt_out
+					? __( 'Failed to disable usage information sharing.' )
+					: __( 'Failed to enable usage information sharing.' ),
+		} )
+	);
 
 	const handleChange = ( { tracks_opt_out }: { tracks_opt_out?: boolean } ) => {
-		mutation.mutate(
-			{ tracks_opt_out },
-			{
-				onSuccess: () => {
-					createSuccessNotice(
-						tracks_opt_out
-							? __( 'Usage information sharing disabled.' )
-							: __( 'Usage information sharing enabled.' ),
-						{ type: 'snackbar' }
-					);
-				},
-				onError: () => {
-					createErrorNotice(
-						tracks_opt_out
-							? __( 'Failed to disable usage information sharing.' )
-							: __( 'Failed to enable usage information sharing.' ),
-						{ type: 'snackbar' }
-					);
-				},
-			}
-		);
+		mutation.mutate( { tracks_opt_out } );
 	};
 
 	const fields: Field< { tracks_opt_out: boolean } >[] = [

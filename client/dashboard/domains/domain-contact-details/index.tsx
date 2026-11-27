@@ -137,6 +137,7 @@ export default function DomainContactInfo() {
 						transferLock: normalizedFormData.optOutTransferLock === false,
 					} );
 				} else {
+					// eslint-disable-next-line no-restricted-syntax -- It reports a failure that the response returns on success.
 					createErrorNotice( data.messages_simple.join( ' ' ), {
 						type: 'snackbar',
 					} );

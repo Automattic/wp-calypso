@@ -14,6 +14,13 @@ const snackbarMetaRestriction = {
 		'Setting `meta.snackbar` by hand drops the mutation’s `meta.statId`. Use `withSnackbar()` from app/snackbars/with-snackbar instead.',
 };
 
+const handWrittenNoticeRestriction = {
+	selector:
+		'Property[key.name=/^on(Success|Error)$/] CallExpression:matches([callee.name=/^create(Success|Error)Notice$/], [callee.property.name=/^create(Success|Error)Notice$/])',
+	message:
+		'Show mutation notices with `withSnackbar()` from app/snackbars/with-snackbar: callbacks passed to `mutate()` stop running if the component unmounts first. If `withSnackbar()` can’t express this notice (e.g. it has `actions` or a custom `id`), disable this rule for the line and say why.',
+};
+
 export default defineConfig( [
 	...parent,
 	{
@@ -224,7 +231,7 @@ export default defineConfig( [
 				},
 			],
 			'@tanstack/query/exhaustive-deps': 'error',
-			'no-restricted-syntax': [ 'error', snackbarMetaRestriction ],
+			'no-restricted-syntax': [ 'error', snackbarMetaRestriction, handWrittenNoticeRestriction ],
 		},
 	},
 	{

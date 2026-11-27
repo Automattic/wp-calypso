@@ -14,6 +14,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import ConfirmModal from '../../components/confirm-modal';
@@ -41,19 +42,30 @@ export default function RecoverySMS() {
 	const { data: smsCountryCodes } = useSuspenseQuery( smsCountryCodesQuery() );
 
 	const { mutate: validateSMS, isPending: isValidateSMSPending } = useMutation(
-		updateAccountRecoverySMSMutation()
+		withSnackbar( updateAccountRecoverySMSMutation(), {
+			success: __( 'Recovery SMS number saved.' ),
+			error: { source: 'server' },
+		} )
 	);
 	const { mutate: removeSMS, isPending: isRemoveSMSPending } = useMutation(
-		removeAccountRecoverySMSMutation()
+		withSnackbar( removeAccountRecoverySMSMutation(), {
+			success: __( 'Recovery SMS number removed.' ),
+			error: { source: 'server' },
+		} )
 	);
 	const { mutate: resendValidation, isPending: isResendValidationPending } = useMutation(
-		resendAccountRecoverySMSValidationMutation()
+		withSnackbar( resendAccountRecoverySMSValidationMutation(), {
+			success: __( 'Recovery SMS validation resent.' ),
+			error: { source: 'server' },
+		} )
 	);
 	const { mutate: validateSMSCode, isPending: isValidateSMSCodePending } = useMutation(
-		validateAccountRecoverySMSCodeMutation()
+		withSnackbar( validateAccountRecoverySMSCodeMutation(), {
+			error: { source: 'server' },
+		} )
 	);
 
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { createErrorNotice } = useDispatch( noticesStore );
 
 	const accountRecoveryPhone = accountRecoveryData.phone;
 
@@ -82,18 +94,7 @@ export default function RecoverySMS() {
 			return;
 		}
 		recordTracksEvent( 'calypso_dashboard_security_account_recovery_sms_validate_sms_click' );
-		validateSMS( formData.smsNumber, {
-			onSuccess: () => {
-				createSuccessNotice( __( 'Recovery SMS number saved.' ), {
-					type: 'snackbar',
-				} );
-			},
-			onError: ( error: Error ) => {
-				createErrorNotice( error.message || __( 'Failed to validate recovery SMS number.' ), {
-					type: 'snackbar',
-				} );
-			},
-		} );
+		validateSMS( formData.smsNumber );
 	};
 
 	const handleValidateSMSCode = () => {
@@ -101,11 +102,6 @@ export default function RecoverySMS() {
 		validateSMSCode( formData.smsCode, {
 			onSuccess: () => {
 				setShowSuccessNotice( true );
-			},
-			onError: ( error: Error ) => {
-				createErrorNotice( error.message || __( 'Failed to validate recovery SMS code.' ), {
-					type: 'snackbar',
-				} );
 			},
 		} );
 	};
@@ -123,15 +119,7 @@ export default function RecoverySMS() {
 		recordTracksEvent( 'calypso_dashboard_security_account_recovery_sms_remove_sms_click' );
 		removeSMS( undefined, {
 			onSuccess: () => {
-				createSuccessNotice( __( 'Recovery SMS number removed.' ), {
-					type: 'snackbar',
-				} );
 				setFormData( initialFormData );
-			},
-			onError: ( error: Error ) => {
-				createErrorNotice( error.message || __( 'Failed to remove recovery SMS number.' ), {
-					type: 'snackbar',
-				} );
 			},
 			onSettled: () => {
 				setIsRemoveDialogOpen( false );
@@ -142,18 +130,7 @@ export default function RecoverySMS() {
 	const handleResendValidation = () => {
 		recordTracksEvent( 'calypso_dashboard_security_account_recovery_sms_resend_validation_click' );
 		setShowResendButton( false );
-		resendValidation( undefined, {
-			onSuccess: () => {
-				createSuccessNotice( __( 'Recovery SMS validation resent.' ), {
-					type: 'snackbar',
-				} );
-			},
-			onError: ( error: Error ) => {
-				createErrorNotice( error.message || __( 'Failed to resend recovery SMS validation.' ), {
-					type: 'snackbar',
-				} );
-			},
-		} );
+		resendValidation();
 	};
 
 	const fields: Field< SecuritySMSFormData >[] = useMemo(

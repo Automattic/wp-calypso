@@ -6,6 +6,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { vi } from 'vitest';
+import Snackbars from '../../../../../app/snackbars';
 import { render } from '../../../../../test-utils';
 import StagingSiteDeleteModal from '../index';
 import type { Site } from '@automattic/api-core';
@@ -19,6 +20,7 @@ vi.mock( '@wordpress/data', () => ( {
 		createErrorNotice: mockCreateErrorNotice,
 		createSuccessNotice: mockCreateSuccessNotice,
 	} ),
+	useSelect: () => [],
 	combineReducers: vi.fn( ( reducers ) => reducers ),
 	createReduxStore: vi.fn(),
 	register: vi.fn(),
@@ -160,7 +162,10 @@ describe( 'StagingSiteDeleteModal', () => {
 
 			mockProductionSite();
 			const { recordTracksEvent } = render(
-				<StagingSiteDeleteModal site={ mockStagingSite } onClose={ vi.fn() } />
+				<>
+					<StagingSiteDeleteModal site={ mockStagingSite } onClose={ vi.fn() } />
+					<Snackbars />
+				</>
 			);
 			await waitFor( () => expect( getButton( 'Delete staging site' ) ).toBeEnabled() );
 
@@ -177,20 +182,28 @@ describe( 'StagingSiteDeleteModal', () => {
 			);
 		} );
 
-		test( 'shows default error message when no error message is provided', async () => {
+		test( 'shows the generic error message when no error message is provided', async () => {
 			const user = userEvent.setup();
 			mockStagingSiteDelete( 400, { message: '' } );
 
 			mockProductionSite();
-			render( <StagingSiteDeleteModal site={ mockStagingSite } onClose={ vi.fn() } /> );
+			render(
+				<>
+					<StagingSiteDeleteModal site={ mockStagingSite } onClose={ vi.fn() } />
+					<Snackbars />
+				</>
+			);
 			await waitFor( () => expect( getButton( 'Delete staging site' ) ).toBeEnabled() );
 
 			await user.click( getButton( 'Delete staging site' ) );
 
 			await waitFor( () => {
-				expect( mockCreateErrorNotice ).toHaveBeenCalledWith( 'Failed to delete staging site', {
-					type: 'snackbar',
-				} );
+				expect( mockCreateErrorNotice ).toHaveBeenCalledWith(
+					'Something went wrong. Please try again.',
+					{
+						type: 'snackbar',
+					}
+				);
 			} );
 		} );
 	} );
@@ -240,7 +253,10 @@ describe( 'StagingSiteDeleteModal', () => {
 			const mockOnClose = vi.fn();
 			mockProductionSite();
 			const { recordTracksEvent } = render(
-				<StagingSiteDeleteModal site={ mockStagingSite } onClose={ mockOnClose } />
+				<>
+					<StagingSiteDeleteModal site={ mockStagingSite } onClose={ mockOnClose } />
+					<Snackbars />
+				</>
 			);
 			await waitFor( () => expect( getButton( 'Delete staging site' ) ).toBeEnabled() );
 

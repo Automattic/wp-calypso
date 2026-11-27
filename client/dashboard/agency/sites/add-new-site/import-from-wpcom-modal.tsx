@@ -20,6 +20,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { useIntlLocale } from '../../../app/locale';
+import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../../components/button-stack';
 import { DataViewsCard, DataViewsEmptyStateLayout } from '../../../components/dataviews';
 import Notice from '../../../components/notice';
@@ -103,7 +104,7 @@ export default function ImportFromWPCOMModal( { onClose }: ImportFromWPCOMModalP
 	const { recordTracksEvent } = useAnalytics();
 	const queryClient = useQueryClient();
 	const locale = useIntlLocale();
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { createErrorNotice } = useDispatch( noticesStore );
 
 	const {
 		data: agency,
@@ -131,7 +132,13 @@ export default function ImportFromWPCOMModal( { onClose }: ImportFromWPCOMModalP
 	const [ selection, setSelection ] = useState< string[] >( [] );
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
 
-	const importSites = useMutation( agencySitesImportMutation( agencyId ) );
+	const importSites = useMutation(
+		withSnackbar( agencySitesImportMutation( agencyId ), {
+			success: ( { imported, failed } ) =>
+				failed.length ? undefined : getImportNotice( imported.length, failed.length ),
+			error: { source: 'server' },
+		} )
+	);
 
 	const fields: Field< Site >[] = useMemo(
 		() => [
@@ -209,16 +216,15 @@ export default function ImportFromWPCOMModal( { onClose }: ImportFromWPCOMModalP
 				refreshSites();
 				setTimeout( refreshSites, SITE_INDEXING_DELAY_MS );
 
-				const notice = getImportNotice( imported.length, failed.length );
-				const createNotice = failed.length ? createErrorNotice : createSuccessNotice;
-				createNotice( notice, { type: 'snackbar' } );
+				if ( failed.length ) {
+					// eslint-disable-next-line no-restricted-syntax -- It reports a failure that the response returns on success.
+					createErrorNotice( getImportNotice( imported.length, failed.length ), {
+						type: 'snackbar',
+					} );
+				}
 
 				onClose();
 			},
-			onError: ( error ) =>
-				createErrorNotice( error.message || __( 'Failed to add sites. Please try again.' ), {
-					type: 'snackbar',
-				} ),
 		} );
 	};
 
