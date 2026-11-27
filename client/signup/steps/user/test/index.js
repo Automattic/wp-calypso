@@ -14,7 +14,7 @@ vi.mock( 'calypso/blocks/signup-form', () => import( 'calypso/components/empty-c
 vi.mock( 'calypso/signup/step-wrapper', () => import( 'calypso/components/empty-component' ) );
 vi.mock( 'calypso/signup/utils', () => ( {
 	getFlowSteps: ( flow ) => {
-		let flowSteps = null;
+		let flowSteps;
 
 		if ( 'userAsFirstStepInFlow' === flow ) {
 			flowSteps = [ 'user' ];

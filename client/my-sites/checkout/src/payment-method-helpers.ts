@@ -59,7 +59,7 @@ export async function createAccount( {
 	siteId: number | undefined;
 	recaptchaClientId: number | undefined;
 } ): Promise< NewUserResponse > {
-	let newSiteParams = null;
+	let newSiteParams;
 	try {
 		newSiteParams = JSON.parse( window.localStorage.getItem( 'siteParams' ) || '{}' );
 	} catch ( err ) {

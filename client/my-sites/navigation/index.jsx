@@ -39,7 +39,7 @@ class MySitesNavigation extends Component {
 			isUnifiedSiteSidebarVisible: this.props.isUnifiedSiteSidebarVisible,
 		};
 
-		let asyncSidebar = null;
+		let asyncSidebar;
 
 		if ( config.isEnabled( 'jetpack-cloud' ) ) {
 			asyncSidebar = <AsyncLoad require={ loadManageSelectedSite } { ...asyncProps } />;

@@ -221,7 +221,7 @@ const LayoutLoggedOut = ( {
 		'is-theme-showcase-modern': isThemeShowcaseModern,
 	};
 
-	let masterbar = null;
+	let masterbar;
 
 	// TODO: figure out how refreshColorScheme is used in the rest of the app, and remove this.
 	useEffect( () => {

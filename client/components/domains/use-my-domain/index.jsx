@@ -199,7 +199,7 @@ function UseMyDomain( props ) {
 	const setTransferStepsAndLockStatus = useCallback(
 		( isDomainUnlocked ) => {
 			const { LOCKED, UNLOCKED, UNKNOWN } = domainLockStatusType;
-			let lockStatus = UNKNOWN;
+			let lockStatus;
 
 			setTransferDomainStepsDefinition(
 				isDomainUnlocked

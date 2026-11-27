@@ -124,7 +124,7 @@ function PayPalSubmitButton( {
 			togglePaymentMethod( 'paypal-js', true );
 		}
 		if ( isPayPalJsLoaded && ! arePayPalButtonsAvailable ) {
-			let paypalObjectString = '';
+			let paypalObjectString;
 			try {
 				paypalObjectString = JSON.stringify( window?.paypal );
 			} catch ( error ) {

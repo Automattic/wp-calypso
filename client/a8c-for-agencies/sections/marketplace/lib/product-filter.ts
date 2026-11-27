@@ -95,10 +95,8 @@ export function filterProductsAndPlans(
 		return productsAndPlans;
 	}
 
-	let filteredProductsAndBundles = [];
-
 	// List only products that matches the selected prices.
-	filteredProductsAndBundles = filterProductsAndPlansByPrices(
+	let filteredProductsAndBundles = filterProductsAndPlansByPrices(
 		productsAndPlans,
 		getSelectedFilters( PRODUCT_FILTER_KEY_PRICES, selectedFilters )
 	);

@@ -47,10 +47,10 @@ const usePlugins = ( {
 	page?: number;
 	staleTime?: number;
 } ) => {
-	let plugins = [];
-	let isFetching = false;
-	let isSuccess = false;
-	let results = 0;
+	let plugins;
+	let isFetching;
+	let isSuccess;
+	let results;
 
 	const categories = useCategories();
 	const categoryTags = categories[ category || '' ]?.tags || [ category ];

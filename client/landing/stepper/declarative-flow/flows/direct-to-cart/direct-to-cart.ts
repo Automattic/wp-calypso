@@ -75,7 +75,7 @@ async function initialize() {
 
 	const sanitizedRedirect = sanitizeDirectToCartRedirect( params.redirectTo );
 	if ( params.redirectTo && ! sanitizedRedirect ) {
-		let host = '';
+		let host;
 		try {
 			host = new URL( params.redirectTo ).hostname;
 		} catch {

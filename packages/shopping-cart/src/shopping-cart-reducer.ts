@@ -338,7 +338,7 @@ export function getInitialShoppingCartState(): ShoppingCartState {
 }
 
 function removeItemFromLocalStorage( productSlugsInCart: string[] ) {
-	let cartItemsFromLocalStorage = null;
+	let cartItemsFromLocalStorage;
 	try {
 		cartItemsFromLocalStorage = JSON.parse( window.localStorage.getItem( 'shoppingCart' ) || '[]' );
 	} catch ( err ) {

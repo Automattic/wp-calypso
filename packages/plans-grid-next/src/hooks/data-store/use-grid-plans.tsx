@@ -417,7 +417,7 @@ const useGridPlans: UseGridPlansType = ( {
 		const availableForPurchase = !! ( isInSignup || plansAvailabilityForPurchase?.[ planSlug ] );
 		const isCurrentPlan = sitePlanSlug ? isSamePlan( sitePlanSlug, planSlug ) : false;
 
-		let tagline: TranslateResult = '';
+		let tagline: TranslateResult;
 		let hasIntentSpecificTagline = false;
 		if ( 'plans-newsletter' === intent ) {
 			tagline = planConstantObj.getNewsletterTagLine?.() ?? '';

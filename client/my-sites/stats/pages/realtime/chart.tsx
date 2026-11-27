@@ -76,7 +76,7 @@ const RealtimeChart = ( { siteId }: { siteId: number } ) => {
 				.subtract( 1, 'minute' )
 				.format( 'YYYY-MM-DD HH:mm:00' );
 
-			let diffViews: number = 0;
+			let diffViews: number;
 
 			if ( viewsData[ eachMinute ] === undefined ) {
 				// No queried minute data yet.

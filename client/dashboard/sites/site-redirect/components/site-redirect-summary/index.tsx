@@ -16,7 +16,7 @@ export default function SiteRedirectSettingsSummary( {
 	if ( isDashboardBackport() ) {
 		return null;
 	}
-	let badges = [];
+	let badges;
 	if ( site.options?.is_redirect ) {
 		badges = [ { text: __( 'Enabled' ), intent: 'stable' as const } ];
 	} else {
