@@ -26,26 +26,16 @@ import { useImageStudioSuggestions } from '../hooks/use-image-studio-suggestions
 import { useImageUrl } from '../hooks/use-image-url';
 import { useRevertToOriginal } from '../hooks/use-revert-to-original';
 import { useSaveShortcut } from '../hooks/use-save-shortcut';
-import {
-	type CloseDialogVariant,
-	useUnsavedChangesConfirmation,
-} from '../hooks/use-unsaved-changes-confirmation';
-import { useVideoClipSuggestions } from '../hooks/use-video-clip-suggestions';
-import {
-	ImageStudioEntryPoint,
-	type ImageStudioActions,
-	store as imageStudioStore,
-} from '../store';
-import { store as videoStudioStore } from '../stores/video-studio';
+import { useUnsavedChangesConfirmation } from '../hooks/use-unsaved-changes-confirmation';
+import { type ImageStudioActions, store as imageStudioStore } from '../store';
 import { ImageStudioMode, type ImageStudioProps, ToolbarOption } from '../types';
 import { defaultAgentConfigFactory } from '../utils/agent-config';
 import { trackImageStudioError, trackImageStudioPromptSent } from '../utils/tracking';
 import AnnotationCanvas from './annotation-canvas';
 import { AspectRatioPicker } from './aspect-ratio-picker';
 import { CanvasControls } from './canvas-controls';
-import { type ActionButton, ConfirmationDialog } from './confirmation-dialog';
+import { ConfirmationDialog } from './confirmation-dialog';
 import { EditLayout } from './edit-layout';
-import { ExperimentalBadge } from './experimental-badge';
 import { Footer } from './footer';
 import { GenerateLayout } from './generate-layout';
 import { Header } from './header';
@@ -54,14 +44,6 @@ import { ImageStudioNotice } from './notice';
 import { ImageStudioAltTextSidebar } from './sidebar';
 import { StylePicker } from './style-picker';
 import './style.scss';
-
-/** Content for one flavor of the modal's close-confirmation dialog. */
-type CloseDialogConfig = {
-	title: string;
-	message: string;
-	onClose: () => void;
-	actions: ActionButton[];
-};
 
 function ImageStudioAgentChat( {
 	agentConfig: agentConfigProp,
@@ -99,12 +81,6 @@ function ImageStudioAgentChat( {
 		return select( imageStudioStore ).getIsAnnotationSaving();
 	}, [] );
 
-	const entryPoint = useSelect( ( select ) => {
-		return select( imageStudioStore ).getEntryPoint();
-	}, [] );
-
-	const isVideoMode = entryPoint === ImageStudioEntryPoint.PostEditorFeatureClip;
-
 	useEffect( () => {
 		return () => {
 			// When the component unmounts, abort any ongoing requests
@@ -124,32 +100,19 @@ function ImageStudioAgentChat( {
 	let placeholder: string;
 	if ( mode === ImageStudioMode.Edit ) {
 		placeholder = __( 'Describe what you want to add, remove, or replace…', __i18n_text_domain__ );
-	} else if ( isVideoMode ) {
-		placeholder = __( "Describe your post's feature video clip…", __i18n_text_domain__ );
 	} else {
 		placeholder = __( 'Describe your image', __i18n_text_domain__ );
 	}
 
-	const imageSuggestions = useImageStudioSuggestions( {
-		registerSuggestions: agentChatProps.registerSuggestions,
-		clearSuggestions: agentChatProps.clearSuggestions,
-		messages: displayMessages,
-		mode,
-		inputValue,
-		disabled: isVideoMode || isLimitReached,
-	} );
-
-	const videoSuggestions = useVideoClipSuggestions( {
-		registerSuggestions: agentChatProps.registerSuggestions,
-		clearSuggestions: agentChatProps.clearSuggestions,
-		messages: displayMessages,
-		inputValue,
-		disabled: ! isVideoMode || isLimitReached,
-	} );
-
-	const { handleSuggestionClick, isLoadingSuggestions, abortSuggestionsLoading } = isVideoMode
-		? videoSuggestions
-		: imageSuggestions;
+	const { handleSuggestionClick, isLoadingSuggestions, abortSuggestionsLoading } =
+		useImageStudioSuggestions( {
+			registerSuggestions: agentChatProps.registerSuggestions,
+			clearSuggestions: agentChatProps.clearSuggestions,
+			messages: displayMessages,
+			mode,
+			inputValue,
+			disabled: isLimitReached,
+		} );
 
 	const handleSubmit = useCallback(
 		async ( message: string ) => {
@@ -192,10 +155,8 @@ function ImageStudioAgentChat( {
 
 	const progressPhase = ( agentChatProps as unknown as { progressPhase?: string } ).progressPhase;
 	const isFinalizingPhase = progressPhase === 'uploading';
-	const isVideoGeneratingPhase = progressPhase === 'generating-video';
 
-	// Stop is meaningless once the video job is in flight server-side; only the SSE stream would abort.
-	const isStopDisabled = isFinalizingPhase || isAnnotationSaving || isVideoGeneratingPhase;
+	const isStopDisabled = isFinalizingPhase || isAnnotationSaving;
 
 	const suggestionsComponent = isLoadingSuggestions ? (
 		<div className="image-studio-suggestions-loading">
@@ -206,72 +167,56 @@ function ImageStudioAgentChat( {
 	);
 
 	return (
-		<>
-			<AgentUI.Container
-				{ ...agentUiProps }
-				messages={ displayMessages as any }
-				variant="embedded"
-				placeholder={ placeholder }
-				className="image-studio-agent agenttic dark"
-				onSubmit={ handleSubmit }
-				onStop={ agentChatProps.abortCurrentRequest }
-				isProcessing={ isProcessing }
-				thinkingMessage={ agentChatProps.progressMessage ?? undefined }
-				inputValue={ inputValue }
-				onInputChange={ setInputValue }
-				onSuggestionClick={ handleSuggestionClick }
-				maxInputLength={ isVideoMode ? 2000 : 1000 }
-				notice={ creditsNotice }
-				beforeSubmit={ creditsBeforeSubmit }
-				trailingActions={
-					creditsMeter && (
-						<CreditsMeter
-							status={ creditsMeter.status }
-							action={ creditsMeter.action }
-							purchaseHint={ creditsMeter.purchaseHint }
-							isOpen={ creditsMeter.isOpen }
-							onToggle={ creditsMeter.onToggle }
-						/>
-					)
-				}
-			>
-				<AgentUI.ConversationView showHeader={ false }>
-					<AgentUI.Messages />
-					<AgentUI.Footer>
-						{ /* Suggestions load during the credits check but wait for it to show, so they never flash and vanish. */ }
-						{ ! isLimitReached && ! isCheckingCredits && suggestionsComponent }
-						<AgentUI.Notice />
-						{ /* Stacked puts the pickers on the same row as the credits meter and send button. */ }
-						<AgentUI.Input
-							layout="stacked"
-							disabled={ isStopDisabled ? true : undefined }
-							leadingActions={
-								<>
-									{ mode === ImageStudioMode.Generate && ! isVideoMode && (
-										<AspectRatioPicker disabled={ isProcessing } mode={ mode } />
-									) }
-									<StylePicker
-										disabled={ isProcessing }
-										mode={ mode }
-										variant={ mode === ImageStudioMode.Generate && isVideoMode ? 'video' : 'image' }
-									/>
-								</>
-							}
-						/>
-					</AgentUI.Footer>
-				</AgentUI.ConversationView>
-			</AgentUI.Container>
-			{ isVideoMode && (
-				<p className="image-studio-modal__media-library-disclaimer">
-					<em>
-						{ __(
-							'Clips are saved to your Media Library as 9:16 vertical MP4 files.',
-							__i18n_text_domain__
-						) }
-					</em>
-				</p>
-			) }
-		</>
+		<AgentUI.Container
+			{ ...agentUiProps }
+			messages={ displayMessages as any }
+			variant="embedded"
+			placeholder={ placeholder }
+			className="image-studio-agent agenttic dark"
+			onSubmit={ handleSubmit }
+			onStop={ agentChatProps.abortCurrentRequest }
+			isProcessing={ isProcessing }
+			thinkingMessage={ agentChatProps.progressMessage ?? undefined }
+			inputValue={ inputValue }
+			onInputChange={ setInputValue }
+			onSuggestionClick={ handleSuggestionClick }
+			maxInputLength={ 1000 }
+			notice={ creditsNotice }
+			beforeSubmit={ creditsBeforeSubmit }
+			trailingActions={
+				creditsMeter && (
+					<CreditsMeter
+						status={ creditsMeter.status }
+						action={ creditsMeter.action }
+						purchaseHint={ creditsMeter.purchaseHint }
+						isOpen={ creditsMeter.isOpen }
+						onToggle={ creditsMeter.onToggle }
+					/>
+				)
+			}
+		>
+			<AgentUI.ConversationView showHeader={ false }>
+				<AgentUI.Messages />
+				<AgentUI.Footer>
+					{ /* Suggestions load during the credits check but wait for it to show, so they never flash and vanish. */ }
+					{ ! isLimitReached && ! isCheckingCredits && suggestionsComponent }
+					<AgentUI.Notice />
+					{ /* Stacked puts the pickers on the same row as the credits meter and send button. */ }
+					<AgentUI.Input
+						layout="stacked"
+						disabled={ isStopDisabled ? true : undefined }
+						leadingActions={
+							<>
+								{ mode === ImageStudioMode.Generate && (
+									<AspectRatioPicker disabled={ isProcessing } mode={ mode } />
+								) }
+								<StylePicker disabled={ isProcessing } mode={ mode } />
+							</>
+						}
+					/>
+				</AgentUI.Footer>
+			</AgentUI.ConversationView>
+		</AgentUI.Container>
 	);
 }
 
@@ -333,17 +278,10 @@ const ImageStudioContent = withInstanceId(
 			hasUnsavedChanges,
 			originalAttachmentId,
 			isSidebarOpen,
-			currentVideoUrl,
-			isVideoMode,
 		} = useSelect( ( select ) => {
 			const selectors = select( imageStudioStore );
 			const currentAttachmentId = selectors.getImageStudioAttachmentId();
 			const annotatedAttachmentIds = selectors.getAnnotatedAttachmentIds();
-			// Read the video URL from the dedicated video-studio store.
-			// Older bundles never registered this store, so the selector is
-			// always present in the bundle that wrote it.
-			const videoUrl = select( videoStudioStore ).getCurrentVideoUrl?.() ?? null;
-			const entryPoint = selectors.getEntryPoint();
 			return {
 				isAiProcessing: selectors.getImageStudioAiProcessing(),
 				displayImageUrl: selectors.getImageStudioCurrentImageUrl(),
@@ -356,8 +294,6 @@ const ImageStudioContent = withInstanceId(
 				hasUnsavedChanges: selectors.getHasUnsavedChanges(),
 				originalAttachmentId: selectors.getOriginalAttachmentId(),
 				isSidebarOpen: selectors.getIsSidebarOpen(),
-				currentVideoUrl: videoUrl,
-				isVideoMode: entryPoint === ImageStudioEntryPoint.PostEditorFeatureClip,
 			};
 		}, [] );
 
@@ -390,7 +326,7 @@ const ImageStudioContent = withInstanceId(
 			getTraceIdForMessage,
 			authProvider: agentConfigState?.authProvider,
 			sessionId: agentConfigState?.sessionId,
-			displayImageUrl: isVideoMode ? currentVideoUrl : displayImageUrl,
+			displayImageUrl,
 			mode: config?.attachmentId ? ImageStudioMode.Edit : ImageStudioMode.Generate,
 		} );
 
@@ -485,21 +421,16 @@ const ImageStudioContent = withInstanceId(
 
 		const {
 			isConfirmDialogOpen,
-			closeDialogVariant,
 			isExiting,
 			setIsExiting,
 			handleRequestClose,
 			handleConfirmSave,
 			handleConfirmDiscard,
 			handleConfirmCancel,
-			handleConfirmKeepGenerating,
-			handleConfirmStopAndClose,
 		} = useUnsavedChangesConfirmation( {
 			onSave,
 			onDiscard,
 			onExit,
-			// Closing while a clip renders aborts it — warn first (Feature Clip only).
-			isGenerationInProgress: isVideoMode && isAiProcessing,
 		} );
 
 		// Revert to original functionality
@@ -576,60 +507,6 @@ const ImageStudioContent = withInstanceId(
 			/>
 		) : null;
 
-		// One close-confirmation dialog, parameterized by which flavor is active.
-		// Memoized on the (stable) handlers so it isn't rebuilt every render.
-		const closeDialogs = useMemo< Record< CloseDialogVariant, CloseDialogConfig > >(
-			() => ( {
-				unsaved: {
-					title: __( 'Unsaved changes', __i18n_text_domain__ ),
-					message: __( 'Do you want to save this image?', __i18n_text_domain__ ),
-					onClose: handleConfirmCancel,
-					actions: [
-						{
-							text: __( 'Discard', __i18n_text_domain__ ),
-							onClick: handleConfirmDiscard,
-							variant: 'secondary',
-							isDestructive: true,
-						},
-						{
-							text: __( 'Save', __i18n_text_domain__ ),
-							onClick: handleConfirmSave,
-							variant: 'primary',
-						},
-					],
-				},
-				generation: {
-					title: __( 'Video generation in progress', __i18n_text_domain__ ),
-					message: __(
-						'Your clip is still generating. Closing now will stop it and discard your progress.',
-						__i18n_text_domain__
-					),
-					onClose: handleConfirmKeepGenerating,
-					actions: [
-						{
-							text: __( 'Keep generating', __i18n_text_domain__ ),
-							onClick: handleConfirmKeepGenerating,
-							variant: 'secondary',
-						},
-						{
-							text: __( 'Stop and close', __i18n_text_domain__ ),
-							onClick: handleConfirmStopAndClose,
-							variant: 'primary',
-							isDestructive: true,
-						},
-					],
-				},
-			} ),
-			[
-				handleConfirmCancel,
-				handleConfirmDiscard,
-				handleConfirmSave,
-				handleConfirmKeepGenerating,
-				handleConfirmStopAndClose,
-			]
-		);
-		const activeCloseDialog = closeDialogs[ closeDialogVariant ];
-
 		return (
 			<>
 				<Modal
@@ -638,11 +515,7 @@ const ImageStudioContent = withInstanceId(
 					className={ modalClasses }
 					__experimentalHideHeader
 					onRequestClose={ handleRequestClose }
-					aria-label={
-						isVideoMode
-							? __( 'Video Studio', __i18n_text_domain__ )
-							: __( 'Image Studio', __i18n_text_domain__ )
-					}
+					aria-label={ __( 'Image Studio', __i18n_text_domain__ ) }
 				>
 					<div className="image-studio-modal__content">
 						<Header
@@ -666,12 +539,6 @@ const ImageStudioContent = withInstanceId(
 							hasNextImage={ hasNextImage }
 						/>
 
-						{ isVideoMode && (
-							<div className="image-studio-modal__experimental-tag">
-								<ExperimentalBadge variant="dark" />
-							</div>
-						) }
-
 						{ mode === ImageStudioMode.Edit ? (
 							<EditLayout
 								isRenderedImageLoaded={ isRenderedImageLoaded }
@@ -688,13 +555,7 @@ const ImageStudioContent = withInstanceId(
 								originalAttachmentId={ originalAttachmentId }
 							/>
 						) : (
-							<GenerateLayout
-								isAiProcessing={ isAiProcessing }
-								isPromptSent={ isPromptSent }
-								videoUrl={ isVideoMode ? currentVideoUrl : null }
-								onFeedback={ handleFeedback }
-								onSubmitFeedbackText={ handleSubmitFeedbackText }
-							/>
+							<GenerateLayout isAiProcessing={ isAiProcessing } isPromptSent={ isPromptSent } />
 						) }
 
 						<Footer
@@ -752,11 +613,23 @@ const ImageStudioContent = withInstanceId(
 				{ isConfirmDialogOpen && (
 					<ConfirmationDialog
 						isOpen={ isConfirmDialogOpen }
-						title={ activeCloseDialog.title }
-						actions={ activeCloseDialog.actions }
-						onClose={ activeCloseDialog.onClose }
+						title={ __( 'Unsaved changes', __i18n_text_domain__ ) }
+						actions={ [
+							{
+								text: __( 'Discard', __i18n_text_domain__ ),
+								onClick: handleConfirmDiscard,
+								variant: 'secondary',
+								isDestructive: true,
+							},
+							{
+								text: __( 'Save', __i18n_text_domain__ ),
+								onClick: handleConfirmSave,
+								variant: 'primary',
+							},
+						] }
+						onClose={ handleConfirmCancel }
 					>
-						{ activeCloseDialog.message }
+						{ __( 'Do you want to save this image?', __i18n_text_domain__ ) }
 					</ConfirmationDialog>
 				) }
 			</>

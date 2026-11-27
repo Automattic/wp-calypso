@@ -28,7 +28,6 @@ interface ImageStudioData {
 	enabled?: boolean | string;
 	environment?: 'wp-admin';
 	isDevMode?: boolean;
-	canGenerateVideoClips?: boolean;
 	blogId?: number | string;
 	siteType?: 'simple' | 'atomic' | 'jetpack' | 'wpcom' | 'woa';
 	isA11n?: boolean;

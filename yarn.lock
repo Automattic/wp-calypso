@@ -1804,7 +1804,6 @@ __metadata:
     react: "npm:^18.3.1 || ^19.0.0"
     react-dom: "npm:^18.3.1 || ^19.0.0"
     resize-observer-polyfill: "npm:^1.5.1"
-    social-logos: "npm:^3.4.3"
     typescript: "npm:^6.0.3"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.0"
