@@ -128,8 +128,7 @@ describe( 'withPostLikeActions', () => {
 
 		renderWithProvider( <View siteId={ 123 } postId={ 456 } />, { queryClient } );
 
-		const user = userEvent.setup();
-		await user.click( screen.getByRole( 'button', { name: 'Unlike' } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Unlike' } ) );
 
 		await waitFor( () =>
 			expect( queryClient.getQueryData( postLikesQuery( 123, 456 ).queryKey ) ).toMatchObject( {
