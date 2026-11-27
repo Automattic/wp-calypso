@@ -1,4 +1,4 @@
-import { getStaticSiteImportErrorCode } from '@automattic/api-core';
+import { createStaticSiteImportSession, getStaticSiteImportErrorCode } from '@automattic/api-core';
 import { createStaticSiteImportSessionMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
@@ -18,6 +18,7 @@ import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { goToCheckout, goToUnifiedCheckout } from 'calypso/landing/stepper/utils/checkout';
 import { stepWithRequiredLogin } from 'calypso/landing/stepper/utils/step-with-required-login';
+import { startWowFunnelSite } from 'calypso/landing/stepper/utils/wow-funnel-site';
 import { loadExperimentAssignment, useExperiment } from 'calypso/lib/explat';
 import { addQueryArgs, addSchemeIfMissing } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
@@ -38,8 +39,37 @@ const ALL_STEPS = [
 	STEPS.CONFIDENCE_STEP,
 	STEPS.STATIC_SITE_IMPORT_PROGRESS,
 	STEPS.UNIFIED_PLANS,
+	STEPS.PROCESSING,
 	STEPS.ERROR,
 ];
+
+const isWordPressSourceError = ( error: unknown ) =>
+	getStaticSiteImportErrorCode( error ) === 'static_site_import_source_is_wordpress';
+
+/**
+ * Starts the import session, then builds a preview site through the `preview` WoW funnel, which
+ * WordPress.com delivers the import onto as soon as the build lands. Run by the processing step,
+ * so it resolves with what happened rather than throwing.
+ */
+async function movePreview( source: string ) {
+	let importSessionId;
+	try {
+		importSessionId = (
+			await createStaticSiteImportSession( addSchemeIfMissing( source, 'https' ) )
+		).session_id;
+	} catch ( error ) {
+		return { action: isWordPressSourceError( error ) ? 'migrate' : 'unavailable' };
+	}
+	try {
+		const preview = await startWowFunnelSite( {
+			funnelSlug: 'preview',
+			funnelArgs: { import_session_id: importSessionId },
+		} );
+		return { action: 'started', importSessionId, previewSiteSlug: preview.siteSlug };
+	} catch {
+		return { action: 'preview_failed' };
+	}
+}
 
 /** A source as the progress step names it, so the same site typed two ways still matches. */
 const normalizeSource = ( source = '' ) =>
@@ -122,9 +152,9 @@ async function initialize() {
 	const first = getSource( query ) ? afterIdentify : STEPS.SITE_MIGRATION_IDENTIFY;
 	const steps = [ first, ...ALL_STEPS.filter( ( step ) => step !== first ) ];
 
-	// Checkout-first signs up at checkout.
+	// Checkout-first signs up at checkout, or before processing when plans are skipped.
 	const needsLogin = ( step: ( typeof ALL_STEPS )[ number ] ) =>
-		! checkoutFirst || step === STEPS.STATIC_SITE_IMPORT_PROGRESS;
+		! checkoutFirst || step === STEPS.PROCESSING;
 	return steps.map( ( step ) =>
 		needsLogin( step ) ? stepWithRequiredLogin( step ) : step
 	) as typeof ALL_STEPS;
@@ -198,7 +228,7 @@ const staticSiteImportPreview: FlowV2< typeof initialize > = {
 		const isCheckoutFirstRun = useIsCheckoutFirst();
 		const query = useQuery();
 		const userIsLoggedIn = useSelector( isUserLoggedIn );
-		const { setPlanCartItem } = useDispatch( ONBOARD_STORE ) as OnboardActions;
+		const { setPlanCartItem, setPendingAction } = useDispatch( ONBOARD_STORE ) as OnboardActions;
 		const { mutate: createSession } = useMutation( createStaticSiteImportSessionMutation() );
 
 		const exitFlow = ( to: string ) =>
@@ -268,6 +298,23 @@ const staticSiteImportPreview: FlowV2< typeof initialize > = {
 						: navigate( STEPS.ERROR.slug ),
 			} );
 
+		/** Checkout-first after skipping plans: the preview processing built, or why it couldn't. */
+		const submitProcessing = ( result: Record< string, unknown > ) => {
+			switch ( result.action ) {
+				case 'started':
+					return typeof result.previewSiteSlug === 'string' &&
+						typeof result.importSessionId === 'string'
+						? exitFlow( overviewUrl( result.previewSiteSlug, result.importSessionId ) )
+						: navigate( STEPS.ERROR.slug );
+				case 'migrate':
+					return goToWordPressMigration( from );
+				// Without a preview, the customer can still buy a plan for the move.
+				case 'preview_failed':
+					return navigate( STEPS.UNIFIED_PLANS.slug );
+			}
+			return navigate( STEPS.ERROR.slug );
+		};
+
 		const submit: SubmitHandler< typeof initialize > = ( submittedStep ) => {
 			const { slug, providedDependencies } = submittedStep;
 
@@ -309,10 +356,11 @@ const staticSiteImportPreview: FlowV2< typeof initialize > = {
 					return navigate( STEPS.UNIFIED_PLANS.slug );
 
 				case STEPS.UNIFIED_PLANS.slug: {
-					// The progress step needs login, then builds the preview the move goes onto.
+					// Processing needs login, then moves the site onto a free preview.
 					if ( isCheckoutFirstRun && providedDependencies?.action === 'skip_plan' ) {
+						setPendingAction( () => movePreview( from ) );
 						return navigate(
-							`${ STEPS.STATIC_SITE_IMPORT_PROGRESS.slug }?${ new URLSearchParams( {
+							`${ STEPS.PROCESSING.slug }?${ new URLSearchParams( {
 								from,
 								platform,
 								skippedPlans: '1',
@@ -342,13 +390,14 @@ const staticSiteImportPreview: FlowV2< typeof initialize > = {
 					} );
 				}
 
+				case STEPS.PROCESSING.slug:
+					return submitProcessing( providedDependencies );
+
 				case STEPS.STATIC_SITE_IMPORT_PROGRESS.slug: {
 					switch ( providedDependencies.action ) {
 						// The step goes on showing the move, which the flow keeps for going back to it.
 						case 'started':
-							set( STEPS.STATIC_SITE_IMPORT_PROGRESS.slug, providedDependencies );
-							// Checkout-first follows the move on the preview's Overview.
-							return isCheckoutFirstRun ? goToPreviewOverview( providedDependencies ) : undefined;
+							return set( STEPS.STATIC_SITE_IMPORT_PROGRESS.slug, providedDependencies );
 						case 'migrate':
 							return goToWordPressMigration( from );
 						case 'unavailable':

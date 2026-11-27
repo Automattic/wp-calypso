@@ -4,13 +4,16 @@
 // @ts-nocheck - the flow test helpers are untyped
 import config from '@automattic/calypso-config';
 import { waitFor } from '@testing-library/react';
+import { select } from '@wordpress/data';
 import { MemoryRouter } from 'react-router';
 import { type Mock, vi } from 'vitest';
 import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
 import { runFlowNavigation } from 'calypso/landing/stepper/declarative-flow/test/helpers';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { goToCheckout, goToUnifiedCheckout } from 'calypso/landing/stepper/utils/checkout';
+import { startWowFunnelSite } from 'calypso/landing/stepper/utils/wow-funnel-site';
 import { loadExperimentAssignment, useExperiment } from 'calypso/lib/explat';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
@@ -34,6 +37,15 @@ vi.mock( '@automattic/api-queries', async () => ( {
 		'@automattic/api-queries'
 	) ),
 	createStaticSiteImportSessionMutation: () => ( { mutationFn: mockCreateSession } ),
+} ) );
+
+const mockStartSession = vi.hoisted( () => vi.fn() );
+vi.mock( '@automattic/api-core', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/api-core' ) >( '@automattic/api-core' ) ),
+	createStaticSiteImportSession: mockStartSession,
+} ) );
+vi.mock( 'calypso/landing/stepper/utils/wow-funnel-site', () => ( {
+	startWowFunnelSite: vi.fn(),
 } ) );
 
 const originalLocation = window.location;
@@ -119,6 +131,7 @@ describe( 'Static site import preview flow', () => {
 				STEPS.CONFIDENCE_STEP.slug,
 				STEPS.STATIC_SITE_IMPORT_PROGRESS.slug,
 				STEPS.UNIFIED_PLANS.slug,
+				STEPS.PROCESSING.slug,
 				STEPS.ERROR.slug,
 			] );
 			expect( steps.every( ( step ) => step.requiresLoggedInUser ) ).toBe( true );
@@ -163,11 +176,12 @@ describe( 'Static site import preview flow', () => {
 					STEPS.CONFIDENCE_STEP.slug,
 					STEPS.STATIC_SITE_IMPORT_PROGRESS.slug,
 					STEPS.UNIFIED_PLANS.slug,
+					STEPS.PROCESSING.slug,
 					STEPS.ERROR.slug,
 				] );
 				expect(
 					steps.filter( ( step ) => step.requiresLoggedInUser ).map( ( s ) => s.slug )
-				).toEqual( [ STEPS.STATIC_SITE_IMPORT_PROGRESS.slug ] );
+				).toEqual( [ STEPS.PROCESSING.slug ] );
 			} );
 
 			it( 'starts at the confidence step for a source on the URL', async () => {
@@ -471,7 +485,7 @@ describe( 'Static site import preview flow', () => {
 			} );
 		} );
 
-		it( 'signs up and moves the site onto a preview when plans are skipped', () => {
+		it( 'signs up, then processes the move onto a preview, when plans are skipped', async () => {
 			identify();
 			const destination = runNavigation( {
 				from: STEPS.UNIFIED_PLANS,
@@ -479,19 +493,59 @@ describe( 'Static site import preview flow', () => {
 			} );
 
 			expect( destination ).toMatchDestination( {
-				step: STEPS.STATIC_SITE_IMPORT_PROGRESS,
+				step: STEPS.PROCESSING,
 				query: { ...SOURCE, skippedPlans: '1' },
 			} );
-			expect( mockCreateSession ).not.toHaveBeenCalled();
 			expect( goToUnifiedCheckout ).not.toHaveBeenCalled();
+
+			mockStartSession.mockResolvedValue( { session_id: 'abc123' } );
+			vi.mocked( startWowFunnelSite ).mockResolvedValue( {
+				blogId: 456,
+				siteSlug: 'preview.wpcomstaging.com',
+			} );
+			await expect( select( ONBOARD_STORE ).getPendingAction()() ).resolves.toEqual( {
+				action: 'started',
+				importSessionId: 'abc123',
+				previewSiteSlug: 'preview.wpcomstaging.com',
+			} );
+			expect( mockStartSession ).toHaveBeenCalledWith( 'https://source.example.com' );
+			expect( startWowFunnelSite ).toHaveBeenCalledWith( {
+				funnelSlug: 'preview',
+				funnelArgs: { import_session_id: 'abc123' },
+			} );
 		} );
 
-		it( 'opens the preview’s Overview once the move starts', () => {
+		it( 'opens the preview’s Overview once processing built it', () => {
 			identify();
-			runNavigation( { from: STEPS.STATIC_SITE_IMPORT_PROGRESS, dependencies: STARTED } );
+			runNavigation( {
+				from: STEPS.PROCESSING,
+				dependencies: {
+					processingResult: 'success',
+					action: 'started',
+					importSessionId: 'abc123',
+					previewSiteSlug: 'preview.wpcomstaging.com',
+				},
+			} );
 
-			expect( flowState[ STEPS.STATIC_SITE_IMPORT_PROGRESS.slug ] ).toEqual( STARTED );
 			expect( lastExit() ).toEqual( overviewExit( SOURCE ) );
+		} );
+
+		it( 'offers plans again when processing can’t build a preview', () => {
+			const destination = runNavigation( {
+				from: STEPS.PROCESSING,
+				dependencies: { processingResult: 'success', action: 'preview_failed' },
+			} );
+
+			expect( destination ).toMatchDestination( { step: STEPS.UNIFIED_PLANS } );
+		} );
+
+		it( 'shows the error step when processing fails', () => {
+			const destination = runNavigation( {
+				from: STEPS.PROCESSING,
+				dependencies: { processingResult: 'failure' },
+			} );
+
+			expect( destination ).toMatchDestination( { step: STEPS.ERROR } );
 		} );
 
 		it( 'names the source, then checks out a new site that opens on the move', async () => {

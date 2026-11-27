@@ -44,8 +44,9 @@ Checkout returns to the new site’s Overview with the session (`/sites/:siteId?
 which names the site as the destination and shows the move, so the flow has nothing to do after
 checkout.
 
-Skipping plans goes to the progress step, which asks for signup or login first. It then moves the
-site onto a free preview as in B, and opens the preview’s Overview as soon as the move starts.
+Skipping plans asks for signup or login, then the generic processing step starts the import
+session and builds a free preview through the `preview` WoW funnel, as B’s progress step does. The
+flow then opens the preview’s Overview, which shows the move.
 
 Leaving checkout comes back to plans with `checkoutExit=1`, and skipping plans adds
 `skippedPlans=1`. Signing up can change the visitor’s assignment, so those parameters keep the run
