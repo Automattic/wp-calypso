@@ -8,10 +8,10 @@ two orders of the same steps: identify the source, see it on its way, pick a pla
 Opening the flow assigns the `calypso_static_site_import_preview_checkout_first_202611` ExPlat
 experiment, before login so signed-out visitors are assigned too.
 
-- `import_after_checkout` (A): shows what will be moved, then a plan and checkout before any
-  import. See [Checkout first](#checkout-first).
-- Any other variation, including control (B): copies the site onto a free preview and shows the
+- Any other variation, including control (A): copies the site onto a free preview and shows the
   move, then a plan and checkout for that preview. See [Preview first](#preview-first).
+- `import_after_checkout` (B): shows what will be moved, then a plan and checkout before any
+  import. See [Checkout first](#checkout-first).
 
 Outside production, `?variation=a` or `?variation=b` on any of the flow's URLs assigns the browser
 to that variation for a day, by storing the assignment where ExPlat keeps it.
@@ -45,12 +45,12 @@ which names the site as the destination and shows the move, so the flow has noth
 checkout.
 
 Skipping plans asks for signup or login, then the generic processing step starts the import
-session and builds a free preview through the `preview` WoW funnel, as B’s progress step does. The
+session and builds a free preview through the `preview` WoW funnel, as A’s progress step does. The
 flow then opens the preview’s Overview, which shows the move.
 
 Leaving checkout comes back to plans with `checkoutExit=1`, and skipping plans adds
 `skippedPlans=1`. Signing up can change the visitor’s assignment, so those parameters keep the run
-in A.
+in B.
 
 ### Preview first
 
@@ -94,7 +94,7 @@ registered.
 
 ## Testing instructions
 
-For the preview-first variation (B), add `?variation=b` to the first URL:
+For the preview-first variation (A), add `?variation=a` to the first URL:
 
 1. Run `yarn start` and open `/setup/static-site-import-preview` while signed out. Sign up or log
    in with an account allowed to create preview sites.
@@ -111,9 +111,9 @@ For the preview-first variation (B), add `?variation=b` to the first URL:
    skips the address step and shows the move’s progress the same way.
 8. Enter a WordPress site’s URL. Confirm the flow continues to `/setup/site-migration`.
 
-For the checkout-first variation (A), add `?variation=a` to the first URL:
+For the checkout-first variation (B), add `?variation=b` to the first URL:
 
-1. Open `/setup/static-site-import-preview?variation=a` while signed out. Confirm it asks for the source
+1. Open `/setup/static-site-import-preview?variation=b` while signed out. Confirm it asks for the source
    without signup, and stays in this flow.
 2. Enter a Wix or Squarespace URL. Confirm **We can copy your whole site** shows the source going
    to a new WordPress.com site, and no import-session request has run.

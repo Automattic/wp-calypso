@@ -129,7 +129,7 @@ function forceVariationFromQuery( query: URLSearchParams ) {
 			`explat-experiment--${ CHECKOUT_FIRST_EXPERIMENT }`,
 			JSON.stringify( {
 				experimentName: CHECKOUT_FIRST_EXPERIMENT,
-				variationName: forced === 'a' ? CHECKOUT_FIRST_VARIATION : null,
+				variationName: forced === 'b' ? CHECKOUT_FIRST_VARIATION : null,
 				retrievedTimestamp: Date.now(),
 				ttl: 24 * 60 * 60,
 			} )

@@ -138,8 +138,8 @@ describe( 'Static site import preview flow', () => {
 		} );
 
 		it.each( [
-			[ 'a', CHECKOUT_FIRST_VARIATION ],
-			[ 'b', null ],
+			[ 'a', null ],
+			[ 'b', CHECKOUT_FIRST_VARIATION ],
 		] )( 'stores the variation forced with ?variation=%s for ExPlat', async ( variation, name ) => {
 			window.location.search = `?variation=${ variation }`;
 
