@@ -1,20 +1,7 @@
-import { DataHelper, TracksEventManager } from '@automattic/calypso-e2e';
+import { DataHelper, LoggedOutHomePage, TracksEventManager } from '@automattic/calypso-e2e';
 import { expect, tags, test } from '../../lib/pw-base';
-import type { Page } from '@playwright/test';
 
 const lohpUrl: string = 'https://wordpress.com/?flags=a8c-analytics.on';
-
-async function clickGetStarted( page: Page, viewportName: string ) {
-	if ( viewportName === 'mobile' ) {
-		await page.getByRole( 'menuitem', { name: 'Menu' } ).click();
-		await page
-			.getByRole( 'menu', { name: 'Navigation Menu' } )
-			.getByRole( 'link', { name: 'Get started' } )
-			.click();
-	} else {
-		await page.getByRole( 'menuitem', { name: 'Get started' } ).click();
-	}
-}
 
 test.describe(
 	DataHelper.createSuiteTitle( 'Verify Tracks events starting at LOHP' ),
@@ -30,10 +17,7 @@ test.describe(
 			expect( await didEventFirePromise ).toBe( true );
 		} );
 
-		test( 'Clicking link on LOHP fires wpcom_homepage_link_click', async ( {
-			pageIncognito,
-			viewportName,
-		} ) => {
+		test( 'Clicking link on LOHP fires wpcom_homepage_link_click', async ( { pageIncognito } ) => {
 			const page = pageIncognito.getPage();
 			const tracksEventManager = new TracksEventManager( page );
 			await tracksEventManager.init();
@@ -43,13 +27,12 @@ test.describe(
 			await pageViewPromise;
 
 			const didEventFirePromise = tracksEventManager.didEventFire( 'wpcom_homepage_link_click' );
-			await clickGetStarted( page, viewportName );
+			await new LoggedOutHomePage( page ).clickHeaderGetStarted();
 			expect( await didEventFirePromise ).toBe( true );
 		} );
 
 		test( 'Anon ids in page view events match when navigating from LOHP to Calypso signup', async ( {
 			pageIncognito,
-			viewportName,
 		} ) => {
 			const page = pageIncognito.getPage();
 			const tracksEventManager = new TracksEventManager( page );
@@ -62,7 +45,7 @@ test.describe(
 			const anonIdFromWpcomPageView = tracksEventManager.getParamFromUrl( '_ui', requestUrl );
 
 			requestUrlPromise = tracksEventManager.getRequestUrlForEvent( 'calypso_page_view' );
-			await clickGetStarted( page, viewportName );
+			await new LoggedOutHomePage( page ).clickHeaderGetStarted();
 
 			requestUrl = await requestUrlPromise;
 

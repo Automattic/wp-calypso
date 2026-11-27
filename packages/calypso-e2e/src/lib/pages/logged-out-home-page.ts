@@ -8,6 +8,9 @@ import type { Locator, Page } from 'playwright';
 export class LoggedOutHomePage {
 	private page: Page;
 	readonly logInMenuItem: Locator;
+	readonly getStartedMenuItem: Locator;
+	readonly menuMenuItem: Locator;
+	readonly navigationMenuGetStartedLink: Locator;
 	readonly exploreThemesLink: Locator;
 	readonly getStartedLink: Locator;
 	readonly heading: Locator;
@@ -18,6 +21,11 @@ export class LoggedOutHomePage {
 	constructor( page: Page ) {
 		this.page = page;
 		this.logInMenuItem = this.page.getByRole( 'menuitem', { name: 'Log In' } );
+		this.getStartedMenuItem = this.page.getByRole( 'menuitem', { name: 'Get started' } );
+		this.menuMenuItem = this.page.getByRole( 'menuitem', { name: 'Menu' } );
+		this.navigationMenuGetStartedLink = this.page
+			.getByRole( 'menu', { name: 'Navigation Menu' } )
+			.getByRole( 'link', { name: 'Get started' } );
 		this.exploreThemesLink = this.page.getByRole( 'link', {
 			name: 'Explore themes',
 			exact: true,
@@ -45,6 +53,19 @@ export class LoggedOutHomePage {
 				state: 'visible',
 			}
 		);
+	}
+
+	/**
+	 * Clicks the header's "Get started", opening the collapsed header menu first on mobile.
+	 * returns {Promise<void>}
+	 */
+	async clickHeaderGetStarted(): Promise< void > {
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			await this.menuMenuItem.click();
+			await this.navigationMenuGetStartedLink.click();
+		} else {
+			await this.getStartedMenuItem.click();
+		}
 	}
 
 	/**
