@@ -1,0 +1,1197 @@
+import { App } from '@modelcontextprotocol/ext-apps/app-with-deps';
+import { createElement, createRoot, flushSync, Fragment } from '@wordpress/element';
+import { PostEditor, type EditorPost } from './editor';
+import { type Prompt, type TextSelection } from './editor/assistant';
+import { joinBlocks, splitBlocks } from './editor/blocks';
+import { changeLabel, type AgentChange, type Decision } from './editor/changes';
+import { Loader } from './editor/loader';
+import { mergePost } from './editor/merge';
+import { type ProofreadIssue } from './editor/proofread';
+import sanitize from './editor/sanitize';
+import { quoted, selectionContext, type EditorSelection } from './editor/selection-context';
+import { applySiteStyles } from './site-styles';
+import './style.scss';
+
+type ToolResult = Awaited< ReturnType< App[ 'callServerTool' ] > >;
+type HostContext = NonNullable< ReturnType< App[ 'getHostContext' ] > >;
+type OpenResult = {
+	site: { id: number; url: string };
+	post: { id: number; title: string };
+	content: string;
+	version: number;
+	conflict?: Conflict;
+};
+type Conflict = { remote_modified: string };
+type StateResult = {
+	version: number;
+	changed: boolean;
+	title?: string;
+	content?: string;
+	changes?: ( AgentChange & { status?: string } )[];
+	proofread?: ProofreadIssue[];
+	conflict?: Conflict;
+};
+type SaveResult = {
+	saved: boolean;
+	autosave_id?: number;
+	version?: number;
+	pending_changes?: number;
+	stale?: boolean;
+	conflict?: Conflict;
+};
+type UpdateResult = { version: number; conflict?: boolean };
+type ConfigResult = {
+	styles?: { css: string }[];
+	assets_styles?: string;
+	font_faces_html?: string;
+};
+type Post = { title: string; content: string };
+// ChatGPT's own bridge, next to the MCP Apps one.
+declare global {
+	interface Window {
+		openai?: { sendFollowUpMessage?: ( args: { prompt: string } ) => Promise< void > };
+	}
+}
+
+const POLL_INTERVAL = 2000;
+const MAX_POLL_INTERVAL = 30000;
+const SAVE_DELAY = 1000;
+const SAVE_RETRIES = 2;
+const CONFIG_ATTEMPTS = 3;
+const CONFIG_TIMEOUT = 10000;
+// How long the loader waits for the site's styles once the post is ready, before showing the
+// post without them.
+const STYLES_WAIT = 4000;
+// The inline panel's height when the host doesn't fix it; the canvas scrolls inside.
+const INLINE_HEIGHT = 560;
+// How long Undo stays after Accept, unless the assistant changes the post first.
+const UNDO_TIME = 30000;
+const LINK_PROTOCOLS = [ 'http:', 'https:', 'mailto:' ];
+// The user's own requests, in the first person: a host can read a message framed as the app's
+// instruction as something to confirm first. `where` is "site …, post …".
+const PROMPTS: Record< Prompt, [ string, ( where: string ) => string ] > = {
+	review: [
+		'Editorial feedback',
+		( where ) =>
+			`Review my post (${ where }, open in the editor) for structure, headings, paragraph length and flow, and give me the feedback here. Read it with wpcom-post-editor-read. Don’t change the post, and don’t use the browser or wp-admin.`,
+	],
+	title: [
+		'Optimize title',
+		( where ) =>
+			`Suggest 3 better titles for my post (${ where }). Read it with wpcom-post-editor-read, then call wpcom-post-editor-suggest-titles with the 3 titles. I’ll pick one in the card it shows; don’t list them in chat, and don’t use the browser or wp-admin.`,
+	],
+	proofread: [
+		'Proofread',
+		( where ) =>
+			`Proofread my post (${ where }): read it with wpcom-post-editor-read, then mark the spelling, grammar, style and clarity issues with wpcom-post-editor-proofread so they’re underlined in my editor. Don’t edit the text yourself, and don’t use the browser or wp-admin.`,
+	],
+};
+
+const root =
+	document.getElementById( 'mcp-post-editor' ) ??
+	document.body.appendChild(
+		Object.assign( document.createElement( 'div' ), { id: 'mcp-post-editor' } )
+	);
+const reactRoot = createRoot( root );
+
+const app = new App(
+	{ name: 'wpcom-post-editor', version: '0.0.1' },
+	{ availableDisplayModes: [ 'inline', 'fullscreen' ] }
+);
+const panelId = `${ Date.now() }-${ Math.random().toString( 36 ).slice( 2 ) }`;
+let post: { wpcom_site: string; post_id: number } | undefined;
+let siteUrl = '';
+let version = 0;
+let polls = 0;
+let error = '';
+let statusMessage = '';
+let timer: ReturnType< typeof setTimeout > | undefined;
+let pollDelay = POLL_INTERVAL;
+// Whether this open has the changes already pending: see loadChanges.
+let changesLoaded = false;
+let polling = false;
+let stopped = false;
+let opens = 0;
+// Set when the host can't run tools for the page, which then shows only the opened post.
+let noServerTools = false;
+let channel: BroadcastChannel | undefined;
+// Errors the poll status must not overwrite, shown until their cause is resolved.
+const persistentErrors: { open?: string; config?: string; host?: string; save?: string } = {};
+let styles: ConfigResult[ 'styles' ] = [];
+let hostContext: HostContext = {};
+let connected = false;
+// The loader shows until the page has connected and shown the first post with the site's styles,
+// or an error. The editor renders under it once it has the post, so the reveal waits only on the
+// styles.
+let loading = true;
+// The site's styles have applied, failed, or taken too long.
+let stylesReady = false;
+let stylesTimer: ReturnType< typeof setTimeout > | undefined;
+
+// The post the server and this page last agreed on, the user's latest, and what the editor shows.
+let base: Post = { title: '', content: '' };
+let local: Post = base;
+let editorPost: EditorPost | undefined;
+// The user changed the title since the last update, so the next one sends it.
+let titleChanged = false;
+let saveTimer: ReturnType< typeof setTimeout > | undefined;
+let saving = false;
+let saveQueued = false;
+let saveStarts = 0;
+// Settles when the update in progress ends.
+let saveEnded: Promise< void > = Promise.resolve();
+// The post the last update sent when the page couldn't tell whether the server took it.
+let unconfirmed: Post | undefined;
+// The update in flight, so a save stopped behind it can still send the typing after it.
+let lastUpdate: Promise< UpdateResult > | undefined;
+// The read-only view shows a sanitized copy: it never saves, so nothing sends it back.
+let preview: { source?: Post; editor?: EditorPost; post?: EditorPost } = {};
+
+// The assistant's pending changes, as the last state listed them.
+let changes: AgentChange[] = [];
+// Changes the page has shown, and those it decided, which stay hidden until the server agrees.
+const seenChanges = new Map< string, AgentChange >();
+const decided = new Set< string >();
+// With the proofreading issues the user applied or dismissed, `done`.
+type Decisions = Record< Decision | 'done', string[] >;
+const noDecisions = (): Decisions => ( { accept: [], reject: [], undo: [], done: [] } );
+// Decisions the next update sends, with the typing.
+let decisions = noDecisions();
+let accepted: { ids: string[]; label: string; timer: ReturnType< typeof setTimeout > } | undefined;
+const hasDecisions = ( list: Decisions ) => Object.values( list ).some( ( ids ) => ids.length );
+const decisionArgs = ( list: Decisions ) => ( {
+	...( list.accept.length && { accept_change_ids: list.accept } ),
+	...( list.reject.length && { reject_change_ids: list.reject } ),
+	...( list.undo.length && { undo_change_ids: list.undo } ),
+	...( list.done.length && { proofread_done_ids: list.done } ),
+} );
+
+// The open proofreading issues, as the last state listed them, and those the user finished,
+// which stay hidden until the server agrees.
+let issues: ProofreadIssue[] = [];
+const doneIssues = new Set< string >();
+// The conflict with WordPress.com, by its stamp, and the one the user dismissed.
+let conflict: string | undefined;
+let dismissedConflict: string | undefined;
+let savingPost = false;
+// Set from the Reload click until its post arrives or the reload fails: the canvas is read-only,
+// and updates and polls stop, so no typing comes back.
+let reloading = false;
+// The context last sent: empty for none, so nothing goes before the first selection; undefined
+// after a failed update, so the next one goes.
+let lastContext: string | undefined = '';
+
+function previewPost() {
+	if ( preview.source !== local || preview.editor !== editorPost ) {
+		preview = {
+			source: local,
+			editor: editorPost,
+			post: editorPost && { ...editorPost, ...local, content: sanitize( local.content ) },
+		};
+	}
+	return preview.post;
+}
+
+function render() {
+	if ( loading && ( error || ( connected && editorPost && stylesReady ) ) ) {
+		loading = false;
+		clearTimeout( stylesTimer );
+	}
+	// The same two places each time, so neither remounts when the other comes or goes.
+	reactRoot.render(
+		createElement(
+			Fragment,
+			null,
+			loading && ! editorPost ? null : renderEditor(),
+			loading
+				? createElement( Loader, {
+						status: editorPost ? 'Loading the site’s styles…' : statusMessage,
+					} )
+				: null
+		)
+	);
+}
+
+function revealStyles() {
+	stylesReady = true;
+	render();
+}
+
+function renderEditor() {
+	const { displayMode, containerDimensions } = hostContext;
+	const isFullscreen = displayMode === 'fullscreen';
+	const fixedHeight =
+		containerDimensions && 'height' in containerDimensions ? containerDimensions.height : undefined;
+	const maxHeight =
+		containerDimensions && 'maxHeight' in containerDimensions
+			? containerDimensions.maxHeight
+			: undefined;
+	let height = '100vh';
+	if ( fixedHeight ) {
+		height = `${ fixedHeight }px`;
+	} else if ( ! isFullscreen ) {
+		height = `${ Math.min( maxHeight ?? INLINE_HEIGHT, INLINE_HEIGHT ) }px`;
+	}
+	const readOnly = noServerTools || stopped || reloading;
+	return createElement( PostEditor, {
+		post: readOnly ? previewPost() : editorPost,
+		styles: styles ?? [],
+		readOnly,
+		status: statusMessage,
+		statusTitle: `Polls: ${ polls }, version ${ version }`,
+		location: post
+			? `${ siteUrl.replace( /^https?:\/\//, '' ) } · post ${ post.post_id }`
+			: undefined,
+		isError: !! error,
+		notices: Object.values( persistentErrors ).filter( ( message ): message is string =>
+			Boolean( message )
+		),
+		isFullscreen,
+		height,
+		onChange: onEditorChange,
+		changes: readOnly
+			? []
+			: placeChanges( changes.filter( ( change ) => ! decided.has( change.change_id ) ) ),
+		accepted: readOnly ? undefined : accepted,
+		onDecide: decide,
+		isSaving: savingPost,
+		onSave: () => savePost(),
+		conflict: conflict === dismissedConflict ? undefined : conflict,
+		onConflict: resolveConflict,
+		canMessage: !! post && canSendMessage(),
+		onPrompt: sendPrompt,
+		onAsk: ask,
+		onSelect: reportSelection,
+		issues: readOnly ? [] : issues.filter( ( issue ) => ! doneIssues.has( issue.id ) ),
+		onProofreadDone: finishIssues,
+		isCovered: loading,
+	} );
+}
+
+// Where each change's block is now: the user may have added or removed blocks above it.
+function placeChanges( list: AgentChange[] ) {
+	const blocks = list.length ? splitBlocks( local.content ) : [];
+	return list.map( ( change ) => {
+		const found =
+			change.block_index === null ? -1 : blocks.indexOf( splitBlocks( change.after )[ 0 ] );
+		return found < 0 || found + 1 === change.block_index
+			? change
+			: { ...change, block_index: found + 1 };
+	} );
+}
+
+function showStatus( message = '' ) {
+	statusMessage = message;
+	render();
+}
+
+function showPersistentError( key: keyof typeof persistentErrors, message?: string ) {
+	persistentErrors[ key ] = message;
+	render();
+}
+
+const errorMessage = ( e: unknown ) => ( e instanceof Error ? e.message : String( e ) );
+
+const resultText = ( result: ToolResult ) =>
+	result.content?.map( ( item ) => ( item.type === 'text' ? item.text : '' ) ).join( ' ' ) ||
+	'The tool failed';
+
+// Some hosts deliver only `content`, whose first text item is the same object as JSON.
+function resultData( result: ToolResult ): Record< string, unknown > | undefined {
+	if ( result.structuredContent && typeof result.structuredContent === 'object' ) {
+		return result.structuredContent as Record< string, unknown >;
+	}
+	const first = result.content?.[ 0 ];
+	if ( first?.type !== 'text' ) {
+		return undefined;
+	}
+	try {
+		const data = JSON.parse( first.text );
+		return data && typeof data === 'object' ? data : undefined;
+	} catch {
+		return undefined;
+	}
+}
+
+// The host's JSON-RPC error when it can't run tools at all ("IPC not available for MCP tool
+// call"). Its code, -32603, also covers any failure in the host's handler, and a tool error
+// may say "not available", so only this message tells them apart.
+const isHostToolError = ( e: unknown ) => /IPC not available/i.test( errorMessage( e ) );
+
+async function callTool< T >(
+	name: string,
+	args: Record< string, unknown > = {},
+	timeout?: number
+) {
+	let result: ToolResult;
+	try {
+		result = await app.callServerTool(
+			{ name, arguments: { ...post, ...args } },
+			timeout ? { timeout } : undefined
+		);
+	} catch ( e ) {
+		if ( isHostToolError( e ) && ! noServerTools ) {
+			noServerTools = true;
+			clearTimeout( timer );
+			timer = undefined;
+			clearTimeout( saveTimer );
+			persistentErrors.config = undefined;
+			showPersistentError(
+				'host',
+				'This host can’t call tools from the panel, so site styles, live updates and saving are off.'
+			);
+		}
+		throw e;
+	}
+	if ( result.isError ) {
+		throw new Error( resultText( result ) );
+	}
+	const data = resultData( result );
+	if ( ! data ) {
+		throw new Error( 'The tool returned no data' );
+	}
+	return data as T;
+}
+
+const normalize = ( content: string ) => joinBlocks( splitBlocks( content ) );
+const isDirty = () => titleChanged || local.content !== base.content || hasDecisions( decisions );
+
+// Synchronous, so typing that follows is reported against the post shown here.
+function showInEditor( next: Post ) {
+	local = next;
+	editorPost = {
+		...next,
+		id: `${ post?.wpcom_site }:${ post?.post_id }`,
+		revision: ( editorPost?.revision ?? 0 ) + 1,
+	};
+	flushSync( render );
+}
+
+function onEditorChange( next: Post ) {
+	if ( next.title !== local.title ) {
+		titleChanged = true;
+	}
+	local = next;
+	scheduleSave();
+	// The outlines and labels follow the blocks the user adds or removes.
+	if ( changes.length ) {
+		render();
+	}
+}
+
+function scheduleSave() {
+	clearTimeout( saveTimer );
+	saveTimer = undefined;
+	if ( isDirty() && ! noServerTools && ! stopped && ! reloading ) {
+		saveTimer = setTimeout( save, SAVE_DELAY );
+	}
+}
+
+// One update at a time: a save asked for during another runs when that one ends.
+async function save() {
+	saveTimer = undefined;
+	if ( saving ) {
+		saveQueued = true;
+		return;
+	}
+	if ( ! isDirty() || noServerTools || stopped || reloading || ! post ) {
+		return;
+	}
+	saving = true;
+	saveStarts++;
+	let ended = () => {};
+	saveEnded = new Promise( ( resolve ) => ( ended = resolve ) );
+	const current = opens;
+	let sendTitle = false;
+	// Decisions sent in an update that didn't succeed, to send again.
+	let sentDecisions: Decisions | undefined;
+	// The server took the update, so a failure after it isn't a failed save.
+	let taken = false;
+	error = '';
+	showStatus( 'Saving…' );
+	try {
+		// The server refuses an update on a stale version: take in its post, then try again.
+		for ( let attempt = 0; ; attempt++ ) {
+			const sent = local;
+			sendTitle = titleChanged;
+			titleChanged = false;
+			// A conflict shows only that this update wasn't taken, not an earlier one.
+			const prior = unconfirmed;
+			unconfirmed = sent;
+			sentDecisions = decisions;
+			decisions = noDecisions();
+			lastUpdate = callTool< UpdateResult >( 'wpcom-post-editor-update', {
+				base_version: version,
+				// Unchanged content stays out: the editor's serialization of a block can differ from
+				// the server's markup, which would make a reject find the block changed.
+				...( sent.content !== base.content && { content: sent.content } ),
+				...( sendTitle && { title: sent.title } ),
+				...decisionArgs( sentDecisions ),
+			} );
+			const result = await lastUpdate;
+			if ( current !== opens || stopped ) {
+				return;
+			}
+			if ( ! result.conflict ) {
+				base = { title: sendTitle ? sent.title : base.title, content: sent.content };
+				unconfirmed = undefined;
+				if ( ! hasDecisions( sentDecisions ) ) {
+					version = result.version;
+					break;
+				}
+				// The server applied the decisions after the content, so its post can differ from
+				// the one sent: take it in from the version before.
+				const undone = [ ...sentDecisions.reject, ...sentDecisions.undo ];
+				sentDecisions = undefined;
+				sendTitle = false;
+				taken = true;
+				const state = await callTool< StateResult >( 'wpcom-post-editor-state', {
+					since_version: version,
+				} );
+				if ( current !== opens || stopped ) {
+					return;
+				}
+				receiveState( state );
+				reportUnreverted( undone );
+				render();
+				break;
+			}
+			restoreDecisions( sentDecisions );
+			sentDecisions = undefined;
+			unconfirmed = prior;
+			titleChanged ||= sendTitle;
+			sendTitle = false;
+			if ( attempt >= SAVE_RETRIES ) {
+				throw new Error( 'the post keeps changing on the server.' );
+			}
+			const state = await callTool< StateResult >( 'wpcom-post-editor-state', {
+				since_version: version,
+			} );
+			if ( current !== opens || stopped ) {
+				return;
+			}
+			receiveState( state );
+			render();
+			clearTimeout( saveTimer );
+			saveTimer = undefined;
+			if ( ! isDirty() ) {
+				break;
+			}
+		}
+		// Keeps a message about the assistant's changes that came in with the save.
+		if ( statusMessage === 'Saving…' ) {
+			showStatus( 'Saved' );
+		}
+	} catch ( e ) {
+		if ( current !== opens ) {
+			return;
+		}
+		titleChanged ||= sendTitle;
+		restoreDecisions( sentDecisions );
+		if ( ! noServerTools && ! stopped && ! taken ) {
+			error = errorMessage( e );
+			showStatus( `Couldn’t save: ${ error }` );
+		}
+	} finally {
+		saving = false;
+		ended();
+		if ( statusMessage === 'Saving…' ) {
+			showStatus();
+		}
+		if ( saveQueued ) {
+			saveQueued = false;
+			save();
+		}
+	}
+}
+
+// Sends a debounced save now, before the page stops or switches posts. Best effort.
+function flushSave() {
+	if ( saving && ( saveTimer || saveQueued ) ) {
+		const args = {
+			...post,
+			content: local.content,
+			...( titleChanged && { title: local.title } ),
+			...decisionArgs( decisions ),
+		};
+		lastUpdate
+			?.then(
+				( result ) =>
+					! result.conflict &&
+					callTool( 'wpcom-post-editor-update', { ...args, base_version: result.version } )
+			)
+			.catch( () => {} );
+	} else if ( saveTimer ) {
+		clearTimeout( saveTimer );
+		save();
+	}
+}
+
+// Merges the server's post into the user's typing, and sends the result back when it differs.
+function applyRemote( state: StateResult ) {
+	const remote = {
+		title: state.title ?? base.title,
+		content: state.content === undefined ? base.content : normalize( state.content ),
+	};
+	if ( remote.title === base.title && remote.content === base.content ) {
+		return;
+	}
+	const merged = mergePost(
+		{ title: base.title, blocks: splitBlocks( base.content ) },
+		{ title: local.title, blocks: splitBlocks( local.content ) },
+		{ title: remote.title, blocks: splitBlocks( remote.content ) },
+		unconfirmed && { title: unconfirmed.title, blocks: splitBlocks( unconfirmed.content ) }
+	);
+	const next = { title: merged.title, content: joinBlocks( merged.blocks ) };
+	base = remote;
+	unconfirmed = undefined;
+	titleChanged = next.title !== remote.title;
+	if ( next.title !== local.title || next.content !== local.content ) {
+		showInEditor( next );
+	}
+	scheduleSave();
+}
+
+function restoreDecisions( sent?: Decisions ) {
+	if ( sent ) {
+		( Object.keys( sent ) as ( keyof Decisions )[] ).forEach( ( decision ) =>
+			decisions[ decision ].unshift( ...sent[ decision ] )
+		);
+	}
+}
+
+function clearAccepted() {
+	clearTimeout( accepted?.timer );
+	accepted = undefined;
+}
+
+// Accept, Reject or Undo, sent with the typing in the next update.
+function decide( decision: Decision, ids: string[] ) {
+	// The server takes only the first of accept, reject and undo listing a change, so an Undo
+	// that travels with its own Accept is a reject.
+	const unsent = decision === 'undo' ? ids.filter( ( id ) => decisions.accept.includes( id ) ) : [];
+	decisions.accept = decisions.accept.filter( ( id ) => ! unsent.includes( id ) );
+	decisions.reject.push( ...unsent );
+	decisions[ decision ].push( ...ids.filter( ( id ) => ! unsent.includes( id ) ) );
+	ids.forEach( ( id ) => decided.add( id ) );
+	if ( decision !== 'reject' ) {
+		clearAccepted();
+	}
+	if ( decision === 'accept' ) {
+		const one = changes.find( ( change ) => change.change_id === ids[ 0 ] );
+		accepted = {
+			ids,
+			label: ids.length === 1 && one ? changeLabel( one ) : `${ ids.length } changes`,
+			timer: setTimeout( () => {
+				accepted = undefined;
+				render();
+			}, UNDO_TIME ),
+		};
+	}
+	render();
+	clearTimeout( saveTimer );
+	save();
+}
+
+// A reject or undo the server found stale leaves the block as the assistant wrote it.
+function reportUnreverted( ids: string[] ) {
+	const blocks = splitBlocks( local.content );
+	const kept = ids
+		.map( ( id ) => seenChanges.get( id ) )
+		.find( ( change ) => change?.after && blocks.includes( splitBlocks( change.after )[ 0 ] ) );
+	if ( kept && kept.block_index !== null ) {
+		statusMessage = `Couldn’t reject ${ changeLabel( kept ) }: it changed since`;
+	}
+}
+
+function receiveChanges( list: StateResult[ 'changes' ] = [] ) {
+	changes = list.filter( ( change ) => ( change.status ?? 'pending' ) === 'pending' );
+	const fresh = changes.filter( ( change ) => ! seenChanges.has( change.change_id ) );
+	if ( ! fresh.length ) {
+		return;
+	}
+	fresh.forEach( ( change ) => seenChanges.set( change.change_id, change ) );
+	clearAccepted();
+	statusMessage =
+		fresh.length === 1
+			? `The assistant changed ${ changeLabel( fresh[ 0 ] ) }`
+			: `The assistant made ${ fresh.length } changes`;
+}
+
+function receiveIssues( list?: StateResult[ 'proofread' ] ) {
+	if ( list ) {
+		issues = list;
+	}
+}
+
+// `state` reports the conflict on every poll while it holds.
+function receiveConflict( next?: Conflict ) {
+	conflict = next?.remote_modified;
+}
+
+// A save that ended during a state call already has that version or a newer one.
+function receiveState( state: StateResult ) {
+	if ( reloading ) {
+		return;
+	}
+	receiveConflict( state.conflict );
+	if ( state.version > version ) {
+		version = state.version;
+		if ( state.changed ) {
+			receiveChanges( state.changes );
+			receiveIssues( state.proofread );
+			applyRemote( state );
+		}
+	}
+}
+
+// Issues the user applied or dismissed, sent with the typing in the next update. An applied
+// issue's edit reaches onEditorChange first, so the same update carries it.
+function finishIssues( ids: string[], failed: number ) {
+	ids.forEach( ( id ) => doneIssues.add( id ) );
+	decisions.done.push( ...ids );
+	if ( failed ) {
+		statusMessage =
+			failed === 1
+				? 'Couldn’t apply a fix: its text changed. Edit it by hand.'
+				: `Couldn’t apply ${ failed } fixes: their text changed. Edit them by hand.`;
+	}
+	render();
+	scheduleSave();
+}
+
+// Waits for the update queue to send the user's typing and decisions.
+async function flushUpdates() {
+	for ( let i = 0; i < 5 && ( saving || saveTimer || saveQueued || isDirty() ); i++ ) {
+		if ( saving ) {
+			await saveEnded;
+			continue;
+		}
+		clearTimeout( saveTimer );
+		saveTimer = undefined;
+		await save();
+	}
+}
+
+// Shown until the next Save, unlike the update's own errors, which the next poll clears.
+const saveError = ( message: string ) => {
+	if ( statusMessage === 'Saving to WordPress.com…' ) {
+		statusMessage = '';
+	}
+	showPersistentError( 'save', `Couldn’t save to WordPress.com: ${ message }` );
+};
+
+// Saves the session's post to WordPress.com, after the typing reaches the session.
+async function savePost( extra: { overwrite?: boolean; overwrite_stamp?: string } = {} ) {
+	if ( savingPost || ! post || noServerTools || stopped ) {
+		return;
+	}
+	savingPost = true;
+	persistentErrors.save = undefined;
+	const current = opens;
+	render();
+	try {
+		// A stale result means the session moved on: take in its post, then try once more.
+		for ( let attempt = 0; ; attempt++ ) {
+			await flushUpdates();
+			if ( current !== opens ) {
+				return;
+			}
+			if ( isDirty() ) {
+				throw new Error( 'your latest changes didn’t reach the server.' );
+			}
+			error = '';
+			showStatus( 'Saving to WordPress.com…' );
+			const result = await callTool< SaveResult >( 'wpcom-post-editor-save', {
+				base_version: version,
+				...extra,
+			} );
+			if ( current !== opens ) {
+				return;
+			}
+			if ( result.saved ) {
+				if ( extra.overwrite ) {
+					dismissedConflict = conflict;
+				}
+				conflict = undefined;
+				showStatus( 'Saved to WordPress.com' );
+				return;
+			}
+			if ( result.conflict ) {
+				conflict = result.conflict.remote_modified;
+				dismissedConflict = undefined;
+				showStatus();
+				return;
+			}
+			if ( result.pending_changes ) {
+				showStatus( 'Accept or reject the agent’s changes before saving.' );
+				return;
+			}
+			if ( ! result.stale || attempt >= 1 ) {
+				throw new Error(
+					result.stale ? 'the post keeps changing.' : 'WordPress.com didn’t take it.'
+				);
+			}
+			const state = await callTool< StateResult >( 'wpcom-post-editor-state', {
+				since_version: version,
+			} );
+			if ( current !== opens ) {
+				return;
+			}
+			receiveState( state );
+			render();
+		}
+	} catch ( e ) {
+		if ( current === opens && ! noServerTools ) {
+			saveError( errorMessage( e ) );
+		}
+	} finally {
+		savingPost = false;
+		render();
+	}
+}
+
+async function resolveConflict( choice: 'reload' | 'keep' | 'dismiss' ) {
+	if ( choice === 'dismiss' ) {
+		dismissedConflict = conflict;
+		render();
+		return;
+	}
+	if ( choice === 'keep' ) {
+		savePost( { overwrite: true, overwrite_stamp: conflict } );
+		return;
+	}
+	if ( savingPost ) {
+		return;
+	}
+	savingPost = true;
+	reloading = true;
+	clearTimeout( saveTimer );
+	saveTimer = undefined;
+	saveQueued = false;
+	clearTimeout( timer );
+	timer = undefined;
+	// Read-only, showing the user's latest.
+	showInEditor( local );
+	// The update under way keeps its decisions: sent, or back in `decisions`.
+	await saveEnded;
+	// Drops the typing not sent yet, and the results of polls already under way.
+	opens++;
+	const kept = { local, titleChanged, decisions };
+	local = base;
+	titleChanged = false;
+	decisions = noDecisions();
+	try {
+		const result = await callTool< OpenResult >( 'wpcom-post-editor-discard' );
+		reloading = false;
+		open( result );
+		showStatus( 'Reloaded from WordPress.com' );
+	} catch ( e ) {
+		( { titleChanged, decisions } = kept );
+		reloading = false;
+		// Editable again, showing what `local` holds.
+		showInEditor( kept.local );
+		scheduleSave();
+		schedule();
+		error = errorMessage( e );
+		showStatus( `Couldn’t reload the post: ${ error }` );
+	} finally {
+		savingPost = false;
+		render();
+	}
+}
+
+const myPost = () => `site ${ post?.wpcom_site }, post ${ post?.post_id }`;
+
+// ChatGPT's `window.openai.sendFollowUpMessage`, or the MCP Apps host's `ui/message`.
+function hasFollowUp() {
+	return typeof window.openai?.sendFollowUpMessage === 'function';
+}
+
+function canSendMessage() {
+	return hasFollowUp() || !! app.getHostCapabilities()?.message;
+}
+
+// The model reads the post from the server, so the typing goes there first.
+async function sendMessage( text: string, sent: string ) {
+	await flushUpdates();
+	if ( isDirty() ) {
+		error = 'dirty';
+		showStatus( 'Couldn’t send: your latest changes haven’t reached the server yet.' );
+		return;
+	}
+	try {
+		let refused = false;
+		// ChatGPT's own call for a follow-up message, which returns nothing to check.
+		if ( hasFollowUp() ) {
+			await window.openai?.sendFollowUpMessage?.( { prompt: text } );
+		} else {
+			const result = await app.sendMessage( { role: 'user', content: [ { type: 'text', text } ] } );
+			refused = !! result.isError;
+		}
+		if ( refused ) {
+			error = 'refused';
+			showStatus(
+				'The host didn’t send the message. If it asks you to allow messages from this app, allow them and try again.'
+			);
+			return;
+		}
+		error = '';
+		showStatus( sent );
+	} catch ( e ) {
+		error = errorMessage( e );
+		showStatus( `Couldn’t send the message: ${ error }` );
+	}
+}
+
+function sendPrompt( prompt: Prompt ) {
+	const [ label, text ] = PROMPTS[ prompt ];
+	sendMessage( text( myPost() ), `Asked: ${ label }` );
+}
+
+function ask( question: string, selection: TextSelection ) {
+	sendMessage(
+		`${ question }\n\nThis is about this text in block ${
+			selection.block
+		} of my post (${ myPost() }):\n${ quoted(
+			selection.text
+		) }\n\nUse the wpcom-post-editor tools, not the browser or wp-admin.`,
+		'Asked about the selection'
+	);
+}
+
+// Tells the model what the user selected, without a message, where the host takes it. With
+// nothing selected, an empty context replaces the last one.
+function reportSelection( selection?: EditorSelection ) {
+	if (
+		! app.getHostCapabilities()?.updateModelContext ||
+		! post ||
+		stopped ||
+		reloading ||
+		noServerTools
+	) {
+		return;
+	}
+	const text = selectionContext( selection, myPost() );
+	if ( text === lastContext ) {
+		return;
+	}
+	lastContext = text;
+	app
+		.updateModelContext( { content: text ? [ { type: 'text', text } ] : [] } )
+		.catch( () => ( lastContext = undefined ) );
+}
+
+function schedule() {
+	if (
+		! timer &&
+		! polling &&
+		! stopped &&
+		! noServerTools &&
+		! reloading &&
+		post &&
+		! document.hidden
+	) {
+		timer = setTimeout( poll, pollDelay );
+	}
+}
+
+async function poll() {
+	timer = undefined;
+	if ( reloading ) {
+		return;
+	}
+	polling = true;
+	const current = opens;
+	const starts = saveStarts;
+	try {
+		if ( ! changesLoaded ) {
+			await loadChanges( current );
+		}
+		const state = await callTool< StateResult >( 'wpcom-post-editor-state', {
+			since_version: version,
+		} );
+		pollDelay = POLL_INTERVAL;
+		// A save's own state call merges; this one may already hold the save, against an old base.
+		if ( current !== opens || stopped || saving || reloading || starts !== saveStarts ) {
+			return;
+		}
+		polls++;
+		receiveState( state );
+		// Retries a failed save.
+		if ( ! saveTimer ) {
+			scheduleSave();
+		}
+		// Only the polls' and updates' own errors; a failed Save stays until the next one.
+		if ( /^(Poll failed|Couldn’t save:)/.test( statusMessage ) ) {
+			error = '';
+			statusMessage = '';
+		}
+		render();
+	} catch ( e ) {
+		if ( current !== opens || stopped || noServerTools ) {
+			return;
+		}
+		pollDelay = Math.min( pollDelay * 2, MAX_POLL_INTERVAL );
+		error = errorMessage( e );
+		showStatus( `Poll failed: ${ error }` );
+	} finally {
+		polling = false;
+		schedule();
+	}
+}
+
+document.addEventListener( 'visibilitychange', () => {
+	if ( document.hidden ) {
+		clearTimeout( timer );
+		timer = undefined;
+	} else {
+		schedule();
+	}
+} );
+
+function stopPolling( message: string ) {
+	flushSave();
+	stopped = true;
+	clearTimeout( timer );
+	timer = undefined;
+	clearTimeout( saveTimer );
+	channel?.close();
+	channel = undefined;
+	error = '';
+	showStatus( message );
+}
+
+// Only the newest panel showing a post polls and edits it: each panel announces the post it
+// opens, and an older panel that hears a newer announcement stops.
+function claimPost( site: string, postId: number ) {
+	channel?.close();
+	channel = undefined;
+	if ( typeof BroadcastChannel === 'undefined' ) {
+		return;
+	}
+	const openedAt = Date.now();
+	try {
+		channel = new BroadcastChannel( `mcp-post-editor:${ site }:${ postId }` );
+	} catch {
+		return;
+	}
+	channel.onmessage = ( { data } ) => {
+		if (
+			data?.id !== panelId &&
+			( data?.at > openedAt || ( data?.at === openedAt && data.id > panelId ) )
+		) {
+			stopPolling( 'A newer panel is showing this post.' );
+		}
+	};
+	channel.postMessage( { id: panelId, at: openedAt } );
+}
+
+async function loadConfig( current: number ) {
+	for ( let attempt = 1; ; attempt++ ) {
+		try {
+			return await callTool< ConfigResult >( 'wpcom-post-editor-config', {}, CONFIG_TIMEOUT );
+		} catch ( e ) {
+			if ( attempt >= CONFIG_ATTEMPTS || current !== opens || noServerTools ) {
+				throw e;
+			}
+			await new Promise( ( resolve ) => setTimeout( resolve, attempt * 1000 ) );
+		}
+	}
+}
+
+// `version` is the latest, so polls list only newer changes: asks for those already pending,
+// then again before each poll until it gets them.
+async function loadChanges( current: number ) {
+	const state = await callTool< StateResult >( 'wpcom-post-editor-state', { since_version: 0 } );
+	if ( current === opens && ! stopped ) {
+		changesLoaded = true;
+		receiveChanges( state.changes );
+		receiveIssues( state.proofread );
+		receiveConflict( state.conflict );
+		render();
+	}
+}
+
+let stylesLoaded = false;
+async function open( result: OpenResult ) {
+	if ( stopped ) {
+		return;
+	}
+	const next = { wpcom_site: String( result.site.id ), post_id: result.post.id };
+	if ( next.wpcom_site !== post?.wpcom_site || next.post_id !== post.post_id ) {
+		flushSave();
+	}
+	const current = ++opens;
+	// Set before anything here can throw, so the loader can't stay up for good.
+	if ( ! stylesReady && ! stylesTimer ) {
+		stylesTimer = setTimeout( revealStyles, STYLES_WAIT );
+	}
+	post = next;
+	siteUrl = result.site.url;
+	version = result.version;
+	error = '';
+	clearTimeout( saveTimer );
+	saveQueued = false;
+	titleChanged = false;
+	unconfirmed = undefined;
+	changes = [];
+	decisions = noDecisions();
+	decided.clear();
+	seenChanges.clear();
+	clearAccepted();
+	issues = [];
+	doneIssues.clear();
+	conflict = result.conflict?.remote_modified;
+	dismissedConflict = undefined;
+	persistentErrors.save = undefined;
+	base = { title: result.post.title, content: normalize( result.content ) };
+	showInEditor( base );
+	persistentErrors.open = undefined;
+	showStatus();
+	claimPost( post.wpcom_site, post.post_id );
+	changesLoaded = false;
+	// A new post or a Reload polls soon, whatever the last post's failed polls left.
+	clearTimeout( timer );
+	timer = undefined;
+	pollDelay = POLL_INTERVAL;
+	schedule();
+	if ( ! noServerTools ) {
+		// The polls ask again, and show the error.
+		loadChanges( current ).catch( () => {} );
+	}
+	if ( stylesLoaded || noServerTools ) {
+		revealStyles();
+		return;
+	}
+	try {
+		const config = await loadConfig( current );
+		if ( current === opens ) {
+			// Set first: a retry after a partial apply would append the same nodes again.
+			stylesLoaded = true;
+			const applied = applySiteStyles( config );
+			styles = config.styles?.filter( ( style ) => style.css ) ?? [];
+			persistentErrors.config = undefined;
+			// The canvas takes the scoped styles now, under the loader, so its fonts start loading.
+			flushSync( render );
+			await applied;
+		}
+	} catch ( e ) {
+		if ( current === opens && ! noServerTools ) {
+			persistentErrors.config = `Couldn’t load the site’s styles: ${ errorMessage( e ) }`;
+		}
+	}
+	// A newer open's styles reveal its post.
+	if ( current === opens ) {
+		revealStyles();
+	}
+}
+
+function openFailed( message: string ) {
+	if ( post ) {
+		showPersistentError( 'open', `Couldn’t open the post: ${ message }` );
+		return;
+	}
+	error = message;
+	showStatus( `Couldn’t open the post: ${ message }` );
+}
+
+app.addEventListener( 'toolresult', ( result ) => {
+	if ( result.isError ) {
+		openFailed( resultText( result ) );
+		return;
+	}
+	const next = resultData( result ) as Partial< OpenResult > | undefined;
+	if ( next?.site && next.post ) {
+		open( next as OpenResult );
+	} else {
+		openFailed( 'The tool result has no post.' );
+	}
+} );
+app.addEventListener( 'hostcontextchanged', ( context ) => {
+	hostContext = { ...hostContext, ...context };
+	render();
+} );
+app.onteardown = () => {
+	flushSave();
+	stopped = true;
+	clearTimeout( timer );
+	clearTimeout( saveTimer );
+	channel?.close();
+	return {};
+};
+
+// Links open through the host: navigating would replace this page in its iframe. Links in
+// editable text don't open: a click there places the caret.
+function openLinkThroughHost( event: MouseEvent ) {
+	// Other buttons (right-click) keep the browser's own menu.
+	if ( event.button > 1 ) {
+		return;
+	}
+	// `a` matches HTML and SVG anchors; `area` is an image map link.
+	const link = event.target instanceof Element ? event.target.closest( 'a, area' ) : null;
+	if ( ! link ) {
+		return;
+	}
+	event.preventDefault();
+	// Not `[contenteditable]`: the editor makes the whole canvas editable while selecting.
+	if ( link.closest( '.rich-text' ) ) {
+		return;
+	}
+	const href =
+		link.getAttribute( 'href' ) ?? link.getAttributeNS( 'http://www.w3.org/1999/xlink', 'href' );
+	if ( href === null ) {
+		return;
+	}
+	if ( href.startsWith( '#' ) ) {
+		let fragment = href.slice( 1 );
+		try {
+			fragment = decodeURIComponent( fragment );
+		} catch {}
+		const id = CSS.escape( fragment );
+		if ( id ) {
+			document
+				.querySelector( '.editor-styles-wrapper' )
+				?.querySelector( `[id="${ id }"], a[name="${ id }"]` )
+				?.scrollIntoView();
+		}
+		return;
+	}
+	let url: URL;
+	try {
+		url = new URL( href.startsWith( '//' ) ? `https:${ href }` : href, siteUrl );
+	} catch {
+		return;
+	}
+	if ( ! LINK_PROTOCOLS.includes( url.protocol ) ) {
+		return;
+	}
+	const linkFailed = ( message: string ) => {
+		error = message;
+		showStatus( `Couldn’t open the link: ${ message }` );
+	};
+	app.openLink( { url: url.href } ).then(
+		( { isError } ) => isError && linkFailed( 'The host declined it.' ),
+		( e ) => linkFailed( errorMessage( e ) )
+	);
+}
+document.addEventListener( 'click', openLinkThroughHost );
+// Middle-click fires `auxclick`, not `click`.
+document.addEventListener( 'auxclick', openLinkThroughHost );
+
+showStatus( 'Connecting to the host…' );
+// autoResize (on by default) reports the page height to the host after every change.
+app.connect().then(
+	() => {
+		connected = true;
+		hostContext = app.getHostContext() ?? {};
+		if ( ! post && ! error ) {
+			statusMessage = 'Connected. Waiting for the post…';
+		}
+		render();
+	},
+	( e ) => {
+		error = errorMessage( e );
+		showStatus( `Couldn’t connect to the host: ${ error }` );
+	}
+);

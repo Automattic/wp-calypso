@@ -19,6 +19,7 @@ private val releaseBuildTags = listOf(
 	"help-center-release-build",
 	"agents-manager-release-build",
 	"survicate-release-build",
+	"mcp-post-editor-release-build",
 )
 
 object WPComPlugins : Project({
@@ -133,6 +134,7 @@ object CalypsoApps: BuildType({
 		apps/help-center/dist => help-center.zip
 		apps/agents-manager/dist => agents-manager.zip
 		apps/survicate/dist => survicate.zip
+		apps/mcp-post-editor/dist => mcp-post-editor.zip
 	""".trimIndent()
 
 	steps {
