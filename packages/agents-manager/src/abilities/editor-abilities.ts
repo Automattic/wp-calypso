@@ -16,7 +16,7 @@ import {
 import { applyBlockEditsAbility } from './apply-block-edits';
 import { applyUpdateThemeAbility } from './apply-update-theme';
 import { captureCanvasAbility } from './capture-canvas';
-import { BIG_SKY_ABILITY_CATEGORY } from './constants';
+import { AGENTS_MANAGER_ABILITY_CATEGORY } from './constants';
 import { editEntityRecordAbility } from './edit-entity-record';
 import { editorNavigateAbility } from './editor-navigate';
 import { getBlockTreeAbility } from './get-block-tree';
@@ -67,9 +67,9 @@ export async function registerEditorAbilities(): Promise< void > {
 
 	// Register the category before the abilities that reference it.
 	try {
-		await registerAbilityCategory( BIG_SKY_ABILITY_CATEGORY, {
-			label: 'Big Sky',
-			description: 'Big Sky abilities',
+		await registerAbilityCategory( AGENTS_MANAGER_ABILITY_CATEGORY, {
+			label: 'Agents Manager',
+			description: 'Agents Manager abilities',
 		} );
 	} catch {
 		// Category may already be registered.

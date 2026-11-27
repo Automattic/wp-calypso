@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { BIG_SKY_ABILITY_CATEGORY } from '../constants';
+import { AGENTS_MANAGER_ABILITY_CATEGORY } from '../constants';
 import { showComponentCallback } from './callback';
 import type { Ability } from '@wordpress/abilities';
 
@@ -17,7 +17,7 @@ export type ShowComponentType = ( typeof SHOW_COMPONENT_TYPES )[ number ];
 export const showComponentAbility: Ability = {
 	name: 'big-sky/show-component',
 	label: __( 'Show Component', __i18n_text_domain__ ),
-	category: BIG_SKY_ABILITY_CATEGORY,
+	category: AGENTS_MANAGER_ABILITY_CATEGORY,
 	description: 'Display a component in the UI with specified props',
 	input_schema: {
 		type: 'object',

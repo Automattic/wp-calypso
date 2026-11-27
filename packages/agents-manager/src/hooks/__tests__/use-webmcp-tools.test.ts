@@ -37,7 +37,7 @@ const ability: Ability = {
 	name: 'big-sky/apply-block-edits',
 	label: 'Apply block edits',
 	description: 'Apply edits to the current block canvas.',
-	category: 'big-sky',
+	category: 'agents-manager',
 	input_schema: { type: 'object', properties: {} },
 	meta: { annotations: { clientRegistered: true }, webmcp: { public: true } },
 	callback: vi.fn(),

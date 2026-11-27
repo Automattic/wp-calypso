@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { BIG_SKY_ABILITY_CATEGORY } from '../constants';
+import { AGENTS_MANAGER_ABILITY_CATEGORY } from '../constants';
 import { streamPageDesignCallback } from './callback';
 import type { Ability } from '@wordpress/abilities';
 
@@ -14,7 +14,7 @@ import type { Ability } from '@wordpress/abilities';
 export const streamPageDesignAbility: Ability = {
 	name: 'big-sky/stream-page-design',
 	label: __( 'Stream Page Design', __i18n_text_domain__ ),
-	category: BIG_SKY_ABILITY_CATEGORY,
+	category: AGENTS_MANAGER_ABILITY_CATEGORY,
 	description:
 		'Streams generated page-design block markup into the editor for review before saving.',
 	input_schema: {

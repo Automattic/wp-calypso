@@ -30,7 +30,7 @@ const createAbility = ( overrides: Partial< Ability > = {} ): Ability => ( {
 	name: 'big-sky/apply-block-edits',
 	label: 'Apply block edits',
 	description: 'Apply deterministic edits to the current block canvas.',
-	category: 'big-sky',
+	category: 'agents-manager',
 	input_schema: {
 		type: 'object',
 		properties: { edits: { type: 'array' } },
@@ -50,7 +50,7 @@ const createBlockTreeAbility = (): Ability => ( {
 	name: 'agents-manager/get-block-tree',
 	label: 'Get block tree',
 	description: 'Read the current editor block tree.',
-	category: 'big-sky',
+	category: 'agents-manager',
 	input_schema: { type: 'object', properties: {} },
 	meta: {
 		annotations: { clientRegistered: true, readonly: true, idempotent: true },
@@ -63,7 +63,7 @@ const createShowTemplateAbility = (): Ability => ( {
 	name: 'big-sky/show-template',
 	label: 'Show the page template',
 	description: 'Show the page template.',
-	category: 'big-sky',
+	category: 'agents-manager',
 	input_schema: { type: 'object', properties: {}, additionalProperties: false },
 	meta: {
 		annotations: { clientRegistered: true, readonly: false, idempotent: true },

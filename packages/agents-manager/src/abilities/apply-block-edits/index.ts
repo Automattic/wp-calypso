@@ -1,18 +1,18 @@
 import { __ } from '@wordpress/i18n';
-import { BIG_SKY_ABILITY_CATEGORY } from '../constants';
+import { AGENTS_MANAGER_ABILITY_CATEGORY } from '../constants';
 import { applyBlockEditsCallback } from './callback';
 import type { Ability } from '@wordpress/abilities';
 
 /**
  * The chat agent never calls this directly: the backend's block-editing tools
  * delegate their edits to it. So only browser agents read the description, and
- * it may name their tools. The `big-sky/` name and category are the keys the
- * backend route allowlists match on — renaming either drops it everywhere.
+ * it may name their tools. The `big-sky/` name is the key the backend route
+ * allowlists match on — renaming it drops it everywhere.
  */
 export const applyBlockEditsAbility: Ability = {
 	name: 'big-sky/apply-block-edits',
 	label: __( 'Apply Block Edits', __i18n_text_domain__ ),
-	category: BIG_SKY_ABILITY_CATEGORY,
+	category: AGENTS_MANAGER_ABILITY_CATEGORY,
 	description:
 		'Applies deterministic edits to the current block-editor canvas. Call agents_manager__get_block_tree immediately before every edit and use the returned clientId values unchanged. To insert a section or several blocks at once, write serialized Gutenberg block markup and pass it as an insert blockMarkup value. For a ready-made section, get the markup of a pattern with the wpcom-patterns-get tool of the WordPress.com MCP. Call wpcom__get_block_schemas first to check block names and attributes. The change remains unsaved and reviewable in the editor.',
 	input_schema: {

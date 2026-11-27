@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { BIG_SKY_ABILITY_CATEGORY } from '../constants';
+import { AGENTS_MANAGER_ABILITY_CATEGORY } from '../constants';
 import { openHelpCenterCallback } from './callback';
 import type { Ability } from '@wordpress/abilities';
 
@@ -13,7 +13,7 @@ export { OPEN_HELP_CENTER_BUTTON_TYPE } from './callback';
 export const openHelpCenterAbility: Ability = {
 	name: 'big-sky/open-help-center',
 	label: __( 'Show Help Center chat button', __i18n_text_domain__ ),
-	category: BIG_SKY_ABILITY_CATEGORY,
+	category: AGENTS_MANAGER_ABILITY_CATEGORY,
 	description:
 		'Show the user a button they can click to open WordPress.com Help Center chat when they ask to talk to a human, contact support, or get help from a person. This ability does not open Help Center automatically.',
 	input_schema: {

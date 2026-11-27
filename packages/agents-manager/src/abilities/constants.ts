@@ -1,3 +1,2 @@
-// Ability category, shared with Big Sky's own abilities (the backend routes
-// match on ability names, not categories).
-export const BIG_SKY_ABILITY_CATEGORY = 'big-sky';
+// The backend routes allow Agents Manager's abilities by name, not by category.
+export const AGENTS_MANAGER_ABILITY_CATEGORY = 'agents-manager';

@@ -276,7 +276,7 @@ describe( 'executeAbilityFromList', () => {
 		name: 'big-sky/show-component',
 		label: 'Show component',
 		description: 'Stub ability',
-		category: 'big-sky',
+		category: 'agents-manager',
 		callback,
 	} );
 
@@ -320,7 +320,10 @@ describe( 'registerEditorAbilities', () => {
 		await editorAbilities.registerEditorAbilities();
 
 		expect( registerAbilityCategory ).toHaveBeenCalledTimes( 1 );
-		expect( registerAbilityCategory ).toHaveBeenCalledWith( 'big-sky', expect.any( Object ) );
+		expect( registerAbilityCategory ).toHaveBeenCalledWith(
+			'agents-manager',
+			expect.any( Object )
+		);
 
 		expect( registerAbility ).toHaveBeenCalledTimes( editorAbilities.EDITOR_ABILITIES.length );
 		expect( registerAbility ).toHaveBeenCalledWith(

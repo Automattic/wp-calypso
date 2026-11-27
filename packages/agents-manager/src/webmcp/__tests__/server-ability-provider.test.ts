@@ -10,7 +10,7 @@ const clientAbility: Ability = {
 	name: 'agents-manager/get-block-tree',
 	label: 'Get block tree',
 	description: 'Read the editor block tree.',
-	category: 'big-sky',
+	category: 'agents-manager',
 	input_schema: { type: 'object', properties: {} },
 	meta: { annotations: { clientRegistered: true } },
 };

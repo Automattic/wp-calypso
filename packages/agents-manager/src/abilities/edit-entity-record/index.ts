@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { BIG_SKY_ABILITY_CATEGORY } from '../constants';
+import { AGENTS_MANAGER_ABILITY_CATEGORY } from '../constants';
 import { editEntityRecordCallback } from './callback';
 import type { Ability } from '@wordpress/abilities';
 
@@ -32,13 +32,13 @@ const navigationItemSchema = {
 /**
  * The `edit-entity-record` ability definition.
  *
- * The `big-sky/` name and category are the keys the backend route allowlists
- * match on — renaming either drops the ability from every surface.
+ * The `big-sky/` name is the key the backend route allowlists match on —
+ * renaming it drops the ability from every surface.
  */
 export const editEntityRecordAbility: Ability = {
 	name: 'big-sky/edit-entity-record',
 	label: __( 'Manage Entity Records', __i18n_text_domain__ ),
-	category: BIG_SKY_ABILITY_CATEGORY,
+	category: AGENTS_MANAGER_ABILITY_CATEGORY,
 	description:
 		'Create, edit, or delete WordPress data entity records using the data layer, as far as the input schema allows. Edits remain unsaved and reviewable in the editor, and renaming a page also relabels the navigation menu items that point to it. Creating or deleting a record takes effect at once.',
 	meta: {

@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { BIG_SKY_ABILITY_CATEGORY } from '../constants';
+import { AGENTS_MANAGER_ABILITY_CATEGORY } from '../constants';
 import { applyUpdateThemeCallback } from './callback';
 import type { Ability } from '@wordpress/abilities';
 
@@ -22,13 +22,13 @@ const namedEntrySchema = ( valueKey: string ) => ( {
 /**
  * The `apply-update-theme` ability definition.
  *
- * The `big-sky/` name and category are the keys the backend route allowlists
- * match on — renaming either drops the ability from every surface.
+ * The `big-sky/` name is the key the backend route allowlists match on —
+ * renaming it drops the ability from every surface.
  */
 export const applyUpdateThemeAbility: Ability = {
 	name: 'big-sky/apply-update-theme',
 	label: __( 'Update Theme', __i18n_text_domain__ ),
-	category: BIG_SKY_ABILITY_CATEGORY,
+	category: AGENTS_MANAGER_ABILITY_CATEGORY,
 	description:
 		"Merges theme.json settings and styles into the site's global styles, for example the color palette, font families, or styles for elements and blocks. The change previews in the editor and remains unsaved and reviewable.",
 	input_schema: {

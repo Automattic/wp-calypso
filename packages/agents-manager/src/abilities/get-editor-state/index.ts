@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { BIG_SKY_ABILITY_CATEGORY } from '../constants';
+import { AGENTS_MANAGER_ABILITY_CATEGORY } from '../constants';
 import { getEditorStateCallback } from './callback';
 import type { Ability } from '@wordpress/abilities';
 
@@ -8,7 +8,7 @@ const RECORD_ID_SCHEMA = { type: [ 'number', 'string' ] } as const;
 export const getEditorStateAbility: Ability = {
 	name: 'agents-manager/get-editor-state',
 	label: __( 'Get Editor State', __i18n_text_domain__ ),
-	category: BIG_SKY_ABILITY_CATEGORY,
+	category: AGENTS_MANAGER_ABILITY_CATEGORY,
 	description:
 		'Reads what the editor has open and what is unsaved: the open post, page or template with its saved status, or null when nothing is open, and every record with unsaved changes. If the open post\'s status is "publish", visitors already see it, so saving it changes the live site. Use this to tell the user what to review and save.',
 	input_schema: {

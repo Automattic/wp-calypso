@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { BIG_SKY_ABILITY_CATEGORY } from '../constants';
+import { AGENTS_MANAGER_ABILITY_CATEGORY } from '../constants';
 import { editorNavigateCallback } from './callback';
 import type { Ability } from '@wordpress/abilities';
 
@@ -13,7 +13,7 @@ import type { Ability } from '@wordpress/abilities';
 export const editorNavigateAbility: Ability = {
 	name: 'big-sky/editor-navigate',
 	label: __( 'Navigate', __i18n_text_domain__ ),
-	category: BIG_SKY_ABILITY_CATEGORY,
+	category: AGENTS_MANAGER_ABILITY_CATEGORY,
 	description:
 		'Saves everything and navigates in the editor. Use "page/{id}" with the numeric id from <site_pages> to open one page, or "all-pages" to open the pages list. Full URLs, slugs and paths like "/visit" are invalid — if the user names a page, look up its numeric id first.',
 	input_schema: {

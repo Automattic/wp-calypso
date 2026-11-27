@@ -1,18 +1,18 @@
 import { __ } from '@wordpress/i18n';
-import { BIG_SKY_ABILITY_CATEGORY } from '../constants';
+import { AGENTS_MANAGER_ABILITY_CATEGORY } from '../constants';
 import { setSiteLogoCallback } from './callback';
 import type { Ability } from '@wordpress/abilities';
 
 /**
  * The `set-site-logo` ability definition.
  *
- * The `big-sky/` name and category are the keys the backend route allowlists
- * match on — renaming either drops the ability from every surface.
+ * The `big-sky/` name is the key the backend route allowlists match on —
+ * renaming it drops the ability from every surface.
  */
 export const setSiteLogoAbility: Ability = {
 	name: 'big-sky/set-site-logo',
 	label: __( 'Set Site Logo', __i18n_text_domain__ ),
-	category: BIG_SKY_ABILITY_CATEGORY,
+	category: AGENTS_MANAGER_ABILITY_CATEGORY,
 	description:
 		"Sets the site logo to an image in the site's media library; find or upload the image there first. Pass the image's attachment ID as fileObj.attachment_id. The logo shows wherever the page has a Site Logo block, and the change remains unsaved and reviewable in the editor.",
 	input_schema: {

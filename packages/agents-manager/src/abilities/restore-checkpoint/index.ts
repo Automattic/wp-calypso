@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { BIG_SKY_ABILITY_CATEGORY } from '../constants';
+import { AGENTS_MANAGER_ABILITY_CATEGORY } from '../constants';
 import { restoreCheckpointCallback } from './callback';
 import type { Ability } from '@wordpress/abilities';
 
@@ -11,7 +11,7 @@ import type { Ability } from '@wordpress/abilities';
 export const restoreCheckpointAbility: Ability = {
 	name: 'big-sky/restore-checkpoint',
 	label: __( 'Restore Checkpoint', __i18n_text_domain__ ),
-	category: BIG_SKY_ABILITY_CATEGORY,
+	category: AGENTS_MANAGER_ABILITY_CATEGORY,
 	description:
 		'Restores editor state from a checkpoint associated with a previous mutating tool call. Use for undo/redo requests. Prefer checkpointId values from clientContext.availableCheckpoints whose toolId matches the user intent: block-edit checkpoints for content changes, theme-update checkpoints for style/theme changes, and navigation/entity checkpoints for navigation/entity changes. For undo, use the checkpointId of the most recent relevant change, whose toolId is not big_sky__restore_checkpoint. Only use a checkpoint whose toolId is big_sky__restore_checkpoint for explicit redo requests, because those checkpoints represent the state before a prior undo/restore. Pass requestIntentType to describe the user intent: "undo" for undo requests, "redo" for redo requests, or "restore" when restoring a specific checkpoint/version. Use only checkpointId values from clientContext.availableCheckpoints; never invent one, and never pass a tool name/id, messageId or calypsoCheckpointId. If the user reports missing homepage/footer/navigation content, do not rebuild or redesign unless the user explicitly agrees; try a relevant checkpoint, WordPress revisions, or support escalation instead.',
 	input_schema: {

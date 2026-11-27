@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { BIG_SKY_ABILITY_CATEGORY } from '../constants';
+import { AGENTS_MANAGER_ABILITY_CATEGORY } from '../constants';
 import { showTemplateCallback } from './callback';
 import type { Ability } from '@wordpress/abilities';
 
@@ -12,14 +12,14 @@ import type { Ability } from '@wordpress/abilities';
  * cannot see them or edit them; this brings them in rather than describing a
  * route to them, which it cannot do reliably — it cannot see the user's screen.
  *
- * Named `big-sky/` like the other abilities in this category: the backend
- * route allowlists match on ability names, and this one is listed in
+ * Named `big-sky/` like the other editor abilities: the backend route
+ * allowlists match on ability names, and this one is listed in
  * `wpcom-editor.php`.
  */
 export const showTemplateAbility: Ability = {
 	name: 'big-sky/show-template',
 	label: __( 'Show the page template', __i18n_text_domain__ ),
-	category: BIG_SKY_ABILITY_CATEGORY,
+	category: AGENTS_MANAGER_ABILITY_CATEGORY,
 	description:
 		'Turn on "Show template" in the editor, so the page renders inside its template and the site header and footer become part of the content you can read and edit. Use this when a header or footer change is asked for but no template part is in view — call it, then read the page structure or block tree again before deciding you cannot make the change. Do NOT use it to recover a block edit that failed on a part already in view: that part is locked by the editing mode, not hidden, and this will not unlock it.',
 	input_schema: {
