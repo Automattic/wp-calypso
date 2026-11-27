@@ -6,6 +6,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { ReactNode } from 'react';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
 import { usePostLikeActions } from '..';
 import { getCachedPost, upsertPostCache } from '../../cache';
 
@@ -13,10 +15,17 @@ const BASE = 'https://public-api.wordpress.com';
 
 const makeQueryClient = () => new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 
-const makeWrapper = ( queryClient: QueryClient ) =>
-	function Wrapper( { children }: { children: ReactNode } ) {
-		return <QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>;
+const makeWrapper = ( queryClient: QueryClient ) => {
+	const store = createStore( () => ( {} ) );
+
+	return function Wrapper( { children }: { children: ReactNode } ) {
+		return (
+			<QueryClientProvider client={ queryClient }>
+				<Provider store={ store }>{ children }</Provider>
+			</QueryClientProvider>
+		);
 	};
+};
 
 describe( 'usePostLikeActions', () => {
 	afterEach( () => nock.cleanAll() );

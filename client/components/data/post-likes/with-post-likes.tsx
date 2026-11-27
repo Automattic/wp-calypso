@@ -1,6 +1,9 @@
 import { likePostMutation, postLikesQuery, unlikePostMutation } from '@automattic/api-queries';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useTranslate } from 'i18n-calypso';
 import { forwardRef } from 'react';
+import { useDispatch } from 'calypso/state';
+import { errorNotice } from 'calypso/state/notices/actions';
 import type { PostLiker, PostLikeMutationParams, PostLikesResponse } from '@automattic/api-core';
 import type { ComponentType } from 'react';
 
@@ -76,6 +79,8 @@ export const usePostLikes = (
 export const usePostLikeActions = (
 	actionOptions: PostLikeActionsOptions = {}
 ): PostLikeActionsInjectedProps => {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const likeMutation = useMutation( likePostMutation( queryClient ) );
 	const unlikeMutation = useMutation( unlikePostMutation( queryClient ) );
@@ -90,7 +95,10 @@ export const usePostLikeActions = (
 		const restoreOptimisticUpdate = actionOptions.onMutate?.( variables, iLike );
 
 		const mutation = iLike ? likeMutation : unlikeMutation;
-		mutation.mutateAsync( variables ).catch( () => restoreOptimisticUpdate?.() );
+		mutation.mutateAsync( variables ).catch( () => {
+			restoreOptimisticUpdate?.();
+			dispatch( errorNotice( translate( 'Could not save your like. Please try again.' ) ) );
+		} );
 	};
 
 	const like = ( siteId: number, postId: number, options?: LikeOptions ) =>

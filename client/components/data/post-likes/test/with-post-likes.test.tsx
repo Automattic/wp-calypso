@@ -7,6 +7,9 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Component } from 'react';
+import { vi } from 'vitest';
+import * as notices from 'calypso/state/notices/actions';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { withPostLikeActions, withPostLikes } from '../with-post-likes';
 import type { PostLiker, PostLikesResponse } from '@automattic/api-core';
 import type { ReactNode } from 'react';
@@ -53,7 +56,12 @@ class PostLikeActionsView extends Component< {
 	isUnlikePending: boolean;
 } > {
 	render() {
-		return <button onClick={ () => this.props.unlike( 123, 456 ) }>Unlike</button>;
+		return (
+			<>
+				<button onClick={ () => this.props.like( 123, 456 ) }>Like</button>
+				<button onClick={ () => this.props.unlike( 123, 456 ) }>Unlike</button>
+			</>
+		);
 	}
 }
 
@@ -118,9 +126,10 @@ describe( 'withPostLikeActions', () => {
 
 		const View = withPostLikeActions( PostLikeActionsView );
 
-		render( makeWrapper( queryClient, <View siteId={ 123 } postId={ 456 } /> ) );
+		renderWithProvider( <View siteId={ 123 } postId={ 456 } />, { queryClient } );
 
-		await userEvent.click( screen.getByRole( 'button', { name: 'Unlike' } ) );
+		const user = userEvent.setup();
+		await user.click( screen.getByRole( 'button', { name: 'Unlike' } ) );
 
 		await waitFor( () =>
 			expect( queryClient.getQueryData( postLikesQuery( 123, 456 ).queryKey ) ).toMatchObject( {
@@ -130,5 +139,35 @@ describe( 'withPostLikeActions', () => {
 			} )
 		);
 		await waitFor( () => expect( unlikeScope.isDone() ).toBe( true ) );
+	} );
+
+	it( 'shows an error notice and restores the like when the like request fails', async () => {
+		const errorNoticeSpy = vi.spyOn( notices, 'errorNotice' );
+		const likeScope = nock( BASE )
+			.post( '/rest/v1.1/sites/123/posts/456/likes/new', {} )
+			.reply( 500, { error: 'oops' } );
+
+		const queryClient = makeQueryClient();
+		queryClient.setQueryData( postLikesQuery( 123, 456 ).queryKey, {
+			found: 72,
+			iLike: false,
+			likes: [],
+		} );
+
+		const View = withPostLikeActions( PostLikeActionsView );
+
+		renderWithProvider( <View siteId={ 123 } postId={ 456 } />, { queryClient } );
+
+		const user = userEvent.setup();
+		await user.click( screen.getByRole( 'button', { name: 'Like' } ) );
+
+		await waitFor( () => expect( likeScope.isDone() ).toBe( true ) );
+		await waitFor( () =>
+			expect( errorNoticeSpy ).toHaveBeenCalledWith( 'Could not save your like. Please try again.' )
+		);
+		expect( queryClient.getQueryData( postLikesQuery( 123, 456 ).queryKey ) ).toMatchObject( {
+			found: 72,
+			iLike: false,
+		} );
 	} );
 } );
