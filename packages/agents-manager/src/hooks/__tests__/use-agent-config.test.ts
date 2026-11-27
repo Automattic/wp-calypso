@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { renderHook } from '@testing-library/react';
 import { DOLLY_AGENT_ID, ORCHESTRATOR_AGENT_ID } from '../../constants';
 import { useAgentConfig } from '../use-agent-config';

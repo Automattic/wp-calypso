@@ -44,7 +44,7 @@
 		"@playwright/browser-chromium": "1.57.0",
 		"@playwright/test": "1.57.0",
 		"@zip.js/zip.js": "2.8.17",
-		"dotenv": "^9.0.2",
+		"dotenv": "^14.3.2",
 		"form-data": "^4.0.6",
 		"mailosaur": "^8.4.0",
 		"playwright": "1.57.0",

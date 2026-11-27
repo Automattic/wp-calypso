@@ -1,9 +1,9 @@
 import clsx from 'clsx';
-import DOMPurify from 'dompurify';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import AutoDirection from 'calypso/components/auto-direction';
+import { sanitizeCommentHtml } from './sanitize-comment-html';
 
 import './post-comment-content.scss';
 
@@ -14,13 +14,11 @@ class PostCommentContent extends Component {
 		className: PropTypes.string,
 	};
 
-	// Cached so a pending comment's markup is only sanitized again when it changes.
-	getInnerHtml( content, isPlaceholder ) {
-		if ( this.innerHtmlContent !== content || this.innerHtmlIsPlaceholder !== isPlaceholder ) {
+	// Cached so markup is only sanitized again when it changes, and embeds don't reload on every render.
+	getInnerHtml( content ) {
+		if ( this.innerHtmlContent !== content ) {
 			this.innerHtmlContent = content;
-			this.innerHtmlIsPlaceholder = isPlaceholder;
-			// A pending comment from the block editor shows its markup sanitized, as the API will render it.
-			this.innerHtml = { __html: isPlaceholder ? DOMPurify.sanitize( content ) : content };
+			this.innerHtml = { __html: sanitizeCommentHtml( content ) };
 		}
 		return this.innerHtml;
 	}
@@ -48,10 +46,7 @@ class PostCommentContent extends Component {
 				<div className={ clsx( 'comments__comment-content-wrapper', this.props.className ) }>
 					<div
 						className="comments__comment-content"
-						dangerouslySetInnerHTML={ this.getInnerHtml(
-							this.props.content,
-							this.props.isPlaceholder
-						) }
+						dangerouslySetInnerHTML={ this.getInnerHtml( this.props.content ) }
 					/>
 				</div>
 			</AutoDirection>

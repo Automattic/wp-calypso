@@ -84,6 +84,10 @@ export const OdieAssistant: React.FC = () => {
 	);
 };
 export { GetSupport } from './components/message/get-support';
+export {
+	isOnWooCommerceCom,
+	isWooCommerceComLink,
+} from './components/message/utils/is-woocommerce-com-link';
 export { useCheckoutSupportVariation } from './hooks/use-checkout-support-variation';
 
 export default OdieAssistantProvider;

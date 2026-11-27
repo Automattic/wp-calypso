@@ -6,6 +6,7 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
 import SupportDocLink from '../support-link';
+import { isOnWooCommerceCom, isWooCommerceComLink } from './utils/is-woocommerce-com-link';
 import type { Message, Source } from '../../types';
 
 export const Sources = ( {
@@ -96,26 +97,34 @@ export const Sources = ( {
 		>
 			<div className="odie-chatbox-message-sources">
 				{ sources.length > 0 &&
-					sources.map( ( source, index ) => (
-						<SupportDocLink
-							key={ index }
-							link={ source.url }
-							onLinkClickHandler={ () => {
-								trackEvent( 'chat_message_action_click', {
-									action: 'link',
-									in_chat_view: true,
-									href: source.url,
-								} );
-								trackEvent( 'sources_traintracks_interact', {
-									railcar: source?.railcar?.railcar,
-									action: 'click',
-									href: source.url,
-								} );
-								navigate( `/post?link=${ source.url }` );
-							} }
-							title={ source.title }
-						/>
-					) ) }
+					sources.map( ( source, index ) => {
+						// On WooCommerce.com, its docs open in a new tab: the article view can't load them yet.
+						const openInNewTab = isOnWooCommerceCom() && isWooCommerceComLink( source.url );
+
+						return (
+							<SupportDocLink
+								key={ index }
+								link={ source.url }
+								openInNewTab={ openInNewTab }
+								onLinkClickHandler={ () => {
+									trackEvent( 'chat_message_action_click', {
+										action: 'link',
+										in_chat_view: true,
+										href: source.url,
+									} );
+									trackEvent( 'sources_traintracks_interact', {
+										railcar: source?.railcar?.railcar,
+										action: 'click',
+										href: source.url,
+									} );
+									if ( ! openInNewTab ) {
+										navigate( `/post?link=${ source.url }` );
+									}
+								} }
+								title={ source.title }
+							/>
+						);
+					} ) }
 			</div>
 			{ isMessageShowingDisclaimer && renderDisclaimers() }
 		</FoldableCard>

@@ -12,7 +12,14 @@ function getIndividualConfig( options = {} ) {
 	const { name, env, argv, injectPolyfill = true } = options;
 
 	const outputPath = path.join( __dirname, 'dist' );
-	const webpackConfig = getBaseWebpackConfig( env, argv );
+	// Chunk URLs carry no `?ver` query, unlike the entries, so chunk files need a content hash to
+	// bust CDN and browser caches. Passing the name to the base config gives the CSS chunks it
+	// derives from it the hash too. Every entry also emits into the shared `dist/`, and the hash
+	// keeps one entry's chunks from overwriting another's.
+	const webpackConfig = getBaseWebpackConfig( env, {
+		...argv,
+		'output-chunk-filename': '[id].[contenthash:8].min.js',
+	} );
 
 	return {
 		...webpackConfig,
@@ -22,7 +29,6 @@ function getIndividualConfig( options = {} ) {
 			...webpackConfig.output,
 			path: outputPath,
 			filename: '[name].min.js', // dynamic filename
-			chunkFilename: `[id].[contenthash:8].min.js`,
 			library: 'helpCenter',
 		},
 		resolve: {

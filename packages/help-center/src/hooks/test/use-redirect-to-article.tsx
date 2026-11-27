@@ -1,6 +1,4 @@
-/**
- * @jest-environment jsdom
- */
+/// <reference types="vitest/jsdom" />
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { renderHook } from '@testing-library/react';
 import React from 'react';
@@ -55,10 +53,16 @@ const resultWithoutPostId = {
 	blog_id: 9619154,
 } as SearchResult;
 
+const PAGE_URL = window.location.href;
+
 describe( 'useRedirectToArticle', () => {
 	beforeEach( () => {
 		vi.clearAllMocks();
 		window.open = vi.fn();
+	} );
+
+	afterEach( () => {
+		jsdom.reconfigure( { url: PAGE_URL } );
 	} );
 
 	it( 'reports the article blog separately from the support site', () => {
@@ -111,5 +115,25 @@ describe( 'useRedirectToArticle', () => {
 			expect.stringContaining( 'postId=185130&query=domains' )
 		);
 		expect( mockNavigate ).toHaveBeenCalledWith( expect.stringContaining( 'blogId=9619154' ) );
+	} );
+
+	/** On WooCommerce.com, its docs opened an empty article view, which can't load them yet. */
+	it( 'opens a WooCommerce.com doc in a new tab on WooCommerce.com', () => {
+		jsdom.reconfigure( { url: 'https://woocommerce.com/my-account/' } );
+		const { result } = renderHook( () => useRedirectToArticle( { searchQuery: '' } ), {
+			wrapper,
+		} );
+
+		result.current( clickEvent(), {
+			link: 'https://woocommerce.com/document/managing-orders/',
+			title: 'Managing orders',
+			post_id: 8736487,
+		} as SearchResult );
+
+		expect( window.open ).toHaveBeenCalledWith(
+			'https://woocommerce.com/document/managing-orders/',
+			'_blank'
+		);
+		expect( mockNavigate ).not.toHaveBeenCalled();
 	} );
 } );

@@ -6,6 +6,7 @@ import {
 	getWebMcpInputSchema,
 	isWebMcpServerAbilityName,
 } from './contracts';
+import { isAbilityOnCurrentScreen } from './eligibility';
 import { adaptToolResult, prepareToolInput, rememberBlockClientIds } from './tool-calls';
 import type { ToolProvider } from '../extension-types';
 import type { ToolCallContext } from './tool-calls';
@@ -46,6 +47,10 @@ function getFlagRefusalReason( ability: Ability ): string | undefined {
 
 export function shouldExposeWebMcpAbility( ability: Ability ): boolean {
 	const annotations = ability.meta?.annotations;
+
+	if ( ! isAbilityOnCurrentScreen( ability ) ) {
+		return false;
+	}
 
 	if ( isWebMcpServerAbilityName( ability.name ) ) {
 		return annotations?.serverRegistered === true && annotations.readonly === true;
@@ -175,7 +180,7 @@ export function createWebMcpAdapter( {
 			return;
 		}
 
-		warnAboutRefusedFlags( abilities );
+		warnAboutRefusedFlags( abilities.filter( isAbilityOnCurrentScreen ) );
 
 		const eligible = new Map(
 			abilities

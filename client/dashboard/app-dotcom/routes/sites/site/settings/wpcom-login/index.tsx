@@ -14,7 +14,7 @@ import InlineSupportLink from '../../../../../../components/inline-support-link'
 import Notice from '../../../../../../components/notice';
 import { PageHeader } from '../../../../../../components/page-header';
 import PageLayout from '../../../../../../components/page-layout';
-import HostingFeatureGatedWithCallout from '../../../../../../sites/hosting-feature-gated-with-callout';
+import HostingFeatureGatedWithCallout from '../../../../../../sites/hosting-features/components/hosting-feature-gated-with-callout';
 import SsoForm from '../../../../../../sites/wpcom-login/components/sso-form';
 import { isJetpackModuleAvailable } from '../../../../../../utils/site-jetpack-modules';
 import { isSimple } from '../../../../../../utils/site-types';

@@ -9,6 +9,7 @@ import {
 	SUPPORT_TYPE_CONTEXTUAL_HELP,
 } from '@automattic/data-stores';
 import { localizeUrl, useLocale } from '@automattic/i18n-utils';
+import { isOnWooCommerceCom, isWooCommerceComLink } from '@automattic/odie-client';
 import { speak } from '@wordpress/a11y';
 import { Button } from '@wordpress/components';
 import { debounce } from '@wordpress/compose';
@@ -74,6 +75,9 @@ const HelpLink: React.FC< HelpLinkProps > = ( props ) => {
 
 	const wpAdminSections = [ 'wp-admin', 'gutenberg-editor' ].includes( sectionName );
 	const external = wpAdminSections || ( externalLinks && type !== SUPPORT_TYPE_ADMIN_SECTION );
+	// Matches useRedirectToArticle: on WooCommerce.com, its docs open in a new tab.
+	const opensInArticleView =
+		!! result.post_id && ! ( isOnWooCommerceCom() && isWooCommerceComLink( link ) );
 
 	const LinkIcon = () => {
 		if ( type === 'admin_section' ) {
@@ -122,7 +126,7 @@ const HelpLink: React.FC< HelpLinkProps > = ( props ) => {
 						<Icon
 							width={ 20 }
 							height={ 20 }
-							icon={ result.post_id ? chevronRight : externalIcon }
+							icon={ opensInArticleView ? chevronRight : externalIcon }
 						/>
 					</a>
 				</div>

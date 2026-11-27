@@ -37,6 +37,7 @@ import {
 	isScheduledOnlyPlanChange,
 	isScheduledTermChangeEnabled,
 	isShorterTermPlanChange,
+	isTermChangeLimitedPlanChange,
 } from '../scheduled-term-change';
 import useGenerateActionCallback, {
 	type CheckoutAttribution,
@@ -177,6 +178,11 @@ export default function useGenerateActionHook( {
 				getScheduledChangeSitePlans( state )?.find( ( p ) => p.productSlug === planSlug )
 			)
 		);
+		const isTermChangeLimitedTarget = useSelector( ( state: IAppState ) =>
+			isTermChangeLimitedPlanChange(
+				getScheduledChangeSitePlans( state )?.find( ( p ) => p.productSlug === planSlug )
+			)
+		);
 		const isScheduledTermChange = useSelector( ( state: IAppState ) => {
 			const sitePlans = getScheduledChangeSitePlans( state );
 			return isShorterTermPlanChange(
@@ -264,6 +270,7 @@ export default function useGenerateActionHook( {
 			availableForDowngrade,
 			isScheduledOnlyTarget,
 			isInstantPlanChangeTarget,
+			isTermChangeLimitedTarget,
 			isScheduledTermChange,
 			domainFromHomeUpsellFlow,
 			canUserManageCurrentPlan,
@@ -471,6 +478,7 @@ function getLoggedInPlansAction( {
 	availableForDowngrade,
 	isScheduledOnlyTarget,
 	isInstantPlanChangeTarget,
+	isTermChangeLimitedTarget,
 	isScheduledTermChange,
 	domainFromHomeUpsellFlow,
 	canUserManageCurrentPlan,
@@ -499,6 +507,11 @@ function getLoggedInPlansAction( {
 	isScheduledOnlyTarget?: boolean;
 	/** Whether the server allows moving to this plan now, with a refund. */
 	isInstantPlanChangeTarget?: boolean;
+	/**
+	 * Whether only a Happiness Engineer may move to this plan, because the billing
+	 * term was already changed in the last 12 months.
+	 */
+	isTermChangeLimitedTarget?: boolean;
 	/**
 	 * Whether this plan bills on a shorter term than the current one, such as
 	 * monthly from annual.
@@ -600,6 +613,15 @@ function getLoggedInPlansAction( {
 		}
 
 		return createLoggedInPlansAction( translate( 'View plan' ), 'secondary' );
+	}
+
+	if ( isTermChangeLimitedTarget ) {
+		return createLoggedInPlansAction(
+			translate( 'Contact support', { context: 'verb' } ),
+			'secondary',
+			undefined,
+			canUserManageCurrentPlan ? undefined : 'disabled'
+		);
 	}
 
 	// Downgrade action if the plan is not available for purchase and is available for downgrade

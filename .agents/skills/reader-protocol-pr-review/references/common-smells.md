@@ -11,6 +11,7 @@ Recurring review findings from the CM-625 / CM-658 / CM-660 / CM-662 slice cycle
 **Fix**: Render the static-count fallback inside the button itself (icon + count + screen-reader text). Drop the corresponding ternary in `<PostCardCounts>` so the button is rendered unconditionally — it decides interactive vs static internally.
 
 **Where to check**:
+
 - `client/reader/social/components/post-card/like-button.tsx`
 - `client/reader/social/components/post-card/repost-button.tsx`
 - `client/reader/social/components/post-card/post-card-counts.tsx`
@@ -25,14 +26,14 @@ Recurring review findings from the CM-625 / CM-658 / CM-660 / CM-662 slice cycle
 
 ```ts
 function isQueryKeyForConnection( key: unknown, connectionId: number ): boolean {
-    return Array.isArray( key ) && key[ 3 ] === connectionId;
+	return Array.isArray( key ) && key[ 3 ] === connectionId;
 }
 
 function patchPostCaches( queryClient, connectionId, statusId, patch ) {
-    for ( const [ key, data ] of queryClient.getQueriesData({ queryKey: keysRoot.all }) ) {
-        if ( ! isQueryKeyForConnection( key, connectionId ) ) continue;
-        // ... patch
-    }
+	for ( const [ key, data ] of queryClient.getQueriesData( { queryKey: keysRoot.all } ) ) {
+		if ( ! isQueryKeyForConnection( key, connectionId ) ) continue;
+		// ... patch
+	}
 }
 ```
 
@@ -94,7 +95,7 @@ default:
 
 ## 6. Mutation `onError` doesn't log; observability lives only in caller
 
-**Symptom**: The user-facing toast lives in the *caller's* `onError` (passed to `mutate({...}, { onError })`). If a future consumer forgets to pass `{ onError }`, the failure is completely silent — cache rolls back, but the user sees their action vanish with no explanation.
+**Symptom**: The user-facing toast lives in the _caller's_ `onError` (passed to `mutate({...}, { onError })`). If a future consumer forgets to pass `{ onError }`, the failure is completely silent — cache rolls back, but the user sees their action vanish with no explanation.
 
 **Fix**: Add `logToLogstash` in the per-protocol adapter's `trackError` (which is the path the caller's onError dispatches through):
 
@@ -116,7 +117,7 @@ const trackError = ( error, direction ) => {
 **Test mock**: any test that exercises an error path needs:
 
 ```ts
-jest.mock( 'calypso/lib/logstash', () => ( { logToLogstash: jest.fn() } ) );
+vi.mock( 'calypso/lib/logstash', () => ( { logToLogstash: vi.fn() } ) );
 ```
 
 Otherwise nock complains about an unmocked HTTPS request.
@@ -153,10 +154,10 @@ const unlike = () => {
 
 ```ts
 const repost = () => {
-    if ( ! post.cid ) {
-        return;
-    }
-    // ... normal path
+	if ( ! post.cid ) {
+		return;
+	}
+	// ... normal path
 };
 ```
 

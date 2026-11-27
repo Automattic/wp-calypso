@@ -4,8 +4,8 @@
 import { HostingFeatures } from '@automattic/api-core';
 import { screen } from '@testing-library/react';
 import nock from 'nock';
+import BackupCard from '..';
 import { render } from '../../../../../test-utils';
-import BackupCard from '../index';
 import type { Site, SiteActivityLog } from '@automattic/api-core';
 
 const site = {

@@ -96,7 +96,9 @@ describe( '<AgencyOnboardingTour>', () => {
 		const saved = expectSectionSaved( 'sites' );
 		renderTour();
 
-		await userEvent.click( await screen.findByRole( 'link', { name: 'Connect your first site' } ) );
+		await userEvent.click(
+			await screen.findByRole( 'button', { name: 'Connect your first site' } )
+		);
 
 		await saved;
 		await waitFor( () =>
@@ -107,6 +109,45 @@ describe( '<AgencyOnboardingTour>', () => {
 			).not.toBeInTheDocument()
 		);
 		expect( await screen.findByRole( 'button', { name: 'Continue tour' } ) ).toBeInTheDocument();
+	} );
+
+	test( 'leaves for the explored page only once the section is saved', async () => {
+		window.history.replaceState( null, '', '/overview#onboarding-tour-sites' );
+		mockSavedSection();
+		let respond = () => {};
+		const requested = new Promise< void >( ( resolve ) => {
+			nock( API )
+				.post( '/rest/v1.1/me/preferences' )
+				.query( true )
+				.reply( ( _uri, _body, callback ) => {
+					respond = () =>
+						callback( null, [ 200, { calypso_preferences: { [ PREFERENCE ]: 'sites' } } ] );
+					resolve();
+				} );
+		} );
+		const { router } = renderTour();
+
+		await userEvent.click(
+			await screen.findByRole( 'button', { name: 'Connect your first site' } )
+		);
+		await requested;
+
+		expect( router.state.location.pathname ).toBe( '/overview' );
+		respond();
+		await waitFor( () => expect( router.state.location.pathname ).toBe( '/sites' ) );
+	} );
+
+	test( 'leaves for the explored page when saving the section fails', async () => {
+		window.history.replaceState( null, '', '/overview#onboarding-tour-sites' );
+		mockSavedSection();
+		nock( API ).post( '/rest/v1.1/me/preferences' ).query( true ).reply( 500 );
+		const { router } = renderTour();
+
+		await userEvent.click(
+			await screen.findByRole( 'button', { name: 'Connect your first site' } )
+		);
+
+		await waitFor( () => expect( router.state.location.pathname ).toBe( '/sites' ) );
 	} );
 
 	test( 'offers to pick the tour back up at the saved section', async () => {

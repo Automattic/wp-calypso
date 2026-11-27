@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  */
 const { spawnSync } = require( 'child_process' );
 const fs = require( 'fs' );

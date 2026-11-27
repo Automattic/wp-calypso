@@ -18,7 +18,9 @@ interface Props {
 	productSlug?: string;
 	/**
 	 * The site's plans. A shorter term than the current plan's stays visible
-	 * when one of its plans can be scheduled for the current plan's renewal.
+	 * when one of its plans can be scheduled for the current plan's renewal, or
+	 * when a Happiness Engineer can make the change because the term was already
+	 * changed in the last 12 months.
 	 */
 	sitePlans?: SitePlanData[] | null;
 }
@@ -45,7 +47,9 @@ const useFilteredDisplayedIntervals = ( {
 			const scheduledChangeTermMonths = new Set(
 				isScheduledTermChangeEnabled()
 					? sitePlans
-							?.filter( ( sitePlan ) => sitePlan.isDelayedDowngradeAvailable )
+							?.filter(
+								( sitePlan ) => sitePlan.isDelayedDowngradeAvailable || sitePlan.isTermChangeLimited
+							)
 							.map( getSitePlanTermMonths )
 					: []
 			);

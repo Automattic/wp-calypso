@@ -32,7 +32,7 @@ import {
 	formatScheduleLabel,
 	formatScheduleDescription,
 } from '../../../../../../sites/crontab/utils/schedules';
-import HostingFeatureGatedWithCallout from '../../../../../../sites/hosting-feature-gated-with-callout';
+import HostingFeatureGatedWithCallout from '../../../../../../sites/hosting-features/components/hosting-feature-gated-with-callout';
 import { hasHostingFeature } from '../../../../../../utils/site-features';
 import type { Crontab } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';

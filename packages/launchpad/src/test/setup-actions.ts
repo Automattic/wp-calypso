@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { vi } from 'vitest';
 import { setUpActionsForTasks } from '../setup-actions';
 import type { LaunchpadTaskActionsProps } from '../types';

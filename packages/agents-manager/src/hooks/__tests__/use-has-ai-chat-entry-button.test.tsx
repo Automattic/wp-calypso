@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { renderHook, act } from '@testing-library/react';
 import { vi } from 'vitest';
 import useHasAiChatEntryButton, { hasAiChatEntryButton } from '../use-has-ai-chat-entry-button';

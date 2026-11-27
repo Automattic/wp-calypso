@@ -11,6 +11,7 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import DomainSetupInfo from './domain-setup-info';
 import { SitePreviewEllipsisMenu } from './site-preview-ellipsis-menu';
 import type { JSX, ReactNode } from 'react';
 import './style.scss';
@@ -129,13 +130,22 @@ const SitePreview = ( {
 				<div className="home-site-preview__action-bar">
 					<div className="home-site-preview__site-info">
 						<h2 className="home-site-preview__info-title">{ selectedSiteName }</h2>
-						<ExternalLink
-							href={ selectedSiteURL }
-							className="home-site-preview__info-domain"
-							localizeUrl={ false }
-						>
-							<Truncated>{ siteDomain }</Truncated>
-						</ExternalLink>
+						<div className="home-site-preview__info-domain-row">
+							<ExternalLink
+								href={ selectedSiteURL }
+								className="home-site-preview__info-domain"
+								localizeUrl={ false }
+							>
+								<Truncated>{ siteDomain }</Truncated>
+							</ExternalLink>
+							{ selectedSite && siteDomain && (
+								<DomainSetupInfo
+									siteId={ selectedSite.ID }
+									siteSlug={ selectedSite.slug }
+									siteDomain={ siteDomain }
+								/>
+							) }
+						</div>
 					</div>
 					<SitePreviewEllipsisMenu />
 				</div>

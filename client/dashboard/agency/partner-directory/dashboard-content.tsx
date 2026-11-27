@@ -23,6 +23,7 @@ import {
 	isApplicationCompleted,
 } from './lib';
 import LinkButton from './link-button';
+import NotApprovedNotice from './not-approved-notice';
 import StatusBadge from './status-badge';
 import type { DirectoryStatusBadge } from './lib';
 import type { Agency, AgencyPartnerDirectorySlug, AgencyProfile } from '@automattic/api-core';
@@ -109,9 +110,9 @@ export default function PartnerDirectoryDashboardContent( {
 	} ) );
 
 	const hasDirectoryApproval = hasApprovedDirectory( application );
-	// The "not approved" popover only auto-opens for a single, unambiguous rejection.
-	const showPopoverOnLoad =
-		directories.filter( ( { status } ) => status === 'rejected' ).length === 1;
+	const rejectedDirectories = directories
+		.filter( ( { status } ) => status === 'rejected' )
+		.map( ( { directory } ) => directory );
 
 	const onApplyNowClick = () => {
 		recordTracksEvent( 'calypso_a4a_partner_directory_dashboard_apply_now_click' );
@@ -182,7 +183,6 @@ export default function PartnerDirectoryDashboardContent( {
 				<HStack key={ directory } spacing={ 2 } justify="flex-start" as="span">
 					<StatusBadge
 						badge={ badge }
-						showPopoverOnLoad={ showPopoverOnLoad }
 						expertiseUrl={ expertiseUrl }
 						recordTracksEvent={ recordTracksEvent }
 						shouldUseRouterLink={ shouldUseRouterLink }
@@ -235,10 +235,8 @@ export default function PartnerDirectoryDashboardContent( {
 												</VStack>
 											) : (
 												<VStack spacing={ 1 } alignment="flex-start" as="span">
-													{ /* No auto-open here: it would cover the congratulations screen. */ }
 													<StatusBadge
 														badge={ badge }
-														showPopoverOnLoad={ false }
 														expertiseUrl={ expertiseUrl }
 														recordTracksEvent={ recordTracksEvent }
 														shouldUseRouterLink={ shouldUseRouterLink }
@@ -291,6 +289,12 @@ export default function PartnerDirectoryDashboardContent( {
 
 	return (
 		<VStack spacing={ 8 }>
+			<NotApprovedNotice
+				rejectedDirectories={ rejectedDirectories }
+				expertiseUrl={ expertiseUrl }
+				recordTracksEvent={ recordTracksEvent }
+				shouldUseRouterLink={ shouldUseRouterLink }
+			/>
 			{ showIntro && (
 				<SectionHeader
 					title={ __( 'Boost your agency’s visibility across Automattic listings.' ) }
@@ -354,7 +358,7 @@ export default function PartnerDirectoryDashboardContent( {
 						layout={ itemLayout }
 						title={ __( 'New clients will find you' ) }
 						description={ __(
-							'Your agency will appear in the Partner Directories you select and get approved for, including WordPress.com, Woo.com, Pressable.com, and Jetpack.com.'
+							'Your agency will appear in the Partner Directories you select and get approved for, including WordPress.com, WooCommerce.com, Pressable.com, and Jetpack.com.'
 						) }
 						actions={
 							<Button

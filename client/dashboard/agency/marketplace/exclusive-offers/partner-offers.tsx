@@ -1,5 +1,6 @@
 import {
 	Button,
+	ExternalLink,
 	SelectControl,
 	__experimentalHeading as Heading,
 	__experimentalText as Text,
@@ -12,13 +13,14 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
 import { getQueryArgs } from '@wordpress/url';
-import { useState, useMemo } from 'react';
+import { useId, useState, useMemo } from 'react';
 import { ButtonStack } from '../../../components/button-stack';
 import { Card, CardBody } from '../../../components/card';
 import Grid from '../../../components/grid';
 import RouterLinkButton from '../../../components/router-link-button';
 import { SectionHeader } from '../../../components/section-header';
 import { isDashboardPath } from '../../../utils/link';
+import NewTabLabel from '../../components/new-tab-label';
 import { getPartnerOffers, getTrustedPartners } from './constants';
 import type { PartnerOffer, PartnerOfferLinks, RecordTracksEvent } from './types';
 
@@ -45,6 +47,9 @@ function PartnerOfferCard( {
 	const termsUrl = item.termsUrl ?? defaultTermsUrl;
 	// Offers lead with their number; partner cards lead with a longer benefit line.
 	const isPartner = item.offerType === 'partner';
+	const termsLinkId = useId();
+	const logoId = useId();
+	const titleId = useId();
 
 	const handleCTAClick = ( event: React.MouseEvent ) => {
 		onCtaClick?.( item, event );
@@ -67,6 +72,7 @@ function PartnerOfferCard( {
 				<VStack spacing={ 4 } justify="flex-start" style={ { flex: 1 } }>
 					<HStack>
 						<HStack
+							id={ logoId }
 							className="exclusive-offers-card-logo"
 							spacing={ 0 }
 							justify="flex-start"
@@ -78,7 +84,7 @@ function PartnerOfferCard( {
 						{ item.badge && <Badge intent="draft">{ item.badge }</Badge> }
 					</HStack>
 					<VStack spacing={ 2 }>
-						<Heading level={ 3 } size={ isPartner ? 15 : 20 } weight={ 500 }>
+						<Heading id={ titleId } level={ 3 } size={ isPartner ? 15 : 20 } weight={ 500 }>
 							{ item.title }
 						</Heading>
 						<Text variant="muted">{ item.description }</Text>
@@ -112,21 +118,25 @@ function PartnerOfferCard( {
 								rel={ item.cta.external ? 'noopener noreferrer' : undefined }
 								onClick={ handleCTAClick }
 							>
-								{ item.cta.label }
+								{ item.cta.external ? (
+									<NewTabLabel>{ item.cta.label }</NewTabLabel>
+								) : (
+									item.cta.label
+								) }
 							</Button>
 						) }
 						{ termsUrl && (
-							<Button
-								variant="link"
+							<ExternalLink
+								id={ termsLinkId }
+								aria-labelledby={ `${ termsLinkId } ${ logoId } ${ titleId }` }
 								href={ termsUrl }
-								target="_blank"
 								onClick={ handleViewTermsClick }
 								style={ {
 									whiteSpace: 'nowrap',
 								} }
 							>
 								{ __( 'View terms' ) }
-							</Button>
+							</ExternalLink>
 						) }
 					</ButtonStack>
 				) }

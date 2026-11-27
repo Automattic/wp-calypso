@@ -7,7 +7,6 @@ import {
 	__experimentalHeading as Heading,
 	ToggleControl,
 } from '@wordpress/components';
-import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { chevronDown, chevronUp } from '@wordpress/icons';
 import { useEffect, useRef, useState } from 'react';
@@ -50,8 +49,7 @@ export default function McpGroupCard( {
 	const hash = ( location.hash ?? '' ).replace( /^#/, '' );
 	const [ isOpen, setIsOpen ] = useState( false );
 	const open = isOpen || forceOpen;
-	const isDesktop = useViewportMatch( 'medium' );
-	const stackToggle = ! isDesktop && !! enableAllHelp;
+	const stackToggle = Boolean( enableAllHelp );
 	// Auto-open once per matching hash value, so a manual collapse afterwards
 	// isn't fought, but a fresh anchor link opens the card again.
 	const handledHash = useRef( '' );

@@ -165,10 +165,7 @@ export default function SshCard( {
 	// Take opportunity while showing the sshEnabled loading state to also fetch the user SSH keys.
 	const isLoadingUserSshKeys = sshEnabled && ! isUserSshKeysFetchedAfterMount;
 	const showSshSettings = sshEnabled && ! isLoadingUserSshKeys;
-	const [ formData, setFormData ] = useState< SshCardFormData >( {
-		connection_command: `ssh ${ sftpUsers[ 0 ]?.username }@ssh.wp.com`,
-		ssh_key: 'default',
-	} );
+	const [ sshKey, setSshKey ] = useState( 'default' );
 
 	const unattachedUserSshKeys = useMemo(
 		() =>
@@ -183,8 +180,8 @@ export default function SshCard( {
 	);
 
 	// Fall back to the first key that can still be attached, for example after the selected key was attached.
-	const selectedSshKey = unattachedUserSshKeys.some( ( { name } ) => name === formData.ssh_key )
-		? formData.ssh_key
+	const selectedSshKey = unattachedUserSshKeys.some( ( { name } ) => name === sshKey )
+		? sshKey
 		: ( unattachedUserSshKeys[ 0 ]?.name ?? '' );
 	const showAttachSshKey = ! hasUserSshKeys || unattachedUserSshKeys.length > 0;
 	const showAddSshKey = ( userSshKeys?.length ?? 0 ) < MAX_SSH_KEYS;
@@ -398,11 +395,16 @@ export default function SshCard( {
 					/>
 					{ showSshSettings && (
 						<DataForm< SshCardFormData >
-							data={ { ...formData, ssh_key: selectedSshKey } }
+							data={ {
+								connection_command: `ssh ${ sftpUsers[ 0 ]?.username }@ssh.wp.com`,
+								ssh_key: selectedSshKey,
+							} }
 							fields={ fields }
 							form={ form }
 							onChange={ ( edits: Partial< SshCardFormData > ) => {
-								setFormData( ( data ) => ( { ...data, ...edits } ) );
+								if ( edits.ssh_key !== undefined ) {
+									setSshKey( edits.ssh_key );
+								}
 							} }
 						/>
 					) }

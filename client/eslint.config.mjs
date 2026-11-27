@@ -57,8 +57,6 @@ export default defineConfig(
 		{
 			name: 'calypso/client/vitest',
 			files: [ '**/test/**/*.{js,jsx,ts,tsx}' ],
-			// The server tests run on Jest.
-			ignores: [ 'server/**' ],
 			plugins: { vitest },
 			rules: {
 				...Object.fromEntries(

@@ -3,7 +3,7 @@ const Config = require( '../../lib/config' );
 const menu = require( '../../lib/menu' );
 const WPNotificationsAPI = require( '../../lib/notifications/api' );
 const platform = require( '../../lib/platform' );
-const SessionManager = require( '../../lib/session' );
+const SessionManager = require( '../../lib/session' ).default;
 
 module.exports = function ( appWindow ) {
 	menu.set( app, appWindow );

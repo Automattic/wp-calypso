@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 export function createBlackboxInstance( initialState = { status: 'ready', sessionId: 'sid' } ) {
 	let snapshot = Object.freeze( initialState );
 	const listeners = new Set();
@@ -6,15 +8,15 @@ export function createBlackboxInstance( initialState = { status: 'ready', sessio
 		listeners.forEach( ( listener ) => listener( snapshot ) );
 	};
 	const api = {
-		configure: jest.fn(),
-		reset: jest.fn( () => setState( { status: 'loading' } ) ),
+		configure: vi.fn(),
+		reset: vi.fn( () => setState( { status: 'loading' } ) ),
 		getSnapshot: () => snapshot,
 		subscribe: ( listener ) => {
 			listeners.add( listener );
 			listener( snapshot );
 			return () => listeners.delete( listener );
 		},
-		flush: jest.fn( async () => ( {
+		flush: vi.fn( async () => ( {
 			sessionId: snapshot.sessionId ?? '',
 			challengePending: snapshot.status === 'challenge',
 			outcome: 'ok',

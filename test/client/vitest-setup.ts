@@ -9,9 +9,8 @@ import { afterAll, beforeAll, vi } from 'vitest';
 const isJsdom = typeof window !== 'undefined';
 const testGlobals = globalThis as unknown as Record< string, unknown >;
 
-// Test helpers shared with tests still on Jest call these.
+// React Testing Library's `waitFor` only advances fake timers when it finds a global `jest`.
 testGlobals.jest = {
-	fn: vi.fn,
 	advanceTimersByTime: ( ms: number ) => vi.advanceTimersByTime( ms ),
 };
 

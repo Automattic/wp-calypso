@@ -1,0 +1,104 @@
+import { siteBackupDownloadProgressQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
+import {
+	__experimentalVStack as VStack,
+	__experimentalSpacer as Spacer,
+} from '@wordpress/components';
+import { __, sprintf } from '@wordpress/i18n';
+import { Progress } from '@wordpress/ui';
+import { useEffect, useId } from 'react';
+import Notice from '../../../../components/notice';
+import { Text } from '../../../../components/text';
+import { ThemedIllustration } from '../../../../components/themed-illustration';
+import downloadIllustrationDark from './backup-download-illustration-dark.svg';
+import downloadIllustration from './backup-download-illustration.svg';
+import type { Site } from '@automattic/api-core';
+
+function SiteBackupDownloadProgress( {
+	site,
+	downloadId,
+	onDownloadComplete,
+	onDownloadError,
+}: {
+	site: Site;
+	downloadId: number;
+	onDownloadComplete: ( downloadUrl: string, fileSizeBytes?: string ) => void;
+	onDownloadError: () => void;
+} ) {
+	const { data: downloadProgress, error: downloadQueryError } = useQuery( {
+		...siteBackupDownloadProgressQuery( site.ID, downloadId ),
+		enabled: !! downloadId,
+		refetchInterval: ( query ) => {
+			const { data, error } = query.state;
+			// Stop polling if there's an API error
+			if ( data?.error || error ) {
+				return false;
+			}
+
+			// Poll every 1.5 seconds if download is in progress
+			if ( ! data?.url ) {
+				return 1500;
+			}
+
+			// Stop polling if finished or failed
+			return false;
+		},
+	} );
+
+	useEffect( () => {
+		if ( downloadProgress?.url ) {
+			onDownloadComplete( downloadProgress.url, downloadProgress.bytes_formatted );
+		} else if ( downloadProgress?.error || downloadQueryError ) {
+			onDownloadError();
+		}
+	}, [
+		downloadProgress?.url,
+		downloadProgress?.bytes_formatted,
+		downloadProgress?.error,
+		onDownloadComplete,
+		onDownloadError,
+		downloadQueryError,
+	] );
+
+	const labelId = useId();
+
+	return (
+		<>
+			<VStack spacing={ 4 } alignment="center">
+				<ThemedIllustration
+					light={ downloadIllustration }
+					dark={ downloadIllustrationDark }
+					alt=""
+					width={ 408 }
+					height={ 280 }
+				/>
+				<Text id={ labelId } size={ 20 }>
+					{ __( 'Initializing the download process' ) }
+				</Text>
+				<Text size={ 13 } variant="muted">
+					{ sprintf(
+						/* translators: %d is the download completion percentage. */
+						__( '%d%% completed' ),
+						downloadProgress?.progress ?? 0
+					) }
+				</Text>
+				<Progress.Root
+					className="dashboard-backups__progress-bar"
+					aria-labelledby={ labelId }
+					value={ downloadProgress?.progress ?? 0 }
+				>
+					<Progress.Track>
+						<Progress.Indicator />
+					</Progress.Track>
+				</Progress.Root>
+			</VStack>
+			<Spacer marginTop={ 12 }>
+				<Notice variant="info" title={ __( 'Check your email' ) }>
+					{ __( 'For your convenience, we’ll email you when your file is ready.' ) }
+				</Notice>
+			</Spacer>
+		</>
+	);
+}
+
+export default SiteBackupDownloadProgress;

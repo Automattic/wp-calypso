@@ -31,7 +31,7 @@ import Notice from '../../../../../../components/notice';
 import { PageHeader } from '../../../../../../components/page-header';
 import PageLayout from '../../../../../../components/page-layout';
 import { isEdgeCacheAvailable as getIsEdgeCacheAvailable } from '../../../../../../sites/caching/utils';
-import HostingFeatureGatedWithCallout from '../../../../../../sites/hosting-feature-gated-with-callout';
+import HostingFeatureGatedWithCallout from '../../../../../../sites/hosting-features/components/hosting-feature-gated-with-callout';
 import { hasHostingFeature, hasPlanFeature } from '../../../../../../utils/site-features';
 import { getSitePlanDisplayName } from '../../../../../../utils/site-plan';
 import type { Field } from '@wordpress/dataviews';

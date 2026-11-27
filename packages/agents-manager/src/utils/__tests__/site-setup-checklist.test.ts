@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { consumePromptSource } from '../prompt-source';
 import {
 	getLastPickedSiteSetupTask,

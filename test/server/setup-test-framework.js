@@ -1,4 +1,5 @@
 import * as nock from 'nock';
+import { vi } from 'vitest';
 
 // Disables all network requests for all tests.
 nock.disableNetConnect();
@@ -18,6 +19,6 @@ afterAll( () => {
 
 // Don't need to mock specific functions for any tests, but mocking
 // module because it accesses the `document` global.
-jest.mock( 'wpcom-proxy-request', () => ( {
+vi.mock( 'wpcom-proxy-request', () => ( {
 	__esModule: true,
 } ) );

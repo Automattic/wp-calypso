@@ -1,15 +1,20 @@
-jest.mock( '../../app/lib/keychain', () => ( {
-	write: jest.fn( () => Promise.resolve() ),
-	clear: jest.fn(),
-} ) );
-jest.mock( '../../app/lib/logger', () => () => ( {
-	info: jest.fn(),
-	debug: jest.fn(),
-	error: jest.fn(),
-} ) );
+import { vi } from 'vitest';
+import keychain from '../../app/lib/keychain';
+import sessionManager from '../../app/lib/session';
 
-const keychain = require( '../../app/lib/keychain' );
-const sessionManager = require( '../../app/lib/session' );
+vi.mock( '../../app/lib/keychain', () =>
+	( ( m ) => ( { ...m, default: m } ) )( {
+		write: vi.fn( () => Promise.resolve() ),
+		clear: vi.fn(),
+	} )
+);
+vi.mock( '../../app/lib/logger', () => ( {
+	default: () => ( {
+		info: vi.fn(),
+		debug: vi.fn(),
+		error: vi.fn(),
+	} ),
+} ) );
 
 const loggedInCookie = {
 	name: 'wordpress_logged_in',
@@ -23,22 +28,22 @@ describe( 'SessionManager', () => {
 	let loggedOut;
 
 	beforeEach( async () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		sessionManager.removeAllListeners();
 
 		const cookies = {
-			get: jest.fn( ( { name } ) =>
+			get: vi.fn( ( { name } ) =>
 				Promise.resolve( name === 'wordpress_logged_in' ? [ loggedInCookie ] : [] )
 			),
-			on: jest.fn( ( event, listener ) => ( onCookieChanged = listener ) ),
+			on: vi.fn( ( event, listener ) => ( onCookieChanged = listener ) ),
 		};
 		await sessionManager.init( { webContents: { session: { cookies } } } );
 
-		loggedIn = jest.fn();
-		loggedOut = jest.fn();
+		loggedIn = vi.fn();
+		loggedOut = vi.fn();
 		sessionManager.on( 'logged-in', loggedIn );
 		sessionManager.on( 'logged-out', loggedOut );
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'starts logged in when the login cookie exists', () => {
