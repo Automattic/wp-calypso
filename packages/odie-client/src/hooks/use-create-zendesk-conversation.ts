@@ -151,7 +151,7 @@ export const useCreateZendeskConversation = () => {
 		// in the first message, or nowhere yet. An Odie chat still loaded from before is about
 		// something else, and its tags, with `cl_classified`, would stop Zendesk from classifying the
 		// ticket itself.
-		const shouldClassify = !! chatId && ! firstMessage && createdFrom !== 'direct_url';
+		const shouldClassify = !! chatId && ! firstMessage && createdFrom !== 'direct_url' && ! checkoutSupportVariation;
 		let classificationStatus: TrackedClassificationStatus = shouldClassify ? 'pending' : 'skipped';
 
 		const handleErrorCreatingZendeskConversation = ( errorType: string, error?: unknown ) => {
