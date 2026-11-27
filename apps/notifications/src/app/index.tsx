@@ -206,7 +206,11 @@ const NotificationApp = ( {
 
 	useEffect( () => {
 		const handleError = ( event: ErrorEvent ) => {
-			logError( event.error ?? event.message );
+			logError( event.error ?? event.message, {
+				filename: event.filename,
+				lineno: event.lineno,
+				colno: event.colno,
+			} );
 		};
 		const handleRejection = ( event: PromiseRejectionEvent ) => {
 			logError( event.reason );
