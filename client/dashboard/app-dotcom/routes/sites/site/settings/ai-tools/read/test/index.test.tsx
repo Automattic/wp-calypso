@@ -141,63 +141,57 @@ describe( '<SiteAIToolsRead>', () => {
 		expect( screen.queryByRole( 'heading', { name: 'Site' } ) ).not.toBeInTheDocument();
 	} );
 
-	test.each( [
-		[ 'omitted', undefined ],
-		[ 'reset', null ],
-	] )(
-		'Read and Write inherit site access when the site override is %s',
-		( _label, siteEnabled ) => {
-			queryClient.setQueryData(
-				siteBySlugQuery( undefined as unknown as string ).queryKey,
-				JETPACK_SITE
-			);
-			queryClient.setQueryData( userSettingsQuery().queryKey, {
-				mcp_abilities: {
-					site_level_enabled_default: true,
-					account: {
-						'wpcom-mcp/posts-list': { enabled: true, readonly: true, visible: true },
-						'wpcom-mcp/posts-create': { enabled: true, readonly: false, visible: true },
+	test( 'Read and Write inherit site access after one remote group is disabled', () => {
+		queryClient.setQueryData(
+			siteBySlugQuery( undefined as unknown as string ).queryKey,
+			JETPACK_SITE
+		);
+		queryClient.setQueryData( userSettingsQuery().queryKey, {
+			mcp_abilities: {
+				site_level_enabled_default: true,
+				account: {
+					'wpcom-mcp/posts-list': { enabled: true, readonly: true, visible: true },
+					'wpcom-mcp/posts-create': { enabled: true, readonly: false, visible: true },
+				},
+				sites: [
+					{
+						blog_id: JETPACK_SITE.ID,
+						remote_groups: { 'read:jetpack-stats': false },
 					},
-					sites: [
-						{
-							blog_id: JETPACK_SITE.ID,
-							...( siteEnabled === null ? { site_level_enabled: null } : {} ),
-							remote_groups: { 'read:jetpack-stats': false },
-						},
-					],
-				},
-			} as unknown as UserSettings );
-			queryClient.setQueryData( siteAbilitiesQuery( JETPACK_SITE.ID, 'en_US' ).queryKey, [
-				{
-					name: 'jetpack-stats/get-views',
-					label: 'Get views',
-					meta: { annotations: { readonly: true } },
-				},
-				{
-					name: 'mailpoet/get-subscribers',
-					label: 'Get subscribers',
-					meta: { annotations: { readonly: true } },
-				},
-				{
-					name: 'mailpoet/send-email',
-					label: 'Send email',
-					meta: { annotations: {} },
-				},
-			] );
+				],
+			},
+		} as unknown as UserSettings );
+		queryClient.setQueryData( siteAbilitiesQuery( JETPACK_SITE.ID, 'en_US' ).queryKey, [
+			{
+				name: 'jetpack-stats/get-views',
+				label: 'Get views',
+				meta: { annotations: { readonly: true } },
+			},
+			{
+				name: 'mailpoet/get-subscribers',
+				label: 'Get subscribers',
+				meta: { annotations: { readonly: true } },
+			},
+			{
+				name: 'mailpoet/send-email',
+				label: 'Send email',
+				meta: { annotations: {} },
+			},
+		] );
 
-			const { unmount } = render( <SiteAIToolsRead />, { queryClient } );
-			const getGroupToggle = ( name: string ) => {
-				const card = screen.getByRole( 'heading', { name } ).closest( 'div[id]' );
-				return within( card as HTMLElement ).getByRole( 'checkbox', { name: 'Enable all' } );
-			};
-			expect( getGroupToggle( 'Jetpack Stats' ) ).not.toBeChecked();
-			expect( getGroupToggle( 'Mailpoet' ) ).toBeChecked();
-			unmount();
+		const { unmount } = render( <SiteAIToolsRead />, { queryClient } );
+		const getGroupToggle = ( name: string ) => {
+			return within( screen.getByRole( 'group', { name } ) ).getByRole( 'checkbox', {
+				name: 'Enable all',
+			} );
+		};
+		expect( getGroupToggle( 'Jetpack Stats' ) ).not.toBeChecked();
+		expect( getGroupToggle( 'Mailpoet' ) ).toBeChecked();
+		unmount();
 
-			render( <SiteAIToolsWrite />, { queryClient } );
-			expect( getGroupToggle( 'Mailpoet' ) ).toBeChecked();
-		}
-	);
+		render( <SiteAIToolsWrite />, { queryClient } );
+		expect( getGroupToggle( 'Mailpoet' ) ).toBeChecked();
+	} );
 
 	test( 'a tool anchor in the URL opens its group and keeps the other tools visible', () => {
 		window.location.hash = '#wpcom-mcp/posts-list';

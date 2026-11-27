@@ -75,7 +75,7 @@ export default function McpGroupCard( {
 	);
 
 	return (
-		<Card id={ id }>
+		<Card id={ id } role="group" aria-label={ title }>
 			<CardBody>
 				<VStack spacing={ 2 }>
 					<HStack justify="space-between" alignment="center" spacing={ 4 }>

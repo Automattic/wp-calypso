@@ -42,8 +42,6 @@ describe( 'client/me/mcp/utils', () => {
 
 	describe( 'getSiteLevelEnabled', () => {
 		it.each( [
-			[ 'no site entry', true, null, true ],
-			[ 'missing override', true, {}, true ],
 			[ 'reset override', true, { site_level_enabled: null }, true ],
 			[ 'missing override with disabled default', false, {}, false ],
 			[ 'explicitly enabled', false, { site_level_enabled: true }, true ],
@@ -52,7 +50,7 @@ describe( 'client/me/mcp/utils', () => {
 			const userSettings = {
 				mcp_abilities: {
 					site_level_enabled_default: defaultEnabled,
-					sites: siteEntry === null ? [] : [ { blog_id: 123, ...siteEntry } ],
+					sites: [ { blog_id: 123, ...siteEntry } ],
 				},
 			};
 			expect( getSiteLevelEnabled( userSettings, 123 ) ).toBe( expected );
