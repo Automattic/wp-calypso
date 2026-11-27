@@ -13,6 +13,11 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import { getTopLevelOfTld } from 'calypso/lib/domains';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { useSelector } from 'calypso/state';
+import {
+	getCurrentUserEmail,
+	isCurrentUserEmailVerified,
+} from 'calypso/state/current-user/selectors';
 import { VatForm } from './vat-form';
 import type { DomainContactDetails as DomainContactDetailsData } from '@automattic/shopping-cart';
 import type { DomainContactDetailsErrors } from '@automattic/wpcom-checkout';
@@ -38,6 +43,8 @@ export default function DomainContactDetails( {
 } ) {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
+	const userEmail = useSelector( getCurrentUserEmail );
+	const isUserEmailVerified = useSelector( isCurrentUserEmailVerified );
 	const needsOnlyGoogleAppsDetails =
 		hasGoogleApps( responseCart ) &&
 		! hasDomainRegistration( responseCart ) &&
@@ -58,6 +65,8 @@ export default function DomainContactDetails( {
 				onContactDetailsChange={ updateDomainContactFields }
 				getIsFieldDisabled={ getIsFieldDisabled }
 				isLoggedOutCart={ isLoggedOutCart }
+				userEmail={ userEmail }
+				isUserEmailVerified={ isUserEmailVerified }
 				emailOnly={ emailOnly }
 			/>
 			{ tlds.includes( 'ca' ) && (

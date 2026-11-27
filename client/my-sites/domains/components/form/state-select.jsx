@@ -4,13 +4,11 @@ import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
-import { connect } from 'react-redux';
-import QueryCountryStates from 'calypso/components/data/query-country-states';
 import FormSelect from 'calypso/components/forms/form-select';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
-import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { getCountryStates } from 'calypso/state/country-states/selectors';
 import Input from './input';
+import useCountryStates from './use-country-states';
 
 class StateSelect extends PureComponent {
 	inputRef = ( element ) => {
@@ -28,10 +26,10 @@ class StateSelect extends PureComponent {
 	};
 
 	recordStateSelectClick = () => {
-		const { eventFormName, recordGoogleEvent: recordEvent } = this.props;
+		const { eventFormName } = this.props;
 
 		if ( eventFormName ) {
-			recordEvent( 'Upgrades', `Clicked ${ eventFormName } State Select` );
+			gaRecordEvent( 'Upgrades', `Clicked ${ eventFormName } State Select` );
 		}
 	};
 
@@ -49,7 +47,6 @@ class StateSelect extends PureComponent {
 	render() {
 		const classes = clsx( this.props.additionalClasses, 'state' );
 		const {
-			countryCode,
 			countryStates,
 			errorMessage,
 			name,
@@ -65,7 +62,6 @@ class StateSelect extends PureComponent {
 
 		return (
 			<>
-				{ countryCode && <QueryCountryStates countryCode={ countryCode } /> }
 				{ isEmpty( countryStates ) ? (
 					<Input inputRef={ this.inputRef } { ...this.props } />
 				) : (
@@ -123,9 +119,9 @@ StateSelect.propTypes = {
 	inputRef: PropTypes.func,
 };
 
-export default connect(
-	( state, { countryCode } ) => ( {
-		countryStates: countryCode ? getCountryStates( state, countryCode ) : [],
-	} ),
-	{ recordGoogleEvent }
-)( localize( StateSelect ) );
+const LocalizedStateSelect = localize( StateSelect );
+
+export default function StateSelectWithStates( props ) {
+	const countryStates = useCountryStates( props.countryCode );
+	return <LocalizedStateSelect { ...props } countryStates={ countryStates } />;
+}

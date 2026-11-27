@@ -11,8 +11,6 @@ import { vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ManagedContactDetailsFormFields } from '../managed-contact-details-form-fields';
 
-vi.mock( 'calypso/components/data/query-countries/domains', () => ( { default: () => null } ) );
-vi.mock( 'calypso/components/data/query-country-states', () => ( { default: () => null } ) );
 const mockPhoneInput = vi.fn( () => null );
 vi.mock( 'calypso/components/forms/form-phone-media-input', () => ( {
 	default: ( props ) => mockPhoneInput( props ),
@@ -47,6 +45,7 @@ function renderForm( contactDetails = {} ) {
 				countriesList={ countriesList }
 				hasCountryStates={ false }
 				userEmail="test@example.com"
+				isUserEmailVerified
 				translate={ ( text ) => text }
 			/>
 		);

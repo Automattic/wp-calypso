@@ -1,25 +1,22 @@
 /**
  * @vitest-environment jsdom
  */
+import { statesListQuery } from '@automattic/api-queries';
+import { QueryClient } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
 import { vi } from 'vitest';
-import countryStatesReducer from 'calypso/state/country-states/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import StateSelect from '../state-select';
 
-const reducers = { countryStates: countryStatesReducer };
-
-const initialState = {
-	countryStates: {
-		items: {
-			in: [
-				{ code: 'AN', name: 'Andaman and Nicobar Islands' },
-				{ code: 'AP', name: 'Andhra Pradesh' },
-			],
-		},
-		isFetching: {},
-	},
-};
+function renderStateSelect( props ) {
+	const queryClient = new QueryClient();
+	queryClient.setQueryDefaults( statesListQuery( 'in' ).queryKey, { staleTime: Infinity } );
+	queryClient.setQueryData( statesListQuery( 'in' ).queryKey, [
+		{ code: 'AN', name: 'Andaman and Nicobar Islands' },
+		{ code: 'AP', name: 'Andhra Pradesh' },
+	] );
+	return renderWithProvider( <StateSelect { ...props } />, { queryClient } );
+}
 
 describe( '<StateSelect />', () => {
 	const defaultProps = {
@@ -30,26 +27,20 @@ describe( '<StateSelect />', () => {
 	};
 
 	test( 'shows the placeholder rather than the first state when there is no value', () => {
-		renderWithProvider( <StateSelect { ...defaultProps } value={ undefined } />, {
-			initialState,
-			reducers,
-		} );
+		renderStateSelect( { ...defaultProps, value: undefined } );
 
 		expect( screen.getByRole( 'combobox', { name: 'State' } ) ).toHaveValue( '' );
 		expect( screen.getByRole( 'option', { name: 'Select State' } ).selected ).toBe( true );
 	} );
 
 	test( 'shows the placeholder rather than the first state when the value is empty', () => {
-		renderWithProvider( <StateSelect { ...defaultProps } value="" />, { initialState, reducers } );
+		renderStateSelect( { ...defaultProps, value: '' } );
 
 		expect( screen.getByRole( 'combobox', { name: 'State' } ) ).toHaveValue( '' );
 	} );
 
 	test( 'shows the selected state when there is a value', () => {
-		renderWithProvider( <StateSelect { ...defaultProps } value="AP" />, {
-			initialState,
-			reducers,
-		} );
+		renderStateSelect( { ...defaultProps, value: 'AP' } );
 
 		expect( screen.getByRole( 'combobox', { name: 'State' } ) ).toHaveValue( 'AP' );
 	} );

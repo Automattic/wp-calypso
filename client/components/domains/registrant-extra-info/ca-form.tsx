@@ -1,12 +1,11 @@
 import { FormInputValidation, FormLabel } from '@automattic/components';
+import { useLocale } from '@automattic/i18n-utils';
 import { camelCase, pick, isEmpty } from '@automattic/js-utils';
 import { LocalizeProps, localize } from 'i18n-calypso';
 import { PureComponent, ReactNode } from 'react';
-import { connect } from 'react-redux';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSelect from 'calypso/components/forms/form-select';
-import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import type { DomainContactDetails } from '@automattic/shopping-cart';
 import type { DomainContactDetailsErrors } from '@automattic/wpcom-checkout';
 
@@ -28,12 +27,12 @@ export interface FormProps {
 	onSubmit?: () => void;
 }
 
-export interface FormReduxProps {
+export interface FormLocaleProps {
 	userWpcomLang: string;
 }
 
 export class RegistrantExtraInfoCaForm extends PureComponent<
-	FormProps & FormReduxProps & LocalizeProps
+	FormProps & FormLocaleProps & LocalizeProps
 > {
 	static defaultProps = {
 		userWpcomLang: 'EN',
@@ -41,7 +40,7 @@ export class RegistrantExtraInfoCaForm extends PureComponent<
 
 	legalTypeOptions: ReactNode[];
 
-	constructor( props: FormProps & FormReduxProps & LocalizeProps ) {
+	constructor( props: FormProps & FormLocaleProps & LocalizeProps ) {
 		super( props );
 		const { translate } = props;
 		const legalTypes = {
@@ -186,8 +185,9 @@ export class RegistrantExtraInfoCaForm extends PureComponent<
 	}
 }
 
-export default connect( ( state ) => {
-	return {
-		userWpcomLang: getCurrentUserLocale( state ),
-	};
-} )( localize( RegistrantExtraInfoCaForm ) );
+const LocalizedRegistrantExtraInfoCaForm = localize( RegistrantExtraInfoCaForm );
+
+export default function RegistrantExtraInfoCaFormWithLocale( props: FormProps ) {
+	const locale = useLocale();
+	return <LocalizedRegistrantExtraInfoCaForm { ...props } userWpcomLang={ locale } />;
+}

@@ -24,7 +24,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import formState from 'calypso/lib/form-state';
 import NoticeErrorMessage from 'calypso/my-sites/checkout/checkout/notice-error-message';
 import { CountrySelect, Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
-import { getCountryStates } from 'calypso/state/country-states/selectors';
+import useCountryStates from 'calypso/my-sites/domains/components/form/use-country-states';
 import { errorNotice } from 'calypso/state/notices/actions';
 import getCountries from 'calypso/state/selectors/get-countries';
 import {
@@ -160,10 +160,7 @@ export class ContactDetailsFormFields extends Component {
 		const { countryCode } = mainFieldValues;
 		let state = mainFieldValues.state;
 
-		const hasCountryStates =
-			countryCode === this.props.countryCode
-				? this.props.hasCountryStates
-				: ! isEmpty( getCountryStates( this.state, countryCode ) );
+		const hasCountryStates = countryCode === this.props.countryCode && this.props.hasCountryStates;
 
 		// domains registered according to ancient validation rules may have state set even though not required
 		if (
@@ -632,22 +629,17 @@ export class ContactDetailsFormFields extends Component {
 	}
 }
 
-export default connect(
-	( state, props ) => {
-		const contactDetails = props.contactDetails;
-		const countryCode = contactDetails.countryCode;
-
-		const hasCountryStates =
-			contactDetails && contactDetails.countryCode
-				? ! isEmpty( getCountryStates( state, contactDetails.countryCode ) )
-				: false;
-		return {
-			countryCode,
-			countriesList: getCountries( state, 'domains' ),
-			hasCountryStates,
-		};
-	},
+const ConnectedContactDetailsFormFields = connect(
+	( state, props ) => ( {
+		countryCode: props.contactDetails.countryCode,
+		countriesList: getCountries( state, 'domains' ),
+	} ),
 	{
 		errorNotice,
 	}
 )( localize( ContactDetailsFormFields ) );
+
+export default function ContactDetailsFormFieldsWithStates( props ) {
+	const hasCountryStates = ! isEmpty( useCountryStates( props.contactDetails?.countryCode ) );
+	return <ConnectedContactDetailsFormFields { ...props } hasCountryStates={ hasCountryStates } />;
+}

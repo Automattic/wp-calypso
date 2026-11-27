@@ -1,15 +1,15 @@
+import { countryListQuery } from '@automattic/api-queries';
 import { camelCase } from '@automattic/js-utils';
 import {
 	tryToGuessPostalCodeFormat,
 	getCountryPostalCodeSupport,
 	CountryListItem,
 } from '@automattic/wpcom-checkout';
+import { useQuery } from '@tanstack/react-query';
 import { Notice } from '@wordpress/components';
 import debugFactory from 'debug';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { Component } from 'react';
-import { connect } from 'react-redux';
-import QueryDomainCountries from 'calypso/components/data/query-countries/domains';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormPhoneMediaInput from 'calypso/components/forms/form-phone-media-input';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -21,12 +21,7 @@ import {
 	convertDomainContactDetailsToManagedContactDetails,
 } from 'calypso/my-sites/checkout/src/types/wpcom-store-state';
 import { Input } from 'calypso/my-sites/domains/components/form';
-import { getCountryStates } from 'calypso/state/country-states/selectors';
-import {
-	getCurrentUserEmail,
-	isCurrentUserEmailVerified,
-} from 'calypso/state/current-user/selectors';
-import getCountries from 'calypso/state/selectors/get-countries';
+import useCountryStates from 'calypso/my-sites/domains/components/form/use-country-states';
 import {
 	CONTACT_DETAILS_FORM_FIELDS,
 	CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES,
@@ -39,7 +34,6 @@ import type {
 	DomainContactDetailsExtra,
 } from '@automattic/shopping-cart';
 import type { DomainContactDetailsErrors, ManagedContactDetails } from '@automattic/wpcom-checkout';
-import type { IAppState } from 'calypso/state/types';
 import './style.scss';
 
 const debug = debugFactory( 'calypso:managed-contact-details-form-fields' );
@@ -69,6 +63,12 @@ export interface ManagedContactDetailsFormFieldsProps {
 	needsAlternateEmailForGSuite?: boolean;
 	emailOnly?: boolean;
 	isLoggedOutCart?: boolean;
+	/**
+	 * The signed-in user's email address and whether it is verified. When the contact
+	 * email differs from it or it is unverified, the form reminds the user to confirm it.
+	 */
+	userEmail?: string;
+	isUserEmailVerified?: boolean;
 	children?: React.ReactNode;
 }
 
@@ -76,8 +76,6 @@ export interface ManagedContactDetailsFormFieldsConnectedProps {
 	countryCode: string | undefined;
 	hasCountryStates: boolean;
 	countriesList: CountryListItem[] | null;
-	needsEmailVerification: boolean;
-	userEmail: string;
 }
 
 interface ManagedContactDetailsFormFieldsState {
@@ -235,7 +233,7 @@ export class ManagedContactDetailsFormFields extends Component<
 	maybeDisplayEmailVerificationNotice = () => {
 		if (
 			this.props.contactDetails.email !== this.props.userEmail ||
-			this.props.needsEmailVerification ||
+			! this.props.isUserEmailVerified ||
 			this.props.isLoggedOutCart
 		) {
 			return this.props.translate( 'Remember to confirm your email address' );
@@ -481,27 +479,28 @@ export class ManagedContactDetailsFormFields extends Component<
 			<FormFieldset className="contact-details-form-fields">
 				{ emailOnly && this.renderContactDetailsEmail() }
 				{ ! emailOnly && this.renderFullForm() }
-				<QueryDomainCountries />
 			</FormFieldset>
 		);
 	}
 }
 
-export default connect( ( state: IAppState, props: ManagedContactDetailsFormFieldsProps ) => {
-	const contactDetails = props.contactDetails;
-	const countryCode = contactDetails.countryCode;
+const LocalizedManagedContactDetailsFormFields = localize( ManagedContactDetailsFormFields );
 
-	const hasCountryStates = contactDetails?.countryCode
-		? !! getCountryStates( state, contactDetails.countryCode )?.length
-		: false;
-	return {
-		countryCode,
-		countriesList: getCountries( state, 'domains' ),
-		hasCountryStates,
-		userEmail: getCurrentUserEmail( state ),
-		needsEmailVerification: ! isCurrentUserEmailVerified( state ),
-	};
-} )( localize( ManagedContactDetailsFormFields ) );
+export default function ManagedContactDetailsFormFieldsWithCountries(
+	props: ManagedContactDetailsFormFieldsProps
+) {
+	const countryCode = props.contactDetails.countryCode;
+	const { data: countriesList = null } = useQuery( countryListQuery() );
+	const hasCountryStates = !! useCountryStates( countryCode )?.length;
+	return (
+		<LocalizedManagedContactDetailsFormFields
+			{ ...props }
+			countryCode={ countryCode }
+			countriesList={ countriesList }
+			hasCountryStates={ hasCountryStates }
+		/>
+	);
+}
 
 function formatDataForParent( {
 	data,
