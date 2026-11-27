@@ -243,7 +243,7 @@
 		"@babel/traverse": "^8.1.0",
 		"@babel/types": "^8.1.0",
 		"@eslint/compat": "^2.1.1",
-		"@eslint/markdown": "^8.0.3",
+		"@eslint/markdown": "^9.0.0",
 		"@mswjs/interceptors": "^0.41.0",
 		"@pmmmwh/react-refresh-webpack-plugin": "0.5.15",
 		"@signal-noise/stylelint-scales": "^2.0.3",

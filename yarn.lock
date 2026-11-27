@@ -871,7 +871,7 @@ __metadata:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/eslint-plugin-json": "workspace:^"
     "@eslint/compat": "npm:^2.1.1"
-    "@eslint/markdown": "npm:^8.0.3"
+    "@eslint/markdown": "npm:^9.0.0"
     "@tanstack/eslint-plugin-query": "npm:^5.100.0"
     "@typescript-eslint/eslint-plugin": "npm:^8.74.0"
     "@typescript-eslint/parser": "npm:^8.74.0"
@@ -5522,12 +5522,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/markdown@npm:^8.0.3":
-  version: 8.0.3
-  resolution: "@eslint/markdown@npm:8.0.3"
+"@eslint/markdown@npm:^9.0.0":
+  version: 9.0.0
+  resolution: "@eslint/markdown@npm:9.0.0"
   dependencies:
     "@eslint/core": "npm:^1.2.1"
-    "@eslint/plugin-kit": "npm:^0.7.2"
+    "@eslint/plugin-kit": "npm:^0.7.3"
     github-slugger: "npm:^2.0.0"
     mdast-util-from-markdown: "npm:^2.0.2"
     mdast-util-frontmatter: "npm:^2.0.1"
@@ -5537,7 +5537,7 @@ __metadata:
     micromark-extension-gfm: "npm:^3.0.0"
     micromark-extension-math: "npm:^3.1.0"
     micromark-util-normalize-identifier: "npm:^2.0.1"
-  checksum: 10c0/00f65a81786c5d286bf029a5eeb69a04bdd4993e363cd1a77b86100532440e47d46ae7757995515862513af3368a263f739fe5af170a5092af6bd8ef25cc980d
+  checksum: 10c0/69b6d86710d45dbeb6f9ee381cd014487aa10a14b4cec9818da07d07a8bd296fa78bde7e124daee56595ff3f20dd84d1a38c8df4bed429470b014060e3b8c324
   languageName: node
   linkType: hard
 
@@ -5548,7 +5548,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/plugin-kit@npm:^0.7.2, @eslint/plugin-kit@npm:^0.7.3":
+"@eslint/plugin-kit@npm:^0.7.3":
   version: 0.7.3
   resolution: "@eslint/plugin-kit@npm:0.7.3"
   dependencies:
@@ -30236,7 +30236,7 @@ __metadata:
     "@babel/traverse": "npm:^8.1.0"
     "@babel/types": "npm:^8.1.0"
     "@eslint/compat": "npm:^2.1.1"
-    "@eslint/markdown": "npm:^8.0.3"
+    "@eslint/markdown": "npm:^9.0.0"
     "@gravatar-com/quick-editor": "npm:^0.8.0"
     "@mswjs/interceptors": "npm:^0.41.0"
     "@pmmmwh/react-refresh-webpack-plugin": "npm:0.5.15"
