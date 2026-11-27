@@ -48,6 +48,7 @@ function getNumPeriodAgo( momentSiteZone, date, period ) {
 	switch ( period ) {
 		case 'hour':
 			numPeriodAgo = durationAgo.asHours();
+			break;
 		case 'day':
 			numPeriodAgo = durationAgo.asDays();
 			break;
