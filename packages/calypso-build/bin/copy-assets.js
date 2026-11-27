@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 // find all the packages
+const fs = require( 'fs' );
 const path = require( 'path' );
-const rcopy = require( 'recursive-copy' );
 
 const dir = process.cwd();
 
@@ -10,20 +10,24 @@ const inputDir = path.join( dir, 'src' );
 const outputDirESM = path.join( dir, 'dist', 'esm' );
 const outputDirCJS = path.join( dir, 'dist', 'cjs' );
 
-const copyOptions = {
-	overwrite: true,
-	filter: [
-		'**/*.gif',
-		'**/*.jpg',
-		'**/*.jpeg',
-		'**/*.png',
-		'**/*.webp',
-		'**/*.svg',
-		'**/*.scss',
-		'!**/test/**',
-	],
-	concurrency: 127,
-};
+const ASSET_FILE = /\.(gif|jpe?g|png|webp|svg|scss)$/;
+
+// Like the globs this replaces, skip dot-named entries and anything in a `test` folder.
+const assets = fs
+	.readdirSync( inputDir, { recursive: true } )
+	.filter(
+		( file ) =>
+			ASSET_FILE.test( file ) &&
+			! file.split( path.sep ).some( ( part ) => part === 'test' || part.startsWith( '.' ) )
+	);
+
+function copyAssets( outputDir ) {
+	for ( const asset of assets ) {
+		const dest = path.join( outputDir, asset );
+		fs.mkdirSync( path.dirname( dest ), { recursive: true } );
+		fs.cpSync( path.join( inputDir, asset ), dest, { verbatimSymlinks: true } );
+	}
+}
 
 let copyAll = true;
 let copyESM = false;
@@ -42,9 +46,9 @@ for ( const arg of process.argv.slice( 2 ) ) {
 }
 
 if ( copyAll || copyESM ) {
-	rcopy( inputDir, outputDirESM, copyOptions );
+	copyAssets( outputDirESM );
 }
 
 if ( copyAll || copyCJS ) {
-	rcopy( inputDir, outputDirCJS, copyOptions );
+	copyAssets( outputDirCJS );
 }
