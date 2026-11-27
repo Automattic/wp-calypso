@@ -437,4 +437,23 @@ describe( 'ProductsList', () => {
 
 		expect( screen.getByText( 'Hidden from subscribers' ) ).toBeInTheDocument();
 	} );
+
+	test( 'explains that only paid newsletter tiers unlock paid posts in the empty list and new-plan dialog', async () => {
+		const user = userEvent.setup();
+		renderProductsList( [] );
+
+		expect(
+			screen.getByText(
+				"Set up a paid newsletter tier, recurring payment plan, or one-time offer. Only paid newsletter tiers unlock paid posts; donations, one-time payments, and other recurring plans don't."
+			)
+		).toBeVisible();
+
+		await user.click( screen.getByRole( 'button', { name: 'Add a new payment plan' } ) );
+
+		expect(
+			within( await screen.findByRole( 'dialog' ) ).getByText(
+				"Turn this on to unlock paid posts and subscriber-only content. One-time payments, donations, and other recurring plans don't unlock paid posts."
+			)
+		).toBeVisible();
+	} );
 } );

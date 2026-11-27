@@ -331,7 +331,7 @@ const Home = () => {
 		};
 		const title = translate( 'Create subscriber-only content' );
 		const body = translate(
-			'Create paid subscription options and gate access to text, video, image, or any other kind of content.'
+			"Create a paid newsletter tier to gate access to text, video, image, or any other kind of content. Donations, one-time payments, and other recurring plans don't unlock paid posts."
 		);
 
 		return {

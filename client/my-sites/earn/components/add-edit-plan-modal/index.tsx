@@ -402,6 +402,11 @@ const RecurringPaymentsPlanAddEditModal = ( {
 							disabled={ !! product.ID }
 							label={ translate( 'Paid newsletter tier' ) }
 						/>
+						<FormSettingExplanation>
+							{ translate(
+								"Turn this on to unlock paid posts and subscriber-only content. One-time payments, donations, and other recurring plans don't unlock paid posts."
+							) }
+						</FormSettingExplanation>
 					</FormFieldset>
 				) }
 				{ isOnlyTier && <input type="hidden" name="type" value={ TYPE_TIER } /> }
