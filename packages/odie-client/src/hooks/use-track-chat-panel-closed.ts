@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 import { HELP_CENTER_STORE } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { getChatState } from '../utils/get-chat-state';
-import { useIsPendingDirectChat } from './use-is-pending-direct-chat';
+import { useIsPendingDirectChat, useIsWaitingForFirstMessage } from './use-is-pending-direct-chat';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 
 /**
@@ -15,9 +15,10 @@ import type { HelpCenterSelect } from '@automattic/data-stores';
 export function useTrackChatPanelClosed() {
 	const { chat, trackEvent } = useOdieAssistantContext();
 	const isPendingDirectChat = useIsPendingDirectChat();
+	const isWaitingForFirstMessage = useIsWaitingForFirstMessage();
 	const registry = useRegistry();
-	const latest = useRef( { chat, trackEvent, isPendingDirectChat } );
-	latest.current = { chat, trackEvent, isPendingDirectChat };
+	const latest = useRef( { chat, trackEvent, isPendingDirectChat, isWaitingForFirstMessage } );
+	latest.current = { chat, trackEvent, isPendingDirectChat, isWaitingForFirstMessage };
 
 	useEffect(
 		() => () => {
@@ -28,7 +29,7 @@ export function useTrackChatPanelClosed() {
 			// Read at unmount: the chat as it was when the panel closed.
 			const state = latest.current;
 			state.trackEvent( 'chat_panel_closed', {
-				chat_state: getChatState( state.chat, state.isPendingDirectChat ),
+				chat_state: getChatState( state.chat, state ),
 				conversation_id: state.chat.conversationId ?? null,
 			} );
 		},

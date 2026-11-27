@@ -19,22 +19,29 @@ const automatedMessage = {
 const chatWith = ( fields: Partial< Chat > ): Chat =>
 	( { provider: 'odie', status: 'loaded', messages: [], ...fields } ) as Chat;
 
+const notPending = { isPendingDirectChat: false, isWaitingForFirstMessage: false };
+const pending = { isPendingDirectChat: true, isWaitingForFirstMessage: false };
+const waitingForFirstMessage = { isPendingDirectChat: true, isWaitingForFirstMessage: true };
+
 describe( 'getChatState', () => {
 	it.each( [
-		[ 'ai', chatWith( {} ), false ],
-		[ 'connecting', chatWith( {} ), true ],
-		[ 'connecting', chatWith( { status: 'transfer' } ), false ],
+		[ 'ai', chatWith( {} ), notPending ],
+		[ 'not_started', chatWith( {} ), waitingForFirstMessage ],
+		// The first message was sent and the conversation is being created.
+		[ 'connecting', chatWith( { status: 'transfer' } ), waitingForFirstMessage ],
+		[ 'connecting', chatWith( {} ), pending ],
+		[ 'connecting', chatWith( { status: 'transfer' } ), notPending ],
 		[
 			'waiting_for_agent',
 			chatWith( { provider: 'zendesk', messages: [ automatedMessage ] } ),
-			false,
+			notPending,
 		],
 		[
 			'with_agent',
 			chatWith( { provider: 'zendesk', messages: [ automatedMessage, agentMessage ] } ),
-			false,
+			notPending,
 		],
-	] )( 'is %s', ( expected, chat, isPendingDirectChat ) => {
-		expect( getChatState( chat, isPendingDirectChat ) ).toBe( expected );
+	] )( 'is %s', ( expected, chat, pendingDirectChat ) => {
+		expect( getChatState( chat, pendingDirectChat ) ).toBe( expected );
 	} );
 } );

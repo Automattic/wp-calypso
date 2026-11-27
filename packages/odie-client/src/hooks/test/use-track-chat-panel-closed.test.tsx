@@ -12,7 +12,10 @@ vi.mock( '@wordpress/data', () => ( { useRegistry: () => mockRegistry } ) );
 vi.mock( '@automattic/zendesk-client', () => ( {} ) );
 vi.mock( '../../constants', () => ( { HELP_CENTER_STORE: 'automattic/help-center' } ) );
 vi.mock( '../../context', () => ( { useOdieAssistantContext: vi.fn() } ) );
-vi.mock( '../use-is-pending-direct-chat', () => ( { useIsPendingDirectChat: () => false } ) );
+vi.mock( '../use-is-pending-direct-chat', () => ( {
+	useIsPendingDirectChat: () => false,
+	useIsWaitingForFirstMessage: () => false,
+} ) );
 
 beforeEach( () => {
 	vi.clearAllMocks();
