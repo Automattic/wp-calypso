@@ -8,6 +8,10 @@ import RenewalPaymentMethodNotice from '../renewal-payment-method-notice';
 
 const NO_PAYMENT_METHOD_TITLE = 'Add a payment method';
 const EXPIRED_CARD_TITLE = 'Your payment method has expired';
+const AUTO_RENEW_OFF_TITLE = 'This domain expires soon';
+
+const daysFromNow = ( days: number ) =>
+	new Date( Date.now() + days * 24 * 60 * 60 * 1000 ).toISOString();
 
 const domainFixture = ( customProps: Partial< Domain > = {} ): Domain =>
 	( {
@@ -75,16 +79,55 @@ describe( '<RenewalPaymentMethodNotice>', () => {
 		expect( screen.queryByRole( 'link', { name: 'Renew now' } ) ).not.toBeInTheDocument();
 	} );
 
+	test( 'tells the owner a domain with auto-renew off is close to expiring', async () => {
+		renderNotice(
+			{ auto_renewing: false, expiry: '2030-06-15T12:00:00+00:00' },
+			{ expiry_status: 'expiring', expiry_date: daysFromNow( 30 ) }
+		);
+
+		expect( await screen.findByText( AUTO_RENEW_OFF_TITLE ) ).toBeVisible();
+		expect( screen.getByText( /Auto-renew is off.*It expires on June 15, 2030/ ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Turn on auto-renew' } ) ).toBeVisible();
+		expect( screen.queryByText( NO_PAYMENT_METHOD_TITLE ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'ignores an expired card when auto-renew is off', async () => {
+		renderNotice(
+			{ auto_renewing: false },
+			{
+				expiry_date: daysFromNow( 30 ),
+				payment_type: 'credit_card',
+				payment_card_type: 'visa',
+				payment_details: '1234',
+				payment_expiry_date: '2020-01-31',
+			}
+		);
+
+		expect( await screen.findByText( AUTO_RENEW_OFF_TITLE ) ).toBeVisible();
+		expect( screen.queryByText( EXPIRED_CARD_TITLE ) ).not.toBeInTheDocument();
+	} );
+
 	test.each< [ string, Partial< Domain >, Partial< Purchase > | null ] >( [
 		[ 'the subscription can still be charged', {}, { expiry_status: 'auto-renewing' } ],
-		[ 'auto-renew is off', { auto_renewing: false }, {} ],
+		[ 'auto-renew is off and the expiry date is far away', { auto_renewing: false }, {} ],
 		[ 'the domain already expired', { expired: true }, {} ],
+		[
+			'the domain with auto-renew off already expired',
+			{ auto_renewing: false, expired: true },
+			{ expiry_date: daysFromNow( 30 ) },
+		],
 		[ 'the user is not the owner', { current_user_is_owner: false }, {} ],
+		[
+			'the user does not own the domain with auto-renew off',
+			{ auto_renewing: false, current_user_is_owner: false },
+			{ expiry_date: daysFromNow( 30 ) },
+		],
 		[ 'there is no purchase to act on', {}, null ],
 	] )( 'shows nothing when %s', async ( _, domain, purchase ) => {
 		renderNotice( domain, purchase );
 
 		expect( screen.queryByText( NO_PAYMENT_METHOD_TITLE ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( EXPIRED_CARD_TITLE ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( AUTO_RENEW_OFF_TITLE ) ).not.toBeInTheDocument();
 	} );
 } );
