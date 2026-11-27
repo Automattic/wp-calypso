@@ -8,7 +8,8 @@ import RenewalPaymentMethodNotice from '../renewal-payment-method-notice';
 
 const NO_PAYMENT_METHOD_TITLE = 'Add a payment method';
 const EXPIRED_CARD_TITLE = 'Your payment method has expired';
-const AUTO_RENEW_OFF_TITLE = 'This domain expires soon';
+const AUTO_RENEW_OFF_TITLE = 'Auto-renew is off';
+const EXPIRING_SOON_TITLE = 'This domain expires soon';
 
 const daysFromNow = ( days: number ) =>
 	new Date( Date.now() + days * 24 * 60 * 60 * 1000 ).toISOString();
@@ -21,6 +22,7 @@ const domainFixture = ( customProps: Partial< Domain > = {} ): Domain =>
 		expiry: '2030-06-15T12:00:00+00:00',
 		current_user_is_owner: true,
 		subscription_id: '123',
+		tld_maintenance_end_time: 0,
 		subtype: { id: DomainSubtype.DOMAIN_REGISTRATION, label: 'Domain Registration' },
 		...customProps,
 	} ) as Domain;
@@ -79,23 +81,52 @@ describe( '<RenewalPaymentMethodNotice>', () => {
 		expect( screen.queryByRole( 'link', { name: 'Renew now' } ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'tells the owner a domain with auto-renew off is close to expiring', async () => {
+	test( 'tells the owner auto-renew is off however far away the expiry date is', async () => {
+		renderNotice( { auto_renewing: false } );
+
+		expect( await screen.findByText( AUTO_RENEW_OFF_TITLE ) ).toBeVisible();
+		expect( screen.getByText( /It expires on June 15, 2030/ ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Turn on auto-renew' } ) ).toBeVisible();
+		expect( screen.queryByText( EXPIRING_SOON_TITLE ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'link', { name: 'Renew domain' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'offers to renew a domain with auto-renew off that is close to expiring', async () => {
 		renderNotice(
-			{ auto_renewing: false, expiry: '2030-06-15T12:00:00+00:00' },
+			{ auto_renewing: false },
 			{ expiry_status: 'expiring', expiry_date: daysFromNow( 30 ) }
 		);
 
-		expect( await screen.findByText( AUTO_RENEW_OFF_TITLE ) ).toBeVisible();
+		expect( await screen.findByText( EXPIRING_SOON_TITLE ) ).toBeVisible();
 		expect( screen.getByText( /Auto-renew is off.*It expires on June 15, 2030/ ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: 'Turn on auto-renew' } ) ).toBeVisible();
-		expect( screen.queryByText( NO_PAYMENT_METHOD_TITLE ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'link', { name: 'Renew domain' } ) ).toHaveAttribute(
+			'href',
+			expect.stringContaining( '/checkout/' )
+		);
+		expect( screen.queryByRole( 'link', { name: 'Turn on auto-renew' } ) ).not.toBeInTheDocument();
 	} );
+
+	test.each< [ string, Partial< Domain >, Partial< Purchase > ] >( [
+		[ 'the purchase cannot be renewed', {}, { is_renewable: false, can_explicit_renew: false } ],
+		[ 'the TLD is in maintenance', { tld_maintenance_end_time: 1900000000 }, {} ],
+	] )(
+		'only offers auto-renew for a domain close to expiring when %s',
+		async ( _, domain, purchase ) => {
+			renderNotice(
+				{ auto_renewing: false, ...domain },
+				{ expiry_date: daysFromNow( 30 ), ...purchase }
+			);
+
+			expect( await screen.findByText( AUTO_RENEW_OFF_TITLE ) ).toBeVisible();
+			expect( screen.getByRole( 'link', { name: 'Turn on auto-renew' } ) ).toBeVisible();
+			expect( screen.queryByRole( 'link', { name: 'Renew domain' } ) ).not.toBeInTheDocument();
+		}
+	);
 
 	test( 'ignores an expired card when auto-renew is off', async () => {
 		renderNotice(
 			{ auto_renewing: false },
 			{
-				expiry_date: daysFromNow( 30 ),
 				payment_type: 'credit_card',
 				payment_card_type: 'visa',
 				payment_details: '1234',
@@ -109,7 +140,6 @@ describe( '<RenewalPaymentMethodNotice>', () => {
 
 	test.each< [ string, Partial< Domain >, Partial< Purchase > | null ] >( [
 		[ 'the subscription can still be charged', {}, { expiry_status: 'auto-renewing' } ],
-		[ 'auto-renew is off and the expiry date is far away', { auto_renewing: false }, {} ],
 		[ 'the domain already expired', { expired: true }, {} ],
 		[
 			'the domain with auto-renew off already expired',
@@ -129,5 +159,6 @@ describe( '<RenewalPaymentMethodNotice>', () => {
 		expect( screen.queryByText( NO_PAYMENT_METHOD_TITLE ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( EXPIRED_CARD_TITLE ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( AUTO_RENEW_OFF_TITLE ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( EXPIRING_SOON_TITLE ) ).not.toBeInTheDocument();
 	} );
 } );

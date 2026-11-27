@@ -2,18 +2,26 @@ import { __experimentalText as Text } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useLocale } from '../../app/locale';
 import { changePaymentMethodRoute, purchaseSettingsRoute } from '../../app/router/me';
-import Notice, { RouterNoticeActionLinkButton } from '../../components/notice';
+import Notice, {
+	NoticeActionLinkButton,
+	RouterNoticeActionLinkButton,
+} from '../../components/notice';
 import { formatDate } from '../../utils/datetime';
-import { needsPaymentMethodToAutoRenew } from '../../utils/domain';
-import { creditCardHasAlreadyExpired, isCloseToExpiration } from '../../utils/purchase';
+import { isTldInMaintenance, needsPaymentMethodToAutoRenew } from '../../utils/domain';
+import {
+	creditCardHasAlreadyExpired,
+	getRenewalUrlFromPurchase,
+	isCloseToExpiration,
+} from '../../utils/purchase';
 import type { Domain, Purchase } from '@automattic/api-core';
 
-type RenewalProblem = 'expired-card' | 'no-payment-method' | 'auto-renew-off';
+type RenewalProblem = 'expired-card' | 'no-payment-method' | 'auto-renew-off' | 'expiring-soon';
 
 /**
  * Why the domain will lapse unless its owner acts: auto-renew is on but the
  * subscription cannot be charged (no payment method, or a card that has
- * already expired), or auto-renew is off and the expiry date is close.
+ * already expired), or auto-renew is off. With auto-renew off, a domain close
+ * to its expiry date that can be renewed now is `expiring-soon`.
  */
 function getRenewalProblem( domain: Domain, purchase?: Purchase ): RenewalProblem | null {
 	if ( ! purchase || ! domain.current_user_is_owner || domain.expired ) {
@@ -21,7 +29,10 @@ function getRenewalProblem( domain: Domain, purchase?: Purchase ): RenewalProble
 	}
 
 	if ( ! domain.auto_renewing ) {
-		return isCloseToExpiration( purchase ) ? 'auto-renew-off' : null;
+		const canRenewNow =
+			( purchase.can_explicit_renew || purchase.is_renewable ) && ! isTldInMaintenance( domain );
+
+		return canRenewNow && isCloseToExpiration( purchase ) ? 'expiring-soon' : 'auto-renew-off';
 	}
 
 	if ( creditCardHasAlreadyExpired( purchase ) ) {
@@ -56,12 +67,24 @@ export default function RenewalPaymentMethodNotice( {
 			case 'no-payment-method':
 				return __( 'Add a payment method' );
 			case 'auto-renew-off':
+				return __( 'Auto-renew is off' );
+			case 'expiring-soon':
 				return __( 'This domain expires soon' );
 		}
 	};
 
 	const getMessage = () => {
 		if ( problem === 'auto-renew-off' ) {
+			return date
+				? sprintf(
+						// translators: %(date)s is the date the domain expires.
+						__( 'This domain won’t renew automatically. It expires on %(date)s.' ),
+						{ date }
+					)
+				: __( 'This domain won’t renew automatically.' );
+		}
+
+		if ( problem === 'expiring-soon' ) {
 			return date
 				? sprintf(
 						// translators: %(date)s is the date the domain expires.
@@ -112,6 +135,14 @@ export default function RenewalPaymentMethodNotice( {
 	};
 
 	const getAction = () => {
+		if ( problem === 'expiring-soon' ) {
+			return (
+				<NoticeActionLinkButton href={ getRenewalUrlFromPurchase( purchase ) } variant="solid">
+					{ __( 'Renew domain' ) }
+				</NoticeActionLinkButton>
+			);
+		}
+
 		if ( problem === 'auto-renew-off' ) {
 			return (
 				<RouterNoticeActionLinkButton
@@ -136,7 +167,11 @@ export default function RenewalPaymentMethodNotice( {
 	};
 
 	return (
-		<Notice variant="warning" title={ getTitle() } actions={ getAction() }>
+		<Notice
+			variant={ problem === 'expiring-soon' ? 'error' : 'warning' }
+			title={ getTitle() }
+			actions={ getAction() }
+		>
 			<Text as="p">{ getMessage() }</Text>
 		</Notice>
 	);
