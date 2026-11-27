@@ -189,9 +189,10 @@ interface DetectedEntity {
  * Detect and extract studio entity context when Image Studio is open.
  *
  * Note on URLs in this payload:
- *  - We do NOT add a top-level `url` field on the `imageStudio` entity. The backend resolves the attachment's canonical URL from the
- *    clientId (attachmentId) via `resolve_image_studio_url()` to avoid agent
- *    retry loops on stale/transient URLs.
+ *  - We do NOT add a top-level `url` field on the `imageStudio` entity. The
+ *    backend resolves the attachment's canonical URL from the clientId
+ *    (attachmentId) via `resolve_image_studio_url()` to avoid agent retry
+ *    loops on stale/transient URLs.
  *  - `metadata.url` is populated from `attachment.source_url` strictly as
  *    descriptive context for the agent (e.g. for prompt grounding); it is not
  *    used by the backend to fetch the asset.

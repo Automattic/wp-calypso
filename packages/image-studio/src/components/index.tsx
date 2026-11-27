@@ -167,58 +167,56 @@ function ImageStudioAgentChat( {
 	);
 
 	return (
-		<>
-			<AgentUI.Container
-				{ ...agentUiProps }
-				messages={ displayMessages as any }
-				variant="embedded"
-				placeholder={ placeholder }
-				className="image-studio-agent agenttic dark"
-				onSubmit={ handleSubmit }
-				onStop={ agentChatProps.abortCurrentRequest }
-				isProcessing={ isProcessing }
-				thinkingMessage={ agentChatProps.progressMessage ?? undefined }
-				inputValue={ inputValue }
-				onInputChange={ setInputValue }
-				onSuggestionClick={ handleSuggestionClick }
-				maxInputLength={ 1000 }
-				notice={ creditsNotice }
-				beforeSubmit={ creditsBeforeSubmit }
-				trailingActions={
-					creditsMeter && (
-						<CreditsMeter
-							status={ creditsMeter.status }
-							action={ creditsMeter.action }
-							purchaseHint={ creditsMeter.purchaseHint }
-							isOpen={ creditsMeter.isOpen }
-							onToggle={ creditsMeter.onToggle }
-						/>
-					)
-				}
-			>
-				<AgentUI.ConversationView showHeader={ false }>
-					<AgentUI.Messages />
-					<AgentUI.Footer>
-						{ /* Suggestions load during the credits check but wait for it to show, so they never flash and vanish. */ }
-						{ ! isLimitReached && ! isCheckingCredits && suggestionsComponent }
-						<AgentUI.Notice />
-						{ /* Stacked puts the pickers on the same row as the credits meter and send button. */ }
-						<AgentUI.Input
-							layout="stacked"
-							disabled={ isStopDisabled ? true : undefined }
-							leadingActions={
-								<>
-									{ mode === ImageStudioMode.Generate && (
-										<AspectRatioPicker disabled={ isProcessing } mode={ mode } />
-									) }
-									<StylePicker disabled={ isProcessing } mode={ mode } />
-								</>
-							}
-						/>
-					</AgentUI.Footer>
-				</AgentUI.ConversationView>
-			</AgentUI.Container>
-		</>
+		<AgentUI.Container
+			{ ...agentUiProps }
+			messages={ displayMessages as any }
+			variant="embedded"
+			placeholder={ placeholder }
+			className="image-studio-agent agenttic dark"
+			onSubmit={ handleSubmit }
+			onStop={ agentChatProps.abortCurrentRequest }
+			isProcessing={ isProcessing }
+			thinkingMessage={ agentChatProps.progressMessage ?? undefined }
+			inputValue={ inputValue }
+			onInputChange={ setInputValue }
+			onSuggestionClick={ handleSuggestionClick }
+			maxInputLength={ 1000 }
+			notice={ creditsNotice }
+			beforeSubmit={ creditsBeforeSubmit }
+			trailingActions={
+				creditsMeter && (
+					<CreditsMeter
+						status={ creditsMeter.status }
+						action={ creditsMeter.action }
+						purchaseHint={ creditsMeter.purchaseHint }
+						isOpen={ creditsMeter.isOpen }
+						onToggle={ creditsMeter.onToggle }
+					/>
+				)
+			}
+		>
+			<AgentUI.ConversationView showHeader={ false }>
+				<AgentUI.Messages />
+				<AgentUI.Footer>
+					{ /* Suggestions load during the credits check but wait for it to show, so they never flash and vanish. */ }
+					{ ! isLimitReached && ! isCheckingCredits && suggestionsComponent }
+					<AgentUI.Notice />
+					{ /* Stacked puts the pickers on the same row as the credits meter and send button. */ }
+					<AgentUI.Input
+						layout="stacked"
+						disabled={ isStopDisabled ? true : undefined }
+						leadingActions={
+							<>
+								{ mode === ImageStudioMode.Generate && (
+									<AspectRatioPicker disabled={ isProcessing } mode={ mode } />
+								) }
+								<StylePicker disabled={ isProcessing } mode={ mode } />
+							</>
+						}
+					/>
+				</AgentUI.Footer>
+			</AgentUI.ConversationView>
+		</AgentUI.Container>
 	);
 }
 

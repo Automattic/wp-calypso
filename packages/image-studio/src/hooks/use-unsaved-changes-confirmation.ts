@@ -126,7 +126,7 @@ export function useUnsavedChangesConfirmation( {
 	}, [ closeConfirmDialog, onDiscard, onExit, setIsExitConfirmed ] );
 
 	/**
-	 * User clicked "Keep editing" in the confirmation dialog
+	 * User dismissed the confirmation dialog (Esc, the close button or the backdrop)
 	 */
 	const handleConfirmCancel = useCallback( () => {
 		closeConfirmDialog();
