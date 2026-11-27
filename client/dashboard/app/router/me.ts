@@ -1377,7 +1377,7 @@ export const mcpMcpSitesRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Add MCP to specific sites' ),
+				title: __( 'Manage MCP access by site' ),
 			},
 		],
 	} ),
