@@ -20,6 +20,7 @@ export interface Email {
 		| 'pending'
 		| 'suspended'
 		| 'domain_not_connected'
+		| 'mx_records_missing'
 		| 'google_pending_tos_acceptance'
 		| 'unverified_forwards'
 		| 'no_subscription'

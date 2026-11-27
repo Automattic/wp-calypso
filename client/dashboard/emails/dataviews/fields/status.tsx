@@ -30,6 +30,20 @@ export const statusField: Field< Email > = {
 			);
 		}
 
+		if ( item.status === 'mx_records_missing' ) {
+			return (
+				<Tooltip
+					text={ __(
+						'The MX records of this domain do not point to Professional Email, so these mailboxes do not receive email. Add the Professional Email MX records at your DNS host.'
+					) }
+				>
+					<Text intent="error" tabIndex={ 0 } className="emails-status-with-tooltip">
+						{ __( 'Not receiving email' ) }
+					</Text>
+				</Tooltip>
+			);
+		}
+
 		if ( item.status === 'google_pending_tos_acceptance' ) {
 			return <Text intent="warning">{ __( 'Action required' ) }</Text>;
 		}
@@ -71,5 +85,6 @@ export const statusField: Field< Email > = {
 		{ value: 'google_pending_tos_acceptance', label: __( 'Finish setup' ) },
 		{ value: 'suspended', label: __( 'Expired' ) },
 		{ value: 'domain_not_connected', label: __( 'Domain removed' ) },
+		{ value: 'mx_records_missing', label: __( 'Not receiving email' ) },
 	],
 };

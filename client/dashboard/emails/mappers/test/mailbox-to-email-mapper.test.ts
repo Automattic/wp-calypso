@@ -29,11 +29,26 @@ const domainNotConnected = {
 	message: 'Domain not connected',
 };
 
+const mxRecordsMissing = {
+	warning_type: 'error',
+	warning_slug: 'mx_records_missing',
+	message: 'MX records missing',
+};
+
 describe( 'mapMailboxToEmail', () => {
 	test( 'uses the status of a warning', () => {
 		const email = mapMailboxToEmail( box, { ...account, warnings: [ domainNotConnected ] } );
 
 		expect( email.status ).toBe( 'domain_not_connected' );
+	} );
+
+	test( 'uses the MX records missing status before the domain not connected status', () => {
+		const email = mapMailboxToEmail( box, {
+			...account,
+			warnings: [ domainNotConnected, mxRecordsMissing ],
+		} );
+
+		expect( email.status ).toBe( 'mx_records_missing' );
 	} );
 
 	test( 'keeps the pending deletion status of a mailbox when the account has a warning', () => {

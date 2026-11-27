@@ -32,6 +32,7 @@ export const useViewTitanDnsRecordsAction = (): Action< Email > => {
 			item.type === 'mailbox' &&
 			item.provider === 'titan' &&
 			item.status !== 'no_subscription' &&
-			item.status !== 'domain_not_connected',
+			item.status !== 'domain_not_connected' &&
+			item.status !== 'mx_records_missing',
 	};
 };
