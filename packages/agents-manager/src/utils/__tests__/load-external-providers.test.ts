@@ -1,10 +1,12 @@
 import { type Mock, vi } from 'vitest';
 import { amToolProvider } from '../../abilities';
+import { addBlockNoteAbility } from '../../abilities/add-block-note';
 import { applyBlockEditsAbility } from '../../abilities/apply-block-edits';
 import { applyUpdateThemeAbility } from '../../abilities/apply-update-theme';
 import { captureCanvasAbility } from '../../abilities/capture-canvas';
 import { editEntityRecordAbility } from '../../abilities/edit-entity-record';
 import { editorNavigateAbility } from '../../abilities/editor-navigate';
+import { getBlockNotesAbility } from '../../abilities/get-block-notes';
 import { getBlockTreeAbility } from '../../abilities/get-block-tree';
 import { openHelpCenterAbility } from '../../abilities/open-help-center';
 import { restoreCheckpointAbility } from '../../abilities/restore-checkpoint';
@@ -330,6 +332,8 @@ describe( 'loadExternalProviders', () => {
 				showComponentAbility,
 				streamPageDesignAbility,
 				getBlockTreeAbility,
+				getBlockNotesAbility,
+				addBlockNoteAbility,
 				showTemplateAbility,
 				createAbility( 'host/navigate' ),
 				createAbility( 'woocommerce/get-products' ),
@@ -374,6 +378,8 @@ describe( 'loadExternalProviders', () => {
 				showComponentAbility,
 				streamPageDesignAbility,
 				getBlockTreeAbility,
+				getBlockNotesAbility,
+				addBlockNoteAbility,
 				showTemplateAbility,
 				createAbility( 'shared/action' ),
 			] )
@@ -435,6 +441,8 @@ describe( 'loadExternalProviders', () => {
 				showComponentAbility,
 				streamPageDesignAbility,
 				getBlockTreeAbility,
+				getBlockNotesAbility,
+				addBlockNoteAbility,
 				showTemplateAbility,
 				createAbility( 'host/navigate' ),
 			] )
@@ -1141,6 +1149,8 @@ describe( 'loadExternalProviders', () => {
 				showComponentAbility,
 				streamPageDesignAbility,
 				getBlockTreeAbility,
+				getBlockNotesAbility,
+				addBlockNoteAbility,
 				showTemplateAbility,
 				createAbility( 'big-sky/compose-patterns' ),
 				createAbility( 'wpcom/manage-site' ),

@@ -1,6 +1,8 @@
 import * as blocks from '@wordpress/blocks';
 import { select } from '@wordpress/data';
 import { type Mock, vi } from 'vitest';
+import { addBlockNoteAbility } from '../../abilities/add-block-note';
+import { getBlockNotesAbility } from '../../abilities/get-block-notes';
 import { createWebMcpAdapter, normalizeInputSchema, shouldExposeWebMcpAbility } from '../adapter';
 import { WEBMCP_SERVER_ABILITY_NAMES } from '../contracts';
 import type { ToolProvider } from '../../extension-types';
@@ -315,6 +317,32 @@ describe( 'WebMCP adapter', () => {
 		expect( harness.toolProvider.executeAbility ).toHaveBeenCalledWith( 'wpcom/get-block-schemas', {
 			fields: 'summary',
 		} );
+	} );
+
+	it( 'exposes the block note abilities with matching hints', async () => {
+		const harness = createHarness( [ getBlockNotesAbility, addBlockNoteAbility ] );
+		await harness.adapter.sync();
+
+		expect( harness.tools.get( 'agents_manager__get_block_notes' ) ).toMatchObject( {
+			annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true },
+		} );
+		expect( harness.tools.get( 'agents_manager__add_block_note' ) ).toMatchObject( {
+			annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false },
+			description: expect.stringContaining( '3 to 8 points' ),
+		} );
+	} );
+
+	it( 'does not expose a server-registered lookalike of the add block note ability', () => {
+		expect( shouldExposeWebMcpAbility( addBlockNoteAbility ) ).toBe( true );
+		expect(
+			shouldExposeWebMcpAbility( {
+				...addBlockNoteAbility,
+				meta: {
+					...addBlockNoteAbility.meta,
+					annotations: { serverRegistered: true, readonly: false },
+				},
+			} )
+		).toBe( false );
 	} );
 
 	it( 'maps show-template guidance to the WebMCP block reader', async () => {

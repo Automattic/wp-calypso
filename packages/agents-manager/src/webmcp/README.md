@@ -78,6 +78,16 @@ The exposed tools are:
   current selection, and a block count. WebMCP remembers these IDs for the matching
   edit call. It is annotated as read-only and idempotent.
 
+- `agents-manager/get-block-notes`: an Agents Manager-owned, client-only ability that lists the
+  block notes on the open post: each thread's blocks, status, author, text and replies, and who
+  wrote the post. An agent calls it before a review, so it doesn't repeat an open or resolved
+  point. It is annotated as read-only and idempotent.
+
+- `agents-manager/add-block-note`: an Agents Manager-owned, client-only ability that leaves a block
+  note on one block of the open post, or adds a reply if the block already has a note. The note is
+  saved at once, and its link to the block is saved with the post. Its description tells the agent
+  when review feedback belongs in notes and when in the chat.
+
 - `big-sky/apply-block-edits`: an Agents Manager-owned, client-only ability that deterministically
   changes the current block-editor canvas. It does not save or publish the edit, so the result
   remains visible and reviewable. Its WebMCP contract supplies item-level schemas for updates,
@@ -156,8 +166,9 @@ only browser agents read the description, as with `big-sky/apply-block-edits`.
 Use any agent that can call the page's WebMCP tools, such as the Codex built-in browser. Don't use
 DevTools or call `document.modelContext` directly for this path.
 
-1. Ask the agent which tools the page offers. Confirm it finds all nine:
-   `agents_manager__get_block_tree`, `big_sky__show_template`, `big_sky__apply_block_edits`,
+1. Ask the agent which tools the page offers. Confirm it finds all eleven:
+   `agents_manager__get_block_tree`, `agents_manager__get_block_notes`,
+   `agents_manager__add_block_note`, `big_sky__show_template`, `big_sky__apply_block_edits`,
    `big_sky__apply_update_theme`, `big_sky__edit_entity_record`, and `big_sky__set_site_logo`, plus
    `wpcom__get_block_schemas`, `wpcom__get_content_guidelines`, and `core__get_site_info`.
 2. Ask the agent to read the block tree. If a requested template part is absent, confirm it calls
@@ -177,13 +188,15 @@ DevTools or call `document.modelContext` directly for this path.
 7. Ask the agent to set the site logo to an image from the media library. Confirm it calls
    `big_sky__set_site_logo` with that image's attachment ID, the Site Logo block previews it, and
    the site settings are not saved.
-8. Do not publish the page. Discard the test changes or remove any auto-draft the editor created.
+8. On a post someone else wrote, ask the agent to review it. Confirm the notes appear on their blocks
+   and in the Notes sidebar.
+9. Do not publish the page. Discard the test changes or remove any auto-draft the editor created.
 
 ### From the console
 
 1. Without opening Agents Manager chat, enumerate the page's tools through
    `document.modelContext.getTools()`.
-2. Confirm the same nine tools are present and that the three server tools expose input schemas.
+2. Confirm the same eleven tools are present and that the three server tools expose input schemas.
 3. Call `agents_manager__get_block_tree`, choose a returned client ID, then call
    `big_sky__apply_block_edits` with that ID and a small reversible edit. Confirm the canvas changes
    without publishing the page.

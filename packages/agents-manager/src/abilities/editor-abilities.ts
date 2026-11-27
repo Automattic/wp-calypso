@@ -13,12 +13,14 @@ import {
 	restoreCheckpoint,
 	swapCheckpoint,
 } from '../utils/checkpoints';
+import { addBlockNoteAbility } from './add-block-note';
 import { applyBlockEditsAbility } from './apply-block-edits';
 import { applyUpdateThemeAbility } from './apply-update-theme';
 import { captureCanvasAbility } from './capture-canvas';
 import { BIG_SKY_ABILITY_CATEGORY } from './constants';
 import { editEntityRecordAbility } from './edit-entity-record';
 import { editorNavigateAbility } from './editor-navigate';
+import { getBlockNotesAbility } from './get-block-notes';
 import { getBlockTreeAbility } from './get-block-tree';
 import { openHelpCenterAbility } from './open-help-center';
 import { restoreCheckpointAbility } from './restore-checkpoint';
@@ -44,6 +46,8 @@ export const EDITOR_ABILITIES: Ability[] = [
 	showComponentAbility,
 	streamPageDesignAbility,
 	getBlockTreeAbility,
+	getBlockNotesAbility,
+	addBlockNoteAbility,
 	showTemplateAbility,
 ];
 
