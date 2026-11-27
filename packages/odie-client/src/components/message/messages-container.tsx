@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 import { NavigationType, useNavigate, useNavigationType, useSearchParams } from 'react-router-dom';
 import {
 	getConversationLimitReachedMessage,
+	getDirectChatWaitingMessage,
 	getOdieEmailFallbackMessage,
 	getOdieInitialMessage,
 	getOdieZendeskConnectionErrorMessage,
@@ -24,6 +25,7 @@ import { useHelpCenterChatScroll } from '../../hooks/use-help-center-chat-scroll
 import {
 	START_ON_MESSAGE_PARAM,
 	useIsPendingDirectChat,
+	useIsWaitingForFirstMessage,
 } from '../../hooks/use-is-pending-direct-chat';
 import { useLoggedOutSession } from '../../hooks/use-logged-out-session';
 import { useOpenInteractionStatusMap } from '../../hooks/use-open-interaction-status-map';
@@ -70,6 +72,10 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		searchParams.get( 'provider' ) === 'zendesk' && chat.provider !== 'zendesk';
 	const isStartingDirectChat = isForwardingToZendesk && canRequestHuman && ! chat.conversationId;
 	const isPendingDirectChat = useIsPendingDirectChat();
+	// Until the user writes, the chat is empty, so say what happens next. A route with an interaction
+	// leads to a chat that has started, though the empty one stays on show until that chat loads.
+	const isEmptyUntilFirstMessage =
+		useIsWaitingForFirstMessage() && ! searchParams.has( 'id' ) && ! chat.messages?.length;
 	const isWaitingForChatClient = isStartingDirectChat && ! forceEmailSupport && ! isChatLoaded;
 	const [ hasChatClientTimedOut, setHasChatClientTimedOut ] = useState( false );
 	const [ shouldEnableAutoScroll, setShouldEnableAutoScroll ] = useState( true );
@@ -275,6 +281,9 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 						) }
 						key={ 0 }
 					/>
+				) }
+				{ isEmptyUntilFirstMessage && (
+					<ChatMessage message={ getDirectChatWaitingMessage( currentUser?.display_name ) } />
 				) }
 				{ chat.messages?.length > 0 && (
 					<MessagesClusterizer

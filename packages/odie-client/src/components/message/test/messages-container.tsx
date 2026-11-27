@@ -8,6 +8,7 @@ import type {
 	HumanSupportRequest,
 	HumanSupportRouting,
 	HumanSupportRoutingStepProps,
+	Message,
 } from '../../../types';
 
 const mockCreateZendeskConversation = vi.fn();
@@ -40,6 +41,11 @@ vi.mock( 'react-router-dom', () => ( {
 
 vi.mock( '../../../constants', () => ( {
 	getConversationLimitReachedMessage: () => ( { internal_message_id: 'limit' } ),
+	getDirectChatWaitingMessage: () => ( {
+		content: 'What happens next',
+		role: 'bot',
+		type: 'message',
+	} ),
 	getOdieEmailFallbackMessage: () => ( { internal_message_id: 'email-fallback' } ),
 	getOdieInitialMessage: () => ( { content: 'Hi', role: 'bot', type: 'message' } ),
 	getOdieZendeskConnectionErrorMessage: () => ( { internal_message_id: 'connection-error' } ),
@@ -111,13 +117,14 @@ const mockContext = ( {
 	odieId = null as number | null,
 	humanSupportRouting = null as HumanSupportRouting | null,
 	pendingHumanSupportRequest = null as HumanSupportRequest | null,
+	messages = [] as Message[],
 } = {} ) => {
 	( useOdieAssistantContext as Mock ).mockReturnValue( {
 		chat: {
 			provider: 'odie',
 			conversationId: null,
 			odieId,
-			messages: [],
+			messages,
 			status: chatStatus,
 		},
 		addMessage: mockAddMessage,
@@ -176,6 +183,39 @@ describe( 'MessagesContainer greeting', () => {
 		render( container() );
 
 		expect( screen.queryByText( 'Hi' ) !== null ).toBe( isGreeted );
+	} );
+} );
+
+describe( 'MessagesContainer waiting for the first message', () => {
+	// Says what happens next only in the empty chat that waits for the user to write, not while a
+	// chat with a person is requested, while an open one loads or once there's a message to show.
+	it.each( [
+		[ 'says what happens next in the empty chat', 'direct-zd-chat=1&start-on-message=1', [], true ],
+		[
+			'drops it once the first message is sent',
+			'direct-zd-chat=1&start-on-message=1',
+			[ { content: 'My card was declined', role: 'user', type: 'message' } ],
+			false,
+		],
+		[
+			"doesn't show it while the chat client loads",
+			'provider=zendesk&start-on-message=1',
+			[],
+			false,
+		],
+		[
+			"doesn't show it while the open chat the link leads to loads",
+			'direct-zd-chat=1&start-on-message=1&id=open-chat',
+			[],
+			false,
+		],
+	] )( '%s', ( _name, params, messages, isShown ) => {
+		mockSearchParams = new URLSearchParams( params );
+		mockContext( { isChatLoaded: false, messages: messages as Message[] } );
+
+		render( container() );
+
+		expect( screen.queryByText( 'What happens next' ) !== null ).toBe( isShown );
 	} );
 } );
 
