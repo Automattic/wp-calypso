@@ -10,7 +10,7 @@ const SiteIntent = Onboard.SiteIntent;
 
 export function useProcessingLoadingMessages( flow?: string | null ): LoadingMessage[] {
 	const { __ } = useI18n();
-	let loadingMessages = [];
+	let loadingMessages;
 
 	const stepData = useSelect(
 		( select ) => ( select( STEPPER_INTERNAL_STORE ) as StepperInternalSelect ).getStepData(),

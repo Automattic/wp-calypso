@@ -554,7 +554,7 @@ export const SiteMonitoring = ( { className }: { className?: string } ) => {
 
 	const startDate = moment( timeRange.start * 1000 );
 	const endDate = moment( timeRange.end * 1000 );
-	let dateRange = null;
+	let dateRange;
 
 	if ( endDate.isSame( startDate, 'day' ) ) {
 		dateRange = endDate.format( 'LL' );

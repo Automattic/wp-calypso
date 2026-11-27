@@ -97,7 +97,7 @@ export function startSiteCollisionListener( qc: QueryClient ): () => void {
 					return [];
 				}
 
-				let items: unknown[] = [];
+				let items: unknown[];
 				if ( typeof data === 'object' && 'sites' in data && Array.isArray( data.sites ) ) {
 					items = data.sites;
 				} else {

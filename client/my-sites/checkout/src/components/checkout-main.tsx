@@ -931,7 +931,7 @@ function getAnalyticsPath(
 		sitelessCheckoutType,
 		checkoutFlow,
 	} );
-	let analyticsPath = '';
+	let analyticsPath;
 	let analyticsProps = {};
 
 	if ( purchaseId && product ) {

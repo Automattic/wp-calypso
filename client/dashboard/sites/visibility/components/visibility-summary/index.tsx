@@ -17,7 +17,7 @@ export default function SiteVisibilitySettingsSummary( {
 		return null;
 	}
 
-	let badges = [];
+	let badges;
 	if ( site.launch_status === 'unlaunched' || site.is_coming_soon ) {
 		badges = [ { text: __( 'Coming soon' ), intent: 'low' as const } ];
 	} else if ( site.is_private ) {

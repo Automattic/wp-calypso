@@ -94,7 +94,7 @@ const Star = forwardRef< SVGSVGElement, StarProps >( ( props, ref ) => {
 	const onFill = isChecked ? vars.yellow50 : vars.yellow20;
 	const offFill = vars.gray5;
 	const gradientId = 'gradient_' + crypto.randomUUID();
-	let gradientPercentage = 0;
+	let gradientPercentage;
 	let halfFill = false;
 	let fill = offFill;
 

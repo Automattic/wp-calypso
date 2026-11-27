@@ -270,7 +270,7 @@ export function browsePlugins( context, next ) {
 
 export function jetpackCanUpdate( context, next ) {
 	const selectedSites = getSelectedOrAllSitesWithPlugins( context.store.getState() );
-	let redirectToPlugins = false;
+	let redirectToPlugins;
 
 	if ( 'updates' === context.params.pluginFilter && selectedSites.length ) {
 		redirectToPlugins = ! selectedSites.some( function ( site ) {

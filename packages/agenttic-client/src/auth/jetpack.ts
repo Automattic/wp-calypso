@@ -90,10 +90,7 @@ export async function requestJetpackToken(
 	const apiNonce = window.JP_CONNECTION_INITIAL_STATE?.apiNonce;
 	const siteId = window.Jetpack_Editor_Initial_State?.wpcomBlogId;
 
-	let data: { token: string; blog_id: string } = {
-		token: '',
-		blog_id: '',
-	};
+	let data: { token: string; blog_id: string };
 
 	try {
 		if ( ! isSimpleSite() ) {

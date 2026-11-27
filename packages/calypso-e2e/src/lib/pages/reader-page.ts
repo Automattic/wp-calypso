@@ -59,7 +59,7 @@ export class ReaderPage {
 		// Use the `last` method to narrow down the locators in case more than 1 placeholders exist.
 		await this.page.locator( selectors.streamPlaceholder ).last().waitFor( { state: 'hidden' } );
 
-		let selector = '';
+		let selector;
 
 		if ( index ) {
 			selector = `:nth-match(${ selectors.readerCard }, ${ index })`;

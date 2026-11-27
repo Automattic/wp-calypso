@@ -169,7 +169,7 @@ export class ManagedContactDetailsFormFields extends Component<
 		phoneNumber: string;
 		countryCode: string;
 	} ): void => {
-		let phoneCountryCode = this.state.phoneCountryCode;
+		let phoneCountryCode;
 
 		if ( countries[ countryCode as keyof typeof countries ] ) {
 			phoneCountryCode = countryCode;

@@ -95,7 +95,7 @@ export function filterProductsAndPlans(
 		return productsAndPlans;
 	}
 
-	let filteredProductsAndBundles = [];
+	let filteredProductsAndBundles;
 
 	// List only products that matches the selected prices.
 	filteredProductsAndBundles = filterProductsAndPlansByPrices(

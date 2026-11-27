@@ -111,7 +111,7 @@ const useLoadingSteps = ( {
 
 	const [ step, setStep ] = useState( 0 );
 
-	let steps = [];
+	let steps;
 
 	if ( isLoadingPages ) {
 		steps = [ translate( 'Getting your site pages' ) ];

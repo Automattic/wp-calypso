@@ -107,8 +107,8 @@ export function useVideoClipSuggestions( {
 			if ( disabled ) {
 				return { postId: null, postBodyText: '' };
 			}
-			let currentPostId: string | number | null = null;
-			let rawContent = '';
+			let currentPostId: string | number | null;
+			let rawContent;
 			try {
 				const editorSelect = storeSelect( 'core/editor' ) as
 					| {

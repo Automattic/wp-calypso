@@ -607,8 +607,8 @@ const DomainSearchStep: StepType< {
 
 			const isSafeBackTo = !! getSafeUrl( backTo );
 
-			let backDestination: string | typeof navigation.goBack = '';
-			let backLabelText = '';
+			let backDestination: string | typeof navigation.goBack;
+			let backLabelText;
 
 			if ( 'site' === source && site?.URL ) {
 				backDestination = site.URL;

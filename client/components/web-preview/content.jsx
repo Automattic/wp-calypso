@@ -167,16 +167,13 @@ export default class WebPreviewContent extends Component {
 
 	handleResize = () => {
 		const { fixedViewportWidth: vpw } = this.props;
-		let iframeScaleRatio = 1;
-		let iframeStyle = {};
-
 		if ( ! this.iframe.parentElement?.clientWidth ) {
 			this.resetResize();
 			return;
 		}
 
-		iframeScaleRatio = this.iframe.parentElement.clientWidth / vpw;
-		iframeStyle = {
+		const iframeScaleRatio = this.iframe.parentElement.clientWidth / vpw;
+		const iframeStyle = {
 			width: `${ vpw }px`,
 			transform: `scale( ${ iframeScaleRatio } )`,
 		};

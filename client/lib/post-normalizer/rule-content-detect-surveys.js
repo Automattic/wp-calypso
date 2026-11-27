@@ -58,7 +58,7 @@ export default function detectSurveys( post, dom ) {
 
 	Array.from( surveys ).forEach( ( survey ) => {
 		// Get survey details
-		let surveyDetails = null;
+		let surveyDetails;
 
 		try {
 			surveyDetails = JSON.parse( survey.getAttribute( 'data-settings' ) );

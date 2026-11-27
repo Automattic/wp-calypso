@@ -21,7 +21,7 @@ const CheckForPlugins: Step< { submits: { hasPlugins: boolean } } > = function C
 		}
 
 		const checkForPlugins = async () => {
-			let hasPlugins = false;
+			let hasPlugins;
 
 			try {
 				const response: PluginsResponse = await wpcom.req.get( {
