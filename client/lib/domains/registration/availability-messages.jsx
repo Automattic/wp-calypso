@@ -596,6 +596,18 @@ function getAvailabilityNotice(
 			);
 			break;
 
+		case domainAvailability.PENDING_DELETE_NOT_TRANSFERRABLE:
+			message = translate(
+				"{{strong}}%(domain)s{{/strong}} is being deleted by its registry, so it can't be transferred or connected. It can be registered again once the registry releases it.",
+				{
+					args: { domain },
+					components: {
+						strong: <strong />,
+					},
+				}
+			);
+			break;
+
 		case domainAvailability.INVALID_LENGTH:
 			message = translate( 'The domain name is too long.' );
 			break;

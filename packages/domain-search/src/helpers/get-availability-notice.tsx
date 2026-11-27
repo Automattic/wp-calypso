@@ -439,6 +439,23 @@ export const getAvailabilityNotice = (
 			);
 			break;
 
+		case DomainAvailabilityStatus.PENDING_DELETE_NOT_TRANSFERRABLE:
+			message = createInterpolateElement(
+				sprintf(
+					/* translators: %(domain)s is the domain name */
+					__(
+						"<strong>%(domain)s</strong> is being deleted by its registry, so it can't be transferred or connected. It can be registered again once the registry releases it."
+					),
+					{
+						domain,
+					}
+				),
+				{
+					strong: <strong />,
+				}
+			);
+			break;
+
 		case DomainAvailabilityStatus.RECENTLY_EXPIRED:
 			message = createInterpolateElement(
 				__( 'This domain expired recently. To get it back please <a>contact support</a>.' ),
