@@ -16,6 +16,11 @@ export interface UseGridPlansParams {
 	isInSignup?: boolean;
 	isSubdomainNotGenerated?: boolean; // If the subdomain generation is unsuccessful we do not show the free plan
 	selectedFeature?: string | null;
+	/**
+	 * The plans that include `selectedFeature`, from the site's feature data. When set, it decides
+	 * which plans show for the feature in place of the plan definitions.
+	 */
+	plansWithSelectedFeature?: string[];
 	selectedPlan?: PlanSlug;
 	showLegacyStorageFeature?: boolean;
 	siteId?: number | null;
