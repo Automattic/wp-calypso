@@ -170,6 +170,15 @@ describe( 'DomainOverviewSettings', () => {
 		expect( screen.queryByText( 'Email forwarding' ) ).not.toBeInTheDocument();
 	} );
 
+	test( 'keeps Email forwarding for a domain with paid email that still has forwarders', async () => {
+		renderDomainSettings( {
+			titan_mail_subscription: { status: 'active' } as Domain[ 'titan_mail_subscription' ],
+			email_forwards_count: 1,
+		} );
+
+		expect( await screen.findByText( 'Email forwarding' ) ).toBeVisible();
+	} );
+
 	test( 'keeps security and glue records behind a tracked toggle, after the default rows', async () => {
 		const { recordTracksEvent } = renderDomainSettings();
 		const trackedToggle = ( expanded: boolean ) =>

@@ -1,5 +1,5 @@
-import { Domain, EmailProvider } from '@automattic/api-core';
-import { mailboxAccountsQuery } from '@automattic/api-queries';
+import { Domain } from '@automattic/api-core';
+import { emailForwardersQuery } from '@automattic/api-queries';
 import { formatNumber } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
 import { __, _n, sprintf } from '@wordpress/i18n';
@@ -12,23 +12,15 @@ export default function DomainEmailForwardingSettingsSummary( {
 	domain: Domain;
 	onClick?: () => void;
 } ) {
-	const { data: accounts } = useQuery( mailboxAccountsQuery( domain.blog_id, domain.domain ) );
+	const { data } = useQuery( emailForwardersQuery( domain.domain ) );
 
 	// Each target of a forwarder is its own entry, so count unique addresses.
 	const forwarderCount =
-		accounts &&
-		new Set(
-			accounts
-				.filter( ( account ) => account.account_type === EmailProvider.Forwarding )
-				.flatMap( ( account ) => account.emails )
-				.filter( ( box ) => box.domain === domain.domain )
-				.map( ( box ) => box.mailbox )
-		).size;
+		data && new Set( ( data.forwards ?? [] ).map( ( forward ) => forward.mailbox ) ).size;
 
 	// Only a known zero offers the add flow: while loading or after a failure the
-	// domain may already have forwarders. This endpoint can leave out the forwarding
-	// account of a domain that supports forwarding, so the add-forwarder page decides
-	// whether the domain is eligible.
+	// domain may already have forwarders. The add-forwarder page decides whether the
+	// domain is eligible.
 	const linkProps =
 		forwarderCount === 0 && domain.current_user_can_add_email
 			? { to: '/emails/add-forwarder', search: { domainName: domain.domain } }

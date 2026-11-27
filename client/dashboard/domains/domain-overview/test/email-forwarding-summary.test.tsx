@@ -1,111 +1,88 @@
 /**
  * @vitest-environment jsdom
  */
-import { EmailProvider, type Domain, type EmailAccount } from '@automattic/api-core';
-import { mailboxAccountsQuery } from '@automattic/api-queries';
+import { type Domain } from '@automattic/api-core';
+import { emailForwardersQuery } from '@automattic/api-queries';
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import DomainEmailForwardingSettingsSummary from '../email-forwarding-summary';
 
-const blogId = 123;
+const DOMAIN = 'example.com';
+const LIST = `/emails?domainName=${ DOMAIN }`;
+const ADD = `/emails/add-forwarder?domainName=${ DOMAIN }`;
 
-const mockAccount = (
-	accountType: EmailProvider,
-	domainName: string,
-	boxes: { mailbox: string; target?: string }[]
-) =>
-	( {
-		account_type: accountType,
-		domains: [ { domain: domainName, is_primary: true } ],
-		emails: boxes.map( ( box ) => ( { ...box, domain: domainName } ) ),
-	} ) as unknown as EmailAccount;
+const mockForward = ( mailbox: string, forwardAddress: string ) => ( {
+	email: `${ mailbox }@${ DOMAIN }`,
+	mailbox,
+	domain: DOMAIN,
+	forward_address: forwardAddress,
+	active: true,
+	created: 0,
+} );
 
 function renderSummary(
-	domainName: string,
 	status: number,
-	accounts: EmailAccount[] = [],
+	forwards: ReturnType< typeof mockForward >[] | null = [],
 	domainProps: Partial< Domain > = {}
 ) {
 	nock( 'https://public-api.wordpress.com' )
-		.get( `/wpcom/v2/sites/${ blogId }/emails/accounts/${ domainName }/mailboxes` )
+		.get( `/rest/v1.1/domains/${ DOMAIN }/email` )
 		.query( true )
-		.reply( status, { accounts } );
+		.reply( status, { type: 'forward', forwards, mx_servers: null, max_forwards: 100 } );
 
 	return render(
 		<DomainEmailForwardingSettingsSummary
-			domain={
-				{
-					domain: domainName,
-					blog_id: blogId,
-					current_user_can_add_email: true,
-					...domainProps,
-				} as Domain
-			}
+			domain={ { domain: DOMAIN, current_user_can_add_email: true, ...domainProps } as Domain }
 		/>
 	);
 }
 
 const getRow = () => screen.getByRole( 'link', { name: /Email forwarding/ } );
-const LIST = '/emails?domainName=example.com';
+
+async function waitForStatus(
+	queryClient: ReturnType< typeof render >[ 'queryClient' ],
+	status: 'success' | 'error'
+) {
+	const { queryKey } = emailForwardersQuery( DOMAIN );
+	await waitFor( () => expect( queryClient.getQueryState( queryKey )?.status ).toBe( status ) );
+}
 
 describe( '<DomainEmailForwardingSettingsSummary>', () => {
 	test( 'counts each forwarding address once and links to the list', async () => {
-		renderSummary( 'example.com', 200, [
-			mockAccount( EmailProvider.Forwarding, 'example.com', [
-				{ mailbox: 'me', target: 'a@other.com' },
-				{ mailbox: 'me', target: 'b@other.com' },
-				{ mailbox: 'info', target: 'a@other.com' },
-			] ),
-			mockAccount( EmailProvider.Titan, 'example.com', [ { mailbox: 'sales' } ] ),
+		renderSummary( 200, [
+			mockForward( 'me', 'a@other.com' ),
+			mockForward( 'me', 'b@other.com' ),
+			mockForward( 'info', 'a@other.com' ),
 		] );
 
 		expect( await screen.findByText( '2 forwarders' ) ).toBeVisible();
 		expect( getRow() ).toHaveAttribute( 'href', LIST );
 	} );
 
-	test( 'offers the add flow for this domain when it has no forwarders, ignoring sibling domains', async () => {
-		renderSummary( 'b.com', 200, [
-			mockAccount( EmailProvider.Forwarding, 'a.com', [ { mailbox: 'me' } ] ),
-			mockAccount( EmailProvider.Forwarding, 'b.com', [] ),
-		] );
+	test.each( [
+		[ 'an empty list', [] ],
+		[ 'no list', null ],
+	] )( 'offers the add flow when the domain has %s of forwarders', async ( _, forwards ) => {
+		renderSummary( 200, forwards );
 
-		await waitFor( () =>
-			expect( getRow() ).toHaveAttribute( 'href', '/emails/add-forwarder?domainName=b.com' )
-		);
+		await waitFor( () => expect( getRow() ).toHaveAttribute( 'href', ADD ) );
 		expect( screen.queryByText( /forwarder/ ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'offers the add flow when the response has no forwarding account', async () => {
-		renderSummary( 'example.com', 200, [] );
-
-		await waitFor( () =>
-			expect( getRow() ).toHaveAttribute( 'href', '/emails/add-forwarder?domainName=example.com' )
-		);
-	} );
-
 	test( 'links to the list when the user cannot add email', async () => {
-		const { queryClient } = renderSummary(
-			'example.com',
-			200,
-			[ mockAccount( EmailProvider.Forwarding, 'example.com', [] ) ],
-			{ current_user_can_add_email: false }
-		);
-		const { queryKey } = mailboxAccountsQuery( blogId, 'example.com' );
+		const { queryClient } = renderSummary( 200, [], { current_user_can_add_email: false } );
 
-		await waitFor( () =>
-			expect( queryClient.getQueryState( queryKey )?.status ).toBe( 'success' )
-		);
+		await waitForStatus( queryClient, 'success' );
 		expect( getRow() ).toHaveAttribute( 'href', LIST );
 	} );
 
 	test( 'links to the list while the forwarders load and after they fail', async () => {
-		const { queryClient } = renderSummary( 'example.com', 500 );
-		const { queryKey } = mailboxAccountsQuery( blogId, 'example.com' );
+		const { queryClient } = renderSummary( 500 );
 
 		expect( getRow() ).toHaveAttribute( 'href', LIST );
 
-		await waitFor( () => expect( queryClient.getQueryState( queryKey )?.status ).toBe( 'error' ) );
+		await waitForStatus( queryClient, 'error' );
 		expect( getRow() ).toHaveAttribute( 'href', LIST );
 	} );
 } );

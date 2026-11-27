@@ -14,7 +14,7 @@ import { getCurrentDashboard } from '../../app/routing';
 import { SectionHeader } from '../../components/section-header';
 import SummaryButton from '../../components/summary-button';
 import { SummaryButtonList } from '../../components/summary-button-list';
-import { hasGSuiteWithUs, hasTitanMailWithUs } from '../../utils/domain';
+import { hasEmailForwards, hasGSuiteWithUs, hasTitanMailWithUs } from '../../utils/domain';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import DomainConnectionSetupSummary from '../domain-connection-setup/summary';
 import DomainDiagnosticsSettingsSummary from '../domain-diagnostics/summary';
@@ -96,8 +96,12 @@ export default function DomainOverviewSettings( {
 	];
 	const advancedButtonListItems = [];
 
-	// Forwarding would conflict with the MX records of a paid mailbox.
-	if ( ! hasTitanMailWithUs( domain ) && ! hasGSuiteWithUs( domain ) ) {
+	// Forwarding would conflict with the MX records of a paid mailbox, but keep the row
+	// while the domain still has forwarders so they stay reachable.
+	if (
+		( ! hasTitanMailWithUs( domain ) && ! hasGSuiteWithUs( domain ) ) ||
+		hasEmailForwards( domain )
+	) {
 		buttonListItems.push(
 			<DomainEmailForwardingSettingsSummary
 				key="email-forwarding"
