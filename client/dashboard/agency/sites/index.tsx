@@ -18,7 +18,12 @@ import {
 	isRouteAllowedByCapabilities,
 	marketplaceRoute,
 } from '../../app/router/agency';
-import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../../components/dataviews';
+import {
+	DataViews,
+	DataViewsCard,
+	DataViewsEmptyStateLayout,
+	DataViewsErrorState,
+} from '../../components/dataviews';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { DEFAULT_PER_PAGE, DEFAULT_CONFIG, recordViewChanges } from '../../sites/dataviews/views';
@@ -133,7 +138,9 @@ export default function AgencySites() {
 		sanitizeFields: removeLegacyFields,
 	} );
 
-	const { data, isLoading } = useQuery( paginatedAgencySitesQuery( toAgencyFetchOptions( view ) ) );
+	const { data, isLoading, isError, isFetching, refetch } = useQuery(
+		paginatedAgencySitesQuery( toAgencyFetchOptions( view ) )
+	);
 
 	const sites = data?.sites ?? [];
 	const totalItems = data?.total ?? 0;
@@ -157,6 +164,20 @@ export default function AgencySites() {
 		totalItems,
 		totalPages: view.perPage ? Math.ceil( totalItems / view.perPage ) : 1,
 	};
+
+	const emptyState = view.search ? (
+		<DataViewsEmptyStateLayout
+			isBorderless
+			title={ __( 'No sites match your search' ) }
+			description={ __( 'Try a different search term.' ) }
+		/>
+	) : (
+		<DataViewsEmptyStateLayout
+			isBorderless
+			title={ __( 'No sites' ) }
+			description={ __( 'No agency-managed sites were found.' ) }
+		/>
+	);
 
 	return (
 		<PageLayout
@@ -219,18 +240,15 @@ export default function AgencySites() {
 					paginationInfo={ paginationInfo }
 					config={ DEFAULT_CONFIG }
 					empty={
-						view.search ? (
-							<DataViewsEmptyStateLayout
+						isError ? (
+							<DataViewsErrorState
 								isBorderless
-								title={ __( 'No sites match your search' ) }
-								description={ __( 'Try a different search term.' ) }
+								title={ __( 'We couldn’t load your sites' ) }
+								onRetry={ refetch }
+								isRetrying={ isFetching }
 							/>
 						) : (
-							<DataViewsEmptyStateLayout
-								isBorderless
-								title={ __( 'No sites' ) }
-								description={ __( 'No agency-managed sites were found.' ) }
-							/>
+							emptyState
 						)
 					}
 				/>

@@ -132,6 +132,20 @@ describe( '<AgencySites>', () => {
 		).not.toBeInTheDocument();
 	} );
 
+	test( 'offers to try again when the sites fail to load, rather than showing none', async () => {
+		nock( BASE )
+			.get( '/wpcom/v2/jetpack-agency/sites' )
+			.query( true )
+			.reply( 500, { message: 'Nope' } );
+		mockEndpoints();
+
+		render( <AgencySites /> );
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Try again' } ) );
+
+		expect( await screen.findByRole( 'row', { name: /First/ } ) ).toBeVisible();
+		expect( screen.queryByText( 'No sites' ) ).not.toBeInTheDocument();
+	} );
+
 	test( 'opens the development site configuration from the menu', async () => {
 		mockEndpoints();
 

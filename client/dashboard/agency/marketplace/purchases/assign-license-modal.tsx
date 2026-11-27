@@ -23,7 +23,7 @@ import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import { useLocale } from '../../../app/locale';
 import { ButtonStack } from '../../../components/button-stack';
-import { DataViews, DataViewsCard } from '../../../components/dataviews';
+import { DataViews, DataViewsCard, DataViewsErrorState } from '../../../components/dataviews';
 import InlineSupportLink from '../../../components/inline-support-link';
 import Notice, { NoticeActionLinkButton } from '../../../components/notice';
 import { formatDate, parseDateAsUTC } from '../../../utils/datetime';
@@ -109,7 +109,7 @@ export default function AssignLicenseModal( {
 	const isMultisiteAssignable = ! /^jetpack-(backup|scan)/.test( licenseKey );
 	const isWooExtension = licenseKey.startsWith( 'woocommerce' );
 
-	const { data, isLoading } = useQuery( {
+	const { data, isLoading, isError, isFetching, refetch } = useQuery( {
 		...paginatedAgencySitesQuery(
 			{
 				search: view.search,
@@ -360,6 +360,16 @@ export default function AssignLicenseModal( {
 							isItemClickable={ () => true }
 							onClickItem={ selectSite }
 							isLoading={ isLoading }
+							empty={
+								isError ? (
+									<DataViewsErrorState
+										isBorderless
+										title={ __( 'We couldn’t load your sites' ) }
+										onRetry={ refetch }
+										isRetrying={ isFetching }
+									/>
+								) : undefined
+							}
 							paginationInfo={ {
 								totalItems,
 								totalPages: Math.ceil( totalItems / ( view.perPage ?? SITES_PER_PAGE ) ),
