@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { useCallback, useEffect, useState, type MouseEvent, type TransitionEvent } from 'react';
 import { Provider } from 'react-redux';
 import repliesCache from '../panel/comment-replies-cache';
-import { modifierKeyIsActive } from '../panel/helpers/input';
+import { isTyping, modifierKeyIsActive } from '../panel/helpers/input';
 import { logError } from '../panel/helpers/log-error';
 import { store } from '../panel/state';
 import actions from '../panel/state/actions';
@@ -18,6 +18,7 @@ import ErrorBoundary from './error-boundary';
 import Note from './note';
 import { useNoteNavigation } from './note/hooks';
 import NotePanel from './note-panel';
+import { markPanelMounted } from './panel-mounted';
 import { useTracksSurface, type TracksSurface } from './use-tracks-surface';
 import type { FilterName } from './types';
 
@@ -202,6 +203,8 @@ const NotificationApp = ( {
 
 	useEffect( () => {
 		store.dispatch( actions.ui.enableKeyboardShortcuts() );
+
+		return markPanelMounted();
 	}, [] );
 
 	useEffect( () => {
@@ -230,7 +233,7 @@ const NotificationApp = ( {
 			if ( ! getKeyboardShortcutsEnabled( store.getState() ) ) {
 				return;
 			}
-			if ( modifierKeyIsActive( event ) ) {
+			if ( modifierKeyIsActive( event ) || isTyping( event ) ) {
 				return;
 			}
 			switch ( event.key ) {

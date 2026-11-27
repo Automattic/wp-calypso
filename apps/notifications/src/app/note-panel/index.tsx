@@ -11,11 +11,11 @@ import { __ } from '@wordpress/i18n';
 import { Tabs } from '@wordpress/ui';
 import { useEffect, useCallback, useRef, type ReactNode } from 'react';
 import { useSelector } from 'react-redux';
-import { modifierKeyIsActive } from '../../panel/helpers/input';
+import { isTyping, modifierKeyIsActive } from '../../panel/helpers/input';
 import { recordTracksEvent } from '../../panel/helpers/stats';
 import getKeyboardShortcutsEnabled from '../../panel/state/selectors/get-keyboard-shortcuts-enabled';
 import { getFilters } from '../../panel/templates/filters';
-import { useOpenFullView } from '../context';
+import { useAppContext, useOpenFullView } from '../context';
 import ErrorBoundary from '../error-boundary';
 import NoteList from '../note-list';
 import CloseButton from '../templates/close-button';
@@ -56,7 +56,9 @@ const NotePanel = ( {
 }: NotePanelProps ) => {
 	const notificationTabs = getNotificationTabs();
 	const tabRefs = useRef< Record< string, HTMLButtonElement > >( {} );
-	const keyboardShortcutsAreEnabled = useSelector( getKeyboardShortcutsEnabled );
+	const { hasNavigationShortcuts } = useAppContext();
+	const keyboardShortcutsAreEnabled =
+		useSelector( getKeyboardShortcutsEnabled ) && hasNavigationShortcuts;
 	const selectedTabRef = useRef< string >( filterName );
 	const openFullView = useOpenFullView( { filterName, noteId: selectedNoteId } );
 
@@ -83,7 +85,7 @@ const NotePanel = ( {
 			if ( ! keyboardShortcutsAreEnabled ) {
 				return;
 			}
-			if ( modifierKeyIsActive( event ) ) {
+			if ( modifierKeyIsActive( event ) || isTyping( event ) ) {
 				return;
 			}
 			if ( selectedNoteId ) {
