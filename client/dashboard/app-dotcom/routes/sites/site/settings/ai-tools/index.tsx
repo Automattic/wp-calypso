@@ -445,6 +445,72 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	const renderSettings = () => {
 		return (
 			<>
+				{ config.isEnabled( 'mcp-settings' ) && (
+					<>
+						<McpConnectCard
+							siteSlug={ siteSlug }
+							mcpEnabled={ isMcpEnabled }
+							onTurnOn={ () => handleMcpToggle( true ) }
+							isTurningOn={ mcpMutation.isPending }
+						/>
+						<Card className="mcp-settings__access-card">
+							<CardBody>
+								<VStack spacing={ 4 }>
+									<SectionHeader
+										title={ __( 'External AI agent access' ) }
+										description={ __( 'Allow external AI agents to access this site via MCP.' ) }
+										level={ 3 }
+									/>
+									<ToggleControl
+										__nextHasNoMarginBottom
+										checked={ isMcpEnabled }
+										disabled={ mcpMutation.isPending }
+										label={ __( 'Enable MCP access for this site' ) }
+										onChange={ handleMcpToggle }
+									/>
+								</VStack>
+							</CardBody>
+							{ isMcpEnabled && (
+								<>
+									<CardDivider className="mcp-settings__sub-divider" />
+									<RouterLinkSummaryButton
+										to={ `/sites/${ siteSlug }/settings/ai-tools/read` }
+										density="medium"
+										title={ __( 'Read' ) }
+										decoration={ <Icon icon={ seen } size={ 24 } /> }
+										badges={ [ readBadge ] }
+									/>
+									<RouterLinkSummaryButton
+										to={ `/sites/${ siteSlug }/settings/ai-tools/write` }
+										density="medium"
+										title={ __( 'Write' ) }
+										decoration={ <Icon icon={ pencil } size={ 24 } /> }
+										badges={ [ writeBadge ] }
+									/>
+								</>
+							) }
+						</Card>
+					</>
+				) }
+				{ ! isAvailable && (
+					<UpsellCallout
+						site={ site }
+						feature={ HostingFeatures.BIG_SKY }
+						upsellId="ai-tools"
+						upsellPlanRequirement="any"
+						upsellTitle={ __( 'Your dream site is just a prompt away' ) }
+						upsellDescription={ __(
+							'Get WordPress Agent to help you build, edit, and redesign your site with ease.'
+						) }
+						upsellIcon={ comment }
+						upsellImage={
+							<ThemedIllustration
+								light={ upsellIllustrationUrl }
+								dark={ upsellIllustrationDarkUrl }
+							/>
+						}
+					/>
+				) }
 				<Card className={ ! isAvailable ? 'ai-tools-settings__locked-card' : undefined }>
 					<CardBody>
 						<VStack spacing={ 4 }>
@@ -507,53 +573,6 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 							disabled={ ! isAvailable }
 						/>
 					</div>
-				) }
-				{ config.isEnabled( 'mcp-settings' ) && (
-					<>
-						<McpConnectCard
-							siteSlug={ siteSlug }
-							mcpEnabled={ isMcpEnabled }
-							onTurnOn={ () => handleMcpToggle( true ) }
-							isTurningOn={ mcpMutation.isPending }
-						/>
-						<Card className="mcp-settings__access-card">
-							<CardBody>
-								<VStack spacing={ 4 }>
-									<SectionHeader
-										title={ __( 'External AI agent access' ) }
-										description={ __( 'Allow external AI agents to access this site via MCP.' ) }
-										level={ 3 }
-									/>
-									<ToggleControl
-										__nextHasNoMarginBottom
-										checked={ isMcpEnabled }
-										disabled={ mcpMutation.isPending }
-										label={ __( 'Enable MCP access for this site' ) }
-										onChange={ handleMcpToggle }
-									/>
-								</VStack>
-							</CardBody>
-							{ isMcpEnabled && (
-								<>
-									<CardDivider className="mcp-settings__sub-divider" />
-									<RouterLinkSummaryButton
-										to={ `/sites/${ siteSlug }/settings/ai-tools/read` }
-										density="medium"
-										title={ __( 'Read' ) }
-										decoration={ <Icon icon={ seen } size={ 24 } /> }
-										badges={ [ readBadge ] }
-									/>
-									<RouterLinkSummaryButton
-										to={ `/sites/${ siteSlug }/settings/ai-tools/write` }
-										density="medium"
-										title={ __( 'Write' ) }
-										decoration={ <Icon icon={ pencil } size={ 24 } /> }
-										badges={ [ writeBadge ] }
-									/>
-								</>
-							) }
-						</Card>
-					</>
 				) }
 				{ isFreeTrial && (
 					<ConfirmModal
@@ -641,25 +660,6 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 				/>
 			}
 		>
-			{ ! isAvailable && (
-				<UpsellCallout
-					site={ site }
-					feature={ HostingFeatures.BIG_SKY }
-					upsellId="ai-tools"
-					upsellPlanRequirement="any"
-					upsellTitle={ __( 'Your dream site is just a prompt away' ) }
-					upsellDescription={ __(
-						'Get WordPress Agent to help you build, edit, and redesign your site with ease.'
-					) }
-					upsellIcon={ comment }
-					upsellImage={
-						<ThemedIllustration
-							light={ upsellIllustrationUrl }
-							dark={ upsellIllustrationDarkUrl }
-						/>
-					}
-				/>
-			) }
 			{ renderSettings() }
 		</PageLayout>
 	);

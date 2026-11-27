@@ -241,12 +241,13 @@ describe( 'getAgentEmailVCard', () => {
 } );
 
 describe( '<AIToolsSettings>', () => {
-	test( 'keeps WordPress Agent gated while showing MCP settings when the Agent is unavailable', async () => {
+	test( 'shows MCP cards above the gated WordPress Agent when the Agent is unavailable', async () => {
 		const user = userEvent.setup();
 		queryClient.setQueryData( siteAbilitiesQuery( site.ID, 'en_US' ).queryKey, [] );
 		const { container } = renderAIToolsSettings( '', false, site, false, true );
 
-		expect( screen.getByText( 'Your dream site is just a prompt away' ) ).toBeVisible();
+		const agentUpsell = screen.getByText( 'Your dream site is just a prompt away' );
+		expect( agentUpsell ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Upgrade plan' } ) ).toBeEnabled();
 		expect( container.querySelectorAll( '.ai-tools-settings__locked-card' ) ).toHaveLength( 3 );
 
@@ -279,11 +280,25 @@ describe( '<AIToolsSettings>', () => {
 		expect( telegramButton ).toHaveClass( 'dashboard-summary-button' );
 		expect( telegramButton ).toHaveAttribute( 'aria-disabled', 'true' );
 
-		expect( screen.getByRole( 'heading', { name: 'External AI agent access' } ) ).toBeVisible();
+		const connectHeading = screen.getByRole( 'heading', {
+			name: 'Connect an external AI agent',
+		} );
+		const accessHeading = screen.getByRole( 'heading', { name: 'External AI agent access' } );
+		const agentHeading = screen.getByRole( 'heading', { name: 'WordPress Agent' } );
+		expect( connectHeading.compareDocumentPosition( accessHeading ) ).toBe(
+			Node.DOCUMENT_POSITION_FOLLOWING
+		);
+		expect( accessHeading.compareDocumentPosition( agentUpsell ) ).toBe(
+			Node.DOCUMENT_POSITION_FOLLOWING
+		);
+		expect( agentUpsell.compareDocumentPosition( agentHeading ) ).toBe(
+			Node.DOCUMENT_POSITION_FOLLOWING
+		);
 		expect(
 			screen.getByRole( 'checkbox', { name: 'Enable MCP access for this site' } )
 		).toBeEnabled();
-		expect( screen.getByRole( 'heading', { name: 'Connect an external AI agent' } ) ).toBeVisible();
+		expect( connectHeading ).toBeVisible();
+		expect( accessHeading ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'ChatGPT' } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Claude' } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: /^Read/ } ) ).toBeVisible();
