@@ -96,7 +96,13 @@ export const usePostLikeActions = (
 		const mutation = iLike ? likeMutation : unlikeMutation;
 		mutation.mutateAsync( variables ).catch( () => {
 			restoreOptimisticUpdate?.();
-			dispatch( errorNotice( __( 'Could not save your like. Please try again.' ) ) );
+			dispatch(
+				errorNotice(
+					iLike
+						? __( 'Could not save your like. Please try again.' )
+						: __( 'Could not remove your like. Please try again.' )
+				)
+			);
 		} );
 	};
 

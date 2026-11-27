@@ -169,4 +169,36 @@ describe( 'withPostLikeActions', () => {
 			iLike: false,
 		} );
 	} );
+
+	it( 'shows an unlike error notice and restores the like when the unlike request fails', async () => {
+		const errorNoticeSpy = vi.spyOn( notices, 'errorNotice' );
+		const unlikeScope = nock( BASE )
+			.post( '/rest/v1.1/sites/123/posts/456/likes/mine/delete', {} )
+			.reply( 500, { error: 'oops' } );
+
+		const queryClient = makeQueryClient();
+		queryClient.setQueryData( postLikesQuery( 123, 456 ).queryKey, {
+			found: 72,
+			iLike: true,
+			likes: [ { ID: 1, login: 'alice' } ],
+		} );
+
+		const View = withPostLikeActions( PostLikeActionsView );
+
+		renderWithProvider( <View siteId={ 123 } postId={ 456 } />, { queryClient } );
+
+		const user = userEvent.setup();
+		await user.click( screen.getByRole( 'button', { name: 'Unlike' } ) );
+
+		await waitFor( () => expect( unlikeScope.isDone() ).toBe( true ) );
+		await waitFor( () =>
+			expect( errorNoticeSpy ).toHaveBeenCalledWith(
+				'Could not remove your like. Please try again.'
+			)
+		);
+		expect( queryClient.getQueryData( postLikesQuery( 123, 456 ).queryKey ) ).toMatchObject( {
+			found: 72,
+			iLike: true,
+		} );
+	} );
 } );
