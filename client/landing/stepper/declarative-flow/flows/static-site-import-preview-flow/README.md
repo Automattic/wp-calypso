@@ -1,69 +1,74 @@
 # static-site-import-preview flow
 
-Moves a site built on another platform (Wix, Squarespace, and similar) onto a free preview site
-on WordPress.com, and shows the move as it happens. Unlike `static-site-import`, there is no plan
-or checkout before the move: the customer sees their site on WordPress.com first, and buys a plan
-to keep it.
+Moves a site built on another platform (Wix, Squarespace, and similar) to WordPress.com, testing
+two orders of the same steps: identify the source, see it on its way, pick a plan, check out.
 
 ## Experiment
 
 Opening the flow assigns the `calypso_static_site_import_preview_checkout_first_202611` ExPlat
 experiment, before login so signed-out visitors are assigned too.
 
-- `import_after_checkout` (A): the flow runs `static-site-import`’s steps up to checkout, without
-  leaving this flow. See [Checkout first](#checkout-first).
-- Any other variation, including control (B): the preview-first flow in [Steps](#steps), which
-  moves the site onto a preview before any checkout.
+- `import_after_checkout` (A): shows what will be moved, then a plan and checkout before any
+  import. See [Checkout first](#checkout-first).
+- Any other variation, including control (B): copies the site onto a free preview and shows the
+  move, then a plan and checkout for that preview. See [Preview first](#preview-first).
 
-Checkout returns to the reading step with `siteId` (or `checkoutExit=1` when the customer left
-it). Signing up at checkout can change the visitor’s assignment, so those parameters keep the run
-in A from then on.
-
-### Checkout first
-
-| Step                         | Screen                                                       |
-| ---------------------------- | ------------------------------------------------------------ |
-| `site-migration-identify`    | The source's address, before login                           |
-| `plans`                      | Public plan selection, without Free                          |
-| Unified checkout             | Account, payment, and site creation                          |
-| `static-site-import-reading` | Starts the import into the new site, then opens its Overview |
-
-The steps and checkout are `static-site-import`’s for a new destination. The plans grid is the
-default one, as B’s **Choose a plan** opens on the preview, so it looks the same in both
-variations. Leaving checkout builds a preview of the import instead, as in `static-site-import`. A source on the URL
-skips identification, and opening the reading step before checkout goes to plans.
-
-## Steps
-
-The preview-first variation (B):
-
-| Step                          | Screen                                                  |
-| ----------------------------- | ------------------------------------------------------- |
-| `user`                        | Signup or login, skipped for a logged-in user           |
-| `site-migration-identify`     | The source's address, analyzed as in `site-migration`   |
-| `static-site-import-reading`  | Starts the import session, then builds the preview site |
-| `static-site-import-progress` | Shows the move's progress until it ends                 |
+Both variations register the same steps, in one list. Each starts at its own first step and
+only goes to its own, and the checkout-first variation asks for login only after checkout.
 
 The identified source is kept in the flow’s state (`useFlowState`, under the identify step’s slug)
 for this session, not in the URL. Opening the flow with `?from=<source>` (and optionally
 `&platform=`) skips identification and stores that source in the flow state the same way.
 
-The reading step is the one `static-site-import` uses when a customer leaves checkout
-(`buildPreview`): it starts a static site import session, then builds a preview site through the
+Both variations offer the same plans grid: the default one, without Free, since the move needs a
+paid plan.
+
+### Checkout first
+
+| Step                      | Screen                                            |
+| ------------------------- | ------------------------------------------------- |
+| `site-migration-identify` | The source's address, before login                |
+| `confidence-step`         | The source, where it’s going, and what we’ll copy |
+| `plans`                   | Public plan selection, with Skip                  |
+| Unified checkout          | Account, payment, and site creation               |
+| Progress screen           | The new site’s Overview, which shows the move     |
+
+The confidence step is `site-migration`’s check screen (`SiteMigrationConfirm`) for a new site: a
+window onto the source, the route to a new WordPress.com site, and what we’ll copy over.
+
+Picking a plan starts an import session for the source, then sends the customer to checkout.
+Checkout returns to the new site’s Overview with the session (`/sites/:siteId?importSessionId=`),
+which names the site as the destination and shows the move, so the flow has nothing to do after
+checkout.
+
+Skipping plans goes to the progress step, which asks for signup or login first. It then moves the
+site onto a free preview as in B, and opens the preview’s Overview as soon as the move starts.
+
+Leaving checkout comes back to plans with `checkoutExit=1`, and skipping plans adds
+`skippedPlans=1`. Signing up can change the visitor’s assignment, so those parameters keep the run
+in A.
+
+### Preview first
+
+| Step                          | Screen                                                       |
+| ----------------------------- | ------------------------------------------------------------ |
+| `user`                        | Signup or login, skipped for a logged-in user                |
+| `site-migration-identify`     | The source's address, analyzed as in `site-migration`        |
+| `static-site-import-progress` | Starts the move onto a preview site, and shows it to the end |
+| `plans`                       | Plan selection for the preview                               |
+| Checkout                      | Payment for the preview, then its Overview                   |
+
+The progress step starts a static site import session, then builds a preview site through the
 `preview` WoW funnel (`/sites/new` with `wow_funnel=preview` and the session’s
 `import_session_id`). WordPress.com delivers the import onto the preview as soon as the build
-lands. The started session and preview are kept in the flow state under the reading step’s slug,
-with the source they copy. Going back to the reading step for the same source picks up that move
-(`startedImport`) instead of starting another, so the progress step shows its status as before.
+lands. The started session and preview are kept in the flow state under the step’s slug, with the
+source they copy. Going back to the step for the same source picks up that move (`startedImport`)
+instead of starting another.
 
-The progress step tracks the move with the dashboard’s own progress steps, site window and hook
+The step tracks the move with the dashboard’s own progress steps, site window and hook
 (`StaticSiteImportPreviewSteps`, `StaticSiteImportPreviewWindow` and `useStaticSiteImport` in
-`client/dashboard/sites/static-site-import`), laid out for signup.
-
-The preview stays Coming Soon like every unpaid preview: WordPress.com keeps it hidden until a plan
-is bought. When the move finishes, the flow opens the preview at its `?share=` link, which gets
-past Coming Soon. The progress step waits until WordPress.com reports the link it made for the
-preview, and only goes on once it has it.
+`client/dashboard/sites/static-site-import`), laid out for signup. When the move finishes, the
+flow offers plans, and checkout buys the plan for the preview, which then opens its Overview.
 
 ## Failures
 
@@ -71,7 +76,7 @@ preview, and only goes on once it has it.
 - Identification finds a source the static import can’t take (parked, unhealthy, or skipped):
   the customer continues to `site-migration`'s identify step, which offers its usual paths.
 - The session API finds WordPress behind the source: as above, `site-migration`'s check step.
-- The session API refuses the source: the reading step says so and offers help.
+- The session API refuses the source: the progress step says so and offers help.
 - The server won’t build a preview: the customer goes to `static-site-import`'s plans step to
   buy a site for the move instead.
 - The move fails, stalls, is refused or can’t be read: the flow opens the preview’s Overview,
@@ -89,27 +94,32 @@ For the preview-first variation (B), force any variation but `import_after_check
 
 1. Run `yarn start` and open `/setup/static-site-import-preview` while signed out. Sign up or log
    in with an account allowed to create preview sites.
-2. Enter a Wix or Squarespace URL. Confirm analysis finishes, **Checking your site** shows, and
-   the flow stays in signup on **Copying your site**.
+2. Enter a Wix or Squarespace URL. Confirm analysis finishes, and the flow stays in signup on
+   **Copying your site**.
 3. Go back in the browser. Confirm the flow returns to **Copying your site** for the same move,
    and no other preview site is created.
-4. Wait for the move to finish. Confirm the browser opens the preview at its `?share=` link.
-5. Open `/setup/static-site-import-preview?from=<a Squarespace URL>` while logged in. Confirm it
+4. Wait for the move to finish. Confirm the flow opens `/setup/static-site-import-preview/plans`,
+   without Free.
+5. Pick a plan. Confirm checkout is for the preview site, and completing it opens the preview’s
+   Overview.
+6. Open `/setup/static-site-import-preview?from=<a Squarespace URL>` while logged in. Confirm it
    skips the address step and shows the move’s progress the same way.
-6. Enter a WordPress site’s URL. Confirm the flow continues to `/setup/site-migration`.
+7. Enter a WordPress site’s URL. Confirm the flow continues to `/setup/site-migration`.
 
 For the checkout-first variation (A), force `import_after_checkout`:
 
 1. Open `/setup/static-site-import-preview` while signed out. Confirm it asks for the source
    without signup, and stays in this flow.
-2. Enter a Wix or Squarespace URL. Confirm it opens `/setup/static-site-import-preview/plans`,
-   which shows the same plans grid as **Choose a plan** on a B preview, without Free.
-3. Pick a plan. Confirm unified checkout includes account creation, and no import-session request
-   has run.
-4. Complete checkout in a test account. Confirm the reading step starts the move without asking to
-   confirm, then opens the new site’s Overview with **We’re moving your site**.
-5. Repeat, leaving checkout instead. Confirm the reading step builds a preview and opens its
-   Overview.
+2. Enter a Wix or Squarespace URL. Confirm **We can copy your whole site** shows the source going
+   to a new WordPress.com site, and no import-session request has run.
+3. Select **Continue**. Confirm it opens `/setup/static-site-import-preview/plans`, without Free.
+4. Pick a plan. Confirm an import session is created, and unified checkout includes account
+   creation.
+5. Complete checkout in a test account. Confirm it opens the new site’s Overview with **We’re
+   moving your site**.
+6. Repeat, leaving checkout instead. Confirm it returns to plans.
+7. Repeat, selecting **Skip** on plans. Confirm it asks for signup, then opens the preview’s
+   Overview with the move under way.
 
 ## Owned by
 
