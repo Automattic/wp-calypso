@@ -200,7 +200,9 @@ function testAccountSite( account ) {
 		const { DataHelper } = e2eRequire( '@automattic/calypso-e2e' );
 		return DataHelper.getAccountSiteURL( account, { protocol: false } );
 	} catch ( error ) {
-		throw new Error( `Couldn't find the site of "${ account }" for {site}: ${ error.message }` );
+		throw new Error( `Couldn't find the site of "${ account }" for {site}: ${ error.message }`, {
+			cause: error,
+		} );
 	}
 }
 

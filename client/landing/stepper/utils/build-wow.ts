@@ -213,7 +213,8 @@ export async function waitForBuildWowSiteEditorReady(
 					lastIsAtomic
 				) }, remote_option_ready=${ String( lastRemoteOptionReady ) }, error=${
 					lastError ?? 'none'
-				}.`
+				}.`,
+				{ cause: error }
 			);
 		}
 		throw error;

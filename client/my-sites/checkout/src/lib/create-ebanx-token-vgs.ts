@@ -163,6 +163,6 @@ export async function createEbanxTokenVgs(
 				? error.message
 				: 'Failed to process payment information. Please try again.';
 
-		throw new Error( errorMessage );
+		throw new Error( errorMessage, { cause: error } );
 	}
 }

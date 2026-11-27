@@ -109,7 +109,8 @@ export default function interpolate( options ) {
 	} catch ( error ) {
 		if ( throwErrors ) {
 			throw new Error(
-				`Interpolation Error: unable to process \`${ mixedString }\` because of error \`${ error.message }\``
+				`Interpolation Error: unable to process \`${ mixedString }\` because of error \`${ error.message }\``,
+				{ cause: error }
 			);
 		}
 

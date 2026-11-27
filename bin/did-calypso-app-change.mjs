@@ -49,13 +49,16 @@ export default async function didCalypsoAppChange( { slug, dir, artifactDir } ) 
 			{ cwd: dir, maxBuffer: 1024 * 1024 * 32 } // 32MB buffer for large diffs.
 		);
 		return false;
-	} catch ( { code, stdout, stderr } ) {
+	} catch ( error ) {
+		const { code, stdout, stderr } = error;
 		if ( code === 1 ) {
 			console.info( `The build for ${ slug } changed. Cause:` );
 			console.info( stdout );
 			return true;
 		}
-		throw new Error( `Unexpected error code ${ code } while diffing ${ slug } build: ${ stderr }` );
+		throw new Error( `Unexpected error code ${ code } while diffing ${ slug } build: ${ stderr }`, {
+			cause: error,
+		} );
 	}
 }
 

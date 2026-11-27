@@ -424,7 +424,8 @@ export class DomainSearchComponent {
 								selectedDomain,
 								cartResponseSummaries,
 								originalError: error,
-							} )
+							} ),
+							{ cause: error }
 						);
 					}
 				}
@@ -543,7 +544,8 @@ export class DomainSearchComponent {
 						null,
 						2
 					) }`,
-				].join( '\n' )
+				].join( '\n' ),
+				{ cause: error }
 			);
 		} finally {
 			this.page.off( 'response', trackCartResponse );

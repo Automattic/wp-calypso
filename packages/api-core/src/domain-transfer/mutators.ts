@@ -54,7 +54,7 @@ export async function fetchIpsTagList(): Promise< IpsTag[] > {
 		}
 		return await response.json();
 	} catch ( error ) {
-		throw new Error( errorMessage );
+		throw new Error( errorMessage, { cause: error } );
 	}
 }
 

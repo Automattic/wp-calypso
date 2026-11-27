@@ -144,7 +144,7 @@ function getNodeAsString( node ) {
 
 		case 'TemplateLiteral':
 			return ( node.quasis || [] ).reduce( ( string, element ) => {
-				return ( string += element.value.cooked );
+				return string + element.value.cooked;
 			}, '' );
 
 		default:

@@ -59,8 +59,8 @@ const AutomatedCopySite: Step = function AutomatedCopySite( { navigation } ) {
 						source_blog_id: sourceSiteId,
 					},
 				} );
-			} catch ( _error ) {
-				throw new Error( __( 'Error copying site' ) );
+			} catch ( error ) {
+				throw new Error( __( 'Error copying site' ), { cause: error } );
 			}
 		}
 		initCopySite();

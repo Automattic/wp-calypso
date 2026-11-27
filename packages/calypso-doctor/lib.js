@@ -34,7 +34,7 @@ const getDockerConfig = async () => {
 		const content = await fs.readFile( getDockerSettings(), 'utf8' );
 		return JSON.parse( content );
 	} catch ( err ) {
-		throw new Error( `Can't load Docker config, ${ err.stack }` );
+		throw new Error( `Can't load Docker config, ${ err.stack }`, { cause: err } );
 	}
 };
 

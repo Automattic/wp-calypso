@@ -224,7 +224,8 @@ test.describe( 'Authentication: Google', { tag: [ tags.AUTHENTICATION ] }, () =>
 		} catch ( error ) {
 			failed = true;
 			throw new Error(
-				`Google authentication failed at ${ stage }. ${ failureReason( error, stage ) }`
+				`Google authentication failed at ${ stage }. ${ failureReason( error, stage ) }`,
+				{ cause: error }
 			);
 		} finally {
 			// A cleanup failure must not replace the test failure that is already in flight.

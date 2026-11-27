@@ -43,7 +43,7 @@ export function useLoadZendeskMessaging(
 		function setUpMessagingEventHandlers( retryCount = 0 ) {
 			if ( typeof window.zE !== 'function' ) {
 				if ( retryCount < 5 ) {
-					setTimeout( setUpMessagingEventHandlers, 250, ++retryCount );
+					setTimeout( setUpMessagingEventHandlers, 250, retryCount + 1 );
 				}
 				return;
 			}

@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Changed: With `throwErrors`, the interpolation error now has the original error as its `cause`.
 - Fixed: Declare the `@babel/runtime` dependency that the built package loads. Before, it only worked if another package installed it.
 
 ## [1.2.2]

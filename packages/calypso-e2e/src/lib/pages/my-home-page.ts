@@ -50,7 +50,8 @@ export class MyHomePage {
 			// suggestion ban is blamed for the missing name.
 			if ( await isServerErrorPage( this.page ) ) {
 				throw new Error(
-					'Home page shows a transient server error (502/503/504), not a missing domain suggestion.'
+					'Home page shows a transient server error (502/503/504), not a missing domain suggestion.',
+					{ cause: error }
 				);
 			}
 

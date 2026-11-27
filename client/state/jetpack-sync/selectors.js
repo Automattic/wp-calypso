@@ -78,10 +78,10 @@ function getImmediateSyncProgressPercentage( state, siteId ) {
 		return 0;
 	}
 	const totalItems = Object.values( progress ).reduce( ( sum, syncItem ) => {
-		return syncItem.total ? ( sum += parseInt( syncItem.total ) ) : sum;
+		return syncItem.total ? sum + parseInt( syncItem.total ) : sum;
 	}, 0 );
 	const totalSent = Object.values( progress ).reduce( ( sum, syncItem ) => {
-		return syncItem.sent ? ( sum += parseInt( syncItem.sent ) ) : sum;
+		return syncItem.sent ? sum + parseInt( syncItem.sent ) : sum;
 	}, 0 );
 	return Math.ceil( ( totalSent / totalItems ) * 100 );
 }
@@ -127,15 +127,15 @@ function getSyncProgressPercentage( state, siteId ) {
 	}
 
 	const countQueued = Object.values( queued ).reduce( ( sum, value ) => {
-		return ( sum += value );
+		return sum + value;
 	}, 0 );
 
 	const countSent = Object.values( sent ).reduce( ( sum, value ) => {
-		return ( sum += value );
+		return sum + value;
 	}, 0 );
 
 	const countTotal = Object.values( total ).reduce( ( sum, value ) => {
-		return ( sum += value );
+		return sum + value;
 	}, 0 );
 
 	const percentQueued = ( countQueued / countTotal ) * queuedMultiplier * 100;
