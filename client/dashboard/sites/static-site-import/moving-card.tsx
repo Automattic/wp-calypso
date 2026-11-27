@@ -16,7 +16,6 @@ import Notice from '../../components/notice';
 import { Text } from '../../components/text';
 import { formatStorage } from '../../utils/site-storage';
 import { CollidingCardsPreview } from './colliding-cards';
-import { TornCollage } from './torn-collage';
 import { getSourceHost } from './use-static-site-import';
 import type { StaticSiteImport, StaticSiteImportSearch } from './use-static-site-import';
 import type {
@@ -316,8 +315,9 @@ function RollingLine( { text, className }: { text: string; className?: string } 
 }
 
 /**
- * A browser window onto the site being moved. Its address follows the page being copied, and once
- * capture has a screenshot of the home page, that fills the window.
+ * A browser window onto the site being moved. Its address follows the page being copied. With the
+ * source's address, two cards collide inside it; without, it lists the pages copied, then shows
+ * capture's screenshot of the home page once there is one.
  */
 function SiteSnapshot( {
 	sourceUrl,
@@ -325,12 +325,9 @@ function SiteSnapshot( {
 	destinationHost,
 	session,
 	step,
-	hasCollidingCards = false,
 }: {
-	/** The address the customer gave, whose screenshot is torn up and stuck back together while pages are found. */
+	/** The address the customer gave. Its screenshot rides two colliding cards for the whole move, in place of the page list. */
 	sourceUrl?: string;
-	/** Keeps two colliding cards up for the whole move, in place of the collage and page list. */
-	hasCollidingCards?: boolean;
 	sourceHost: string;
 	/** Shown in the address bar once the copy is being built there, when given. */
 	destinationHost?: string;
@@ -382,13 +379,7 @@ function SiteSnapshot( {
 	if ( step === 1 && progress?.current_page && ! copied.includes( progress.current_page ) ) {
 		setCopied( [ progress.current_page, ...copied ] );
 	}
-	// The collage keeps going until the first page is copied, which can take minutes, and the list
-	// of pages takes over from there.
-	const isCollage =
-		Boolean( sourceUrl ) &&
-		( hasCollidingCards ||
-			( step <= 1 && ! hasLoaded && ! pages.some( ( page ) => page.captured ) ) );
-	const isListShown = pages.length > 0 && ! isCollage;
+	const isListShown = pages.length > 0 && ! sourceUrl;
 
 	return (
 		<figure
@@ -416,13 +407,7 @@ function SiteSnapshot( {
 					<span />
 					<span />
 				</div>
-				{ isCollage &&
-					sourceUrl &&
-					( hasCollidingCards ? (
-						<CollidingCardsPreview url={ sourceUrl } />
-					) : (
-						<TornCollage url={ sourceUrl } />
-					) ) }
+				{ sourceUrl && <CollidingCardsPreview url={ sourceUrl } /> }
 				{ isListShown && (
 					<ol
 						ref={ pagesRef }
@@ -437,7 +422,7 @@ function SiteSnapshot( {
 						) ) }
 					</ol>
 				) }
-				{ imageUrl && ! hasCollidingCards && (
+				{ imageUrl && ! sourceUrl && (
 					<img
 						className="static-site-import-snapshot__image"
 						src={ imageUrl }
@@ -458,9 +443,7 @@ function SiteSnapshot( {
 						} }
 					/>
 				) }
-				{ ! hasCollidingCards && (
-					<span className="static-site-import-snapshot__scan" aria-hidden="true" />
-				) }
+				{ ! sourceUrl && <span className="static-site-import-snapshot__scan" aria-hidden="true" /> }
 			</div>
 		</figure>
 	);
@@ -790,7 +773,6 @@ export function StaticSiteImportPreviewWindow( {
 				destinationHost={ getSourceHost( session?.site_url ) }
 				session={ session }
 				step={ getCurrentStep( session ) }
-				hasCollidingCards
 			/>
 		</div>
 	);

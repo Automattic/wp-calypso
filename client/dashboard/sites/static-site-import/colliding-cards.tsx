@@ -1,8 +1,18 @@
 import { WordPressLogo } from '@automattic/components/src/logos/wordpress-logo';
 import { useEffect, useState } from 'react';
-import { getMshotUrl, MSHOT_PLACEHOLDER, MSHOT_TRIES } from './torn-collage';
 
 import './colliding-cards.scss';
+
+// The same capture signup asks mShots for when the address is entered, so it's usually ready by now.
+const MSHOT_PARAMS = 'vpw=1440&vph=1440&w=1440&h=1462&screen_height=1440&scale=2';
+// mShots answers with a 400×300 placeholder while it's still taking the shot.
+const MSHOT_PLACEHOLDER = { width: 400, height: 300 };
+const MSHOT_TRIES = 10;
+
+const getMshotUrl = ( url: string, attempt = 0 ) =>
+	`https://s0.wp.com/mshots/v1/${ encodeURIComponent( url ) }?${ MSHOT_PARAMS }${
+		attempt ? `&count=${ attempt }` : ''
+	}`;
 
 /** The address of the site's screenshot, once mShots has finished taking it. */
 function useMshotImage( url: string ) {

@@ -14,7 +14,7 @@ import {
 	useOpenPreviewWhenReady,
 	useStaticSiteImport,
 } from '../index';
-import type { StaticSiteImport as StaticSiteImportState } from '../index';
+import type { StaticSiteImport as StaticSiteImportState, StaticSiteImportSearch } from '../index';
 import type { Site, StaticSiteImportSession } from '@automattic/api-core';
 
 const site = {
@@ -138,12 +138,18 @@ describe( 'StaticSiteImportCard', () => {
 		expect( screen.getByRole( 'heading', { name: 'We’re moving your site' } ) ).toBeVisible();
 	} );
 
-	const currentStepOf = ( state: string, extra = {} ) => {
+	const currentStepOf = (
+		state: string,
+		extra = {},
+		moveSearch: StaticSiteImportSearch = search
+	) => {
 		const siteImport = {
 			status: 'moving',
 			session: session( state, extra ) as StaticSiteImportSession,
 		} as StaticSiteImportState;
-		render( <StaticSiteImportProgress siteImport={ siteImport } search={ search } locale="en" /> );
+		render(
+			<StaticSiteImportProgress siteImport={ siteImport } search={ moveSearch } locale="en" />
+		);
 		const current = screen
 			.getAllByRole( 'listitem' )
 			.filter( ( item ) => item.getAttribute( 'aria-current' ) === 'step' );
@@ -295,24 +301,31 @@ describe( 'StaticSiteImportCard', () => {
 		expect( within( current ).getByRole( 'status' ) ).toHaveTextContent( activity );
 	} );
 
+	// Without the source's address there are no cards to collide, so the snapshot lists the pages.
+	const searchWithoutSource = { ...search, from: undefined };
+
 	// The page list is decoration beside the checklist, hidden from assistive technology.
 	const pageList = () =>
 		document.querySelector< HTMLElement >( '.static-site-import-snapshot__pages' ) as HTMLElement;
 
 	test( 'lists every page found and ticks only the copied ones', () => {
-		currentStepOf( 'capturing', {
-			progress: {
-				phase: 'capturing',
-				pages_captured: 1,
-				pages_total: 3,
-				current_page: '/about/',
-				pages: [
-					{ path: '/', captured: false },
-					{ path: '/about/', captured: true },
-					{ path: '/caf%C3%A9/', captured: false },
-				],
+		currentStepOf(
+			'capturing',
+			{
+				progress: {
+					phase: 'capturing',
+					pages_captured: 1,
+					pages_total: 3,
+					current_page: '/about/',
+					pages: [
+						{ path: '/', captured: false },
+						{ path: '/about/', captured: true },
+						{ path: '/caf%C3%A9/', captured: false },
+					],
+				},
 			},
-		} );
+			searchWithoutSource
+		);
 
 		const list = within( pageList() );
 		const rows = [ 'Home page', '/about/', '/café/' ].map( ( name ) =>
@@ -333,29 +346,40 @@ describe( 'StaticSiteImportCard', () => {
 		expect( screen.getAllByRole( 'listitem' )[ 1 ] ).toHaveTextContent( '12 pages copied' );
 	} );
 
-	test( 'keeps the collage up, not the page list, until the first page is copied', () => {
-		currentStepOf( 'capturing', {
+	test( 'keeps the colliding cards up, not the page list, for the whole move', () => {
+		currentStepOf( 'building', {
 			progress: {
-				phase: 'capturing',
-				pages_captured: 0,
+				phase: 'building',
+				pages_captured: 2,
 				pages_total: 2,
 				pages: [
-					{ path: '/', captured: false },
-					{ path: '/about/', captured: false },
+					{ path: '/', captured: true },
+					{ path: '/about/', captured: true },
 				],
 			},
+			preview_image_url: 'https://example.com/preview.png',
 		} );
 
-		expect( document.querySelector( '.static-site-import-snapshot__collage' ) ).toBeInTheDocument();
+		expect( document.querySelector( '.static-site-import-colliding-cards' ) ).toBeInTheDocument();
+		expect( screen.queryByRole( 'img' ) ).not.toBeInTheDocument();
 		expect(
 			document.querySelector( '.static-site-import-snapshot__pages' )
 		).not.toBeInTheDocument();
 	} );
 
 	test( 'lists the pages copied while watching when the server lists none', () => {
-		currentStepOf( 'capturing', {
-			progress: { phase: 'capturing', pages_captured: 1, pages_total: 3, current_page: '/about/' },
-		} );
+		currentStepOf(
+			'capturing',
+			{
+				progress: {
+					phase: 'capturing',
+					pages_captured: 1,
+					pages_total: 3,
+					current_page: '/about/',
+				},
+			},
+			searchWithoutSource
+		);
 
 		const list = within( pageList() );
 		expect( list.getByText( '/about/' ).closest( 'li' ) ).toHaveClass( 'is-captured' );
@@ -513,10 +537,14 @@ describe( 'StaticSiteImportCard', () => {
 	} );
 
 	test( 'shows the old site’s home page once capture has a picture of it', () => {
-		currentStepOf( 'building', { preview_image_url: 'https://example.com/preview.png' } );
+		currentStepOf(
+			'building',
+			{ preview_image_url: 'https://example.com/preview.png' },
+			searchWithoutSource
+		);
 
 		expect(
-			screen.getByRole( 'img', { name: 'The home page of busybearscleaning.com' } )
+			screen.getByRole( 'img', { name: 'The home page of your current site' } )
 		).toHaveAttribute( 'src', 'https://example.com/preview.png' );
 	} );
 
