@@ -152,7 +152,7 @@ export default function McpMcpSites() {
 		}
 	};
 
-	const pageTitle = mcpEnabled ? __( 'Site exceptions' ) : __( 'Add MCP to specific sites' );
+	const pageTitle = __( 'Manage MCP access by site' );
 	const pageDescription = mcpEnabled
 		? __( 'MCP access is enabled at the account level. Disable it for specific sites here.' )
 		: __( 'MCP access is disabled at the account level. Add it to individual sites here.' );
