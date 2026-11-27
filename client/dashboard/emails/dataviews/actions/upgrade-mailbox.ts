@@ -32,13 +32,9 @@ export const useUpgradeMailboxAction = (): Action< Email > => {
 			if (
 				item.type !== 'mailbox' ||
 				item.provider !== 'titan' ||
-				[
-					'no_subscription',
-					'suspended',
-					'pending_deletion',
-					'domain_not_connected',
-					'mx_records_missing',
-				].includes( item.status )
+				[ 'no_subscription', 'suspended', 'pending_deletion', 'domain_not_connected' ].includes(
+					item.status
+				)
 			) {
 				return false;
 			}
