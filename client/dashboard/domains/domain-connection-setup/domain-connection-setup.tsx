@@ -10,11 +10,11 @@ import {
 	__experimentalHStack as HStack,
 	Button,
 	Icon,
-	ExternalLink,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { globe } from '@wordpress/icons';
+import { Link } from '@wordpress/ui';
 import { useState } from 'react';
 import { Card, CardBody } from '../../components/card';
 import ConnectionModeCard from './connection-mode-card';
@@ -85,7 +85,10 @@ export default function DomainConnectionSetup( {
 						{
 							registrar:
 								! isReseller && registrar_url ? (
-									<ExternalLink href={ registrar_url }> { registrar } </ExternalLink>
+									<Link openInNewTab href={ registrar_url }>
+										{ ' ' }
+										{ registrar }{ ' ' }
+									</Link>
 								) : (
 									<>{ registrar || __( 'your domain name provider' ) }</>
 								),

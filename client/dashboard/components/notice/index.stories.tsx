@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { ExternalLink } from '@wordpress/components';
+import { Link } from '@wordpress/ui';
 import Notice, { NoticeActionButton, NoticeActionLink } from './index';
 
 const meta: Meta< typeof Notice > = {
@@ -19,7 +19,11 @@ const defaultArgs = {
 	title: 'Title',
 	children: (
 		<>
-			Hello, I’m a notice with an inline <ExternalLink href="#">link</ExternalLink>.
+			Hello, I’m a notice with an inline{ ' ' }
+			<Link href="#" openInNewTab>
+				link
+			</Link>
+			.
 		</>
 	),
 	actions: (

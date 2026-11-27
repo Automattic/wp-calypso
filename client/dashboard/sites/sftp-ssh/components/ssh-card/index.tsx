@@ -14,7 +14,6 @@ import {
 	__experimentalText as Text,
 	BaseControl,
 	Button,
-	ExternalLink,
 	SelectControl,
 	ToggleControl,
 } from '@wordpress/components';
@@ -24,7 +23,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import { trash } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
-import { Badge } from '@wordpress/ui';
+import { Badge, Link } from '@wordpress/ui';
 import { useMemo, useState } from 'react';
 import { useAuth } from '../../../../app/auth';
 import { useAppContext } from '../../../../app/context';
@@ -382,7 +381,7 @@ export default function SshCard( {
 								'SSH lets you access your site’s backend via a terminal, so you can manage files and use <wpCliLink>WP-CLI</wpCliLink> for quick changes and troubleshooting. <learnMoreLink/>'
 							),
 							{
-								wpCliLink: <ExternalLink href="https://wp-cli.org/" children={ null } />,
+								wpCliLink: <Link openInNewTab href="https://wp-cli.org/" children={ null } />,
 								learnMoreLink: <InlineSupportLink supportContext="hosting-connect-to-ssh" />,
 							}
 						) }

@@ -18,7 +18,6 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
-	ExternalLink,
 	Spinner,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -27,6 +26,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Icon, lock } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
+import { Link } from '@wordpress/ui';
 import {
 	createContext,
 	useContext,
@@ -494,12 +494,13 @@ export const ConnectRepositoryForm = ( {
 			),
 			{
 				adjustPermissions: (
-					<ExternalLink
+					<Link
+						openInNewTab
 						href={ `https://github.com/settings/installations/${ selectedInstallation.external_id }` }
 						children={ null }
 					/>
 				),
-				createRepo: <ExternalLink href="https://github.com/new" children={ null } />,
+				createRepo: <Link openInNewTab href="https://github.com/new" children={ null } />,
 			}
 		);
 	}, [ isLoadingRepositories, repositories, selectedInstallation ] );

@@ -13,7 +13,7 @@
  * });
  * // Renders: Updated <a href="/reader/blogs/123/posts/456">Hello World</a>
  */
-import { ExternalLink } from '@wordpress/components';
+import { Link as UILink } from '@wordpress/ui';
 import { Fragment, type MouseEvent, type ReactNode } from 'react';
 import isA8CForAgencies from '../../../lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from '../../../lib/jetpack/is-jetpack-cloud';
@@ -59,7 +59,8 @@ const Link: BlockRenderer = ( { content, children, onClick, meta } ) => {
 	}
 
 	return (
-		<ExternalLink
+		<UILink
+			openInNewTab
 			href={ getWpcomHref( url ) }
 			onClick={ onClick }
 			data-activity={ activity ?? meta.activity }
@@ -67,7 +68,7 @@ const Link: BlockRenderer = ( { content, children, onClick, meta } ) => {
 			data-intent={ intent ?? meta.intent }
 		>
 			{ children }
-		</ExternalLink>
+		</UILink>
 	);
 };
 
@@ -158,18 +159,23 @@ const Plugin: BlockRenderer = ( { content, children, onClick, meta } ) => {
 	const url = `/plugins/${ pluginSlug }/${ siteSlug }`;
 	const isBackport = isDashboardBackport();
 	const href = isBackport ? url : wpcomLink( url );
-	const Component = isBackport ? 'a' : ExternalLink;
+
+	const linkProps = {
+		href,
+		onClick,
+		'data-activity': activity ?? meta.activity,
+		'data-section': section ?? meta.section ?? 'plugins',
+		'data-intent': intent ?? meta.intent ?? 'view',
+	};
+
+	if ( isBackport ) {
+		return <a { ...linkProps }>{ children }</a>;
+	}
 
 	return (
-		<Component
-			href={ href }
-			onClick={ onClick }
-			data-activity={ activity ?? meta.activity }
-			data-section={ section ?? meta.section ?? 'plugins' }
-			data-intent={ intent ?? meta.intent ?? 'view' }
-		>
+		<UILink openInNewTab { ...linkProps }>
 			{ children }
-		</Component>
+		</UILink>
 	);
 };
 

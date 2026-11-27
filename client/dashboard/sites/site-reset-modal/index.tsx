@@ -9,7 +9,6 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	Button,
-	ExternalLink,
 	Modal,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -17,7 +16,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { Progress } from '@wordpress/ui';
+import { Link, Progress } from '@wordpress/ui';
 import { useEffect, useState, useCallback, useId } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
@@ -110,8 +109,7 @@ function SiteResetContent( {
 							'Before resetting your site, consider <link>exporting your content as a backup</link>.'
 						),
 						{
-							// @ts-expect-error children prop is injected by createInterpolateElement
-							link: <ExternalLink href={ wpcomLink( `/export/${ siteDomain }` ) } />,
+							link: <Link openInNewTab href={ wpcomLink( `/export/${ siteDomain }` ) } />,
 						}
 					) }
 				</Text>

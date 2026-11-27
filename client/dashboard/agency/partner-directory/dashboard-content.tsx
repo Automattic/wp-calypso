@@ -2,13 +2,13 @@ import { agencyPartnerDirectoryApplicationMutation } from '@automattic/api-queri
 import { useMutation } from '@tanstack/react-query';
 import {
 	Button,
-	ExternalLink,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { sprintf, _n, __ } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import ActionList from '../../components/action-list';
 import { Card, CardBody } from '../../components/card';
@@ -162,7 +162,9 @@ export default function PartnerDirectoryDashboardContent( {
 				{ label }
 			</Button>
 		) : (
-			<ExternalLink href={ url }>{ label }</ExternalLink>
+			<Link openInNewTab href={ url }>
+				{ label }
+			</Link>
 		);
 
 	const learnMoreSection = (
@@ -220,16 +222,16 @@ export default function PartnerDirectoryDashboardContent( {
 										description={
 											badge.key === 'approved' && brandMeta.isAvailable ? (
 												<VStack spacing={ 1 } alignment="flex-start" as="span">
-													<ExternalLink href={ brandMeta.url }>
+													<Link openInNewTab href={ brandMeta.url }>
 														{ sprintf(
 															/* translators: %s is the brand name, e.g. WordPress.com */
 															__( '%s Partner Directory' ),
 															DIRECTORY_NAMES[ directory ]
 														) }
-													</ExternalLink>
-													<ExternalLink href={ brandMeta.profileUrl }>
+													</Link>
+													<Link openInNewTab href={ brandMeta.profileUrl }>
 														{ __( 'Your agency’s profile' ) }
-													</ExternalLink>
+													</Link>
 												</VStack>
 											) : (
 												<VStack spacing={ 1 } alignment="flex-start" as="span">

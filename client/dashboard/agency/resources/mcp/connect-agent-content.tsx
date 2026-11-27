@@ -2,13 +2,13 @@ import {
 	Button,
 	SelectControl,
 	TextareaControl,
-	ExternalLink,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { check, copy } from '@wordpress/icons';
+import { Link } from '@wordpress/ui';
 import { useCallback, useMemo, useState } from 'react';
 import { Card, CardBody } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
@@ -128,7 +128,9 @@ export default function McpConnectAgent( {
 	// The documentation link belongs at the end of the last configuration card, so
 	// it stays reachable whichever setup paths this agent offers.
 	const docsLink = (
-		<ExternalLink href={ selectedAgent.docsUrl }>{ selectedAgent.docsLabel }</ExternalLink>
+		<Link openInNewTab href={ selectedAgent.docsUrl }>
+			{ selectedAgent.docsLabel }
+		</Link>
 	);
 
 	return (

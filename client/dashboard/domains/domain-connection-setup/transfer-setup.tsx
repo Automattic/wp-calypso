@@ -11,13 +11,13 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 	Button,
-	ExternalLink,
 	TextControl,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { Link as UILink } from '@wordpress/ui';
 import { useState } from 'react';
 import { domainTransferSetupRoute } from '../../app/router/domains';
 import { purchaseSettingsRoute } from '../../app/router/me';
@@ -86,7 +86,10 @@ export default function DomainTransferSetup() {
 						{
 							registrar:
 								! isReseller && registrar_url ? (
-									<ExternalLink href={ registrar_url }> { registrar } </ExternalLink>
+									<UILink openInNewTab href={ registrar_url }>
+										{ ' ' }
+										{ registrar }{ ' ' }
+									</UILink>
 								) : (
 									<>{ registrar || __( 'your domain name provider' ) }</>
 								),

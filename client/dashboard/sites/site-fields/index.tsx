@@ -11,11 +11,10 @@ import { Link } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	ExternalLink,
 } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
-import { Badge } from '@wordpress/ui';
+import { Badge, Link as UILink } from '@wordpress/ui';
 import { useInView } from 'react-intersection-observer';
 import { useAnalytics } from '../../app/analytics';
 import ComponentViewTracker from '../../components/component-view-tracker';
@@ -160,13 +159,14 @@ export function URL( { site, value }: { site: Site; value: string } ) {
 	return site.is_deleted ? (
 		<Text variant="muted">{ value }</Text>
 	) : (
-		<ExternalLink
+		<UILink
+			openInNewTab
 			className="dataviews-url-field"
 			style={ titleFieldTextOverflowStyles }
 			href={ site.URL }
 		>
 			{ value }
-		</ExternalLink>
+		</UILink>
 	);
 }
 
@@ -374,7 +374,8 @@ function SiteLaunchNag( { site }: { site: Site } ) {
 				eventName="calypso_dashboard_sites_site_launch_nag_impression"
 				properties={ { site_id: siteId } }
 			/>
-			<ExternalLink
+			<UILink
+				openInNewTab
 				href={ href }
 				onClick={ () => {
 					recordTracksEvent( 'calypso_dashboard_sites_site_launch_nag_click', {
@@ -383,7 +384,7 @@ function SiteLaunchNag( { site }: { site: Site } ) {
 				} }
 			>
 				{ __( 'Finish setup' ) }
-			</ExternalLink>
+			</UILink>
 		</>
 	);
 }

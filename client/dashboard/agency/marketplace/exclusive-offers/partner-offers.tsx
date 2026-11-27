@@ -1,6 +1,5 @@
 import {
 	Button,
-	ExternalLink,
 	SelectControl,
 	__experimentalHeading as Heading,
 	__experimentalText as Text,
@@ -11,7 +10,7 @@ import {
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
-import { Badge } from '@wordpress/ui';
+import { Badge, Link } from '@wordpress/ui';
 import { getQueryArgs } from '@wordpress/url';
 import { useId, useState, useMemo } from 'react';
 import { ButtonStack } from '../../../components/button-stack';
@@ -126,7 +125,8 @@ function PartnerOfferCard( {
 							</Button>
 						) }
 						{ termsUrl && (
-							<ExternalLink
+							<Link
+								openInNewTab
 								id={ termsLinkId }
 								aria-labelledby={ `${ termsLinkId } ${ logoId } ${ titleId }` }
 								href={ termsUrl }
@@ -136,7 +136,7 @@ function PartnerOfferCard( {
 								} }
 							>
 								{ __( 'View terms' ) }
-							</ExternalLink>
+							</Link>
 						) }
 					</ButtonStack>
 				) }

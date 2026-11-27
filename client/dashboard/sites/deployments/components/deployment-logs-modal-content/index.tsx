@@ -2,7 +2,6 @@ import { deploymentRunLogsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import {
 	Button,
-	ExternalLink,
 	__experimentalHeading as Heading,
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
@@ -10,7 +9,7 @@ import {
 	Spinner,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { Badge } from '@wordpress/ui';
+import { Badge, Link } from '@wordpress/ui';
 import { useLocale } from '../../../../app/locale';
 import { formatDate } from '../../../../utils/datetime';
 import { BranchDisplay } from '../branch-display';
@@ -72,14 +71,15 @@ export function DeploymentLogsModalContent( {
 						</Badge>
 					) }
 
-					<ExternalLink
+					<Link
+						openInNewTab
 						style={ { flexShrink: 0 } }
 						href={ `https://github.com/${ deployment.repository_name }/commit/${ commit_sha }` }
 					>
 						<Text as="code" size="small" style={ { color: 'inherit' } }>
 							{ shortSha }
 						</Text>
-					</ExternalLink>
+					</Link>
 
 					<div style={ { width: 'auto', flexShrink: 0, maxWidth: '50%' } }>
 						<BranchDisplay branchName={ deployment.branch_name } />
@@ -156,11 +156,12 @@ export function DeploymentLogsModalContent( {
 
 				<HStack alignment="right" spacing={ 5 }>
 					{ deployment.metadata.workflow_run_id && (
-						<ExternalLink
+						<Link
+							openInNewTab
 							href={ `https://github.com/${ deployment.repository_name }/actions/runs/${ deployment.metadata.workflow_run_id }` }
 						>
 							{ __( 'View workflow run in GitHub' ) }
-						</ExternalLink>
+						</Link>
 					) }
 					<Button variant="primary" onClick={ onRequestClose }>
 						{ __( 'Close' ) }

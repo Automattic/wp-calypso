@@ -1,9 +1,10 @@
 import { siteAgencyBlogQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
-import { __experimentalText as Text, ExternalLink } from '@wordpress/components';
+import { __experimentalText as Text } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { Link as UILink } from '@wordpress/ui';
 import { MetadataList, MetadataItem } from '../../../components/metadata-list';
 import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../../utils/site-provider';
 import { isSelfHostedJetpackConnected } from '../../../utils/site-types';
@@ -58,9 +59,9 @@ const SiteOverviewFields = ( { site }: { site: Site } ) => {
 						__( 'Redirects to <link />' ),
 						{
 							link: (
-								<ExternalLink href={ site.URL } style={ { overflowWrap: 'anywhere' } }>
+								<UILink openInNewTab href={ site.URL } style={ { overflowWrap: 'anywhere' } }>
 									{ getSiteDisplayUrl( site ) }
-								</ExternalLink>
+								</UILink>
 							),
 						}
 					) }

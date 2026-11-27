@@ -1,6 +1,6 @@
-import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { useAuth } from '../../app/auth';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -13,7 +13,10 @@ import GravatarLogo from './gravatar-logo';
 function GravatarProfileLink( { children }: { children?: React.ReactNode } ) {
 	return (
 		<span style={ { whiteSpace: 'nowrap' } }>
-			<GravatarLogo /> <ExternalLink href="https://gravatar.com/profile">{ children }</ExternalLink>
+			<GravatarLogo />{ ' ' }
+			<Link openInNewTab href="https://gravatar.com/profile">
+				{ children }
+			</Link>
 		</span>
 	);
 }

@@ -1,6 +1,6 @@
-import { ExternalLink } from '@wordpress/components';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __, sprintf } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { PageHeader } from '../../components/page-header';
 import { Text } from '../../components/text';
 import { formatDate } from '../../utils/datetime';
@@ -23,7 +23,11 @@ export function AgencyOverviewHeaderInfo( {
 
 	return (
 		<Text variant="muted" size={ 13 } lineHeight="20px">
-			{ url && <ExternalLink href={ url }>{ url.replace( /^https?:\/\//, '' ) }</ExternalLink> }
+			{ url && (
+				<Link openInNewTab href={ url }>
+					{ url.replace( /^https?:\/\//, '' ) }
+				</Link>
+			) }
 			{ /* Wrap in span; avoids a Google Translate DOM crash (react/react#11538) */ }
 			{ url && joinedDate && <span>{ ' · ' }</span> }
 			{ /* Wrap in span; avoids a Google Translate DOM crash (react/react#11538) */ }

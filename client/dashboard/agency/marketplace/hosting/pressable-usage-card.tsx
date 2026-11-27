@@ -1,12 +1,12 @@
 import { activeAgencyQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import {
-	ExternalLink,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { useIntlLocale } from '../../../app/locale';
 import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
@@ -110,9 +110,9 @@ export default function PressableUsageCard( { existingPlan }: { existingPlan: Ag
 						<>
 							<CardDivider />
 							<div>
-								<ExternalLink { ...crossoverLinkProps( 'pressable' ) }>
+								<Link openInNewTab { ...crossoverLinkProps( 'pressable' ) }>
 									{ __( 'Manage in Pressable' ) }
-								</ExternalLink>
+								</Link>
 							</div>
 						</>
 					) }

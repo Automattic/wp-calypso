@@ -1,6 +1,6 @@
-import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import type { ReactNode } from 'react';
 
 export const A4A_MCP_URL = 'https://public-api.wordpress.com/wpcom/v2/agencies-mcp/v1';
@@ -194,7 +194,8 @@ export const AGENT_CONFIGS: AgentConfig[] = [
 				{
 					code: <code />,
 					a: (
-						<ExternalLink
+						<Link
+							openInNewTab
 							href="https://docs.anthropic.com/en/docs/claude-code/setup"
 							children={ __( 'the setup guide' ) }
 						/>

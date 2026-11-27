@@ -11,12 +11,12 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 	Button,
-	ExternalLink,
 	Modal,
 } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { useState } from 'react';
 import { purchasesRoute } from '../../app/router/me';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
@@ -202,7 +202,11 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 						),
 						{
 							link: (
-								<ExternalLink href={ wpcomLink( `/export/${ site.slug }` ) } children={ null } />
+								<Link
+									openInNewTab
+									href={ wpcomLink( `/export/${ site.slug }` ) }
+									children={ null }
+								/>
 							),
 						}
 					) }

@@ -8,11 +8,11 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	Button,
-	ExternalLink,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { Link } from '@wordpress/ui';
 import { useState } from 'react';
 import Breadcrumbs from '../../../../app/breadcrumbs';
 import { marketplacePurchasesCrmDownloadsRoute } from '../../../../app/router/agency';
@@ -49,9 +49,12 @@ function LicenseKeyCard( { licenseKey }: { licenseKey: string } ) {
 					value={ licenseKey }
 					readOnly
 					help={
-						<ExternalLink href="https://kb.jetpackcrm.com/knowledge-base/how-to-activate-your-license-key/">
+						<Link
+							openInNewTab
+							href="https://kb.jetpackcrm.com/knowledge-base/how-to-activate-your-license-key/"
+						>
 							{ __( 'How to activate' ) }
-						</ExternalLink>
+						</Link>
 					}
 					onCopy={ () =>
 						createSuccessNotice( __( 'License key copied to clipboard.' ), { type: 'snackbar' } )
@@ -154,7 +157,9 @@ function ExtensionsList( { licenseKey }: { licenseKey: string } ) {
 						description={
 							<VStack spacing={ 1 }>
 								{ extension.kbUrl && (
-									<ExternalLink href={ extension.kbUrl }>{ __( 'Documentation' ) }</ExternalLink>
+									<Link openInNewTab href={ extension.kbUrl }>
+										{ __( 'Documentation' ) }
+									</Link>
 								) }
 								<span>{ getExtensionDescription( extension.slug, extension.description ) }</span>
 							</VStack>

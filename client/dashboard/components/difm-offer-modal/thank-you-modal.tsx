@@ -1,7 +1,8 @@
 import { localizeUrl } from '@automattic/i18n-utils';
-import { ExternalLink, __experimentalVStack as VStack } from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { useId } from 'react';
 import { Text } from '../text';
 import { DifmOfferModalFrame } from './frame';
@@ -36,7 +37,7 @@ export default function DifmOfferThankYouModal( { onClose }: { onClose: () => vo
 						__(
 							'If you submit your request Monday to Friday, you’ll hear from us within 24 hours. If it’s submitted over the weekend, we’ll be in touch the following Monday. In the meantime, feel free to review <link>examples of our work</link>.'
 						),
-						{ link: <ExternalLink href={ DIFM_EXAMPLES_URL } children={ null } /> }
+						{ link: <Link openInNewTab href={ DIFM_EXAMPLES_URL } children={ null } /> }
 					) }
 				</Text>
 				<Text as="p">{ __( 'We’re excited to help you get online — talk soon!' ) }</Text>

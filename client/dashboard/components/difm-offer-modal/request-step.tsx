@@ -1,13 +1,9 @@
 import { difmOfferBuildRequestMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import {
-	Button,
-	ExternalLink,
-	TextareaControl,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { Button, TextareaControl, __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useState } from 'react';
 import { getCurrentDashboard } from '../../app/routing';
@@ -182,7 +178,9 @@ export function RequestStep( {
 				/>
 			</VStack>
 			<div className="difm-offer-modal__footer">
-				<ExternalLink href={ DIFM_OFFER_FAQ_URL }>{ __( 'How it works' ) }</ExternalLink>
+				<Link openInNewTab href={ DIFM_OFFER_FAQ_URL }>
+					{ __( 'How it works' ) }
+				</Link>
 				<Button
 					variant="primary"
 					type="submit"

@@ -5,14 +5,13 @@ import {
 } from '@automattic/api-core';
 import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import {
-	ExternalLink,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { Badge } from '@wordpress/ui';
+import { Badge, Link } from '@wordpress/ui';
 import { Text as DashboardText } from '../../../components/text';
 import { TextBlur } from '../../../components/text-blur';
 import { DEFAULT_PER_PAGE } from '../../../sites/dataviews/views';
@@ -164,9 +163,9 @@ export function SiteCell( {
 	}
 	if ( isPressableLicense( license ) && ! license.revoked_at ) {
 		return isAgencyOwner ? (
-			<ExternalLink { ...crossoverLinkProps( 'pressable', () => onManageSite( license ) ) }>
+			<Link openInNewTab { ...crossoverLinkProps( 'pressable', () => onManageSite( license ) ) }>
 				{ __( 'Manage in Pressable' ) }
-			</ExternalLink>
+			</Link>
 		) : (
 			<Text variant="muted">{ __( 'Managed by agency owner' ) }</Text>
 		);
@@ -177,7 +176,9 @@ export function SiteCell( {
 	return (
 		<TextBlur isBlurred={ isResolvingSite } length={ SITE_PLACEHOLDER_LENGTH }>
 			{ license.siteurl ? (
-				<ExternalLink href={ license.siteurl }>{ getSiteHostname( license.siteurl ) }</ExternalLink>
+				<Link openInNewTab href={ license.siteurl }>
+					{ getSiteHostname( license.siteurl ) }
+				</Link>
 			) : (
 				<Text variant="muted">
 					{ isProvisioning ? __( 'Being created…' ) : __( 'Not assigned' ) }

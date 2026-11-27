@@ -33,7 +33,6 @@ import {
 	Button,
 	ToggleControl,
 	Notice,
-	ExternalLink,
 	Icon,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
@@ -51,6 +50,7 @@ import {
 	check,
 } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
+import { Link as UILink } from '@wordpress/ui';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import Breadcrumbs from '../../../app/breadcrumbs';
@@ -1263,9 +1263,9 @@ function DomainRegistrationAgreement( { purchase }: { purchase: Purchase } ) {
 	}
 	return (
 		<MetadataItem>
-			<ExternalLink rel="noreferrer" href={ purchase.domain_registration_agreement_url }>
+			<UILink openInNewTab rel="noreferrer" href={ purchase.domain_registration_agreement_url }>
 				{ __( 'Domain Registration Agreement' ) }
-			</ExternalLink>
+			</UILink>
 		</MetadataItem>
 	);
 }
@@ -1473,12 +1473,13 @@ function DomainTransferInfo( { purchase }: { purchase: Purchase } ) {
 			<Text>
 				{ createInterpolateElement( __( 'Transfer failed. Learn the possible <ReasonsWhy />.' ), {
 					LearnMore: (
-						<ExternalLink
+						<UILink
+							openInNewTab
 							href={ INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS }
 							rel="noopener noreferrer"
 						>
 							{ __( 'reasons why' ) }
-						</ExternalLink>
+						</UILink>
 					),
 				} ) }
 			</Text>
@@ -1499,12 +1500,13 @@ function DomainTransferInfo( { purchase }: { purchase: Purchase } ) {
 							</strong>
 						),
 						LearnMore: (
-							<ExternalLink
+							<UILink
+								openInNewTab
 								href={ INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS }
 								rel="noopener noreferrer"
 							>
 								{ __( 'Learn more' ) }
-							</ExternalLink>
+							</UILink>
 						),
 					}
 				) }
@@ -1521,12 +1523,13 @@ function DomainTransferInfo( { purchase }: { purchase: Purchase } ) {
 					),
 					{
 						LearnMore: (
-							<ExternalLink
+							<UILink
+								openInNewTab
 								href={ INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS }
 								rel="noopener noreferrer"
 							>
 								{ __( 'Learn more' ) }
-							</ExternalLink>
+							</UILink>
 						),
 					}
 				) }
@@ -1546,12 +1549,13 @@ function DomainTransferInfo( { purchase }: { purchase: Purchase } ) {
 							</strong>
 						),
 						LearnMore: (
-							<ExternalLink
+							<UILink
+								openInNewTab
 								href={ INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS }
 								rel="noopener noreferrer"
 							>
 								{ __( 'Learn more' ) }
-							</ExternalLink>
+							</UILink>
 						),
 					}
 				) }

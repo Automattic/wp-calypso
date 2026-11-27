@@ -3,9 +3,9 @@ import { siteByIdQuery } from '@automattic/api-queries';
 import { useLocale } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
-import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { isToday } from 'date-fns';
 import SiteIcon from '../../components/site-icon';
 import { Text } from '../../components/text';
@@ -59,9 +59,14 @@ export const MonetizeSiteLink = ( { subscription }: { subscription: MonetizeSubs
 	const displayUrl = subscription.site_url.replace( /^https?:\/\//, '' );
 
 	return (
-		<ExternalLink href={ subscription.site_url } rel="noreferrer" title={ subscription.site_url }>
+		<Link
+			openInNewTab
+			href={ subscription.site_url }
+			rel="noreferrer"
+			title={ subscription.site_url }
+		>
 			{ displayUrl }
-		</ExternalLink>
+		</Link>
 	);
 };
 

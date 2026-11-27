@@ -1,9 +1,9 @@
 import {
-	ExternalLink,
 	__experimentalHeading as Heading,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { useAnalytics } from '../../app/analytics';
 import { Text } from '../../components/text';
 import { useTermTooltip } from '../components/term-tooltip';
@@ -208,7 +208,8 @@ export default function AmplifyOverviewStory() {
 								'A detailed PDF of everything holding the site back. Bring prospects proof of the problems, and a clear plan for how you’ll fix them once they hire you.'
 							) }
 						</Text>
-						<ExternalLink
+						<Link
+							openInNewTab
 							className="dashboard-amplify-story__sample-link"
 							href={ SAMPLE_REPORT_URL }
 							onClick={ () =>
@@ -216,7 +217,7 @@ export default function AmplifyOverviewStory() {
 							}
 						>
 							{ __( 'View a sample report' ) }
-						</ExternalLink>
+						</Link>
 					</VStack>
 				</VStack>
 			</section>

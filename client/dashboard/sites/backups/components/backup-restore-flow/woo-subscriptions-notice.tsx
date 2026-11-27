@@ -5,9 +5,9 @@ import {
 	siteBackupContentsQuery,
 } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import Notice from '../../../../components/notice';
 
 const SUPPORT_URL = 'https://jetpack.com/support/getting-started-with-jetpack/known-issues/#backup';
@@ -46,8 +46,7 @@ export default function WooSubscriptionsNotice( {
 					'This backup includes WooCommerce Subscriptions. Renewals that were charged after the selected restore point will look unpaid again once the database is restored, and may be processed a second time. <link>Learn more</link>'
 				),
 				{
-					// @ts-expect-error children prop is injected by createInterpolateElement
-					link: <ExternalLink href={ SUPPORT_URL } />,
+					link: <Link openInNewTab href={ SUPPORT_URL } />,
 				}
 			) }
 		</Notice>

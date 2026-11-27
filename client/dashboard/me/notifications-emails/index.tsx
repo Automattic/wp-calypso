@@ -1,6 +1,7 @@
-import { __experimentalVStack as VStack, ExternalLink } from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -20,7 +21,11 @@ export default function NotificationsEmails() {
 						__( 'To manage individual site subscriptions, <link>go to the Reader</link>.' ),
 						{
 							link: (
-								<ExternalLink href={ wpcomLink( '/reader/subscriptions' ) } children={ null } />
+								<Link
+									openInNewTab
+									href={ wpcomLink( '/reader/subscriptions' ) }
+									children={ null }
+								/>
 							),
 						}
 					) }

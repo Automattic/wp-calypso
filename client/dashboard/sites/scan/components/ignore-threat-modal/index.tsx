@@ -4,12 +4,12 @@ import {
 	Button,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
-	ExternalLink,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { Link } from '@wordpress/ui';
 import { useEffect } from 'react';
 import { useAnalytics } from '../../../../app/analytics';
 import { ButtonStack } from '../../../../components/button-stack';
@@ -69,9 +69,9 @@ export function IgnoreThreatModal( { items, closeModal, site }: IgnoreThreatModa
 					),
 					{
 						codeable: (
-							<ExternalLink href={ CODEABLE_JETPACK_SCAN_URL } onClick={ handleCodeableClick }>
+							<Link openInNewTab href={ CODEABLE_JETPACK_SCAN_URL } onClick={ handleCodeableClick }>
 								Codeable
-							</ExternalLink>
+							</Link>
 						),
 					}
 				) }

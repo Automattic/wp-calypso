@@ -1,8 +1,8 @@
 import { akismetApiKeyQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { key } from '@wordpress/icons';
+import { Link } from '@wordpress/ui';
 import ClipboardInputControl from '../../../components/clipboard-input-control';
 import OverviewCard from '../../../components/overview-card';
 
@@ -32,9 +32,9 @@ export default function AkismetApiKeyCard() {
 				/>
 			}
 			description={
-				<ExternalLink href="https://akismet.com/support/getting-started/api-key/">
+				<Link openInNewTab href="https://akismet.com/support/getting-started/api-key/">
 					{ __( 'How to activate' ) }
-				</ExternalLink>
+				</Link>
 			}
 			isLoading={ isLoading }
 		/>

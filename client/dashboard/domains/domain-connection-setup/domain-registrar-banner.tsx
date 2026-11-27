@@ -1,9 +1,6 @@
-import {
-	__experimentalText as Text,
-	__experimentalHStack as HStack,
-	ExternalLink,
-} from '@wordpress/components';
+import { __experimentalText as Text, __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { Card, CardBody } from '../../components/card';
 
 interface DomainRegistrarBannerProps {
@@ -32,7 +29,9 @@ export default function DomainRegistrarBanner( {
 								{ __( 'Registered by' ) }
 							</Text>
 							{ ! isReseller && registrar_url ? (
-								<ExternalLink href={ registrar_url }>{ registrar }</ExternalLink>
+								<Link openInNewTab href={ registrar_url }>
+									{ registrar }
+								</Link>
 							) : (
 								<Text size="small">{ registrar }</Text>
 							) }

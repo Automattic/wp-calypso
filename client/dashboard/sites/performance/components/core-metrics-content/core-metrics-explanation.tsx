@@ -1,8 +1,8 @@
 import { Metrics } from '@automattic/api-core';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { Text } from '../../../../components/text';
 
 const metricsExplanations = {
@@ -14,13 +14,14 @@ const metricsExplanations = {
 			),
 			{
 				learnMore: (
-					<ExternalLink
+					<Link
+						openInNewTab
 						href={ localizeUrl(
 							'https://wordpress.com/support/check-your-sites-performance/#understanding-your-site-s-performance-score'
 						) }
 					>
 						{ __( 'Learn more' ) }
-					</ExternalLink>
+					</Link>
 				),
 			}
 		),
@@ -33,13 +34,14 @@ const metricsExplanations = {
 			),
 			{
 				learnMore: (
-					<ExternalLink
+					<Link
+						openInNewTab
 						href={ localizeUrl(
 							'https://wordpress.com/support/check-your-sites-performance/#understanding-your-site-s-performance-score'
 						) }
 					>
 						{ __( 'Learn more' ) }
-					</ExternalLink>
+					</Link>
 				),
 			}
 		),
@@ -52,13 +54,14 @@ const metricsExplanations = {
 			),
 			{
 				learnMore: (
-					<ExternalLink
+					<Link
+						openInNewTab
 						href={ localizeUrl(
 							'https://wordpress.com/support/check-your-sites-performance/#understanding-your-site-s-performance-score'
 						) }
 					>
 						{ __( 'Learn more' ) }
-					</ExternalLink>
+					</Link>
 				),
 			}
 		),
@@ -71,7 +74,9 @@ const metricsExplanations = {
 			),
 			{
 				learnMore: (
-					<ExternalLink href="https://web.dev/articles/inp">{ __( 'Learn more' ) }</ExternalLink>
+					<Link openInNewTab href="https://web.dev/articles/inp">
+						{ __( 'Learn more' ) }
+					</Link>
 				),
 			}
 		),
@@ -84,13 +89,14 @@ const metricsExplanations = {
 			),
 			{
 				learnMore: (
-					<ExternalLink
+					<Link
+						openInNewTab
 						href={ localizeUrl(
 							'https://wordpress.com/support/check-your-sites-performance/#understanding-your-site-s-performance-score'
 						) }
 					>
 						{ __( 'Learn more' ) }
-					</ExternalLink>
+					</Link>
 				),
 			}
 		),
@@ -103,13 +109,14 @@ const metricsExplanations = {
 			),
 			{
 				learnMore: (
-					<ExternalLink
+					<Link
+						openInNewTab
 						href={ localizeUrl(
 							'https://wordpress.com/support/check-your-sites-performance/#understanding-your-site-s-performance-score'
 						) }
 					>
 						{ __( 'Learn more' ) }
-					</ExternalLink>
+					</Link>
 				),
 			}
 		),
@@ -122,13 +129,14 @@ const metricsExplanations = {
 			),
 			{
 				learnMore: (
-					<ExternalLink
+					<Link
+						openInNewTab
 						href={ localizeUrl(
 							'https://wordpress.com/support/check-your-sites-performance/#understanding-your-site-s-performance-score'
 						) }
 					>
 						{ __( 'Learn more' ) }
-					</ExternalLink>
+					</Link>
 				),
 			}
 		),

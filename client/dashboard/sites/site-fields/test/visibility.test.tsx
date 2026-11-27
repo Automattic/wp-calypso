@@ -41,11 +41,10 @@ describe( '<Visibility>', () => {
 		const { container, getByRole } = render(
 			<Visibility site={ site } visibility="private" status={ null } isLaunched={ false } />
 		);
-		expect( container ).toHaveTextContent( 'Finish setup↗' );
-		expect( getByRole( 'link', { name: /Finish setup/ } ) ).toHaveAttribute(
-			'href',
-			wpcomLink( '/home/test.wordpress.com' )
-		);
+		expect( container ).toHaveTextContent( 'Finish setup' );
+		const link = getByRole( 'link', { name: 'Finish setup (opens in a new tab)' } );
+		expect( link ).toHaveAttribute( 'href', wpcomLink( '/home/test.wordpress.com' ) );
+		expect( link ).toHaveAttribute( 'target', '_blank' );
 	} );
 
 	test( 'for unlaunched sites with an active AI Launchpad, "Finish setup" links to the wp-admin site setup page', () => {

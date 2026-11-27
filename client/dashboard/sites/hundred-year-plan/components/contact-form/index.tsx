@@ -1,9 +1,10 @@
 import { siteSettingsMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import { __experimentalVStack as VStack, Button, ExternalLink } from '@wordpress/components';
+import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import { useState } from 'react';
 import { NavigationBlocker } from '../../../../app/navigation-blocker';
 import { withSnackbar } from '../../../../app/snackbars/with-snackbar';
@@ -62,7 +63,7 @@ export default function ContactForm( { site, settings }: { site: Site; settings:
 									'Choose someone to look after your site when you pass away. To take ownership of the site, we ask that the person you designate contacts us at <link>wordpress.com/help</link> with a copy of the death certificate.'
 								),
 								{
-									link: <ExternalLink href={ wpcomLink( '/support' ) } children={ null } />,
+									link: <Link openInNewTab href={ wpcomLink( '/support' ) } children={ null } />,
 								}
 							) }
 							level={ 3 }

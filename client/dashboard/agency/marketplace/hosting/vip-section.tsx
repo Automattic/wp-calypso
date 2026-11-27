@@ -1,13 +1,13 @@
 import { formatNumber } from '@automattic/number-formatters';
 import {
 	Button,
-	ExternalLink,
 	__experimentalHeading as Heading,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import cnnLogo from 'calypso/assets/images/logos/cnn.svg';
 import metaLogo from 'calypso/assets/images/logos/meta.svg';
 import newsCorpLogo from 'calypso/assets/images/logos/news-corp.svg';
@@ -169,7 +169,7 @@ export default function VipSection( { isReferralMode }: { isReferralMode: boolea
 												} ) }
 											</>
 										),
-										a: <ExternalLink href={ VIP_PROGRAM_INCENTIVES_URL } children={ null } />,
+										a: <Link openInNewTab href={ VIP_PROGRAM_INCENTIVES_URL } children={ null } />,
 									}
 								) }
 							</Text>

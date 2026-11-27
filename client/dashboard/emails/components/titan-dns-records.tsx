@@ -5,11 +5,11 @@ import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	ExternalLink,
 	Spinner,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { Link } from '@wordpress/ui';
 import ClipboardInputControl from '../../components/clipboard-input-control';
 import { Text } from '../../components/text';
 
@@ -89,7 +89,9 @@ export default function TitanDnsRecords( { domain }: { domain: string } ) {
 						'Your domain uses external name servers. To send and receive Professional Email, add these MX, SPF and DKIM records at your DNS provider. <learnMoreLink>Learn more</learnMoreLink>'
 					),
 					{
-						learnMoreLink: <ExternalLink href={ ADDING_TITAN_TO_YOUR_SITE } children={ null } />,
+						learnMoreLink: (
+							<Link openInNewTab href={ ADDING_TITAN_TO_YOUR_SITE } children={ null } />
+						),
 					}
 				) }
 			</Text>

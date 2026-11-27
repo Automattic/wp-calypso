@@ -1,12 +1,11 @@
 import {
 	Modal,
-	ExternalLink,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { Badge } from '@wordpress/ui';
+import { Badge, Link } from '@wordpress/ui';
 import { useIntlLocale } from '../../app/locale';
 import type { ConnectedApplication } from '@automattic/api-core';
 
@@ -37,7 +36,11 @@ const getAccessScopeDetails = ( scope: string, site?: { site_name: string; site_
 							// translators: %(siteLink)s will be replaced with the site name.
 							__( 'This connection is only allowed to access <siteLink />' ),
 							{
-								siteLink: <ExternalLink href={ site.site_URL }>{ site.site_name }</ExternalLink>,
+								siteLink: (
+									<Link openInNewTab href={ site.site_URL }>
+										{ site.site_name }
+									</Link>
+								),
 							}
 						),
 					}
@@ -77,7 +80,11 @@ export default function ApplicationDetailsModal( {
 			<VStack spacing={ 6 }>
 				<DetailItem
 					label={ __( 'Application website' ) }
-					value={ <ExternalLink href={ application.URL }>{ application.URL }</ExternalLink> }
+					value={
+						<Link openInNewTab href={ application.URL }>
+							{ application.URL }
+						</Link>
+					}
 				/>
 				<DetailItem
 					label={ __( 'Authorized on' ) }
