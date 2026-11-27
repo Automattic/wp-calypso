@@ -12,7 +12,7 @@ import type { Ability } from '@wordpress/abilities';
  * cannot see them or edit them; this brings them in rather than describing a
  * route to them, which it cannot do reliably — it cannot see the user's screen.
  *
- * Named `big-sky/` like the other editor abilities: the backend route
+ * Named `big-sky/` like most editor abilities: the backend route
  * allowlists match on ability names, and this one is listed in
  * `wpcom-editor.php`.
  */
