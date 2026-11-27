@@ -150,6 +150,26 @@ describe( 'DomainOverviewSettings', () => {
 		expect( screen.getAllByRole( 'link' ) ).toHaveLength( 3 );
 	} );
 
+	test.each< [ string, Partial< Domain > ] >( [
+		[
+			'Professional Email',
+			{
+				titan_mail_subscription: { status: 'active' } as Domain[ 'titan_mail_subscription' ],
+			},
+		],
+		[
+			'Google Workspace',
+			{
+				google_apps_subscription: { status: 'active' } as Domain[ 'google_apps_subscription' ],
+			},
+		],
+	] )( 'hides Email forwarding for a domain with %s', async ( _, customProps ) => {
+		renderDomainSettings( customProps );
+
+		expect( await screen.findByText( 'Professional email' ) ).toBeVisible();
+		expect( screen.queryByText( 'Email forwarding' ) ).not.toBeInTheDocument();
+	} );
+
 	test( 'keeps security and glue records behind a tracked toggle, after the default rows', async () => {
 		const { recordTracksEvent } = renderDomainSettings();
 		const trackedToggle = ( expanded: boolean ) =>
