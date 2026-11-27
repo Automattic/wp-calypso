@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 /* eslint-disable react/no-danger -- the point of these tests is to feed the component raw post markup. */
 import { render, waitFor } from '@testing-library/react';

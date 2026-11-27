@@ -91,7 +91,10 @@ const getDB = once( () => {
 						// This fires when the database gets upgraded or when it gets deleted.
 						// We need to close our handle to allow the change to proceed
 						db.close();
+						getDB.clear();
 					};
+					// The browser can close the connection itself, e.g. when site data is cleared.
+					db.onclose = () => getDB.clear();
 					resolve( db );
 				};
 				request.onupgradeneeded = () => request.result.createObjectStore( STORE_NAME );

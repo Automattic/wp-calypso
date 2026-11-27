@@ -9,9 +9,9 @@ export default calypsoTestConfig( {
 	root: path.resolve( import.meta.dirname, '../../client' ),
 	resolve: {
 		alias: [
-			// agenttic-client has no `calypso:src` export, and CI doesn't build it before the tests. A
-			// file that fails to import leaves its nock patched onto the worker's `http`, failing the
-			// network requests of every later file in that worker.
+			// agenttic-client has no `calypso:src` export, so resolve it from source rather than
+			// depending on a built `dist/`. A file that fails to import leaves its nock patched onto
+			// the worker's `http`, failing the network requests of every later file in that worker.
 			{
 				find: /^@automattic\/agenttic-client$/,
 				replacement: path.join( packages, 'agenttic-client/src/index.ts' ),

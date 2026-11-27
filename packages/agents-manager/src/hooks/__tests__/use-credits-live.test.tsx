@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { act, renderHook } from '@testing-library/react';
 import { vi } from 'vitest';

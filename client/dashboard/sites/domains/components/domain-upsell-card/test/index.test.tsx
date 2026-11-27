@@ -7,8 +7,8 @@ import userEvent from '@testing-library/user-event';
 import { select } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
 import nock from 'nock';
+import DomainUpsellCard from '..';
 import { render } from '../../../../../test-utils';
-import DomainUpsellCard from '../index';
 import type { DomainSuggestion, Site } from '@automattic/api-core';
 
 const site = {

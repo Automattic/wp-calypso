@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import * as oauthToken from '@automattic/oauth-token';
 import apiFetch from '@wordpress/api-fetch';
 import { type Mock, vi } from 'vitest';

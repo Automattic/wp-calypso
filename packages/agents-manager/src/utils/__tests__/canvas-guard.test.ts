@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { select } from '@wordpress/data';
 import { type Mock, type MockedFunction, vi } from 'vitest';
 import {

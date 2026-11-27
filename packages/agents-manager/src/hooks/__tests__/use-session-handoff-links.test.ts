@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { fireEvent, renderHook } from '@testing-library/react';
 import { vi } from 'vitest';
 import { getOrCreateSessionId, saveSessionId } from '../../utils/agent-session';

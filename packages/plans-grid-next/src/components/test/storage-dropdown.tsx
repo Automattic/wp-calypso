@@ -1,5 +1,5 @@
 /**
- * @jest-environment jsdom
+ * @vitest-environment jsdom
  */
 import { FEATURE_50GB_STORAGE, PLAN_BUSINESS } from '@automattic/calypso-products';
 import { AddOns, Purchases } from '@automattic/data-stores';

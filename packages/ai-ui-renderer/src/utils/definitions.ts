@@ -1,7 +1,7 @@
 import { createComponentImplementation } from '@a2ui/react';
 import { createElement, Suspense } from '@wordpress/element';
 import { useInteractiveUiHostProps, useInteractiveUiSurface } from '../contexts/surface';
-import type { ReactComponentImplementation } from '@a2ui/react';
+import type { ReactA2uiComponentProps, ReactComponentImplementation } from '@a2ui/react';
 import type { ComponentApi, FunctionImplementation } from '@a2ui/web_core';
 import type { ComponentType } from 'react';
 
@@ -58,7 +58,10 @@ export function toComponentImplementation(
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	component: ComponentType< any >
 ): ReactComponentImplementation {
-	function DefinitionComponent( { props }: { props: Record< string, unknown > } ) {
+	function DefinitionComponent( {
+		props,
+		buildChild,
+	}: ReactA2uiComponentProps< Record< string, unknown > > ) {
 		const { surfaceId, disabled, isShowingErrors } = useInteractiveUiSurface();
 		const hostProps = useInteractiveUiHostProps();
 
@@ -74,6 +77,7 @@ export function toComponentImplementation(
 				disabled,
 				isShowingErrors,
 				...hostProps,
+				buildChild,
 			} )
 		);
 	}

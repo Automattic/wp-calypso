@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { act, render } from '@testing-library/react';
 import { defaultI18n, resetLocaleData, setLocaleData } from '@wordpress/i18n';
 import { I18nProvider } from '@wordpress/react-i18n';

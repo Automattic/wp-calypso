@@ -11,7 +11,7 @@ import Breadcrumbs from '../../../../../../app/breadcrumbs';
 import { PageHeader } from '../../../../../../components/page-header';
 import PageLayout from '../../../../../../components/page-layout';
 import { ThemedIllustration } from '../../../../../../components/themed-illustration';
-import HostingFeatureGatedWithCallout from '../../../../../../sites/hosting-feature-gated-with-callout';
+import HostingFeatureGatedWithCallout from '../../../../../../sites/hosting-features/components/hosting-feature-gated-with-callout';
 import EnableSftpCard from '../../../../../../sites/sftp-ssh/components/enable-sftp-card';
 import SftpCard, {
 	type SftpCardSshState,

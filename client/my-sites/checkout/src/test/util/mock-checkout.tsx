@@ -46,7 +46,9 @@ export function MockCheckout( {
 	site?: Partial< Site >;
 } ) {
 	const reduxStore = createTestReduxStore();
-	const [ queryClient ] = useState( () => seedTestSite( new QueryClient(), site ) );
+	const [ queryClient ] = useState( () =>
+		seedTestSite( new QueryClient( { defaultOptions: { queries: { retry: false } } } ), site )
+	);
 
 	const mockSetCartEndpoint = mockSetCartEndpointWith( {
 		currency: initialCart.currency,

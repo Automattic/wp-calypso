@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { type Mock, vi } from 'vitest';
 vi.mock( '../is-editor-page', () => ( {
 	isEditorPage: vi.fn(),

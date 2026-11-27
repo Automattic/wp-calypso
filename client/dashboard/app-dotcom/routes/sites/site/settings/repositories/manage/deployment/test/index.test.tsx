@@ -5,8 +5,8 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { type Mock, vi } from 'vitest';
+import ConfigureRepository from '..';
 import { render } from '../../../../../../../../../test-utils';
-import ConfigureRepository from '../index';
 import type { AnalyticsClient } from '../../../../../../../../../app/analytics';
 import type { CodeDeploymentData, Site } from '@automattic/api-core';
 

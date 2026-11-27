@@ -164,7 +164,7 @@ describe( 'client/me/mcp/tools-subpage Tracks payloads', () => {
 			/>
 		);
 		await user.click( await screen.findByRole( 'button', { name: 'Show operations' } ) );
-		await user.click( screen.getByRole( 'button', { name: 'Turn on individually' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Turn on separately' } ) );
 		expect( mockSaveSettings ).not.toHaveBeenCalled();
 		await user.keyboard( '{Escape}' );
 		const optInToggle = screen.getByRole( 'checkbox', { name: 'Sensitive read' } );

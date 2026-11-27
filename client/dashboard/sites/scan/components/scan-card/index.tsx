@@ -10,7 +10,7 @@ import { isDashboardBackport } from '../../../../utils/is-dashboard-backport';
 import { wpcomLink } from '../../../../utils/link';
 import { isSelfHostedJetpackConnected, isSimple } from '../../../../utils/site-types';
 import JetpackConnectionWarningCard from '../../../components/jetpack-connection-warning-card';
-import HostingFeatureGatedWithOverviewCard from '../../../hosting-feature-gated-with-overview-card';
+import HostingFeatureGatedWithOverviewCard from '../../../hosting-features/components/hosting-feature-gated-with-overview-card';
 import type { SiteScan, Site } from '@automattic/api-core';
 
 const CARD_PROPS = {

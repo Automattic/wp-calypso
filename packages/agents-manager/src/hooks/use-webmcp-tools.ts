@@ -1,18 +1,30 @@
 import { useEffect } from '@wordpress/element';
 import { canExposeWebMcpTools, getWebMcpModelContext } from '../webmcp/eligibility';
 import type { ToolProvider } from '../extension-types';
+import type { LoadedProviders } from '../utils/load-external-providers';
+
+// A site with no agent provider still offers the flagged abilities in the `@wordpress/abilities`
+// registry.
+const NO_TOOL_PROVIDER: ToolProvider = {
+	getAbilities: async () => [],
+	executeAbility: async ( name ) => {
+		throw new Error( `No tool provider runs ${ name }` );
+	},
+};
 
 export default function useWebMcpTools( {
-	toolProvider,
+	providers,
 	scope,
 }: {
-	toolProvider?: ToolProvider;
+	providers: Pick< LoadedProviders, 'toolProvider' > | null;
 	scope: string;
 } ): void {
 	useEffect( () => {
-		if ( ! toolProvider || ! canExposeWebMcpTools() ) {
+		if ( ! providers || ! canExposeWebMcpTools() ) {
 			return;
 		}
+
+		const toolProvider = providers.toolProvider ?? NO_TOOL_PROVIDER;
 
 		const modelContext = getWebMcpModelContext();
 
@@ -68,5 +80,5 @@ export default function useWebMcpTools( {
 			unsubscribe?.();
 			adapter?.dispose();
 		};
-	}, [ scope, toolProvider ] );
+	}, [ scope, providers ] );
 }

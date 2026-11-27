@@ -20,49 +20,79 @@ const TEAM_MEMBERS_SUPPORT_URL =
 export default function NoMultiAgencyMessage( {
 	currentAgency,
 	targetAgency,
+	isOwner,
 }: {
 	currentAgency: AgencyTeamInviteAgency;
 	targetAgency: AgencyTeamInviteAgency;
+	isOwner: boolean;
 } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { openContactForm } = useContactSupport();
+
+	const goToTeamButton = (
+		<RouterLinkButton
+			variant="secondary"
+			size="compact"
+			to={ TEAM_ROUTE }
+			target="_blank"
+			rel="noreferrer"
+			onClick={ () => recordTracksEvent( 'calypso_a4a_team_current_agency_link_click' ) }
+		>
+			{ __( 'Go to Team' ) }
+		</RouterLinkButton>
+	);
 
 	return (
 		<>
 			<Notice variant="warning" title={ __( 'You can only join one agency dashboard at a time.' ) }>
 				<Text>
-					{ sprintf(
-						/* translators: %1$s and %2$s are agency names */
-						__( 'To join %1$s, first leave the %2$s dashboard.' ),
-						targetAgency.name,
-						currentAgency.name
-					) }
+					{ isOwner
+						? sprintf(
+								/* translators: %1$s and %2$s are agency names */
+								__(
+									'To join %1$s, first transfer ownership of %2$s to another team member, then leave its dashboard.'
+								),
+								targetAgency.name,
+								currentAgency.name
+							)
+						: sprintf(
+								/* translators: %1$s and %2$s are agency names */
+								__( 'To join %1$s, first leave the %2$s dashboard.' ),
+								targetAgency.name,
+								currentAgency.name
+							) }
 				</Text>
 			</Notice>
 			<ActionList title={ __( 'How to fix this:' ) }>
+				{ isOwner && (
+					<ActionList.ActionItem
+						title={ sprintf(
+							/* translators: %s is an agency name */
+							__( 'Transfer ownership of %s' ),
+							currentAgency.name
+						) }
+						description={ __(
+							'In the Team section, make another active team member the owner. You’ll become a regular team member.'
+						) }
+						actions={ goToTeamButton }
+					/>
+				) }
 				<ActionList.ActionItem
 					title={ sprintf(
 						/* translators: %s is an agency name */
 						__( 'Leave the %s dashboard' ),
 						currentAgency.name
 					) }
-					description={ sprintf(
-						/* translators: %s is an agency name */
-						__( 'Visit the %s dashboard and remove yourself in the Team section.' ),
-						currentAgency.name
-					) }
-					actions={
-						<RouterLinkButton
-							variant="secondary"
-							size="compact"
-							to={ TEAM_ROUTE }
-							target="_blank"
-							rel="noreferrer"
-							onClick={ () => recordTracksEvent( 'calypso_a4a_team_current_agency_link_click' ) }
-						>
-							{ __( 'Go to Team' ) }
-						</RouterLinkButton>
+					description={
+						isOwner
+							? __( 'Then remove yourself in the Team section.' )
+							: sprintf(
+									/* translators: %s is an agency name */
+									__( 'Visit the %s dashboard and remove yourself in the Team section.' ),
+									currentAgency.name
+								)
 					}
+					actions={ isOwner ? null : goToTeamButton }
 				/>
 				<ActionList.ActionItem
 					title={ sprintf(
@@ -78,6 +108,7 @@ export default function NoMultiAgencyMessage( {
 					actions={ null }
 				/>
 			</ActionList>
+			{ isOwner && <Text>{ __( 'No other team members? Contact support for help.' ) }</Text> }
 			<VStack spacing={ 3 } alignment="flex-start">
 				<SectionHeader level={ 3 } title={ __( 'Learn more about Agency membership' ) } />
 				<InlineSupportLink

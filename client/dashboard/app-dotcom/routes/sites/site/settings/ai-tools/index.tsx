@@ -73,7 +73,7 @@ import McpConnectCard from '../../../../../../me/mcp/connect-card';
 import { collectNamespaces } from '../../../../../../sites/ai-tools/components/remote-abilities-section';
 import upsellIllustrationDarkUrl from '../../../../../../sites/ai-tools/components/upsell-illustration/upsell-illustration-dark.svg';
 import upsellIllustrationUrl from '../../../../../../sites/ai-tools/components/upsell-illustration/upsell-illustration.svg';
-import UpsellCallout from '../../../../../../sites/hosting-feature-gated-with-callout/upsell';
+import UpsellCallout from '../../../../../../sites/hosting-features/components/hosting-feature-upsell-callout';
 import {
 	getAgentEmailAddress,
 	getAgentEmailVCardDataUrl,

@@ -18,7 +18,11 @@ Name CSS classes BEM-style under the `ai-ui-renderer` block, with kebab-case mod
 state, which the components that change something read: inputs, and buttons that run an action.
 Style colors with A2UI's `--a2ui-*` tokens and their defaults, keeping `THEME_PROPERTIES` in
 `utils/theme.ts` in sync with `style.scss`. Keep host-specific chat isolation, token values and
-modal and chart tooltip stacking rules in consumers.
+modal and chart tooltip stacking rules in consumers. Optional shared theme presets live in
+`src/themes/`; each includes `theme.scss`'s `preset()` mixin for its own name, which maps its
+`--ai-ui-theme-*` tokens onto the components.
+Keep the default WordPress appearance unchanged when no theme is selected. The host selects
+the theme; MCP client detection stays outside this package.
 
 WordPress UI components come from `@wordpress/ui` and load their own styles. `style.scss` maps the
 A2UI theme onto their `--wpds-*` design tokens and uses the host's WordPress component colors as

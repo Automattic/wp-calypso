@@ -1,9 +1,10 @@
-import { defineConfig } from 'vitest/config';
+import { mergeConfig } from 'vitest/config';
+import base from '../../test/packages/vitest.config.mjs';
 
-export default defineConfig( {
+export default mergeConfig( base, {
 	test: {
-		globals: true,
-		environment: 'jsdom', // Use jsdom for better browser compatibility
+		environment: 'jsdom',
+		include: [ 'src/**/*.test.{ts,tsx}' ],
 		css: {
 			modules: {
 				classNameStrategy: 'non-scoped',

@@ -58,6 +58,15 @@ export function isInstantPlanChange( targetSitePlan: SitePlanData | null | undef
 }
 
 /**
+ * Whether moving to this plan would change the billing term a second time
+ * within 12 months, which the customer can't do themselves: a Happiness
+ * Engineer makes the change, so the grid offers a support chat instead.
+ */
+export function isTermChangeLimitedPlanChange( targetSitePlan: SitePlanData | null | undefined ) {
+	return isScheduledTermChangeEnabled() && !! targetSitePlan?.isTermChangeLimited;
+}
+
+/**
  * The site plan's name with its billing term, e.g. "WordPress.com Premium
  * (monthly)", to tell two terms of the same plan apart.
  */

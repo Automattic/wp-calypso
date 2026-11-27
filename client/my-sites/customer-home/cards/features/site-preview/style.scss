@@ -87,7 +87,20 @@
 				line-height: 24px;
 			}
 
+			.home-site-preview__info-domain-row {
+				display: flex;
+				align-items: center;
+				gap: 4px;
+				min-width: 0;
+			}
+
+			.home-site-preview__domain-setup-info {
+				display: flex;
+				flex-shrink: 0;
+			}
+
 			.home-site-preview__info-domain {
+				min-width: 0;
 				font-size: $font-body-small;
 				color: var(--color-text-subtle);
 
@@ -110,4 +123,13 @@
 			transform: rotate(90deg);
 		}
 	}
+}
+
+.popover.info-popover__tooltip.home-site-preview__domain-setup-info .popover__inner {
+	max-width: 280px;
+	overflow-wrap: anywhere;
+}
+
+.home-site-preview__domain-setup-info-text {
+	margin-block-end: 8px;
 }

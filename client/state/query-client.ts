@@ -5,6 +5,7 @@ import {
 	persistQueryClient,
 } from '@tanstack/react-query-persist-client';
 import { throttle } from '@wordpress/compose';
+import debugModule from 'debug';
 import { MAX_AGE, SERIALIZE_THROTTLE } from 'calypso/state/constants';
 import { shouldPersist } from 'calypso/state/initial-state';
 import {
@@ -32,6 +33,8 @@ declare module '@automattic/api-queries' {
 		fullPageLoader?: boolean;
 	}
 }
+
+const debug = debugModule( 'calypso:state' );
 
 let calypsoQueryClient: QueryClient | null = null;
 
@@ -91,7 +94,10 @@ export async function hydrateBrowserState(
 						}
 					} );
 
-					return storePersistedStateItem( storeKey, state );
+					// The throttle drops this promise, so a failed write has to be caught here.
+					return storePersistedStateItem( storeKey, state ).catch( ( error ) =>
+						debug( 'failed to set query-client state', error )
+					);
 				} ) as ( ...args: unknown[] ) => unknown,
 				SERIALIZE_THROTTLE,
 				{ leading: false, trailing: true }

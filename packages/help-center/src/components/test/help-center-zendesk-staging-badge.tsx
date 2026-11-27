@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 import { isTestModeEnvironment } from '@automattic/zendesk-client';
 import { render, screen } from '@testing-library/react';
 import { type Mock, vi } from 'vitest';

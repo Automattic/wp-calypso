@@ -25,6 +25,7 @@ import LatestActivityCard from '../../../../sites/activity/components/latest-act
 import BackupCard from '../../../../sites/backups/components/backup-card';
 import AgencySiteShareCard from '../../../../sites/components/agency-site-share-card';
 import { EmailBlockNotice, getEmailBlock } from '../../../../sites/components/email-block-notice';
+import { InaccessibleJetpackNotice } from '../../../../sites/components/inaccessible-jetpack-notice';
 import { SitesNoticeArbiter } from '../../../../sites/components/notice-arbiter';
 import SiteActionMenu from '../../../../sites/components/site-action-menu';
 import SiteOverviewFields from '../../../../sites/components/site-overview-fields';
@@ -44,7 +45,6 @@ import {
 import PerformanceCard from '../../../../sites/performance/components/performance-card';
 import PlanCard from '../../../../sites/plan/components/plan-card';
 import ScanCard from '../../../../sites/scan/components/scan-card';
-import { InaccessibleJetpackNotice } from '../../../../sites/site/notices';
 import StagingSiteSyncDropdown from '../../../../sites/staging-site/components/staging-site-sync-dropdown';
 import {
 	StagingSiteSyncNotice,

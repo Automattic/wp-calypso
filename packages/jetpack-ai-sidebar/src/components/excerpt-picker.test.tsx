@@ -1,7 +1,3 @@
-/**
- * @jest-environment jsdom
- */
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { render, screen, fireEvent } from '@testing-library/react';

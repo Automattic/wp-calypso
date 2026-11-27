@@ -91,26 +91,6 @@ testGlobals.IntersectionObserver = class IntersectionObserver {
 	}
 };
 
-vi.mock( '@automattic/agenttic-client', () => ( {
-	getAgentManager: vi.fn( () => ( {
-		createAgent: vi.fn(),
-		getAgent: vi.fn(),
-	} ) ),
-	useAgentChat: vi.fn( () => ( {
-		messages: [],
-		isLoading: false,
-		sendMessage: vi.fn(),
-		clearMessages: vi.fn(),
-	} ) ),
-} ) );
-
-vi.mock( '@automattic/agenttic-ui', () => ( {
-	ThinkingMessage: vi.fn( () => 'Thinking...' ),
-	AgentUI: vi.fn( () => null ),
-	createMessageRenderer: vi.fn(),
-	EmptyView: vi.fn( () => null ),
-} ) );
-
 testGlobals.matchMedia = vi.fn( ( query: string ) => ( {
 	matches: false,
 	media: query,

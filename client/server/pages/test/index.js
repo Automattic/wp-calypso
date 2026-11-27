@@ -375,6 +375,11 @@ const buildApp = async ( environment ) => {
 	};
 };
 
+// The first build loads the app's modules, which can take longer than a hook's 10s timeout on a busy
+// CI agent. Building one at the top level loads them outside any timeout, and the builds in the hooks
+// below reuse them.
+await buildApp( 'production' );
+
 const assertDefaultContext = ( { url, entry } ) => {
 	let app;
 

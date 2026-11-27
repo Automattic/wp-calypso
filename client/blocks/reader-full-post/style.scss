@@ -445,6 +445,11 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	color: var( --color-neutral-70 );
 	font-size: rem( 17px );
 	line-height: 28px;
+	// Post markup comes from other sites, and its class names can match Calypso's styles. Paint
+	// containment keeps whatever it renders inside the post's box. The clip margin leaves room for
+	// the focus outline below on links at the box's edges.
+	contain: paint;
+	overflow-clip-margin: 8px;
 
 	a:focus-visible {
 		outline: 2px solid var( --studio-blue-50 );

@@ -3,7 +3,6 @@
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { useViewportMatch } from '@wordpress/compose';
 import nock from 'nock';
 import { type Mock, vi } from 'vitest';
@@ -30,6 +29,7 @@ import {
 	oneTimePurchase,
 } from './util';
 import { MockCheckout } from './util/mock-checkout';
+import { setupUserNoPointerEvents } from './util/setup-user';
 import type { CartKey, ResponseCart } from '@automattic/shopping-cart';
 
 vi.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
@@ -164,7 +164,7 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders country-specific domain fields when a country has been chosen and a domain is in the cart', async () => {
-		const user = userEvent.setup();
+		const user = setupUserNoPointerEvents();
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'US' );
@@ -178,7 +178,7 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders domain fields with postal code when a country with postal code support has been chosen and a plan is in the cart', async () => {
-		const user = userEvent.setup();
+		const user = setupUserNoPointerEvents();
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'US' );
@@ -187,7 +187,7 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders domain fields except postal code when a country without postal code support has been chosen and a plan is in the cart', async () => {
-		const user = userEvent.setup();
+		const user = setupUserNoPointerEvents();
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'CW' );
@@ -196,7 +196,7 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders domain fields with postal code when a country with postal code support has been chosen and a domain is in the cart', async () => {
-		const user = userEvent.setup();
+		const user = setupUserNoPointerEvents();
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'US' );
@@ -207,7 +207,7 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'autodetects the phone country from a dialing code typed into the phone field', async () => {
-		const user = userEvent.setup();
+		const user = setupUserNoPointerEvents();
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
 		const { container } = render(
 			<MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />
@@ -220,7 +220,7 @@ describe( 'Checkout contact step', () => {
 	} );
 
 	it( 'renders domain fields except postal code when a country without postal code support has been chosen and a domain is in the cart', async () => {
-		const user = userEvent.setup();
+		const user = setupUserNoPointerEvents();
 		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
 		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'CW' );

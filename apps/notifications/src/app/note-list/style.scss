@@ -13,6 +13,18 @@
 		min-height: 0;
 	}
 
+	> .wpnc__load-error {
+		flex: 1;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: var( --wpds-dimension-padding-2xl );
+	}
+
+	.wpnc__load-error-description {
+		color: var(--wpds-color-foreground-content-neutral);
+	}
+
 	// The subject and excerpt render in separate DataViews cells (the title and
 	// description fields), so they're styled directly rather than under a shared
 	// row wrapper.
