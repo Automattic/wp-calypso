@@ -266,7 +266,7 @@ export function getSiteLevelEnabled( userSettings, siteId ) {
 	const mcpSites = mcpAbilities?.sites || [];
 	const siteEntry = mcpSites.find( ( site ) => site.blog_id === parseInt( siteId ) );
 
-	if ( siteEntry ) {
+	if ( typeof siteEntry?.site_level_enabled === 'boolean' ) {
 		return siteEntry.site_level_enabled === true;
 	}
 

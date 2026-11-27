@@ -1,4 +1,4 @@
-import { getGroupDescriptors, getGroupIntents } from '../utils';
+import { getGroupDescriptors, getGroupIntents, getSiteLevelEnabled } from '../utils';
 
 describe( 'client/me/mcp/utils', () => {
 	describe( 'getGroupDescriptors', () => {
@@ -37,6 +37,25 @@ describe( 'client/me/mcp/utils', () => {
 
 		it( 'returns an empty object when group intents are missing', () => {
 			expect( getGroupIntents( {} ) ).toEqual( {} );
+		} );
+	} );
+
+	describe( 'getSiteLevelEnabled', () => {
+		it.each( [
+			[ 'no site entry', true, null, true ],
+			[ 'missing override', true, {}, true ],
+			[ 'reset override', true, { site_level_enabled: null }, true ],
+			[ 'missing override with disabled default', false, {}, false ],
+			[ 'explicitly enabled', false, { site_level_enabled: true }, true ],
+			[ 'explicitly disabled', true, { site_level_enabled: false }, false ],
+		] )( '%s', ( _name, defaultEnabled, siteEntry, expected ) => {
+			const userSettings = {
+				mcp_abilities: {
+					site_level_enabled_default: defaultEnabled,
+					sites: siteEntry === null ? [] : [ { blog_id: 123, ...siteEntry } ],
+				},
+			};
+			expect( getSiteLevelEnabled( userSettings, 123 ) ).toBe( expected );
 		} );
 	} );
 } );
