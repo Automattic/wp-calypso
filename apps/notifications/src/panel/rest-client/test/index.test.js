@@ -1538,6 +1538,20 @@ describe( 'RestClient', () => {
 		} );
 	} );
 
+	describe( 'opening the panel while live updates are connected', () => {
+		it( 'asks the server for the list', () => {
+			seedFirstWindow();
+			pinghubCallback( null, { response: { type: 'open' } } );
+			getCalls.length = 0;
+
+			client.setVisibility( { isShowing: true, isVisible: true } );
+
+			const listCalls = getCalls.filter( ( call ) => call.path.path === '/notifications/' );
+			expect( listCalls ).toHaveLength( 1 );
+			expect( listCalls[ 0 ].query ).not.toHaveProperty( 'before' );
+		} );
+	} );
+
 	describe( 'notes marked as unread here, when the panel opens', () => {
 		const NOTE_ID = 100;
 		const noteCalls = () =>
