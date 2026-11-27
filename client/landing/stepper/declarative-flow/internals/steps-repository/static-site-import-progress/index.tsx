@@ -38,11 +38,14 @@ export type StaticSiteImportProgressStartedImport = {
 
 export type StaticSiteImportProgressStepSubmits =
 	| StaticSiteImportProgressStartedImport
-	| { action: 'finished' }
+	| { action: 'finished'; previewUrl?: string }
 	| { action: 'stopped' }
 	| { action: 'migrate' }
 	| { action: 'unavailable' }
 	| { action: 'preview_failed' };
+
+/** How long a finished move waits for the preview's share link, which the dashboard polls for. */
+const SHARE_LINK_WAIT_MS = 30000;
 
 /** The WoW funnel that builds a preview site for an import. */
 const PREVIEW_FUNNEL = 'preview';
@@ -82,6 +85,9 @@ const StaticSiteImportProgressStep: StepType< {
 	const status = siteImport?.status;
 	const isRefused = siteImport?.isRefused;
 	const isFinished = status === 'finished';
+	// The share link gets past Coming Soon, and the server makes it shortly after the move finishes.
+	const previewUrl = siteImport?.previewUrl;
+	const [ hasShareLinkWaitEnded, setHasShareLinkWaitEnded ] = useState( false );
 
 	const submit = useEffectEvent(
 		( result: Exclude< StaticSiteImportProgressStepSubmits, { action: 'started' } > ) => {
@@ -144,13 +150,26 @@ const StaticSiteImportProgressStep: StepType< {
 			return submit( { action: 'stopped' } );
 		}
 		if ( isFinished ) {
-			return submit( { action: 'finished' } );
+			if ( previewUrl || hasShareLinkWaitEnded ) {
+				return submit( { action: 'finished', previewUrl } );
+			}
+			const timer = setTimeout( () => setHasShareLinkWaitEnded( true ), SHARE_LINK_WAIT_MS );
+			return () => clearTimeout( timer );
 		}
 		// The dashboard explains a move that stopped, and offers what can be done about it.
 		if ( isRefused || ( status && status !== 'moving' ) ) {
 			submit( { action: 'stopped' } );
 		}
-	}, [ started, siteId, importSessionId, status, isFinished, isRefused ] );
+	}, [
+		started,
+		siteId,
+		importSessionId,
+		status,
+		isFinished,
+		isRefused,
+		previewUrl,
+		hasShareLinkWaitEnded,
+	] );
 
 	if ( isRefusedError( sessionError ) ) {
 		return (

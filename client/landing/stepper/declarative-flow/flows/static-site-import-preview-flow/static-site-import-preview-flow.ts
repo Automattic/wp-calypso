@@ -367,8 +367,13 @@ const staticSiteImportPreview: FlowV2< typeof initialize > = {
 							} ) }`
 						);
 					}
-					// Preview-first already built the preview, whose Overview shows the move.
+					// Preview-first already built the preview: skipping opens its homepage through the share
+					// link, which gets past Coming Soon, or its Overview without one.
 					if ( providedDependencies?.action === 'skip_plan' ) {
+						const previewUrl = query.get( 'previewUrl' );
+						if ( previewUrl && /^https:\/\//i.test( previewUrl ) ) {
+							return window.location.replace( previewUrl );
+						}
 						return goToPreviewOverview();
 					}
 					const planCartItem = providedDependencies?.cartItems?.[ 0 ];
@@ -420,7 +425,13 @@ const staticSiteImportPreview: FlowV2< typeof initialize > = {
 							);
 						// The copied site is on the preview, so the customer picks a plan to keep it.
 						case 'finished':
-							return navigate( STEPS.UNIFIED_PLANS.slug );
+							return navigate(
+								providedDependencies.previewUrl
+									? `${ STEPS.UNIFIED_PLANS.slug }?${ new URLSearchParams( {
+											previewUrl: providedDependencies.previewUrl,
+										} ) }`
+									: STEPS.UNIFIED_PLANS.slug
+							);
 					}
 					// The preview's Overview shows how a move ended, and what can be done next.
 					return goToPreviewOverview();

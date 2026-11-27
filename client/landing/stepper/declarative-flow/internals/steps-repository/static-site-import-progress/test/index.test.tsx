@@ -1,7 +1,7 @@
 /**
  * @vitest-environment jsdom
  */
-import { screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { MemoryRouter } from 'react-router';
 import { vi } from 'vitest';
@@ -93,11 +93,33 @@ describe( 'StaticSiteImportProgressStep', () => {
 		).not.toBeInTheDocument();
 	} );
 
-	it( 'submits a finished move', () => {
-		const submit = render( { status: 'finished', isPreview: true } );
+	it( 'submits a finished move with the preview’s share link', () => {
+		const submit = render( {
+			status: 'finished',
+			isPreview: true,
+			previewUrl: 'https://preview.wpcomstaging.com/?share=abc',
+		} );
 
 		expect( submit ).toHaveBeenCalledTimes( 1 );
-		expect( submit ).toHaveBeenCalledWith( { action: 'finished' } );
+		expect( submit ).toHaveBeenCalledWith( {
+			action: 'finished',
+			previewUrl: 'https://preview.wpcomstaging.com/?share=abc',
+		} );
+	} );
+
+	it( 'submits a finished move without a share link once waiting for one ends', () => {
+		vi.useFakeTimers();
+		try {
+			const submit = render( { status: 'finished', isPreview: true } );
+			expect( submit ).not.toHaveBeenCalled();
+
+			act( () => vi.advanceTimersByTime( 30000 ) );
+
+			expect( submit ).toHaveBeenCalledTimes( 1 );
+			expect( submit ).toHaveBeenCalledWith( { action: 'finished', previewUrl: undefined } );
+		} finally {
+			vi.useRealTimers();
+		}
 	} );
 
 	it.each( [

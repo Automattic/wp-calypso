@@ -415,7 +415,33 @@ describe( 'Static site import preview flow', () => {
 				expect( goToUnifiedCheckout ).not.toHaveBeenCalled();
 			} );
 
-			it( 'opens the preview’s Overview when plans are skipped', () => {
+			it( 'offers plans with the preview’s share link once the move finishes', () => {
+				const destination = submitProgress( {
+					action: 'finished',
+					previewUrl: 'https://preview.wpcomstaging.com/?share=abc',
+				} );
+
+				expect( destination ).toMatchDestination( {
+					step: STEPS.UNIFIED_PLANS,
+					query: { previewUrl: 'https://preview.wpcomstaging.com/?share=abc' },
+				} );
+			} );
+
+			it( 'opens the preview’s homepage through its share link when plans are skipped', () => {
+				identify();
+				runNavigation( {
+					from: STEPS.UNIFIED_PLANS,
+					dependencies: { action: 'skip_plan' },
+					query: { previewUrl: 'https://preview.wpcomstaging.com/?share=abc' },
+				} );
+
+				expect( window.location.replace ).toHaveBeenLastCalledWith(
+					'https://preview.wpcomstaging.com/?share=abc'
+				);
+				expect( goToCheckout ).not.toHaveBeenCalled();
+			} );
+
+			it( 'opens the preview’s Overview when plans are skipped without a share link', () => {
 				identify();
 				runNavigation( { from: STEPS.UNIFIED_PLANS, dependencies: { action: 'skip_plan' } } );
 
