@@ -557,7 +557,6 @@ export const SiteMonitoring = ( { className }: { className?: string } ) => {
 	let dateRange;
 
 	if ( endDate.isSame( startDate, 'day' ) ) {
-		dateRange = endDate.format( 'LL' );
 		dateRange = (
 			<>
 				<span>{ endDate.format( 'LL' ) }</span>
