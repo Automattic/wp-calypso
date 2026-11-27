@@ -6,12 +6,11 @@ import {
 	__experimentalText as Text,
 	ExternalLink,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
 import { useAnalytics } from '../../../../app/analytics';
+import { withSnackbar } from '../../../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../../../components/button-stack';
 import { Notice } from '../../../../components/notice';
 import { CODEABLE_JETPACK_SCAN_URL } from '../../constants';
@@ -28,8 +27,12 @@ export function IgnoreThreatModal( { items, closeModal, site }: IgnoreThreatModa
 	const threat = items[ 0 ];
 
 	const { recordTracksEvent } = useAnalytics();
-	const ignoreThreat = useMutation( ignoreThreatMutation( site.ID ) );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const ignoreThreat = useMutation(
+		withSnackbar( ignoreThreatMutation( site.ID ), {
+			success: __( 'Threat ignored.' ),
+			error: __( 'Failed to ignore threat. Please try again.' ),
+		} )
+	);
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_dashboard_scan_ignore_threat_modal_open' );
@@ -41,14 +44,10 @@ export function IgnoreThreatModal( { items, closeModal, site }: IgnoreThreatModa
 			onSuccess: () => {
 				closeModal?.();
 				recordTracksEvent( 'calypso_dashboard_scan_ignore_threat_success' );
-				createSuccessNotice( __( 'Threat ignored.' ), { type: 'snackbar' } );
 			},
 			onError: () => {
 				closeModal?.();
 				recordTracksEvent( 'calypso_dashboard_scan_ignore_threat_failed' );
-				createErrorNotice( __( 'Failed to ignore threat. Please try again.' ), {
-					type: 'snackbar',
-				} );
 			},
 		} );
 	};

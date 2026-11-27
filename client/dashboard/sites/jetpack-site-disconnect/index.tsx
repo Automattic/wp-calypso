@@ -6,14 +6,13 @@ import {
 	Button,
 	ExternalLink,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { purchaseSettingsRoute, purchasesRoute } from '../../app/router/me';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import RouterLinkButton from '../../components/router-link-button';
@@ -96,8 +95,16 @@ function ContentConfirmDisconnect( {
 	activePurchaseIds,
 }: JetpackSiteDisconnectProps & { activePurchaseIds: number[] } ) {
 	const { recordTracksEvent } = useAnalytics();
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const mutation = useMutation( siteJetpackDisconnectMutation( site.ID ) );
+	const mutation = useMutation(
+		withSnackbar( siteJetpackDisconnectMutation( site.ID ), {
+			success: sprintf(
+				/* translators: %s: site domain */
+				__( '%s has been disconnected.' ),
+				site.slug
+			),
+			error: { source: 'server' },
+		} )
+	);
 
 	const [ formData, setFormData ] = useState< DisconnectFormData >( {
 		domain: '',
@@ -114,25 +121,12 @@ function ContentConfirmDisconnect( {
 		mutation.mutate( undefined, {
 			onSuccess: () => {
 				recordTracksEvent( 'calypso_dashboard_site_disconnect_modal_disconnect_success' );
-				createSuccessNotice(
-					sprintf(
-						/* translators: %s: site domain */
-						__( '%s has been disconnected.' ),
-						site.slug
-					),
-					{ type: 'snackbar' }
-				);
-
 				onClose();
 			},
 			onError: ( error: Error ) => {
 				recordTracksEvent( 'calypso_dashboard_site_disconnect_modal_disconnect_error', {
 					site_id: site.ID,
 					error: error.name,
-				} );
-
-				createErrorNotice( error.message || __( 'Failed to disconnect site.' ), {
-					type: 'snackbar',
 				} );
 				onClose();
 			},

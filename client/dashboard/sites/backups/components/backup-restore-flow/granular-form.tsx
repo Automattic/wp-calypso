@@ -1,12 +1,11 @@
 import { siteBackupGranularRestoreMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { Button, Panel, __experimentalVStack as VStack } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useCallback, useId, useState } from 'react';
 import { useFileBrowserContext } from '../../../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
+import { withSnackbar } from '../../../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../../../components/button-stack';
 import Notice from '../../../../components/notice';
 import { Text } from '../../../../components/text';
@@ -32,9 +31,10 @@ function SiteBackupGranularRestoreForm( {
 	onRestoreInitiate: ( restoreId: number, trackingProps?: RestoreTrackingProps ) => void;
 } ) {
 	const { mutate: restoreMutation, isPending: isRestoreMutationPending } = useMutation(
-		siteBackupGranularRestoreMutation( siteId )
+		withSnackbar( siteBackupGranularRestoreMutation( siteId ), {
+			error: __( 'Failed to initiate restore. Please try again.' ),
+		} )
 	);
-	const { createErrorNotice } = useDispatch( noticesStore );
 
 	const { fileBrowserState } = useFileBrowserContext();
 	const browserCheckList = fileBrowserState.getCheckList( Number( rewindId ) );
@@ -66,11 +66,6 @@ function SiteBackupGranularRestoreForm( {
 					onRestoreInitiate( restoreId, {
 						known_threats_shown: hasKnownThreats,
 						known_threats_acknowledged: hasKnownThreats && acknowledged,
-					} );
-				},
-				onError: () => {
-					createErrorNotice( __( 'Failed to initiate restore. Please try again.' ), {
-						type: 'snackbar',
 					} );
 				},
 			}

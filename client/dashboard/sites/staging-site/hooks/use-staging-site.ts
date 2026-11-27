@@ -16,6 +16,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { useHelpCenter } from '../../../app/help-center';
+import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import {
 	isAtomicTransferInProgress,
 	isAtomicTransferredSite,
@@ -144,7 +145,16 @@ export default function useStagingSite( site: Site ) {
 		productionSite,
 	] );
 
-	const mutation = useMutation( stagingSiteCreateMutation( productionSite?.ID ?? 0 ) );
+	const mutation = useMutation(
+		withSnackbar( stagingSiteCreateMutation( productionSite?.ID ?? 0 ), {
+			error: ( error ) =>
+				sprintf(
+					// translators: %(reason)s: the reason the staging site creation failed.
+					__( 'Failed to create staging site: %(reason)s' ),
+					{ reason: error.message }
+				),
+		} )
+	);
 
 	const { data: hasValidQuota, error: isErrorValidQuota } = useQuery( {
 		...hasValidQuotaQuery( productionSite?.ID ?? 0 ),
@@ -224,18 +234,8 @@ export default function useStagingSite( site: Site ) {
 				queryClient.invalidateQueries( siteByIdQuery( productionSiteId ?? 0 ) );
 				queryClient.invalidateQueries( hasStagingSiteQuery( productionSiteId ?? 0 ) );
 			},
-			onError: ( error: Error ) => {
+			onError: () => {
 				recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_failure' );
-				createErrorNotice(
-					sprintf(
-						// translators: %(reason)s: the reason the staging site creation failed.
-						__( 'Failed to create staging site: %(reason)s' ),
-						{ reason: error.message }
-					),
-					{
-						type: 'snackbar',
-					}
-				);
 			},
 		} );
 	};

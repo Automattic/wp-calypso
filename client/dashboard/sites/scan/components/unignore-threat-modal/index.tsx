@@ -6,12 +6,11 @@ import {
 	__experimentalText as Text,
 	ExternalLink,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
 import { useAnalytics } from '../../../../app/analytics';
+import { withSnackbar } from '../../../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../../../components/button-stack';
 import { Notice } from '../../../../components/notice';
 import { CODEABLE_JETPACK_SCAN_URL } from '../../constants';
@@ -27,8 +26,12 @@ interface UnignoreThreatModalProps extends RenderModalProps< Threat > {
 export function UnignoreThreatModal( { items, closeModal, site }: UnignoreThreatModalProps ) {
 	const threat = items[ 0 ];
 	const { recordTracksEvent } = useAnalytics();
-	const unignoreThreat = useMutation( unignoreThreatMutation( site.ID ) );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const unignoreThreat = useMutation(
+		withSnackbar( unignoreThreatMutation( site.ID ), {
+			success: __( 'Threat unignored.' ),
+			error: __( 'Failed to unignore threat. Please try again.' ),
+		} )
+	);
 
 	useEffect( () => {
 		recordTracksEvent( 'calypso_dashboard_scan_unignore_threat_modal_open' );
@@ -40,14 +43,10 @@ export function UnignoreThreatModal( { items, closeModal, site }: UnignoreThreat
 			onSuccess: () => {
 				closeModal?.();
 				recordTracksEvent( 'calypso_dashboard_scan_unignore_threat_success' );
-				createSuccessNotice( __( 'Threat unignored.' ), { type: 'snackbar' } );
 			},
 			onError: () => {
 				closeModal?.();
 				recordTracksEvent( 'calypso_dashboard_scan_unignore_threat_failed' );
-				createErrorNotice( __( 'Failed to unignore threat. Please try again.' ), {
-					type: 'snackbar',
-				} );
 			},
 		} );
 	};

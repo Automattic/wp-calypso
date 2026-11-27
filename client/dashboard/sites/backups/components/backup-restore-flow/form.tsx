@@ -1,12 +1,11 @@
 import { siteBackupRestoreInitiateMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { Button, __experimentalVStack as VStack } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useCallback, useId, useState } from 'react';
+import { withSnackbar } from '../../../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../../../components/button-stack';
 import Notice from '../../../../components/notice';
 import { Text } from '../../../../components/text';
@@ -70,9 +69,10 @@ function SiteBackupRestoreForm( {
 	onRestoreInitiate: ( restoreId: number, trackingProps?: RestoreTrackingProps ) => void;
 } ) {
 	const { mutate: restoreMutation, isPending: isRestoreMutationPending } = useMutation(
-		siteBackupRestoreInitiateMutation( siteId )
+		withSnackbar( siteBackupRestoreInitiateMutation( siteId ), {
+			error: __( 'Failed to initiate restore. Please try again.' ),
+		} )
 	);
-	const { createErrorNotice } = useDispatch( noticesStore );
 
 	const [ formData, setFormData ] = useState< RestoreConfig >( {
 		themes: true,
@@ -112,11 +112,6 @@ function SiteBackupRestoreForm( {
 					onRestoreInitiate( restoreId, {
 						known_threats_shown: hasKnownThreats,
 						known_threats_acknowledged: hasKnownThreats && acknowledged,
-					} );
-				},
-				onError: () => {
-					createErrorNotice( __( 'Failed to initiate restore. Please try again.' ), {
-						type: 'snackbar',
 					} );
 				},
 			}
