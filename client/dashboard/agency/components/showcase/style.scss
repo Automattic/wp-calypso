@@ -1,5 +1,6 @@
 @import '@wordpress/base-styles/colors';
 @import '@automattic/color-studio/dist/color-variables';
+@import './edge-fade';
 
 $pad-x: 32px;
 $pad-y: 28px;
@@ -11,9 +12,7 @@ $side-by-side: $pad-x * 2 + $words-min + $gap + $object;
 $lead-side-by-side: $pad-x * 2 + $words-min + $gap + $lead-object;
 
 .dashboard-showcase {
-	--fade-start: 0%;
-	--fade-end: 0%;
-	--fade-direction: to right;
+	@include edge-fade;
 
 	display: flex;
 	gap: 16px;
@@ -26,34 +25,9 @@ $lead-side-by-side: $pad-x * 2 + $words-min + $gap + $lead-object;
 	scroll-behavior: smooth;
 	scroll-snap-type: x mandatory;
 	scrollbar-width: none;
-	mask-image: linear-gradient(
-		var( --fade-direction ),
-		transparent,
-		rgba( 0, 0, 0, 0.3 ) calc( var( --fade-start ) * 0.35 ),
-		rgba( 0, 0, 0, 0.75 ) calc( var( --fade-start ) * 0.7 ),
-		#000 var( --fade-start ),
-		#000 calc( 100% - var( --fade-end ) ),
-		rgba( 0, 0, 0, 0.75 ) calc( 100% - var( --fade-end ) * 0.7 ),
-		rgba( 0, 0, 0, 0.3 ) calc( 100% - var( --fade-end ) * 0.35 ),
-		transparent
-	);
 
 	&::-webkit-scrollbar {
 		display: none;
-	}
-
-	// Gradients have no logical direction, so the fade runs from the
-	// inline start by hand.
-	[dir='rtl'] & {
-		--fade-direction: to left;
-	}
-
-	&.can-back {
-		--fade-start: 40px;
-	}
-
-	&.can-forward {
-		--fade-end: 64px;
 	}
 
 	@media ( prefers-reduced-motion: reduce ) {
