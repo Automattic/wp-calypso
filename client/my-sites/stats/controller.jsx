@@ -46,7 +46,7 @@ function getNumPeriodAgo( momentSiteZone, date, period ) {
 	let numPeriodAgo;
 
 	switch ( period ) {
-		// The Hours view navigates by day, so its startDate has day precision.
+		// The Hours view moves back one day at a time, so count days.
 		case 'hour':
 		case 'day':
 			numPeriodAgo = durationAgo.asDays();
