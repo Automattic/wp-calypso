@@ -24,7 +24,7 @@ import {
 	has100YearDomain,
 	planItem,
 } from 'calypso/lib/cart-values/cart-items';
-import useCheckoutCartKey from 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key';
+import { useCheckoutCartKey } from 'calypso/my-sites/checkout/src/hooks/use-checkout-host';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { siteHasPaidPlan, useCheckoutSite } from '../src/hooks/use-checkout-site';

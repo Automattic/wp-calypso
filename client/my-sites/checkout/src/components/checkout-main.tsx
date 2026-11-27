@@ -14,7 +14,7 @@ import { VGSCollectProvider } from '@vgs/collect-js-react';
 import debugFactory from 'debug';
 import DOMPurify from 'dompurify';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useCheckoutMigrationIntroductoryOfferSticker } from 'calypso/data/site-migration/use-checkout-migration-introductory-offer-sticker';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -25,8 +25,8 @@ import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
 import hasGravatarDomainQueryParam from 'calypso/state/selectors/has-gravatar-domain-query-param';
 import useActOnceOnStrings from '../hooks/use-act-once-on-strings';
 import useAddProductsFromUrl from '../hooks/use-add-products-from-url';
-import { CheckoutCartKeyProvider } from '../hooks/use-checkout-cart-key';
 import useCheckoutFlowTrackKey from '../hooks/use-checkout-flow-track-key';
+import { CheckoutHostProvider } from '../hooks/use-checkout-host';
 import { isJetpackNotAtomicSite, useCheckoutSite } from '../hooks/use-checkout-site';
 import useCountryList from '../hooks/use-country-list';
 import useCreatePaymentMethods from '../hooks/use-create-payment-methods';
@@ -72,6 +72,7 @@ import { OnChangeItemVariant } from './item-variation-picker';
 import JetpackProRedirectModal from './jetpack-pro-redirect-modal';
 import PrePurchaseNotices from './prepurchase-notices';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
+import type { User } from '@automattic/api-core';
 import type {
 	CheckoutPageErrorCallback,
 	PaymentEventCallbackArguments,
@@ -88,6 +89,8 @@ export interface CheckoutMainProps {
 	cartKey: CartKey;
 	siteSlug: string | undefined;
 	siteId: number | undefined;
+	/** The logged-in user, or `null` when checkout is logged out. */
+	user: User | null;
 	productAliasFromUrl?: string | undefined;
 	productSourceFromUrl?: string;
 	/** The AI agent session that generated the checkout link, for purchase attribution. */
@@ -123,7 +126,8 @@ export interface CheckoutMainProps {
 export default function CheckoutMain( {
 	cartKey,
 	siteSlug,
-	siteId,
+	siteId: siteIdFromHost,
+	user,
 	productAliasFromUrl,
 	productSourceFromUrl,
 	aiSessionIdFromUrl,
@@ -147,6 +151,11 @@ export default function CheckoutMain( {
 	adminUrl,
 }: CheckoutMainProps ) {
 	const translate = useTranslate();
+
+	// A logged-out checkout can create a site along with the account before the
+	// transaction; from then on, the purchase is for that site.
+	const [ createdSiteId, setCreatedSiteId ] = useState< number | undefined >();
+	const siteId = createdSiteId ?? siteIdFromHost;
 
 	const { data: site, isLoading: isSiteLoading } = useCheckoutSite( siteId );
 	const isJetpackNotAtomic = isJetpackNotAtomicSite( site ) || sitelessCheckoutType === 'jetpack';
@@ -329,6 +338,7 @@ export default function CheckoutMain( {
 	// passed the post-checkout URL before the transaction begins.
 	const getThankYouUrlBase = useGetThankYouUrl( {
 		siteSlug: updatedSiteSlug,
+		siteId,
 		redirectTo,
 		purchaseId,
 		feature,
@@ -352,7 +362,7 @@ export default function CheckoutMain( {
 
 	const contactDetailsType = getContactDetailsType( responseCart );
 
-	useDetectedCountryCode();
+	useDetectedCountryCode( user?.user_ip_country_code );
 
 	// Record errors adding products to the cart
 	useActOnceOnStrings( [ cartProductPrepError ].filter( isValueTruthy ), ( messages ) => {
@@ -540,6 +550,7 @@ export default function CheckoutMain( {
 			reduxDispatch,
 			responseCart,
 			siteId: updatedSiteId,
+			onSiteCreated: setCreatedSiteId,
 			siteSlug: updatedSiteSlug,
 			stripeConfiguration,
 			stripe,
@@ -753,6 +764,7 @@ export default function CheckoutMain( {
 	// DO NOT PUT POST-CHECKOUT BEHAVIOR IN HERE! IT'S NOT WHAT YOU THINK!
 	const onPaymentSubmittedAndProcessing = useCreatePaymentSubmittedAndProcessingCallback( {
 		cartKey,
+		siteId,
 		createUserAndSiteBeforeTransaction,
 		productAliasFromUrl,
 		redirectTo,
@@ -851,7 +863,7 @@ export default function CheckoutMain( {
 	);
 
 	return (
-		<CheckoutCartKeyProvider cartKey={ cartKey }>
+		<CheckoutHostProvider cartKey={ cartKey } siteId={ siteId } user={ user }>
 			<Step.StepContainerV2Provider value={ stepContainerV2Context }>
 				{ /* Waits for the cart when the path depends on it: a later path change records a second view. */ }
 				{ ( ! isRenewalBySubscriptionId || ! isInitialCartLoading ) && (
@@ -919,7 +931,7 @@ export default function CheckoutMain( {
 					</CheckoutProvider>
 				</VGSCollectProvider>
 			</Step.StepContainerV2Provider>
-		</CheckoutCartKeyProvider>
+		</CheckoutHostProvider>
 	);
 }
 

@@ -7,7 +7,11 @@ import CheckoutQueryClientProvider from 'calypso/my-sites/checkout/checkout-quer
 import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector } from 'calypso/state';
-import { getCurrentUserLocale, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUser,
+	getCurrentUserLocale,
+	isUserLoggedIn,
+} from 'calypso/state/current-user/selectors';
 import ClientCheckoutV2Error from '../../checkout-v2-error';
 import ClientCheckoutV2Placeholder from '../../checkout-v2-placeholder';
 import useClientCheckout from '../../hooks/use-client-checkout';
@@ -17,6 +21,7 @@ const EXPRESS_CHECKOUT_REDIRECT_URL = 'https://agencies.automattic.com/client/su
 
 function ClientExpressCheckoutContent() {
 	const cartKey = useCartKey();
+	const user = useSelector( getCurrentUser );
 	const translate = useTranslate();
 	const userLoggedIn = useSelector( isUserLoggedIn );
 
@@ -40,6 +45,7 @@ function ClientExpressCheckoutContent() {
 	return (
 		<CheckoutMain
 			cartKey={ cartKey }
+			user={ user }
 			sitelessCheckoutType="a4a"
 			redirectTo={ redirectTo }
 			customizedPreviousPath={ EXPRESS_CHECKOUT_REDIRECT_URL }

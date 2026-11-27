@@ -18,7 +18,7 @@ import { useMemo } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { vi } from 'vitest';
 import { CheckoutSubmitButtonContent } from 'calypso/my-sites/checkout/src/components/checkout-submit-button-content';
-import { CheckoutCartKeyProvider } from 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key';
+import { CheckoutHostProvider } from 'calypso/my-sites/checkout/src/hooks/use-checkout-host';
 import { createExistingCardMethod } from 'calypso/my-sites/checkout/src/payment-methods/existing-credit-card';
 import { createReduxStore } from 'calypso/state/create-store';
 
@@ -48,7 +48,7 @@ function TestWrapper( { paymentMethods, paymentProcessors = undefined } ) {
 	return (
 		<ReduxProvider store={ store }>
 			<QueryClientProvider client={ queryClient }>
-				<CheckoutCartKeyProvider cartKey="no-site">
+				<CheckoutHostProvider cartKey="no-site" siteId={ null } user={ null }>
 					<CheckoutProvider
 						paymentMethods={ paymentMethods }
 						selectFirstAvailablePaymentMethod
@@ -59,7 +59,7 @@ function TestWrapper( { paymentMethods, paymentProcessors = undefined } ) {
 							<CheckoutFormSubmit />
 						</CheckoutStepGroup>
 					</CheckoutProvider>
-				</CheckoutCartKeyProvider>
+				</CheckoutHostProvider>
 			</QueryClientProvider>
 		</ReduxProvider>
 	);

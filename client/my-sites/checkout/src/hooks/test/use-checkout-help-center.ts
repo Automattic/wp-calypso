@@ -80,32 +80,30 @@ vi.mock( '@wordpress/data', () => ( {
 		} ) ),
 } ) );
 
-vi.mock( 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key', () => ( {
-	__esModule: true,
-	default: () => 'cart-key',
+vi.mock( 'calypso/my-sites/checkout/src/hooks/use-checkout-host', () => ( {
+	useCheckoutCartKey: () => 'cart-key',
+	useCheckoutSiteId: () => mockSiteId,
+	useCheckoutUser: () => ( mockIsLoggedIn ? { ID: 1 } : null ),
+} ) );
+
+vi.mock( 'calypso/my-sites/checkout/src/hooks/use-checkout-site', () => ( {
+	useCheckoutSite: () => ( {
+		data: mockSiteId
+			? {
+					slug: 'example.wordpress.com',
+					jetpack: mockIsJetpackSite,
+					is_wpcom_atomic: mockIsAtomicSite,
+				}
+			: undefined,
+	} ),
 } ) );
 
 vi.mock( 'calypso/state', () => ( {
 	useSelector: ( selector: () => unknown ) => selector(),
 } ) );
 
-vi.mock( 'calypso/state/current-user/selectors', () => ( {
-	isUserLoggedIn: () => mockIsLoggedIn,
-} ) );
-
-vi.mock( 'calypso/state/selectors/is-site-automated-transfer', () => ( {
-	__esModule: true,
-	default: () => mockIsAtomicSite,
-} ) );
-
-vi.mock( 'calypso/state/sites/selectors', () => ( {
-	isJetpackSite: () => mockIsJetpackSite,
-} ) );
-
 vi.mock( 'calypso/state/ui/selectors', () => ( {
 	getSectionName: () => mockSectionName,
-	getSelectedSiteId: () => mockSiteId,
-	getSelectedSiteSlug: () => 'example.wordpress.com',
 } ) );
 
 vi.mock( '../../lib/checkout-support-routing', () => ( {

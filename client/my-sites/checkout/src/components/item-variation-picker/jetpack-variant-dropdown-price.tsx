@@ -3,7 +3,7 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { LoadingCopy } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
-import useCheckoutCartKey from 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key';
+import { useCheckoutCartKey } from 'calypso/my-sites/checkout/src/hooks/use-checkout-host';
 import { Discount, Label, Price, PriceTextContainer, Variant } from './styles';
 import type { WPCOMProductVariant } from './types';
 import type { FunctionComponent } from 'react';

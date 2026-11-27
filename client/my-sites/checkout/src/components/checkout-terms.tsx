@@ -11,8 +11,7 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import DomainPromotionalPricingRestrictions from 'calypso/my-sites/checkout/src/components/domain-promotional-pricing-restrictions';
-import { useSelector } from 'calypso/state';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { useCheckoutSiteId } from '../hooks/use-checkout-host';
 import { isJetpackNotAtomicSite, useCheckoutSite } from '../hooks/use-checkout-site';
 import { useContactDetails } from '../lib/checkout-stores';
 import AdditionalTermsOfServiceInCart from './additional-terms-of-service-in-cart';
@@ -68,7 +67,7 @@ export default function CheckoutTerms( {
 } ) {
 	const isGiftPurchase = cart.is_gift_purchase;
 	const translate = useTranslate();
-	const siteId = useSelector( getSelectedSiteId );
+	const siteId = useCheckoutSiteId();
 	const { data: site } = useCheckoutSite( siteId );
 	const isJetpackNotAtomic = isJetpackNotAtomicSite( site );
 	const contactInfo = useContactDetails();

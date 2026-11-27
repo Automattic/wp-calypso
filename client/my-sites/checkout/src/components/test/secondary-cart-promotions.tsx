@@ -22,7 +22,7 @@ import {
 	mockGetCartEndpointWith,
 	mockSetCartEndpointWith,
 } from 'calypso/my-sites/checkout/src/test/util';
-import { CheckoutCartKeyProvider } from '../../hooks/use-checkout-cart-key';
+import { CheckoutHostProvider } from '../../hooks/use-checkout-host';
 import SecondaryCartPromotions from '../secondary-cart-promotions';
 import { responseCartWithRenewal, storeData } from './lib/fixtures';
 
@@ -113,6 +113,7 @@ function TestWrapper( {
 	queryClient: initialQueryClient,
 } ) {
 	const [ reduxStore ] = useState( () => applyMiddleware( thunk )( createStore )( reducer ) );
+	const selectedSiteId = reduxStore.getState().ui.selectedSiteId;
 	const [ queryClient ] = useState(
 		() => initialQueryClient ?? createSeededQueryClient( sitePlan )
 	);
@@ -128,9 +129,9 @@ function TestWrapper( {
 		<ReduxProvider store={ reduxStore }>
 			<QueryClientProvider client={ queryClient }>
 				<ShoppingCartProvider managerClient={ managerClient }>
-					<CheckoutCartKeyProvider cartKey={ 123 }>
+					<CheckoutHostProvider cartKey={ 123 } siteId={ selectedSiteId } user={ null }>
 						<ThemeProvider theme={ checkoutTheme }>{ children }</ThemeProvider>
-					</CheckoutCartKeyProvider>
+					</CheckoutHostProvider>
 				</ShoppingCartProvider>
 			</QueryClientProvider>
 		</ReduxProvider>

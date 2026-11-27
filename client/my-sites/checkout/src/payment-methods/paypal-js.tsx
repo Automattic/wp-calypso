@@ -18,7 +18,7 @@ import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { PayPalLogo } from 'calypso/dashboard/components/paypal-logo';
-import useCheckoutCartKey from 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key';
+import { useCheckoutCartKey } from 'calypso/my-sites/checkout/src/hooks/use-checkout-host';
 import { PaymentMethodLogos } from '../components/payment-method-logos';
 import { convertErrorToString, logStashEvent } from '../lib/analytics';
 

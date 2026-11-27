@@ -25,9 +25,10 @@ vi.mock( '@automattic/shopping-cart', () => ( {
 	useShoppingCart: vi.fn(),
 } ) );
 
-vi.mock( 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key', () => ( {
-	__esModule: true,
-	default: vi.fn(),
+vi.mock( 'calypso/my-sites/checkout/src/hooks/use-checkout-host', () => ( {
+	useCheckoutCartKey: vi.fn(),
+	useCheckoutSiteId: () => null,
+	useCheckoutUser: () => null,
 } ) );
 
 vi.mock( 'calypso/lib/analytics/tracks', () => ( {

@@ -18,9 +18,9 @@ vi.mock( 'calypso/my-sites/checkout/src/components/leave-checkout-modal', () => 
 vi.mock( 'calypso/my-sites/checkout/src/hooks/use-checkout-help-center', () => ( {
 	useCheckoutHelpCenter: () => ( { toggleHelpCenter: vi.fn() } ),
 } ) );
-vi.mock( 'calypso/my-sites/checkout/use-cart-key', () => ( {
+vi.mock( 'calypso/my-sites/checkout/calypso-checkout-host-provider', () => ( {
 	__esModule: true,
-	default: () => 'no-site',
+	default: ( { children }: PropsWithChildren ) => children,
 } ) );
 vi.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: vi.fn() } ) );
 vi.mock( '../masterbar', () => ( {

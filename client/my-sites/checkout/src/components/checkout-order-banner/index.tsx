@@ -1,6 +1,6 @@
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { GiftingCheckoutBanner } from 'calypso/my-sites/checkout/src/components/checkout-order-banner/gifting-checkout-banner';
-import useCheckoutCartKey from 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key';
+import { useCheckoutCartKey } from 'calypso/my-sites/checkout/src/hooks/use-checkout-host';
 
 export function CheckoutOrderBanner() {
 	const cartKey = useCheckoutCartKey();

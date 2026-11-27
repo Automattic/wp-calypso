@@ -15,8 +15,10 @@ vi.mock( '@automattic/shopping-cart', async () => ( {
 	) ),
 	useShoppingCart: vi.fn(),
 } ) );
-vi.mock( 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key', () => ( {
-	default: () => 'no-site',
+vi.mock( 'calypso/my-sites/checkout/src/hooks/use-checkout-host', () => ( {
+	useCheckoutCartKey: () => 'no-site',
+	useCheckoutSiteId: () => null,
+	useCheckoutUser: () => null,
 } ) );
 
 const yearly: WPCOMProductVariant = {

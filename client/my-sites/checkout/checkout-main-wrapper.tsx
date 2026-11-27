@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 import { logToLogstash } from 'calypso/lib/logstash';
 import Recaptcha from 'calypso/signup/recaptcha';
 import { useSelector } from 'calypso/state';
-import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { getCurrentUser, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import CheckoutQueryClientProvider from './checkout-query-client-provider';
@@ -74,6 +74,7 @@ export default function CheckoutMainWrapper( {
 	const locale = useSelector( getCurrentUserLocale );
 	const selectedSiteId = useSelector( getSelectedSiteId ) ?? undefined;
 	const cartKey = useCartKey();
+	const user = useSelector( getCurrentUser );
 
 	useEffect( () => {
 		window.scrollTo( 0, 0 );
@@ -119,6 +120,7 @@ export default function CheckoutMainWrapper( {
 						>
 							<CheckoutMain
 								cartKey={ cartKey }
+								user={ user }
 								siteSlug={ siteSlug }
 								siteId={ selectedSiteId }
 								productAliasFromUrl={ productAliasFromUrl }

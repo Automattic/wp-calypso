@@ -8,7 +8,7 @@ import {
 	getStateLabelText,
 	STATE_SELECT_TEXT,
 } from 'calypso/components/domains/contact-details-form-fields/custom-form-fieldsets/utils';
-import useCheckoutCartKey from 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key';
+import { useCheckoutCartKey } from 'calypso/my-sites/checkout/src/hooks/use-checkout-host';
 import { StateSelect } from 'calypso/my-sites/domains/components/form';
 import { useCachedContactDetails } from '../hooks/use-cached-contact-details';
 import type { PaymentMethod, ProcessPayment } from '@automattic/composite-checkout';

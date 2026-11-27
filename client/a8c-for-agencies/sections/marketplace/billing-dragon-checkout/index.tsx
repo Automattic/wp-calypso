@@ -15,7 +15,7 @@ import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main
 import usePrepareProductsForCart from 'calypso/my-sites/checkout/src/hooks/use-prepare-products-for-cart';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
-import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { getCurrentUser, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
 import getSite from 'calypso/state/sites/selectors/get-site';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
@@ -73,6 +73,7 @@ function BillingDragonCheckoutContent( {
 
 	// Use site's cart key when site exists, otherwise use 'no-site' for siteless checkout
 	const cartKey = siteId || 'no-site';
+	const user = useSelector( getCurrentUser );
 	const { replaceProductsInCart, responseCart } = useShoppingCart( cartKey );
 
 	// Prepared Cart Flow: the WordPress.com backend already saved the cart (`skip_active_cart=1`
@@ -310,6 +311,7 @@ function BillingDragonCheckoutContent( {
 			) }
 			<CheckoutMain
 				cartKey={ cartKey }
+				user={ user }
 				sitelessCheckoutType="a4a"
 				redirectTo={
 					successUrl ??

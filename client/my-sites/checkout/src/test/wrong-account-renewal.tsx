@@ -12,10 +12,12 @@ import {
 	LogInToCorrectAccountButton,
 	WrongAccountRenewal,
 } from '../components/wrong-account-renewal';
+import { CheckoutHostProvider } from '../hooks/use-checkout-host';
 import {
 	useHasWrongAccountRenewalError,
 	WRONG_ACCOUNT_RENEWAL_ERROR_CODE,
 } from '../hooks/use-has-wrong-account-renewal-error';
+import type { User } from '@automattic/api-core';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
 vi.mock( 'calypso/state/current-user/actions', async () => ( {
@@ -40,18 +42,17 @@ function getCartWithErrorCodes( codes: string[] ): ResponseCart {
  */
 function CheckoutWrapper( { children }: { children: React.ReactNode } ) {
 	return (
-		<CheckoutProvider paymentMethods={ [] } paymentProcessors={ {} }>
-			{ children }
-		</CheckoutProvider>
+		<CheckoutHostProvider
+			cartKey="no-site"
+			siteId={ null }
+			user={ { ID: 12345, username: 'wrongaccount' } as User }
+		>
+			<CheckoutProvider paymentMethods={ [] } paymentProcessors={ {} }>
+				{ children }
+			</CheckoutProvider>
+		</CheckoutHostProvider>
 	);
 }
-
-const stateWithUser = {
-	currentUser: {
-		id: 12345,
-		user: { ID: 12345, username: 'wrongaccount' },
-	},
-};
 
 describe( 'useHasWrongAccountRenewalError', () => {
 	it( 'is false for a cart with no errors', () => {
@@ -96,8 +97,7 @@ describe( 'WrongAccountRenewal', () => {
 		renderWithProvider(
 			<CheckoutWrapper>
 				<WrongAccountRenewal />
-			</CheckoutWrapper>,
-			{ initialState: stateWithUser }
+			</CheckoutWrapper>
 		);
 		expect(
 			screen.getByText( 'This subscription belongs to a different account' )
@@ -112,8 +112,7 @@ describe( 'LogInToCorrectAccountButton', () => {
 		renderWithProvider(
 			<CheckoutWrapper>
 				<LogInToCorrectAccountButton />
-			</CheckoutWrapper>,
-			{ initialState: stateWithUser }
+			</CheckoutWrapper>
 		);
 
 		await user.click( screen.getByRole( 'button', { name: 'Log in to the right account' } ) );

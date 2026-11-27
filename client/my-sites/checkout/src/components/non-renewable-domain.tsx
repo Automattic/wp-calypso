@@ -4,8 +4,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { domainAddNew } from 'calypso/my-sites/domains/paths';
-import { useSelector } from 'calypso/state';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { useCheckoutSiteId } from '../hooks/use-checkout-host';
+import { useCheckoutSite } from '../hooks/use-checkout-site';
 
 export function NonRenewableDomain() {
 	useEffect( () => {
@@ -45,7 +45,7 @@ function NonRenewableDomainExplanation() {
  */
 export function SearchForNewDomainButton() {
 	const translate = useTranslate();
-	const siteSlug = useSelector( getSelectedSiteSlug );
+	const siteSlug = useCheckoutSite( useCheckoutSiteId() ).data?.slug ?? null;
 
 	return (
 		<Button

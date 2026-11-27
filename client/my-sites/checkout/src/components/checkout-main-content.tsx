@@ -77,7 +77,10 @@ import { usePresalesChat } from 'calypso/lib/presales-chat';
 import { areVatDetailsSame } from 'calypso/me/purchases/vat-info/are-vat-details-same';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 import { CheckoutOrderBanner } from 'calypso/my-sites/checkout/src/components/checkout-order-banner';
-import useCheckoutCartKey from 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key';
+import {
+	useCheckoutCartKey,
+	useCheckoutSiteId,
+} from 'calypso/my-sites/checkout/src/hooks/use-checkout-host';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/src/hooks/use-valid-checkout-back-url';
 import { leaveCheckout } from 'calypso/my-sites/checkout/src/lib/leave-checkout';
 import {
@@ -91,7 +94,6 @@ import { useDispatch as useReduxDispatch, useSelector } from 'calypso/state';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getIsOnboardingAffiliateFlow } from 'calypso/state/signup/flow/selectors';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useUpdateCachedContactDetails } from '../hooks/use-cached-contact-details';
 import { useCheckoutHelpCenter } from '../hooks/use-checkout-help-center';
 import { siteHasPaidPlan, useCheckoutSite } from '../hooks/use-checkout-site';
@@ -323,7 +325,7 @@ function CheckoutSidebarNudge( {
 	const isDIFMInCart = hasDIFMProduct( responseCart );
 	const hasMonthlyProduct = responseCart?.products?.some( isMonthlyProduct );
 	const isPurchaseRenewal = responseCart?.products?.some?.( ( product ) => product.is_renewal );
-	const selectedSiteId = useSelector( getSelectedSiteId );
+	const selectedSiteId = useCheckoutSiteId();
 	const { data: site } = useCheckoutSite( selectedSiteId );
 
 	const domainWithoutPlanInCartOrSite =
@@ -512,7 +514,7 @@ export default function CheckoutMainContent( {
 		( isOnboardingFlowCheckout || showProgress ) &&
 		hasStepCount &&
 		stepsTotal < ONBOARDING_STEPPER_TOTAL;
-	const selectedSiteId = useSelector( getSelectedSiteId );
+	const selectedSiteId = useCheckoutSiteId();
 	const wpcomDomain = useSiteDomains( selectedSiteId ?? undefined ).find(
 		( { isWPCOMDomain, isWpcomStagingDomain } ) => isWPCOMDomain || isWpcomStagingDomain
 	);

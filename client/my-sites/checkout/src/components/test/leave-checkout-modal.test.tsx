@@ -13,7 +13,7 @@ import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { type Mock, vi } from 'vitest';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import useCheckoutCartKey from '../../hooks/use-checkout-cart-key';
+import { useCheckoutCartKey } from '../../hooks/use-checkout-host';
 import useValidCheckoutBackUrl from '../../hooks/use-valid-checkout-back-url';
 import { leaveCheckout } from '../../lib/leave-checkout';
 import { useCheckoutLeaveModal } from '../leave-checkout-modal';
@@ -27,9 +27,10 @@ import type {
 } from '@automattic/shopping-cart';
 import type { ReactNode } from 'react';
 
-vi.mock( '../../hooks/use-checkout-cart-key', () => ( {
-	__esModule: true,
-	default: vi.fn(),
+vi.mock( '../../hooks/use-checkout-host', () => ( {
+	useCheckoutCartKey: vi.fn(),
+	useCheckoutSiteId: () => null,
+	useCheckoutUser: () => null,
 } ) );
 
 vi.mock( '../../hooks/use-valid-checkout-back-url', () => ( {

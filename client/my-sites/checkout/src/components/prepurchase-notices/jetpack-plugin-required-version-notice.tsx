@@ -1,8 +1,7 @@
 import { getJetpackProductDisplayName } from '@automattic/calypso-products';
 import { LocalizeProps, useTranslate } from 'i18n-calypso';
-import { useSelector } from 'react-redux';
 import { preventWidows } from 'calypso/lib/formatting';
-import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import { useCheckoutSiteId } from '../../hooks/use-checkout-host';
 import { getSiteAdminUrl, useCheckoutSite } from '../../hooks/use-checkout-site';
 import PrePurchaseNotice from './prepurchase-notice';
 import type { Product } from '@automattic/calypso-products';
@@ -53,7 +52,7 @@ const JetpackPluginRequiredVersionNotice = ( {
 	minVersion: string | number;
 } ) => {
 	const translate = useTranslate();
-	const { data: site } = useCheckoutSite( useSelector( getSelectedSiteId ) );
+	const { data: site } = useCheckoutSite( useCheckoutSiteId() );
 	const siteJetpackVersion = site?.options?.jetpack_version;
 	const pluginUpgradeUrl = getSiteAdminUrl( site, 'update-core.php#update-plugins-table' );
 
