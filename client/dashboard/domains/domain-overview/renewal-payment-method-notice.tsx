@@ -7,11 +7,12 @@ import Notice, {
 	RouterNoticeActionLinkButton,
 } from '../../components/notice';
 import { formatDate } from '../../utils/datetime';
-import { isTldInMaintenance, needsPaymentMethodToAutoRenew } from '../../utils/domain';
+import { isRegisteredDomain, isTldInMaintenance } from '../../utils/domain';
 import {
 	creditCardHasAlreadyExpired,
 	getRenewalUrlFromPurchase,
 	isCloseToExpiration,
+	isExpiring,
 } from '../../utils/purchase';
 import type { Domain, Purchase } from '@automattic/api-core';
 
@@ -22,24 +23,35 @@ type RenewalProblem = 'expired-card' | 'no-payment-method' | 'auto-renew-off' | 
  * subscription cannot be charged (no payment method, or a card that has
  * already expired), or auto-renew is off. With auto-renew off, a domain close
  * to its expiry date that can be renewed now is `expiring-soon`.
+ *
+ * Whether auto-renew is on comes from the purchase: `domain.auto_renewing` is
+ * also false for domains that aren't registrations, and once the next renewal
+ * attempt is due.
  */
 function getRenewalProblem( domain: Domain, purchase?: Purchase ): RenewalProblem | null {
 	if ( ! purchase || ! domain.current_user_is_owner || domain.expired ) {
 		return null;
 	}
 
-	if ( ! domain.auto_renewing ) {
-		const canRenewNow =
-			( purchase.can_explicit_renew || purchase.is_renewable ) && ! isTldInMaintenance( domain );
+	if ( purchase.is_auto_renew_enabled ) {
+		if ( creditCardHasAlreadyExpired( purchase ) ) {
+			return 'expired-card';
+		}
 
-		return canRenewNow && isCloseToExpiration( purchase ) ? 'expiring-soon' : 'auto-renew-off';
+		return isExpiring( purchase ) ? 'no-payment-method' : null;
 	}
 
-	if ( creditCardHasAlreadyExpired( purchase ) ) {
-		return 'expired-card';
+	if ( ! isRegisteredDomain( domain ) ) {
+		return null;
 	}
 
-	return needsPaymentMethodToAutoRenew( domain, purchase ) ? 'no-payment-method' : null;
+	const canRenewNow = purchase.can_explicit_renew && ! isTldInMaintenance( domain );
+	// The purchase can pass its expiry date before the domain is flagged as expired.
+	const isPastExpiry = !! purchase.expiry_date && new Date( purchase.expiry_date ) < new Date();
+
+	return canRenewNow && ( isCloseToExpiration( purchase ) || isPastExpiry )
+		? 'expiring-soon'
+		: 'auto-renew-off';
 }
 
 export default function RenewalPaymentMethodNotice( {
