@@ -124,6 +124,26 @@ describe( 'Static site import preview flow', () => {
 			expect( steps.every( ( step ) => step.requiresLoggedInUser ) ).toBe( true );
 		} );
 
+		it.each( [
+			[ 'a', CHECKOUT_FIRST_VARIATION ],
+			[ 'b', null ],
+		] )( 'stores the variation forced with ?variation=%s for ExPlat', async ( variation, name ) => {
+			window.location.search = `?variation=${ variation }`;
+
+			await staticSiteImportPreviewFlow.initialize();
+
+			expect(
+				JSON.parse(
+					window.localStorage.getItem( `explat-experiment--${ CHECKOUT_FIRST_EXPERIMENT }` )
+				)
+			).toMatchObject( {
+				experimentName: CHECKOUT_FIRST_EXPERIMENT,
+				variationName: name,
+				ttl: 86400,
+			} );
+			window.localStorage.clear();
+		} );
+
 		it( 'starts at the progress step for a source on the URL', async () => {
 			window.location.search = '?from=source.example.com';
 

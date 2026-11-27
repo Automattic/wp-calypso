@@ -1,5 +1,6 @@
 import { getStaticSiteImportErrorCode } from '@automattic/api-core';
 import { createStaticSiteImportSessionMutation } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import {
 	SITE_MIGRATION_FLOW,
@@ -84,8 +85,33 @@ function useIsCheckoutFirst() {
 	return isCheckoutFirst( assignment?.variationName, useQuery() );
 }
 
+/**
+ * Outside production, `?variation=a` or `?variation=b` assigns this browser for a day, for testing.
+ * It is stored where ExPlat keeps its assignments, so it holds across steps, signup and checkout.
+ */
+function forceVariationFromQuery( query: URLSearchParams ) {
+	const forced = query.get( 'variation' );
+	if ( config( 'env_id' ) === 'production' || ( forced !== 'a' && forced !== 'b' ) ) {
+		return;
+	}
+	try {
+		window.localStorage.setItem(
+			`explat-experiment--${ CHECKOUT_FIRST_EXPERIMENT }`,
+			JSON.stringify( {
+				experimentName: CHECKOUT_FIRST_EXPERIMENT,
+				variationName: forced === 'a' ? CHECKOUT_FIRST_VARIATION : null,
+				retrievedTimestamp: Date.now(),
+				ttl: 24 * 60 * 60,
+			} )
+		);
+	} catch {
+		// Without storage, ExPlat assigns the browser as usual.
+	}
+}
+
 async function initialize() {
 	const query = new URLSearchParams( window.location.search );
+	forceVariationFromQuery( query );
 	const assignment = await loadExperimentAssignment( CHECKOUT_FIRST_EXPERIMENT );
 	// The checkout-first variation shows what will be moved, then asks for a plan and checkout
 	// before signing up. The new site's Overview shows the move from there.

@@ -13,6 +13,9 @@ experiment, before login so signed-out visitors are assigned too.
 - Any other variation, including control (B): copies the site onto a free preview and shows the
   move, then a plan and checkout for that preview. See [Preview first](#preview-first).
 
+Outside production, `?variation=a` or `?variation=b` on any of the flow's URLs assigns the browser
+to that variation for a day, by storing the assignment where ExPlat keeps it.
+
 Both variations register the same steps, in one list. Each starts at its own first step and
 only goes to its own, and the checkout-first variation asks for login only after checkout.
 
@@ -90,7 +93,7 @@ registered.
 
 ## Testing instructions
 
-For the preview-first variation (B), force any variation but `import_after_checkout`:
+For the preview-first variation (B), add `?variation=b` to the first URL:
 
 1. Run `yarn start` and open `/setup/static-site-import-preview` while signed out. Sign up or log
    in with an account allowed to create preview sites.
@@ -106,9 +109,9 @@ For the preview-first variation (B), force any variation but `import_after_check
    skips the address step and shows the move’s progress the same way.
 7. Enter a WordPress site’s URL. Confirm the flow continues to `/setup/site-migration`.
 
-For the checkout-first variation (A), force `import_after_checkout`:
+For the checkout-first variation (A), add `?variation=a` to the first URL:
 
-1. Open `/setup/static-site-import-preview` while signed out. Confirm it asks for the source
+1. Open `/setup/static-site-import-preview?variation=a` while signed out. Confirm it asks for the source
    without signup, and stays in this flow.
 2. Enter a Wix or Squarespace URL. Confirm **We can copy your whole site** shows the source going
    to a new WordPress.com site, and no import-session request has run.
