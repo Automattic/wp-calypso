@@ -1,6 +1,5 @@
 const fs = require( 'fs' );
 const path = require( 'path' );
-const rcopy = require( 'recursive-copy' );
 const yargs = require( 'yargs' );
 const serverDeps = require( '../client/package.json' ).dependencies;
 
@@ -129,8 +128,12 @@ function shipDependencies( pkgList ) {
 
 	fs.mkdirSync( destDir, { recursive: true } );
 	for ( const pkgName of pkgList ) {
-		rcopy( path.join( 'node_modules', pkgName ), path.join( destDir, pkgName ), {
-			overwrite: true,
+		fs.cpSync( path.join( 'node_modules', pkgName ), path.join( destDir, pkgName ), {
+			recursive: true,
+			verbatimSymlinks: true,
+			// Leave dotfiles such as .npmignore behind, but keep dot-named folders like .bin.
+			filter: ( src ) =>
+				! path.basename( src ).startsWith( '.' ) || fs.lstatSync( src ).isDirectory(),
 		} );
 	}
 }
