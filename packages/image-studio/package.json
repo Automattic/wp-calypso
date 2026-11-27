@@ -73,7 +73,6 @@
 		"@wordpress/primitives": "^5.2.0",
 		"@wordpress/url": "^5.2.0",
 		"clsx": "^2.1.1",
-		"social-logos": "^3.4.3",
 		"wpcom-proxy-request": "workspace:^"
 	},
 	"devDependencies": {
