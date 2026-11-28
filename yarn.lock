@@ -5,15 +5,15 @@ __metadata:
   version: 10
   cacheKey: 10c0
 
-"@a2ui/markdown-it@npm:0.2.2, @a2ui/markdown-it@npm:^0.2.2":
-  version: 0.2.2
-  resolution: "@a2ui/markdown-it@npm:0.2.2"
+"@a2ui/markdown-it@npm:0.2.4, @a2ui/markdown-it@npm:^0.2.2":
+  version: 0.2.4
+  resolution: "@a2ui/markdown-it@npm:0.2.4"
   dependencies:
-    dompurify: "npm:3.4.11"
+    dompurify: "npm:^3.4.17"
     markdown-it: "npm:^14.2.0"
   peerDependencies:
-    "@a2ui/web_core": ^0.14.0
-  checksum: 10c0/bd971ae89ef5ea61c319d2ec6e8813b1a4345809c595f35e18b209976ccd909c1451e4bb15e9c0e69002f1ba10c40d3c1764847fc5a213cdbc554c1120a85541
+    "@a2ui/web_core": ^0.16.1
+  checksum: 10c0/6eaf13c05978a5eef7489066bb27f8056287615d94f0cf5afaef9dd25c24502f4b8afc368a1c5fb79039d5cf33bbdf24866699194c21c9bf196135d7614ed70e
   languageName: node
   linkType: hard
 
@@ -483,7 +483,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/ai-ui-renderer@workspace:packages/ai-ui-renderer"
   dependencies:
-    "@a2ui/markdown-it": "npm:0.2.2"
+    "@a2ui/markdown-it": "npm:0.2.4"
     "@a2ui/react": "npm:0.14.0"
     "@a2ui/web_core": "npm:0.14.0"
     "@automattic/calypso-typescript-config": "workspace:^"
@@ -16454,6 +16454,18 @@ __metadata:
     "@types/trusted-types":
       optional: true
   checksum: 10c0/6a12251ef5e700fc91b6d96d33e9f8b5fd590c55276f632cf42d182c5808e9f48d5bef435ab26eac235dfcc05ed8fe95e1c8308dcc502bf1050e561f14d0361a
+  languageName: node
+  linkType: hard
+
+"dompurify@npm:^3.4.17":
+  version: 3.5.0
+  resolution: "dompurify@npm:3.5.0"
+  dependencies:
+    "@types/trusted-types": "npm:^2.0.7"
+  dependenciesMeta:
+    "@types/trusted-types":
+      optional: true
+  checksum: 10c0/e01e1ee94c70f30da9ba923f34d07aa1e4135e57d0f6c5da5b7e0de6a5ff9bed15bb3af0996cf112786768b7e9aea3408fb5b5c776c42739ad4871c5216b8df5
   languageName: node
   linkType: hard
 

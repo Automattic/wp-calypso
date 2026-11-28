@@ -57,7 +57,7 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@a2ui/markdown-it": "0.2.2",
+		"@a2ui/markdown-it": "0.2.4",
 		"@a2ui/react": "0.14.0",
 		"@a2ui/web_core": "0.14.0",
 		"@automattic/charts": "^4.15.2",
