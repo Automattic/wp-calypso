@@ -203,7 +203,7 @@ class Document extends Component {
 					shouldPrefetchRestProxy={ ! app?.isFirefox }
 				>
 					{ head.metas.map( ( props, index ) => (
-						<meta { ...props } key={ index } />
+						<meta { ...props } key={ index } data-calypso-document-head />
 					) ) }
 					{ /* `bilmur` and `bilmur-spa` look their configuration up by this `id`. */ }
 					{ ( hasBilmurSpa || isBilmurEnabled() ) && (
@@ -218,7 +218,7 @@ class Document extends Component {
 						/>
 					) }
 					{ head.links.map( ( props, index ) => (
-						<link { ...props } key={ index } />
+						<link { ...props } key={ index } data-calypso-document-head />
 					) ) }
 					{ chunkCssLinks( entrypoint, shouldUseRtlCss ) }
 					{ chunkCssLinks( chunkFiles, shouldUseRtlCss ) }
