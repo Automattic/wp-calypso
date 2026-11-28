@@ -20,11 +20,12 @@ import useCreatePaymentSubmittedAndProcessingCallback from 'calypso/my-sites/che
 import existingCardProcessor from 'calypso/my-sites/checkout/src/lib/existing-card-processor';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useDispatch, useSelector } from 'calypso/state';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSiteId } from 'calypso/state/sites/selectors';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import CheckoutQueryClientProvider from '../checkout-query-client-provider';
-import { CheckoutCartKeyProvider } from '../src/hooks/use-checkout-cart-key';
+import { CheckoutHostProvider } from '../src/hooks/use-checkout-host';
 import { isJetpackNotAtomicSite, useCheckoutSite } from '../src/hooks/use-checkout-site';
 import useCountryList from '../src/hooks/use-country-list';
 import { useStoredPaymentMethods } from '../src/hooks/use-stored-payment-methods';
@@ -124,8 +125,11 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 	} = props;
 
 	const cartKey = useCartKey();
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	const user = useSelector( getCurrentUser );
 	const onPaymentSubmittedAndProcessing = useCreatePaymentSubmittedAndProcessingCallback( {
 		cartKey,
+		siteId: selectedSiteId,
 		isComingFromUpsell: true,
 		siteSlug: siteSlug,
 		isInModal: disabledThankYouPage,
@@ -147,7 +151,6 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 	} );
 	const countries = useCountryList();
 
-	const selectedSiteId = useSelector( getSelectedSiteId );
 	const { data: site } = useCheckoutSite( selectedSiteId );
 	const isJetpackNotAtomic = isJetpackNotAtomicSite( site );
 	const isAkismetSitelessCheckout = responseCart.products.some(
@@ -253,7 +256,7 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 	}, [ productToAdd.product_slug ] );
 
 	return (
-		<CheckoutCartKeyProvider cartKey={ cartKey }>
+		<CheckoutHostProvider cartKey={ cartKey } siteId={ selectedSiteId } user={ user }>
 			<CheckoutProvider
 				paymentMethods={ [] }
 				onPaymentComplete={ handlePaymentComplete }
@@ -271,7 +274,7 @@ function PurchaseModalWrapper( props: PurchaseModalProps ) {
 					showFeatureList={ showFeatureList }
 				/>
 			</CheckoutProvider>
-		</CheckoutCartKeyProvider>
+		</CheckoutHostProvider>
 	);
 }
 

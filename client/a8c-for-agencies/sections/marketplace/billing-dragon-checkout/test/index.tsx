@@ -30,6 +30,7 @@ vi.mock( 'calypso/state/a8c-for-agencies/agency/selectors', () => ( {
 	getActiveAgency: () => ( { id: 42 } ),
 } ) );
 vi.mock( 'calypso/state/current-user/selectors', () => ( {
+	getCurrentUser: () => null,
 	getCurrentUserLocale: () => 'en',
 } ) );
 vi.mock( 'calypso/state/selectors/has-loaded-sites', () => ( { default: () => true } ) );

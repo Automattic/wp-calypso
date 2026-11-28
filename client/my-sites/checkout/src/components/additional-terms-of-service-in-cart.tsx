@@ -16,16 +16,18 @@ import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { ReactNode } from 'react';
 import CheckoutTermsItem from 'calypso/my-sites/checkout/src/components/checkout-terms-item';
-import useCheckoutCartKey from 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key';
-import { useSelector } from 'calypso/state';
-import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import {
+	useCheckoutCartKey,
+	useCheckoutSiteId,
+} from 'calypso/my-sites/checkout/src/hooks/use-checkout-host';
+import { useCheckoutSite } from 'calypso/my-sites/checkout/src/hooks/use-checkout-site';
 
 const debug = debugFactory( 'calypso:composite-checkout:additional-terms-of-service' );
 
 export default function AdditionalTermsOfServiceInCart() {
 	const cartKey = useCheckoutCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
-	const siteSlug = useSelector( getSelectedSiteSlug );
+	const siteSlug = useCheckoutSite( useCheckoutSiteId() ).data?.slug ?? null;
 
 	if ( ! responseCart.terms_of_service || responseCart.terms_of_service.length === 0 ) {
 		return null;

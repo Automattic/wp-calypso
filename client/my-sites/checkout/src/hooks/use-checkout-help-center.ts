@@ -20,12 +20,14 @@ import {
 } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useRef } from 'react';
-import useCheckoutCartKey from 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key';
+import {
+	useCheckoutCartKey,
+	useCheckoutSiteId,
+	useCheckoutUser,
+} from 'calypso/my-sites/checkout/src/hooks/use-checkout-host';
+import { useCheckoutSite } from 'calypso/my-sites/checkout/src/hooks/use-checkout-site';
 import { useSelector } from 'calypso/state';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSectionName, getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSectionName } from 'calypso/state/ui/selectors';
 import { AGENCY_CHECKOUT_PATH } from '../../agency-checkout/lib/agency-checkout-params';
 import { loadCheckoutSupportAssignment } from '../lib/checkout-support-routing';
 
@@ -67,15 +69,13 @@ export const useCheckoutHelpCenter = (): {
 	helpCenterButtonCopy?: string;
 	helpCenterButtonLink: string;
 } => {
-	const siteId = useSelector( getSelectedSiteId );
-	const siteSlug = useSelector( getSelectedSiteSlug );
-	const isLoggedIn = useSelector( isUserLoggedIn );
+	const siteId = useCheckoutSiteId();
+	const { data: site } = useCheckoutSite( siteId );
+	const siteSlug = site?.slug ?? null;
+	const isLoggedIn = !! useCheckoutUser();
 	const sectionName = useSelector( getSectionName );
 	// Atomic sites are Jetpack sites too, but hosted on WordPress.com.
-	const isWordPressComSite = useSelector(
-		( state ) =>
-			!! siteId && ( ! isJetpackSite( state, siteId ) || !! isAtomicSite( state, siteId ) )
-	);
+	const isWordPressComSite = !! siteId && ( ! site?.jetpack || !! site?.is_wpcom_atomic );
 
 	const cartKey = useCheckoutCartKey();
 	const {

@@ -8,8 +8,9 @@ import { QueryClient } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
 import { type Mock, vi } from 'vitest';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
+import { CheckoutHostProvider } from '../../hooks/use-checkout-host';
 import WPCheckoutOrderReview from '../wp-checkout-order-review';
-import type { Site } from '@automattic/api-core';
+import type { Site, User } from '@automattic/api-core';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
 vi.mock( '@automattic/shopping-cart', async () => ( {
@@ -17,9 +18,6 @@ vi.mock( '@automattic/shopping-cart', async () => ( {
 		'@automattic/shopping-cart'
 	) ),
 	useShoppingCart: vi.fn(),
-} ) );
-vi.mock( 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key', () => ( {
-	default: () => 'no-site',
 } ) );
 vi.mock( '../wp-order-review-line-items', () => ( {
 	WPOrderReviewLineItems: () => null,
@@ -33,26 +31,26 @@ function renderOrderReview(
 ) {
 	( useShoppingCart as Mock ).mockReturnValue( { responseCart: cart } );
 	return renderWithProvider(
-		<CheckoutProvider paymentMethods={ [] } paymentProcessors={ {} }>
-			<WPCheckoutOrderReview
-				removeProductFromCart={ vi.fn() }
-				replaceProductInCart={ vi.fn() }
-				addProductsToCart={ vi.fn() }
-				couponFieldStateProps={ {} as never }
-				removeCouponAndClearField={ vi.fn() }
-				isCouponFieldVisible={ false }
-				setCouponFieldVisible={ vi.fn() }
-				// What `CheckoutMainWrapper` passes when no site is selected.
-				siteUrl="no-site"
-			/>
-		</CheckoutProvider>,
-		{
-			queryClient,
-			initialState: {
-				currentUser: { id: 1, user: { ID: 1, email: 'buyer@example.com' } },
-				ui: { selectedSiteId },
-			},
-		}
+		<CheckoutHostProvider
+			cartKey="no-site"
+			siteId={ selectedSiteId }
+			user={ { ID: 1, email: 'buyer@example.com' } as User }
+		>
+			<CheckoutProvider paymentMethods={ [] } paymentProcessors={ {} }>
+				<WPCheckoutOrderReview
+					removeProductFromCart={ vi.fn() }
+					replaceProductInCart={ vi.fn() }
+					addProductsToCart={ vi.fn() }
+					couponFieldStateProps={ {} as never }
+					removeCouponAndClearField={ vi.fn() }
+					isCouponFieldVisible={ false }
+					setCouponFieldVisible={ vi.fn() }
+					// What `CheckoutMainWrapper` passes when no site is selected.
+					siteUrl="no-site"
+				/>
+			</CheckoutProvider>
+		</CheckoutHostProvider>,
+		{ queryClient }
 	);
 }
 

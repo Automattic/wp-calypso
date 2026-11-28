@@ -4,9 +4,8 @@ import { FunctionComponent } from 'react';
 import { withoutHttp } from 'calypso/lib/url';
 import CartFreeUserPlanUpsell from 'calypso/my-sites/checkout/cart/cart-free-user-plan-upsell';
 import UpcomingRenewalsReminder from 'calypso/my-sites/checkout/cart/upcoming-renewals-reminder';
+import { useCheckoutSiteId } from 'calypso/my-sites/checkout/src/hooks/use-checkout-host';
 import { useCheckoutSite } from 'calypso/my-sites/checkout/src/hooks/use-checkout-site';
-import { useSelector } from 'calypso/state';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { ResponseCart, MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 export type PartialCart = Partial< ResponseCart > & Pick< ResponseCart, 'products' >;
@@ -70,7 +69,7 @@ const SecondaryCartPromotions: FunctionComponent< Props > = ( {
 	addItemToCart,
 	isPurchaseRenewal,
 } ) => {
-	const selectedSiteId = useSelector( getSelectedSiteId );
+	const selectedSiteId = useCheckoutSiteId();
 	// "Renew now" checkouts skip site selection, so fall back to the cart's site.
 	const { data: site } = useCheckoutSite( selectedSiteId || Number( responseCart.blog_id ) || 0 );
 

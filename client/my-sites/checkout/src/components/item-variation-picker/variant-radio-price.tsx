@@ -9,7 +9,7 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { LoadingCopy, styled } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
-import useCheckoutCartKey from 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key';
+import { useCheckoutCartKey } from 'calypso/my-sites/checkout/src/hooks/use-checkout-host';
 import type { WPCOMProductVariant } from './types';
 
 const Discount = styled.span`

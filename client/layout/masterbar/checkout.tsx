@@ -15,16 +15,15 @@ import {
 	AGENCY_CHECKOUT_PATH,
 	getAllowedA4ADashboardUrl,
 } from 'calypso/my-sites/checkout/agency-checkout/lib/agency-checkout-params';
+import CalypsoCheckoutHostProvider from 'calypso/my-sites/checkout/calypso-checkout-host-provider';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import {
 	LeaveCheckoutModal,
 	useCheckoutLeaveModal,
 } from 'calypso/my-sites/checkout/src/components/leave-checkout-modal';
-import { CheckoutCartKeyProvider } from 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key';
 import { useCheckoutHelpCenter } from 'calypso/my-sites/checkout/src/hooks/use-checkout-help-center';
 import { resolvedRenewalDataStore } from 'calypso/my-sites/checkout/src/lib/checkout-stores';
 import { useValueStore } from 'calypso/my-sites/checkout/src/lib/value-store';
-import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import Masterbar from './masterbar';
 
 interface Props {
@@ -216,14 +215,13 @@ const CheckoutMasterbar = ( {
 };
 
 export default function CheckoutMasterbarWrapper( props: Props ) {
-	const cartKey = useCartKey();
 	return (
 		<CalypsoShoppingCartProvider>
-			<CheckoutCartKeyProvider cartKey={ cartKey }>
+			<CalypsoCheckoutHostProvider>
 				<ThemeProvider theme={ checkoutTheme }>
 					<CheckoutMasterbar { ...props } />
 				</ThemeProvider>
-			</CheckoutCartKeyProvider>
+			</CalypsoCheckoutHostProvider>
 		</CalypsoShoppingCartProvider>
 	);
 }

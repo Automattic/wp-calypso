@@ -18,7 +18,6 @@ import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import hasGravatarDomainQueryParam from 'calypso/state/selectors/has-gravatar-domain-query-param';
 import { requestSite } from 'calypso/state/sites/actions';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isExternalA4ACheckout } from '../lib/is-external-a4a-checkout';
 import normalizeTransactionResponse from '../lib/normalize-transaction-response';
 import { absoluteRedirectThroughPending, redirectThroughPending } from '../lib/pending-page';
@@ -47,6 +46,7 @@ const debug = debugFactory( 'calypso:composite-checkout:use-on-payment-complete'
  */
 export default function useCreatePaymentSubmittedAndProcessingCallback( {
 	cartKey,
+	siteId,
 	createUserAndSiteBeforeTransaction,
 	productAliasFromUrl,
 	redirectTo,
@@ -62,6 +62,7 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 	fromSiteSlug,
 }: {
 	cartKey: CartKey;
+	siteId: number | null | undefined;
 	createUserAndSiteBeforeTransaction?: boolean;
 	productAliasFromUrl?: string | undefined;
 	redirectTo?: string | undefined;
@@ -85,7 +86,6 @@ export default function useCreatePaymentSubmittedAndProcessingCallback( {
 } ): PaymentEventCallback {
 	const { responseCart, reloadFromServer: reloadCart } = useShoppingCart( cartKey );
 	const reduxDispatch = useDispatch();
-	const siteId = useSelector( getSelectedSiteId );
 	const { data: site } = useCheckoutSite( siteId );
 	const adminUrl = site?.options?.admin_url || wpAdminUrl;
 	const isJetpackNotAtomic = isJetpackNotAtomicSite( site );

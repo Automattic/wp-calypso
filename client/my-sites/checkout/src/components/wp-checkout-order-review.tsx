@@ -13,19 +13,17 @@ import { useEffect, useCallback } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { hasP2PlusPlan } from 'calypso/lib/cart-values/cart-items';
 import { withoutHttp } from 'calypso/lib/url';
-import useCheckoutCartKey from 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key';
+import {
+	useCheckoutCartKey,
+	useCheckoutSiteId,
+	useCheckoutUser,
+} from 'calypso/my-sites/checkout/src/hooks/use-checkout-host';
 import { useSelector } from 'calypso/state';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
-import {
-	currentUserHasFlag,
-	getCurrentUser,
-	getCurrentUserEmail,
-} from 'calypso/state/current-user/selectors';
 import {
 	getIsOnboardingAffiliateFlow,
 	getIsOnboardingUnifiedFlow,
 } from 'calypso/state/signup/flow/selectors';
-import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import { useCheckoutSite } from '../hooks/use-checkout-site';
 import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
@@ -136,7 +134,7 @@ export default function WPCheckoutOrderReview( {
 		} );
 	}, [] );
 
-	const selectedSiteId = useSelector( getSelectedSiteId );
+	const selectedSiteId = useCheckoutSiteId();
 	const { data: selectedSite } = useCheckoutSite( selectedSiteId );
 
 	// A cart without a site in its key (eg: a renewal at `/checkout/renew/:id`)
@@ -158,11 +156,11 @@ export default function WPCheckoutOrderReview( {
 
 	const planIsP2Plus = hasP2PlusPlan( responseCart );
 
-	const isPwpoUser = useSelector(
-		( state ) =>
-			getCurrentUser( state ) && currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
+	const user = useCheckoutUser();
+	const isPwpoUser = !! user?.meta?.data?.flags?.active_flags?.includes(
+		NON_PRIMARY_DOMAINS_TO_FREE_USERS
 	);
-	const currentUserEmail = useSelector( getCurrentUserEmail ) as string | undefined;
+	const currentUserEmail = user?.email;
 	const isGiftPurchase = Boolean( responseCart.gift_details?.receiver_blog_slug );
 
 	return (
@@ -205,7 +203,7 @@ export default function WPCheckoutOrderReview( {
 						isSummary={ isSummary }
 						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 						responseCart={ responseCart }
-						isPwpoUser={ isPwpoUser ?? false }
+						isPwpoUser={ isPwpoUser }
 						onRemoveProduct={ onRemoveProduct }
 						onRemoveProductClick={ onRemoveProductClick }
 						onRemoveProductCancel={ onRemoveProductCancel }

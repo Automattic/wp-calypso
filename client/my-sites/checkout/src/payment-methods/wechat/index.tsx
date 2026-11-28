@@ -17,7 +17,7 @@ import {
 	SummaryLine,
 	SummaryDetails,
 } from 'calypso/my-sites/checkout/src/components/summary-details';
-import useCheckoutCartKey from 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key';
+import { useCheckoutCartKey } from 'calypso/my-sites/checkout/src/hooks/use-checkout-host';
 import type { PaymentMethod, PaymentMethodSubmitButtonProps } from '@automattic/composite-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:wechat-payment-method' );

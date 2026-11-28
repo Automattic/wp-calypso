@@ -22,7 +22,7 @@ import {
 	countryList,
 	stateList,
 } from './index';
-import type { Site } from '@automattic/api-core';
+import type { Site, User } from '@automattic/api-core';
 import type { CartKey, SetCart, ResponseCart } from '@automattic/shopping-cart';
 
 function seedTestSite( client: QueryClient, site?: Partial< Site > ) {
@@ -59,6 +59,7 @@ export function MockCheckout( {
 	useUndefinedSiteId,
 	site,
 	cartKey = siteId,
+	user = null,
 }: {
 	initialCart: ResponseCart;
 	cartChanges?: Partial< ResponseCart >;
@@ -67,6 +68,7 @@ export function MockCheckout( {
 	useUndefinedSiteId?: boolean;
 	site?: Partial< Site >;
 	cartKey?: CartKey;
+	user?: User | null;
 } ) {
 	const reduxStore = createTestReduxStore();
 	const [ queryClient ] = useState( () =>
@@ -89,6 +91,7 @@ export function MockCheckout( {
 					<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
 						<CheckoutMain
 							cartKey={ cartKey }
+							user={ user }
 							siteId={ useUndefinedSiteId ? undefined : siteId }
 							siteSlug="foo.com"
 							{ ...additionalProps }

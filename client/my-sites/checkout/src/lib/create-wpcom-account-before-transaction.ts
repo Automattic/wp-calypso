@@ -1,4 +1,3 @@
-import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { createAccount } from '../payment-method-helpers';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type { RequestCart, CartKey } from '@automattic/shopping-cart';
@@ -57,7 +56,7 @@ export async function createWpcomAccountBeforeTransaction(
 		// siteId is set (although it will update the email address if that
 		// changes).
 		if ( siteIdFromResponse ) {
-			transactionOptions.reduxDispatch( setSelectedSiteId( Number( siteIdFromResponse ) ) );
+			transactionOptions.onSiteCreated?.( siteIdFromResponse );
 		}
 
 		// If the account is already created (as happens when we are reprocessing

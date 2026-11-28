@@ -2,6 +2,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import EmptyContent from 'calypso/components/empty-content';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { useSelector } from 'calypso/state';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
 	getAgencySiteCheckoutExitUrl,
 	getAgencySiteCheckoutParams,
@@ -24,6 +26,7 @@ interface Props {
  */
 function AgencySiteCheckoutContent( { siteId, siteSlug, productSlug }: Props ) {
 	const cartKey = useCartKey();
+	const user = useSelector( getCurrentUser );
 	const translate = useTranslate();
 	const { term, redirectTo, cancelTo } = useMemo(
 		() => getAgencySiteCheckoutParams( window.location.search, siteSlug ),
@@ -43,6 +46,7 @@ function AgencySiteCheckoutContent( { siteId, siteSlug, productSlug }: Props ) {
 	return (
 		<CheckoutMain
 			cartKey={ cartKey }
+			user={ user }
 			sitelessCheckoutType="a4a"
 			redirectTo={ redirectTo }
 			customizedPreviousPath={ cancelTo }

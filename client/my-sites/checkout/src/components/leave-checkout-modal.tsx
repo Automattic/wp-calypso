@@ -4,7 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import useCheckoutCartKey from 'calypso/my-sites/checkout/src/hooks/use-checkout-cart-key';
+import { useCheckoutCartKey } from 'calypso/my-sites/checkout/src/hooks/use-checkout-host';
 import getPreviousRoute from '../../../../state/selectors/get-previous-route';
 import useValidCheckoutBackUrl from '../hooks/use-valid-checkout-back-url';
 import { getGiftCheckoutBackUrl } from '../lib/get-gift-checkout-back-url';

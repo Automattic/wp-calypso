@@ -1,8 +1,6 @@
 import debugFactory from 'debug';
 import { useCallback } from 'react';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
-import { useSelector } from 'calypso/state';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { useCheckoutSite } from '../use-checkout-site';
 import type { ResponseCart } from '@automattic/shopping-cart';
 import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
@@ -27,6 +25,7 @@ export type GetThankYouUrl = () => string;
  */
 export default function useGetThankYouUrl( {
 	siteSlug,
+	siteId,
 	redirectTo,
 	purchaseId,
 	feature,
@@ -42,7 +41,7 @@ export default function useGetThankYouUrl( {
 	adminUrl: wpAdminUrl,
 	fromSiteSlug,
 }: GetThankYouUrlProps ): GetThankYouUrl {
-	const { data: site } = useCheckoutSite( useSelector( getSelectedSiteId ) );
+	const { data: site } = useCheckoutSite( siteId );
 
 	const adminUrl = site?.options?.admin_url || wpAdminUrl;
 
@@ -91,6 +90,7 @@ export default function useGetThankYouUrl( {
 
 export interface GetThankYouUrlProps {
 	siteSlug: string | undefined;
+	siteId: number | null | undefined;
 	redirectTo?: string | undefined;
 	purchaseId?: number | string | undefined;
 	feature?: string | undefined;

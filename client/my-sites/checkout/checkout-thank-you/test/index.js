@@ -30,6 +30,11 @@ vi.mock( '@automattic/help-center/src/hooks', async () => ( {
 vi.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: () => null,
 } ) );
+// The masterbar's help center reads the site through a query; these tests don't render one.
+vi.mock( 'calypso/my-sites/checkout/src/hooks/use-checkout-site', async () => ( {
+	...( await vi.importActual( 'calypso/my-sites/checkout/src/hooks/use-checkout-site' ) ),
+	useCheckoutSite: () => ( { data: undefined } ),
+} ) );
 vi.mock( 'calypso/lib/analytics/page-view-tracker', () => ( {
 	default: () => 'page-view-tracker',
 } ) );

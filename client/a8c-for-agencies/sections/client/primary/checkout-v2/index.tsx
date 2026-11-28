@@ -10,7 +10,7 @@ import CheckoutQueryClientProvider from 'calypso/my-sites/checkout/checkout-quer
 import CheckoutMain from 'calypso/my-sites/checkout/src/components/checkout-main';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector } from 'calypso/state';
-import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { getCurrentUser, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import ClientCheckoutV2Error from '../../checkout-v2-error';
 import ClientCheckoutV2Placeholder from '../../checkout-v2-placeholder';
 import useClientCheckout from '../../hooks/use-client-checkout';
@@ -23,6 +23,7 @@ import './style.scss';
  */
 function ClientCheckoutContent( { skipActiveCart }: { skipActiveCart: boolean } ) {
 	const cartKey = useCartKey();
+	const user = useSelector( getCurrentUser );
 	const translate = useTranslate();
 	const [ isCheckoutFormSubmitting, setIsCheckoutFormSubmitting ] = useState( false );
 
@@ -97,6 +98,7 @@ function ClientCheckoutContent( { skipActiveCart }: { skipActiveCart: boolean } 
 			</div>
 			<CheckoutMain
 				cartKey={ cartKey }
+				user={ user }
 				sitelessCheckoutType="a4a"
 				redirectTo={ successUrl ?? redirectTo }
 				customizedPreviousPath="/client/subscriptions"

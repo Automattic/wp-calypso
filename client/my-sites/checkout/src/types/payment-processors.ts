@@ -18,6 +18,11 @@ export interface PaymentProcessorOptions {
 	getThankYouUrl: GetThankYouUrl;
 	siteSlug: string | undefined;
 	siteId: number | undefined;
+	/**
+	 * Called with the ID of the site created along with the account in a
+	 * logged-out checkout, before the transaction is submitted.
+	 */
+	onSiteCreated?: ( siteId: number ) => void;
 	contactDetails: ManagedContactDetails | undefined;
 	recaptchaClientId?: number;
 	/**

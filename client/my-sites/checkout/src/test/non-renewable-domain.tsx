@@ -1,19 +1,22 @@
 /**
  * @vitest-environment jsdom
  */
+import { siteByIdQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { CheckoutProvider } from '@automattic/composite-checkout';
 import { getEmptyResponseCart } from '@automattic/shopping-cart';
+import { QueryClient } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
-import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider, renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import { NonRenewableDomain, SearchForNewDomainButton } from '../components/non-renewable-domain';
+import { CheckoutHostProvider } from '../hooks/use-checkout-host';
 import {
 	useHasNonRenewableDomainError,
 	NON_RENEWABLE_DOMAIN_ERROR_CODE,
 } from '../hooks/use-has-non-renewable-domain-error';
+import type { Site } from '@automattic/api-core';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
 vi.mock( '@automattic/calypso-router', () => ( { default: vi.fn() } ) );
@@ -31,21 +34,30 @@ function getCartWithErrorCodes( codes: string[] ): ResponseCart {
  * Both components are rendered inside checkout, so they rely on its theme and
  * form state the same way every other step of the page does.
  */
-function CheckoutWrapper( { children }: { children: React.ReactNode } ) {
+function CheckoutWrapper( {
+	children,
+	siteId = null,
+}: {
+	children: React.ReactNode;
+	siteId?: number | null;
+} ) {
 	return (
-		<CheckoutProvider paymentMethods={ [] } paymentProcessors={ {} }>
-			{ children }
-		</CheckoutProvider>
+		<CheckoutHostProvider cartKey="no-site" siteId={ siteId } user={ null }>
+			<CheckoutProvider paymentMethods={ [] } paymentProcessors={ {} }>
+				{ children }
+			</CheckoutProvider>
+		</CheckoutHostProvider>
 	);
 }
 
-const withSelectedSite = {
-	initialState: {
-		sites: { items: { 12345: { ID: 12345, URL: 'https://example.wordpress.com' } } },
-		ui: { selectedSiteId: 12345 },
-	},
-	reducers: { ui: uiReducer },
-};
+function createQueryClientWithSite() {
+	const queryClient = new QueryClient();
+	queryClient.setQueryData( siteByIdQuery( 12345 ).queryKey, {
+		ID: 12345,
+		slug: 'example.wordpress.com',
+	} as Site );
+	return queryClient;
+}
 
 describe( 'useHasNonRenewableDomainError', () => {
 	it( 'is false for a cart with no errors', () => {
@@ -103,10 +115,10 @@ describe( 'SearchForNewDomainButton', () => {
 	it( 'sends the customer to domain search for the selected site', async () => {
 		const user = userEvent.setup();
 		renderWithProvider(
-			<CheckoutWrapper>
+			<CheckoutWrapper siteId={ 12345 }>
 				<SearchForNewDomainButton />
 			</CheckoutWrapper>,
-			withSelectedSite
+			{ queryClient: createQueryClientWithSite() }
 		);
 
 		await user.click( screen.getByRole( 'button', { name: 'Search for a new domain' } ) );

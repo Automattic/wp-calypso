@@ -327,10 +327,12 @@ describe( 'multiPartnerCardProcessor', () => {
 				cardNumberElement: mockCardNumberElement,
 			};
 			const expected = { payload: { success: 'true' }, type: 'SUCCESS' };
+			const onSiteCreated = vi.fn();
 			await expect(
 				multiPartnerCardProcessor( submitData, {
 					...options,
 					createUserAndSiteBeforeTransaction: true,
+					onSiteCreated,
 					contactDetails: {
 						email,
 						countryCode,
@@ -339,6 +341,7 @@ describe( 'multiPartnerCardProcessor', () => {
 				} )
 			).resolves.toStrictEqual( expected );
 			expect( createAccountEndpoint ).toHaveBeenCalledWith( expectedCreateAccountRequest );
+			expect( onSiteCreated ).toHaveBeenCalledWith( 1234567 );
 			expect( transactionsEndpoint ).toHaveBeenCalledWith( {
 				...basicExpectedStripeRequest,
 				cart: {
@@ -363,10 +366,12 @@ describe( 'multiPartnerCardProcessor', () => {
 				cardNumberElement: mockCardNumberElement,
 			};
 			const expected = { payload: { success: 'true' }, type: 'SUCCESS' };
+			const onSiteCreated = vi.fn();
 			await expect(
 				multiPartnerCardProcessor( submitData, {
 					...options,
 					createUserAndSiteBeforeTransaction: true,
+					onSiteCreated,
 					contactDetails: {
 						email,
 						countryCode,
@@ -375,6 +380,7 @@ describe( 'multiPartnerCardProcessor', () => {
 				} )
 			).resolves.toStrictEqual( expected );
 			expect( createAccountEndpoint ).toHaveBeenCalledWith( expectedCreateAccountRequest );
+			expect( onSiteCreated ).not.toHaveBeenCalled();
 			expect( transactionsEndpoint ).toHaveBeenCalledWith( basicExpectedStripeRequest );
 		} );
 
