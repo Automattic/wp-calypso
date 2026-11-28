@@ -75,7 +75,7 @@
 		"@size-limit/file": "^8.2.6",
 		"@testing-library/dom": "^10.4.2",
 		"@testing-library/react": "^16.3.3",
-		"@testing-library/user-event": "^14.6.10",
+		"@testing-library/user-event": "^14.6.13",
 		"@wordpress/dependency-extraction-webpack-plugin": "^7.2.0",
 		"autoprefixer": "^10.4.21",
 		"gettext-parser": "^6.0.0",
@@ -87,7 +87,7 @@
 		"postcss-selector-parser": "^7.2.1",
 		"size-limit": "^8.2.6",
 		"vite": "^8.3.8",
-		"vitest": "^5.1.0",
+		"vitest": "^5.1.2",
 		"webpack": "^5.111.1",
 		"webpack-bundle-analyzer": "^5.4.0"
 	}

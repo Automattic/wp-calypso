@@ -104,7 +104,7 @@
 		"@testing-library/dom": "^10.4.2",
 		"@testing-library/jest-dom": "^7.0.1",
 		"@testing-library/react": "^16.3.3",
-		"@testing-library/user-event": "^14.6.10",
+		"@testing-library/user-event": "^14.6.13",
 		"@types/canvas-confetti": "^1.6.0",
 		"@types/node": "^24.19.2",
 		"@types/react": "^19.3.0",
@@ -116,7 +116,7 @@
 		"storybook": "^10.6.8",
 		"typescript": "^6.0.3",
 		"vite": "^8.3.8",
-		"vitest": "^5.1.0",
+		"vitest": "^5.1.2",
 		"webpack": "^5.111.1"
 	},
 	"scripts": {

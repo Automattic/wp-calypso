@@ -81,7 +81,7 @@
 		"resize-observer-polyfill": "^1.5.1",
 		"typescript": "^6.0.3",
 		"vite": "^8.3.8",
-		"vitest": "^5.1.0"
+		"vitest": "^5.1.2"
 	},
 	"peerDependencies": {
 		"@wordpress/element": "^10.2.0",

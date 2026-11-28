@@ -65,12 +65,12 @@
 		"@automattic/wp-oxc-makepot": "workspace:^",
 		"@testing-library/dom": "^10.4.2",
 		"@testing-library/react": "^16.3.3",
-		"@testing-library/user-event": "^14.6.10",
+		"@testing-library/user-event": "^14.6.13",
 		"html-webpack-plugin": "^5.6.8",
 		"postcss": "^8.5.32",
 		"postcss-custom-properties": "^12.1.11",
 		"vite": "^8.3.8",
-		"vitest": "^5.1.0",
+		"vitest": "^5.1.2",
 		"webpack": "^5.111.1"
 	}
 }

@@ -43,7 +43,7 @@
 		"playwright": "1.57.0",
 		"semver": "^7.8.6",
 		"vite": "^8.3.8",
-		"vitest": "^5.1.0",
+		"vitest": "^5.1.2",
 		"webpack": "^5.111.1",
 		"webpack-cli": "^7.2.3",
 		"winston": "^3.3.3"
