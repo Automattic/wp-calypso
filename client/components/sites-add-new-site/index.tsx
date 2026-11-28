@@ -6,7 +6,7 @@ import { AuthProvider } from '../../dashboard/app/auth';
 import { useAnalyticsClient } from '../../sites/v2/hooks/use-analytics-client';
 import { AsyncContent } from './async';
 import AddNewSiteButton from './button';
-import type { AddNewSiteProps } from '../../dashboard/sites/add-new-site/types';
+import type { AddNewSiteProps } from '../../dashboard/sites/site-list/components/add-new-site/types';
 import type { PropsWithChildren } from 'react';
 import './style.scss';
 

@@ -6,8 +6,8 @@ import '@testing-library/jest-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
-import { render } from '../../../test-utils';
-import AddNewSite from '../index';
+import AddNewSite from '..';
+import { render } from '../../../../../test-utils';
 
 vi.mock( '@automattic/calypso-config', async ( importActual ) => {
 	const { default: actual } = await importActual< typeof import( '@automattic/calypso-config' ) >();

@@ -21,9 +21,15 @@ import { usePersistentView } from '../../../app/hooks/use-persistent-view';
 import { DataViewsEmptyStateLayout } from '../../../components/dataviews';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
-import AddNewSite from '../../../sites/add-new-site';
 import { InviteAcceptedFlashMessage } from '../../../sites/components/invite-accepted-flash-message';
 import { SitesNoticeArbiter } from '../../../sites/components/notice-arbiter';
+import { useHasOnlyDeletedSites } from '../../../sites/deleted-sites';
+import AddNewSite from '../../../sites/site-list/components/add-new-site';
+import {
+	EmptyDeletedSitesStateContent,
+	EmptySitesStateContent,
+	EmptySitesSearchStateContent,
+} from '../../../sites/site-list/components/empty-sites-state';
 import {
 	SitesDataViews,
 	useActions,
@@ -31,14 +37,8 @@ import {
 	getDefaultView,
 	recordViewChanges,
 	sanitizeFields,
-} from '../../../sites/dataviews';
-import { useHasOnlyDeletedSites } from '../../../sites/deleted-sites';
-import {
-	EmptyDeletedSitesStateContent,
-	EmptySitesStateContent,
-	EmptySitesSearchStateContent,
-} from '../../../sites/empty-sites-state';
-import { useSiteListQuery } from '../../../sites/hooks/use-site-list-query';
+} from '../../../sites/site-list/dataviews';
+import { useSiteListQuery } from '../../../sites/site-list/hooks/use-site-list-query';
 import type { Site } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 

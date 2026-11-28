@@ -7,10 +7,10 @@ import {
 	BLACK_FRIDAY_2026_DISCOUNT_PERCENT,
 	BLACK_FRIDAY_2026_MONTHLY_SAVINGS_PERCENT,
 } from 'calypso/lib/promotions/black-friday-2026';
-import { useAnalytics } from '../../app/analytics';
-import BlackFriday2026Artwork from '../../components/black-friday-2026-artwork';
-import OfferCard from '../../components/offer-card';
-import { wpcomLink } from '../../utils/link';
+import { useAnalytics } from '../../../../app/analytics';
+import BlackFriday2026Artwork from '../../../../components/black-friday-2026-artwork';
+import OfferCard from '../../../../components/offer-card';
+import { wpcomLink } from '../../../../utils/link';
 
 export default function BlackFridayOfferCard( { onClick }: { onClick?: () => void } ) {
 	const { recordTracksEvent } = useAnalytics();

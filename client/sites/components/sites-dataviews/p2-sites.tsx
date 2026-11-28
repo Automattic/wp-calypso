@@ -5,7 +5,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useMemo } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { Text } from 'calypso/dashboard/components/text';
-import { DEFAULT_CONFIG } from 'calypso/dashboard/sites/dataviews';
+import { DEFAULT_CONFIG } from 'calypso/dashboard/sites/site-list/dataviews';
 import { SitePlan } from 'calypso/sites-dashboard/components/sites-site-plan';
 import { getSiteDisplayUrl, getSiteDisplayName } from 'calypso/sites-dashboard/utils';
 import { useSelector } from 'calypso/state';

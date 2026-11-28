@@ -15,7 +15,7 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
 import { Text as DashboardText } from '../../../components/text';
 import { TextBlur } from '../../../components/text-blur';
-import { DEFAULT_PER_PAGE } from '../../../sites/dataviews/views';
+import { DEFAULT_PER_PAGE } from '../../../sites/site-list/dataviews/views';
 import { formatDate, parseDateAsUTC } from '../../../utils/datetime';
 import { crossoverLinkProps } from '../../crossover/store';
 import {

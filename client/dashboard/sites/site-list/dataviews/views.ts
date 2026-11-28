@@ -1,4 +1,4 @@
-import type { AnalyticsClient } from '../../app/analytics';
+import type { AnalyticsClient } from '../../../app/analytics';
 import type { Operator, SortDirection, SupportedLayouts, View } from '@wordpress/dataviews';
 
 export const DEFAULT_LAYOUTS: SupportedLayouts = {

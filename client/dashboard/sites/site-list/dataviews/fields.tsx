@@ -2,16 +2,16 @@ import { dashboardSiteFiltersQuery, queryClient } from '@automattic/api-queries'
 import { formatNumber } from '@automattic/number-formatters';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
-import SiteIcon from '../../components/site-icon';
-import { Text } from '../../components/text';
-import TimeSince from '../../components/time-since';
-import { getSiteDisplayName } from '../../utils/site-name';
-import { getSitePlanDisplayName } from '../../utils/site-plan';
-import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../utils/site-provider';
-import { getSiteBlockingStatus } from '../../utils/site-status';
-import { isSelfHostedJetpackConnected } from '../../utils/site-types';
-import { getSiteDisplayUrl } from '../../utils/site-url';
-import { PHPVersion } from '../php-version/components/php-version-field';
+import SiteIcon from '../../../components/site-icon';
+import { Text } from '../../../components/text';
+import TimeSince from '../../../components/time-since';
+import { getSiteDisplayName } from '../../../utils/site-name';
+import { getSitePlanDisplayName } from '../../../utils/site-plan';
+import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../../utils/site-provider';
+import { getSiteBlockingStatus } from '../../../utils/site-status';
+import { isSelfHostedJetpackConnected } from '../../../utils/site-types';
+import { getSiteDisplayUrl } from '../../../utils/site-url';
+import { PHPVersion } from '../../php-version/components/php-version-field';
 import {
 	AsyncEngagementStat,
 	LastBackup,
@@ -22,9 +22,9 @@ import {
 	URL,
 	Uptime,
 	Visibility,
-} from '../site-fields';
-import { getSiteVisibility, getVisibilityLabels } from '../visibility/utils';
-import { getFormattedWordPressVersion } from '../wordpress-version/utils';
+} from '../../site-fields';
+import { getSiteVisibility, getVisibilityLabels } from '../../visibility/utils';
+import { getFormattedWordPressVersion } from '../../wordpress-version/utils';
 import type { Site } from '@automattic/api-core';
 import type { Field, Operator, View } from '@wordpress/dataviews';
 

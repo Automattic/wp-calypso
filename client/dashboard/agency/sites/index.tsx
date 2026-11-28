@@ -21,7 +21,11 @@ import {
 import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../../components/dataviews';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { DEFAULT_PER_PAGE, DEFAULT_CONFIG, recordViewChanges } from '../../sites/dataviews/views';
+import {
+	DEFAULT_PER_PAGE,
+	DEFAULT_CONFIG,
+	recordViewChanges,
+} from '../../sites/site-list/dataviews/views';
 import { AgencyNotices } from '../components/agency-notices';
 import { DevSiteConfigurationModal } from '../marketplace/purchases/site-configuration-modal';
 import AddNewSite from './add-new-site';

@@ -19,8 +19,8 @@ import { Icon, globe } from '@wordpress/icons';
 import { useState } from 'react';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import { useAnalytics } from '../../../app/analytics';
-import Column from '../../../sites/add-new-site/column';
-import MenuItem from '../../../sites/add-new-site/menu-item';
+import Column from '../../../sites/site-list/components/add-new-site/column';
+import MenuItem from '../../../sites/site-list/components/add-new-site/menu-item';
 import { ApprovalGate, useIsApprovalGated } from '../../approval-gate';
 import { crossoverLinkProps } from '../../crossover/store';
 import { getMarketplaceHostingSectionRoute } from '../../marketplace/paths';
@@ -30,7 +30,7 @@ import DevSiteCard from './dev-site-card';
 import { getAvailablePendingSites, getPressableOwnershipType, isAgencyApproved } from './lib';
 import type { AddNewSiteAction, AddNewSiteProps } from './types';
 // The shared Column and MenuItem above are styled by the dotcom menu's stylesheet.
-import '../../../sites/add-new-site/style.scss';
+import '../../../sites/site-list/components/add-new-site/style.scss';
 
 /**
  * `useLinkProps` describes a bare anchor: it widens `children` past the single

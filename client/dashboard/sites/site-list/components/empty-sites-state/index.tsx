@@ -3,11 +3,11 @@ import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { backup, Icon, reusableBlock, wordpress } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
-import { useAnalytics } from '../../app/analytics';
-import EmptyState from '../../components/empty-state';
-import OfferCard from '../../components/offer-card';
-import RouterLinkButton from '../../components/router-link-button';
-import { wpcomLink } from '../../utils/link';
+import { useAnalytics } from '../../../../app/analytics';
+import EmptyState from '../../../../components/empty-state';
+import OfferCard from '../../../../components/offer-card';
+import RouterLinkButton from '../../../../components/router-link-button';
+import { wpcomLink } from '../../../../utils/link';
 
 const CONTEXT = 'dashboard-sites';
 const EMPTY_STATE_REF = 'dashboard-sites-empty-state';

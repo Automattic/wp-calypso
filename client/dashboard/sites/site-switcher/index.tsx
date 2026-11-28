@@ -9,7 +9,7 @@ import { __ } from '@wordpress/i18n';
 import { plus } from '@wordpress/icons';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import AddNewSite from '../add-new-site';
+import AddNewSite from '../site-list/components/add-new-site';
 import { SiteSwitcherBase } from './base';
 import type { SiteSwitcherProps } from './types';
 
