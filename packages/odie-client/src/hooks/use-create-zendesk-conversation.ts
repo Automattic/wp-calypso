@@ -1,10 +1,12 @@
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import {
 	getTicketFieldMetadata,
+	requestClassificationTags,
 	useUpdateZendeskUserFields,
 	ZENDESK_CUSTOM_FIELD_AI_CHAT_ID,
 	ZENDESK_CUSTOM_FIELD_WEBSITE_URL,
 	ZENDESK_SOURCE_URL_TICKET_FIELD_ID,
+	type ClassificationStatus,
 	type ZendeskConversation,
 } from '@automattic/zendesk-client';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -23,6 +25,14 @@ import type { HumanSupportChatValues, Message } from '../types';
 
 // Zendesk routes and prioritizes the checkout support experiment's chats by this tag.
 const CHECKOUT_SUPPORT_TAG = 'wpcom_checkout_chat';
+
+// How long chat creation waits for the classification tags, counted from when the request starts.
+// Past it, the chat is created without them and Zendesk classifies the ticket itself.
+const CLASSIFICATION_TIME_LIMIT_MS = 10000;
+
+// Besides the request's own statuses: `skipped` when there was nothing to classify, `pending`
+// while the result hasn't been read yet, and `timed_out` when it came after the time limit.
+type TrackedClassificationStatus = ClassificationStatus | 'skipped' | 'pending' | 'timed_out';
 
 export const useCreateZendeskConversation = () => {
 	const {
@@ -137,6 +147,13 @@ export const useCreateZendeskConversation = () => {
 		let smoochWaitedMs = 0;
 		let smoochAttempts = 0;
 
+		// A chat that went straight to a person has no Odie conversation to classify: its question is
+		// in the first message, or nowhere yet. An Odie chat still loaded from before is about
+		// something else, and its tags, with `cl_classified`, would stop Zendesk from classifying the
+		// ticket itself.
+		const shouldClassify = !! chatId && ! firstMessage && createdFrom !== 'direct_url' && ! checkoutSupportVariation;
+		let classificationStatus: TrackedClassificationStatus = shouldClassify ? 'pending' : 'skipped';
+
 		const handleErrorCreatingZendeskConversation = ( errorType: string, error?: unknown ) => {
 			trackEvent( errorType, {
 				error_message: getErrorMessage( error ),
@@ -146,6 +163,7 @@ export const useCreateZendeskConversation = () => {
 				is_chat_loaded: isChatLoaded,
 				smooch_waited_ms: smoochWaitedMs,
 				smooch_attempts: smoochAttempts,
+				classification_status: classificationStatus,
 			} );
 
 			setChat( {
@@ -164,6 +182,10 @@ export const useCreateZendeskConversation = () => {
 			messages: [ ...prevChat.messages, ...firstMessages ],
 			status: 'transfer',
 		} ) );
+
+		// Classification runs alongside the user fields request; its time limit starts now.
+		const classificationStartedAt = Date.now();
+		const classification = shouldClassify && chatId ? requestClassificationTags( chatId ) : null;
 
 		try {
 			trackEvent( 'submitting_zendesk_user_fields', {
@@ -190,6 +212,28 @@ export const useCreateZendeskConversation = () => {
 			return;
 		}
 
+		// Only the time left of the limit is waited for. A result that is already in wins the race
+		// even when none is left, because it settles before the timer fires.
+		const classificationWaitStartedAt = Date.now();
+		let classificationTags: string[] = [];
+		if ( classification ) {
+			let classificationTimer: ReturnType< typeof setTimeout > | undefined;
+			const remainingMs = Math.max(
+				0,
+				CLASSIFICATION_TIME_LIMIT_MS - ( classificationWaitStartedAt - classificationStartedAt )
+			);
+			const result = await Promise.race( [
+				classification,
+				new Promise< null >( ( resolve ) => {
+					classificationTimer = setTimeout( () => resolve( null ), remainingMs );
+				} ),
+			] );
+			clearTimeout( classificationTimer );
+			classificationTags = result?.tags ?? [];
+			classificationStatus = result?.status ?? 'timed_out';
+		}
+		const classificationWaitMs = Date.now() - classificationWaitStartedAt;
+
 		let conversation: ZendeskConversation | null;
 		let interaction;
 
@@ -214,6 +258,7 @@ export const useCreateZendeskConversation = () => {
 			...new Set( [
 				...( zendeskConversationTags ?? [] ),
 				...tags,
+				...classificationTags,
 				...( checkoutSupportVariation
 					? [ CHECKOUT_SUPPORT_TAG, `${ CHECKOUT_SUPPORT_TAG }_${ checkoutSupportVariation }` ]
 					: [] ),
@@ -323,6 +368,10 @@ export const useCreateZendeskConversation = () => {
 				messaging_url: requestedSiteUrl || selectedSiteURL || null,
 				smooch_waited_ms: smoochWaitedMs,
 				smooch_attempts: smoochAttempts,
+				classification_status: classificationStatus,
+				classification_tags_count: classificationTags.length,
+				classification_wait_ms: classificationWaitMs,
+				classification_timed_out: classificationStatus === 'timed_out',
 			} );
 
 			// If the interaction id has changed, update the URL.
