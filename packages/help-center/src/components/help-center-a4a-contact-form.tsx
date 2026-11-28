@@ -22,6 +22,7 @@ import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import './help-center-a4a-contact-form.scss';
 import { useSubmitA4ATicketMutation } from '../data/use-submit-a4a-support-ticket';
 import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
+import { HelpCenterA4ASiteField } from './help-center-a4a-site-field';
 import type { Field } from '@wordpress/dataviews';
 
 type FormData = {
@@ -142,6 +143,15 @@ export const HelpCenterA4AContactForm = () => {
 						label: __( 'Related site', __i18n_text_domain__ ),
 						type: 'text' as const,
 						placeholder: __( 'Add site if necessary', __i18n_text_domain__ ),
+						Edit: ( { field, data, onChange } ) => (
+							<HelpCenterA4ASiteField
+								agencyId={ agency?.id }
+								label={ field.label }
+								placeholder={ field.placeholder }
+								value={ field.getValue( { item: data } ) }
+								onChange={ ( value ) => onChange( { [ field.id ]: value } ) }
+							/>
+						),
 						isVisible: () => ! isPressableOfferRequest,
 					},
 			{
@@ -253,7 +263,7 @@ export const HelpCenterA4AContactForm = () => {
 				},
 			},
 		],
-		[ isMigrationRequest, isPressableOfferRequest ]
+		[ isMigrationRequest, isPressableOfferRequest, agency?.id ]
 	);
 
 	const { validity } = useFormValidity( formData, fields, FORM_CONFIG );
