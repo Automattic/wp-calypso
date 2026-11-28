@@ -6,6 +6,16 @@
 
 - **[Calypso Live](#calypso-live)** for final signed-in checks, when a PR is open or you were asked to open one. Run the static checks and unit tests before opening it, and the browser check once the draft's preview is built, before marking it ready. Drafts from branches in this repository get previews, which verify the intended commit without sharing a local dev server across worktrees.
 - **A [local dev server](#setup)** to reproduce bugs, test unpushed changes, or when the preview is unavailable or can't support the check, e.g. a flag only the local config turns on. Never open a PR, or ask for one, just to get a preview. A dev server takes 4 to 9 GB of memory while it builds, more on a machine with more cores, and 2 to 6 GB after, so stop one you no longer need.
+- **A change to `config/dashboard-stage.json` or `config/dashboard-production.json`** can't be checked on Calypso Live: the preview's Dashboard link runs the `dashboard-horizon` config (its corner badge says so). `?flags=` on the preview can turn the same flags on or off (`?flags=a,-b`), which approximates the change without testing it. Check it on a local build of that config instead. These configs set `env: production`, so `yarn start` serves a prebuilt client and doesn't build one: run `yarn build-client` once the server is up. After any code or config change, rebuild the client and restart the server.
+
+  ```bash
+  export CALYPSO_ENV=dashboard-stage HOST=my.localhost NODE_OPTIONS=--max-old-space-size=8192
+  export ENTRY_LIMIT=entry-main,entry-stepper,entry-dashboard-dotcom,entry-dashboard-a4a SECTION_LIMIT=signup,checkout,a8c-for-agencies-signup
+  yarn start         # in the background
+  yarn build-client  # once the server is up
+  ```
+
+  Use `CALYPSO_ENV=dashboard-production` the same way for the production config.
 
 ## Accounts
 
@@ -118,6 +128,7 @@ node .agents/skills/verify/scripts/browse.cjs '/sites/{site}' --screenshot /tmp/
 - **Don't wait for `networkidle`.** The dashboard keeps polling. Wait for a visible element.
 - **Tour popovers** can cover parts of a screenshot. Dismiss them in `--eval` if they get in the way.
 - **Don't count Dashboard snackbars by page text.** A hidden screen-reader region repeats the message and keeps it after the snackbar closes. Count `.components-snackbar` elements right after the action: most snackbars close after 6 seconds.
+- **Tracks events.** `--log-requests '_en=<event_name>'` lists an event's `t.gif` hits, but prints only the first 200 characters of each URL, and Tracks puts the event's properties before `_en`. To check properties, collect the URLs of `pixel.wp.com/t.gif` requests with `page.on( 'request' )` in `--eval` and read them with `new URL( url ).searchParams`. `--eval` runs after the page has loaded, so for an event sent on load, register the listener, then `await page.reload(); await loaded();` before reading the URLs. Tracks keeps hits it hasn't confirmed in a cookie and resends them, with the same `_ts`, when the page or another frame records its next event, so one action can show two or three identical hits: count distinct `_ts`. Events recorded with `recordTracksEvent` also appear in the console after `localStorage.setItem( 'debug', 'calypso:analytics' )`.
 - **Sandboxes.** Headless Chromium can reach production even when `/etc/hosts` points at a sandbox. Responses from the edge have an `x-ac` header; sandbox responses don't. To reach the sandbox, start the `--eval` with:
 
   ```js
