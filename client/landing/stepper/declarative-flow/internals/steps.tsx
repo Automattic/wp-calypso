@@ -289,6 +289,14 @@ export const STEPS = {
 			),
 	},
 
+	CONFIDENCE_STEP: {
+		slug: 'confidence-step',
+		asyncComponent: () =>
+			import(
+				/* webpackChunkName: 'async-step-confidence-step' */ './steps-repository/confidence-step'
+			),
+	},
+
 	PICK_SITE: {
 		slug: 'sitePicker',
 		asyncComponent: () => import( './steps-repository/site-picker' ),

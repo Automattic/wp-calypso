@@ -1,10 +1,16 @@
+import { createStaticSiteImportSession, getStaticSiteImportErrorCode } from '@automattic/api-core';
+import { createStaticSiteImportSessionMutation } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import {
 	SITE_MIGRATION_FLOW,
 	STATIC_SITE_IMPORT_FLOW,
 	STATIC_SITE_IMPORT_PREVIEW_FLOW,
 } from '@automattic/onboarding';
+import { useMutation } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
+import { sprintf } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
@@ -12,10 +18,17 @@ import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps'
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
+import { goToCheckout, goToUnifiedCheckout } from 'calypso/landing/stepper/utils/checkout';
+import { stepWithRequiredLogin } from 'calypso/landing/stepper/utils/step-with-required-login';
+import { startWowFunnelSite } from 'calypso/landing/stepper/utils/wow-funnel-site';
+import { loadExperimentAssignment, useExperiment } from 'calypso/lib/explat';
+import { getImporterByKey } from 'calypso/lib/importer/importer-config';
 import { addQueryArgs, addSchemeIfMissing } from 'calypso/lib/url';
+import { useSelector } from 'calypso/state';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { withLocale } from '../../helpers/with-locale';
 import { canUseStaticSiteImport } from '../static-site-import-flow/helpers';
+import type { OnboardActions } from '@automattic/data-stores';
 import type {
 	FlowV2,
 	NavigateV2,
@@ -23,14 +36,45 @@ import type {
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import type { ImporterPlatform } from 'calypso/lib/importer/types';
 
+/** Both variations' steps. Each variation starts at its own first step and goes only to its own. */
 const ALL_STEPS = [
 	STEPS.SITE_MIGRATION_IDENTIFY,
-	STEPS.STATIC_SITE_IMPORT_READING,
+	STEPS.CONFIDENCE_STEP,
 	STEPS.STATIC_SITE_IMPORT_PROGRESS,
+	STEPS.UNIFIED_PLANS,
+	STEPS.PROCESSING,
 	STEPS.ERROR,
 ];
 
-/** A source as the reading step names it, so the same site typed two ways still matches. */
+const isWordPressSourceError = ( error: unknown ) =>
+	getStaticSiteImportErrorCode( error ) === 'static_site_import_source_is_wordpress';
+
+/**
+ * Starts the import session, then builds a preview site through the `preview` WoW funnel, which
+ * WordPress.com delivers the import onto as soon as the build lands. Run by the processing step,
+ * so it resolves with what happened rather than throwing.
+ */
+async function movePreview( source: string ) {
+	let importSessionId;
+	try {
+		importSessionId = (
+			await createStaticSiteImportSession( addSchemeIfMissing( source, 'https' ) )
+		).session_id;
+	} catch ( error ) {
+		return { action: isWordPressSourceError( error ) ? 'migrate' : 'unavailable' };
+	}
+	try {
+		const preview = await startWowFunnelSite( {
+			funnelSlug: 'preview',
+			funnelArgs: { import_session_id: importSessionId },
+		} );
+		return { action: 'started', importSessionId, previewSiteSlug: preview.siteSlug };
+	} catch {
+		return { action: 'preview_failed' };
+	}
+}
+
+/** A source as the progress step names it, so the same site typed two ways still matches. */
 const normalizeSource = ( source = '' ) =>
 	source.trim() ? addSchemeIfMissing( source.trim(), 'https' ).replace( /\/+$/, '' ) : '';
 
@@ -55,16 +99,68 @@ function useSource() {
 	};
 }
 
-function initialize() {
-	// A source on the URL skips identification.
-	if ( getSource( new URLSearchParams( window.location.search ) ) ) {
-		return stepsWithRequiredLogin( [
-			STEPS.STATIC_SITE_IMPORT_READING,
-			STEPS.STATIC_SITE_IMPORT_PROGRESS,
-			STEPS.ERROR,
-		] );
+export const CHECKOUT_FIRST_EXPERIMENT = 'calypso_static_site_import_preview_checkout_first_202611';
+export const CHECKOUT_FIRST_VARIATION = 'import_after_checkout';
+
+/**
+ * Leaving checkout comes back to plans with `checkoutExit`, and skipping plans goes to signup with
+ * `skippedPlans`. Only the checkout-first variation does either, and signing up can change the
+ * assignment, so the URL decides from then on.
+ */
+const isPastPlans = ( query: URLSearchParams ) =>
+	query.get( 'checkoutExit' ) === '1' || query.get( 'skippedPlans' ) === '1';
+
+const isCheckoutFirst = ( variationName: string | null | undefined, query: URLSearchParams ) =>
+	variationName === CHECKOUT_FIRST_VARIATION || isPastPlans( query );
+
+function useIsCheckoutFirst() {
+	const [ , assignment ] = useExperiment( CHECKOUT_FIRST_EXPERIMENT );
+	return isCheckoutFirst( assignment?.variationName, useQuery() );
+}
+
+/**
+ * Outside production, `?variation=a` or `?variation=b` assigns this browser for a day, for testing.
+ * It is stored where ExPlat keeps its assignments, so it holds across steps, signup and checkout.
+ */
+function forceVariationFromQuery( query: URLSearchParams ) {
+	const forced = query.get( 'variation' );
+	if ( config( 'env_id' ) === 'production' || ( forced !== 'a' && forced !== 'b' ) ) {
+		return;
 	}
-	return stepsWithRequiredLogin( ALL_STEPS );
+	try {
+		window.localStorage.setItem(
+			`explat-experiment--${ CHECKOUT_FIRST_EXPERIMENT }`,
+			JSON.stringify( {
+				experimentName: CHECKOUT_FIRST_EXPERIMENT,
+				variationName: forced === 'b' ? CHECKOUT_FIRST_VARIATION : null,
+				retrievedTimestamp: Date.now(),
+				ttl: 24 * 60 * 60,
+			} )
+		);
+	} catch {
+		// Without storage, ExPlat assigns the browser as usual.
+	}
+}
+
+async function initialize() {
+	const query = new URLSearchParams( window.location.search );
+	forceVariationFromQuery( query );
+	const assignment = await loadExperimentAssignment( CHECKOUT_FIRST_EXPERIMENT );
+	// The checkout-first variation shows what will be moved, then asks for a plan and checkout
+	// before signing up. The new site's Overview shows the move from there.
+	const checkoutFirst = isCheckoutFirst( assignment.variationName, query );
+
+	// A source on the URL skips identification.
+	const afterIdentify = checkoutFirst ? STEPS.CONFIDENCE_STEP : STEPS.STATIC_SITE_IMPORT_PROGRESS;
+	const first = getSource( query ) ? afterIdentify : STEPS.SITE_MIGRATION_IDENTIFY;
+	const steps = [ first, ...ALL_STEPS.filter( ( step ) => step !== first ) ];
+
+	// Checkout-first signs up at checkout, or before processing when plans are skipped.
+	const needsLogin = ( step: ( typeof ALL_STEPS )[ number ] ) =>
+		! checkoutFirst || step === STEPS.PROCESSING;
+	return steps.map( ( step ) =>
+		needsLogin( step ) ? stepWithRequiredLogin( step ) : step
+	) as typeof ALL_STEPS;
 }
 
 const staticSiteImportPreview: FlowV2< typeof initialize > = {
@@ -76,28 +172,47 @@ const staticSiteImportPreview: FlowV2< typeof initialize > = {
 	useStepsProps() {
 		const { get } = useFlowState< typeof initialize >();
 		const { from, platform } = useSource();
-		const started = get( STEPS.STATIC_SITE_IMPORT_READING.slug );
+		const isCheckoutFirstRun = useIsCheckoutFirst();
+		const started = get( STEPS.STATIC_SITE_IMPORT_PROGRESS.slug );
+		const { __ } = useI18n();
+		const platformName = getImporterByKey( `importer-type-${ platform }` )?.title;
 		return {
-			[ STEPS.STATIC_SITE_IMPORT_READING.slug ]: {
-				buildPreview: true,
-				sourceUrl: from || undefined,
+			// Both variations offer the same grid, without Free: the move needs a paid plan.
+			[ STEPS.UNIFIED_PLANS.slug ]: {
+				isInSignup: true,
+				intent: 'plans-default-wpcom',
+				hideFreePlan: true,
+				// Skipping signs the customer up and moves the site onto a free preview instead.
+				skippable: true,
+			},
+			[ STEPS.CONFIDENCE_STEP.slug ]: {
+				from,
+				platform,
+				title: __( 'Ready to copy' ),
+				subTitle: platformName
+					? sprintf(
+							/* translators: %s is the platform the site is built on, e.g. Wix. */
+							__( 'Your site runs on %s. We’ll copy it to WordPress.com.' ),
+							platformName
+						)
+					: __( 'We’ll copy your site to WordPress.com.' ),
+				includesLabel: __( 'Why move to WordPress.com' ),
+				includes: [
+					__( 'Your site is yours, on the open web' ),
+					__( 'Your pages, as they look today' ),
+					__( 'All of your images and files' ),
+				],
+			},
+			[ STEPS.STATIC_SITE_IMPORT_PROGRESS.slug ]: {
+				from,
+				platform,
 				// Going back to this step picks up the move it started, rather than copying the site again.
 				startedImport:
-					started?.action === 'continue' &&
-					started.previewSiteId &&
+					! isCheckoutFirstRun &&
+					started?.action === 'started' &&
 					normalizeSource( started.sourceUrl ) === normalizeSource( from )
 						? started
 						: undefined,
-			},
-			[ STEPS.STATIC_SITE_IMPORT_PROGRESS.slug ]: {
-				// Site creation returns the ID as a string, and the move looks up the preview by a numeric ID.
-				siteId:
-					started?.action === 'continue' && started.previewSiteId
-						? Number( started.previewSiteId )
-						: undefined,
-				importSessionId: started?.action === 'continue' ? started.importSessionId : undefined,
-				from,
-				platform,
 			},
 		};
 	},
@@ -126,10 +241,15 @@ const staticSiteImportPreview: FlowV2< typeof initialize > = {
 		}, [ urlSource, urlPlatform ] );
 	},
 
-	useStepNavigation( _currentStep, navigate: NavigateV2< typeof ALL_STEPS > ) {
+	useStepNavigation( currentStep, navigate: NavigateV2< typeof ALL_STEPS > ) {
 		const locale = useFlowLocale();
 		const { get, set } = useFlowState< typeof initialize >();
 		const { from, platform } = useSource();
+		const isCheckoutFirstRun = useIsCheckoutFirst();
+		const query = useQuery();
+		const userIsLoggedIn = useSelector( isUserLoggedIn );
+		const { setPlanCartItem, setPendingAction } = useDispatch( ONBOARD_STORE ) as OnboardActions;
+		const { mutate: createSession } = useMutation( createStaticSiteImportSessionMutation() );
 
 		const exitFlow = ( to: string ) =>
 			window.location.replace( addQueryArgs( { ref: STATIC_SITE_IMPORT_PREVIEW_FLOW }, to ) );
@@ -137,17 +257,33 @@ const staticSiteImportPreview: FlowV2< typeof initialize > = {
 		const siteMigrationUrl = ( slug: string, args: Record< string, string | undefined > ) =>
 			addQueryArgs( args, withLocale( `/setup/${ SITE_MIGRATION_FLOW }/${ slug }`, locale ) );
 
-		const goToPreviewOverview = () => {
-			const started = get( STEPS.STATIC_SITE_IMPORT_READING.slug );
-			if ( started?.action !== 'continue' || ! started.previewSiteSlug ) {
-				return navigate( STEPS.ERROR.slug );
-			}
-			return exitFlow(
-				addQueryArgs(
-					{ importSessionId: started.importSessionId, from, platform },
-					dashboardLink( `/sites/${ started.previewSiteSlug }` )
+		const plansUrl = ( args: Record< string, string > = {} ) =>
+			addQueryArgs(
+				args,
+				withLocale(
+					`/setup/${ STATIC_SITE_IMPORT_PREVIEW_FLOW }/${ STEPS.UNIFIED_PLANS.slug }`,
+					locale
 				)
 			);
+
+		/** A site's Overview, which shows the session's move. */
+		const overviewUrl = ( site: string, importSessionId: string ) =>
+			`${ dashboardLink( `/sites/${ site }` ) }?${ new URLSearchParams( {
+				importSessionId,
+				from,
+				platform,
+			} ) }`;
+
+		const startedMove = () => {
+			const started = get( STEPS.STATIC_SITE_IMPORT_PROGRESS.slug );
+			return started?.action === 'started' && started.previewSiteSlug ? started : undefined;
+		};
+
+		const goToPreviewOverview = ( started = startedMove() ) => {
+			if ( ! started?.previewSiteSlug ) {
+				return navigate( STEPS.ERROR.slug );
+			}
+			return exitFlow( overviewUrl( started.previewSiteSlug, started.importSessionId ) );
 		};
 
 		const goToWordPressMigration = ( source: string, host?: string, isWpcom?: boolean ) =>
@@ -159,6 +295,45 @@ const staticSiteImportPreview: FlowV2< typeof initialize > = {
 					isWpcom: isWpcom ? 'true' : undefined,
 				} )
 			);
+
+		/**
+		 * The session names the source, and the site checkout makes takes the move when its Overview
+		 * opens, since the customer paid for it there.
+		 */
+		const checkOutNewSite = ( plan: string ) =>
+			createSession( addSchemeIfMissing( from, 'https' ), {
+				onSuccess: ( session ) =>
+					goToUnifiedCheckout( {
+						flowName: STATIC_SITE_IMPORT_PREVIEW_FLOW,
+						plan,
+						userIsLoggedIn,
+						// The pending page resolves the literal placeholder from the purchase receipt.
+						destination: overviewUrl( ':siteId', session.session_id ),
+						cancelDestination: plansUrl( { from, platform, checkoutExit: '1' } ),
+						siteIntent: Onboard.SiteIntent.SiteMigration,
+					} ),
+				onError: ( error ) =>
+					getStaticSiteImportErrorCode( error ) === 'static_site_import_source_is_wordpress'
+						? goToWordPressMigration( from )
+						: navigate( STEPS.ERROR.slug ),
+			} );
+
+		/** Checkout-first after skipping plans: the preview processing built, or why it couldn't. */
+		const submitProcessing = ( result: Record< string, unknown > ) => {
+			switch ( result.action ) {
+				case 'started':
+					return typeof result.previewSiteSlug === 'string' &&
+						typeof result.importSessionId === 'string'
+						? exitFlow( overviewUrl( result.previewSiteSlug, result.importSessionId ) )
+						: navigate( STEPS.ERROR.slug );
+				case 'migrate':
+					return goToWordPressMigration( from );
+				// Without a preview, the customer can still buy a plan for the move.
+				case 'preview_failed':
+					return navigate( STEPS.UNIFIED_PLANS.slug );
+			}
+			return navigate( STEPS.ERROR.slug );
+		};
 
 		const submit: SubmitHandler< typeof initialize > = ( submittedStep ) => {
 			const { slug, providedDependencies } = submittedStep;
@@ -184,7 +359,11 @@ const staticSiteImportPreview: FlowV2< typeof initialize > = {
 						canUseStaticSiteImport( identifiedPlatform as ImporterPlatform, source )
 					) {
 						set( STEPS.SITE_MIGRATION_IDENTIFY.slug, providedDependencies );
-						return navigate( STEPS.STATIC_SITE_IMPORT_READING.slug );
+						return navigate(
+							isCheckoutFirstRun
+								? STEPS.CONFIDENCE_STEP.slug
+								: STEPS.STATIC_SITE_IMPORT_PROGRESS.slug
+						);
 					}
 
 					// Parked, unhealthy and unrecognized sources take the regular migration paths.
@@ -193,12 +372,63 @@ const staticSiteImportPreview: FlowV2< typeof initialize > = {
 					);
 				}
 
-				case STEPS.STATIC_SITE_IMPORT_READING.slug: {
+				case STEPS.CONFIDENCE_STEP.slug:
+					return navigate( STEPS.UNIFIED_PLANS.slug );
+
+				case STEPS.UNIFIED_PLANS.slug: {
+					// Processing needs login, then moves the site onto a free preview.
+					if ( isCheckoutFirstRun && providedDependencies?.action === 'skip_plan' ) {
+						setPendingAction( () => movePreview( from ) );
+						return navigate(
+							`${ STEPS.PROCESSING.slug }?${ new URLSearchParams( {
+								from,
+								platform,
+								skippedPlans: '1',
+							} ) }`
+						);
+					}
+					// Preview-first already built the preview: skipping opens its homepage through the share
+					// link, which gets past Coming Soon, or its Overview without one.
+					if ( providedDependencies?.action === 'skip_plan' ) {
+						const previewUrl = query.get( 'previewUrl' );
+						if ( previewUrl && /^https:\/\//i.test( previewUrl ) ) {
+							return window.location.replace( previewUrl );
+						}
+						return goToPreviewOverview();
+					}
+					const planCartItem = providedDependencies?.cartItems?.[ 0 ];
+					if ( ! planCartItem?.product_slug ) {
+						return navigate( STEPS.ERROR.slug, { errorReason: 'no_plan_selected' } );
+					}
+					if ( isCheckoutFirstRun ) {
+						setPlanCartItem( planCartItem );
+						return checkOutNewSite( planCartItem.product_slug );
+					}
+					// The plan is for the preview, which already holds the copied site.
+					const started = startedMove();
+					if ( ! started?.previewSiteSlug ) {
+						return navigate( STEPS.ERROR.slug );
+					}
+					return goToCheckout( {
+						flowName: STATIC_SITE_IMPORT_PREVIEW_FLOW,
+						stepName: STEPS.UNIFIED_PLANS.slug,
+						siteSlug: started.previewSiteSlug,
+						plan: planCartItem.product_slug,
+						destination: overviewUrl( started.previewSiteSlug, started.importSessionId ),
+						cancelDestination: plansUrl(),
+					} );
+				}
+
+				case STEPS.PROCESSING.slug:
+					return submitProcessing( providedDependencies );
+
+				case STEPS.STATIC_SITE_IMPORT_PROGRESS.slug: {
 					switch ( providedDependencies.action ) {
+						// The step goes on showing the move, which the flow keeps for going back to it.
+						case 'started':
+							return set( STEPS.STATIC_SITE_IMPORT_PROGRESS.slug, providedDependencies );
 						case 'migrate':
 							return goToWordPressMigration( from );
-						// A preview has no destination to confirm, so its reading step never offers importers.
-						case 'choose_importer':
 						case 'unavailable':
 							return navigate( STEPS.ERROR.slug );
 						// The server won't build a preview, so the customer can still move the site by
@@ -213,22 +443,15 @@ const staticSiteImportPreview: FlowV2< typeof initialize > = {
 									)
 								)
 							);
-					}
-
-					if ( ! providedDependencies.previewSiteSlug ) {
-						return navigate( STEPS.ERROR.slug );
-					}
-					set( STEPS.STATIC_SITE_IMPORT_READING.slug, providedDependencies );
-					if ( ! providedDependencies.previewSiteId ) {
-						return goToPreviewOverview();
-					}
-					return navigate( STEPS.STATIC_SITE_IMPORT_PROGRESS.slug );
-				}
-
-				case STEPS.STATIC_SITE_IMPORT_PROGRESS.slug: {
-					// The share link gets past Coming Soon, so the customer sees the site that was copied.
-					if ( providedDependencies.action === 'finished' && providedDependencies.previewUrl ) {
-						return window.location.replace( providedDependencies.previewUrl );
+						// The copied site is on the preview, so the customer picks a plan to keep it.
+						case 'finished':
+							return navigate(
+								providedDependencies.previewUrl
+									? `${ STEPS.UNIFIED_PLANS.slug }?${ new URLSearchParams( {
+											previewUrl: providedDependencies.previewUrl,
+										} ) }`
+									: STEPS.UNIFIED_PLANS.slug
+							);
 					}
 					// The preview's Overview shows how a move ended, and what can be done next.
 					return goToPreviewOverview();
@@ -236,7 +459,27 @@ const staticSiteImportPreview: FlowV2< typeof initialize > = {
 			}
 		};
 
-		return { submit };
+		// Plans go back to the confidence step, which goes back to identifying the source.
+		const goBack = () => {
+			if ( currentStep === STEPS.UNIFIED_PLANS.slug ) {
+				return navigate( STEPS.CONFIDENCE_STEP.slug );
+			}
+			if ( ! getSource( query ) ) {
+				return navigate( STEPS.SITE_MIGRATION_IDENTIFY.slug );
+			}
+			return window.location.assign(
+				siteMigrationUrl( STEPS.SITE_MIGRATION_IDENTIFY.slug, { from } )
+			);
+		};
+
+		return {
+			submit,
+			goBack:
+				isCheckoutFirstRun &&
+				( currentStep === STEPS.UNIFIED_PLANS.slug || currentStep === STEPS.CONFIDENCE_STEP.slug )
+					? goBack
+					: undefined,
+		};
 	},
 };
 

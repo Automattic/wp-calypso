@@ -54,6 +54,11 @@ export const SiteMigrationConfirm = ( {
 	onContinue,
 	onRetryDestination,
 	sourceIssue,
+	title: titleOverride,
+	subTitle: subTitleOverride,
+	includesLabel,
+	includes,
+	platformName,
 }: {
 	topBar: ReactNode;
 	from: string;
@@ -69,6 +74,16 @@ export const SiteMigrationConfirm = ( {
 	onContinue: () => void;
 	onRetryDestination?: () => void;
 	sourceIssue?: SourceIssue;
+	/** Replaces the heading when nothing needs the customer's attention. */
+	title?: TranslateResult;
+	/** Replaces the sub-heading when nothing needs the customer's attention. */
+	subTitle?: TranslateResult;
+	/** Replaces the label above the checklist. */
+	includesLabel?: TranslateResult;
+	/** Replaces the checklist for a new site. */
+	includes?: TranslateResult[];
+	/** The platform the source is known to run on, such as Wix, named under its address. */
+	platformName?: string;
 } ) => {
 	const translate = useTranslate();
 	const hasDestination = !! destinationSiteSlug || destinationFailed;
@@ -79,12 +94,13 @@ export const SiteMigrationConfirm = ( {
 	const showNotWordPress = shownSourceIssue?.type === 'unconfirmed';
 	const sourcePlatformName =
 		shownSourceIssue?.type === 'unconfirmed' ? shownSourceIssue.platformName : undefined;
+	const knownPlatformName = shownSourceIssue ? undefined : platformName;
 	const hasNotice = isSameSite || showLoadError || showUnreachable || showNotWordPress;
 	const destinationAddress = destinationSiteSlug ?? '';
 	// A new site sits beside a short source. A picked destination, or a long source address, stacks.
 	const isSideBySide = ! hasDestination && hostname.length <= 26;
 
-	let title = translate( 'We can copy your whole site' );
+	let title = titleOverride ?? translate( 'We can copy your whole site' );
 	if ( isSameSite ) {
 		title = translate( 'Pick two different sites' );
 	} else if ( showNotWordPress || showUnreachable ) {
@@ -92,9 +108,16 @@ export const SiteMigrationConfirm = ( {
 	}
 	const subTitle = hasNotice
 		? undefined
-		: translate(
+		: ( subTitleOverride ??
+			translate(
 				'It runs on WordPress, so everything comes across: pages, posts, media, theme, plugins and settings.'
-			);
+			) );
+
+	const includedItems = includes ?? [
+		translate( 'Pages, posts and media' ),
+		translate( 'Your theme and plugins' ),
+		translate( 'Your settings' ),
+	];
 
 	let primaryAction: { label: TranslateResult; onClick: () => void } | undefined = {
 		label: hasDestination ? translate( 'Replace and continue' ) : translate( 'Continue' ),
@@ -176,17 +199,27 @@ export const SiteMigrationConfirm = ( {
 							} ) }
 						>
 							<div className="site-migration-confirm__site">
-								<span className="site-migration-confirm__label">
-									{ showNotWordPress && sourcePlatformName
-										? translate( 'From · %(platform)s', {
-												args: { platform: sourcePlatformName },
-												comment: 'The platform the site seems to be built on, e.g. Wix.',
-											} )
-										: translate( 'From your WordPress site' ) }
-								</span>
+								{ ! knownPlatformName && (
+									<span className="site-migration-confirm__label">
+										{ showNotWordPress && sourcePlatformName
+											? translate( 'From · %(platform)s', {
+													args: { platform: sourcePlatformName },
+													comment: 'The platform the site seems to be built on, e.g. Wix.',
+												} )
+											: translate( 'From' ) }
+									</span>
+								) }
 								<span className="site-migration-confirm__address">
 									{ wrappableAddress( hostname ) }
 								</span>
+								{ knownPlatformName && (
+									<span className="site-migration-confirm__label">
+										{ translate( 'On %(platform)s today', {
+											args: { platform: knownPlatformName },
+											comment: 'The platform the site is built on, e.g. Wix.',
+										} ) }
+									</span>
+								) }
 								{ showUnreachable && (
 									<span className="site-migration-confirm__error">
 										{ translate( 'Not loading right now' ) }
@@ -209,16 +242,29 @@ export const SiteMigrationConfirm = ( {
 							</div>
 							<Icon className="site-migration-confirm__arrow" icon={ arrowDown } size={ 24 } />
 							<div className="site-migration-confirm__site">
-								<span className="site-migration-confirm__label">
-									{ hasDestination
-										? translate( 'To your existing WordPress.com site' )
-										: translate( 'To' ) }
-								</span>
-								<span className="site-migration-confirm__address">
-									{ hasDestination
-										? wrappableAddress( destinationAddress )
-										: translate( 'A new WordPress.com site' ) }
-								</span>
+								{ knownPlatformName && ! hasDestination ? (
+									<>
+										<span className="site-migration-confirm__address">
+											{ translate( 'A new site' ) }
+										</span>
+										<span className="site-migration-confirm__label">
+											{ translate( 'On WordPress.com' ) }
+										</span>
+									</>
+								) : (
+									<>
+										<span className="site-migration-confirm__label">
+											{ hasDestination
+												? translate( 'To your existing WordPress.com site' )
+												: translate( 'To' ) }
+										</span>
+										<span className="site-migration-confirm__address">
+											{ hasDestination
+												? wrappableAddress( destinationAddress )
+												: translate( 'A new WordPress.com site' ) }
+										</span>
+									</>
+								) }
 								{ onChangeDestination && (
 									<Step.LinkButton
 										className="site-migration-confirm__change"
@@ -243,21 +289,15 @@ export const SiteMigrationConfirm = ( {
 						{ ! hasDestination && (
 							<div className="site-migration-confirm__includes">
 								<span className="site-migration-confirm__label">
-									{ translate( 'What we’ll copy over' ) }
+									{ includesLabel ?? translate( 'What we’ll copy over' ) }
 								</span>
 								<ul>
-									<li>
-										<Icon icon={ check } size={ 20 } />
-										{ translate( 'Pages, posts and media' ) }
-									</li>
-									<li>
-										<Icon icon={ check } size={ 20 } />
-										{ translate( 'Your theme and plugins' ) }
-									</li>
-									<li>
-										<Icon icon={ check } size={ 20 } />
-										{ translate( 'Your settings' ) }
-									</li>
+									{ includedItems.map( ( item, index ) => (
+										<li key={ index }>
+											<Icon icon={ check } size={ 20 } />
+											{ item }
+										</li>
+									) ) }
 								</ul>
 							</div>
 						) }

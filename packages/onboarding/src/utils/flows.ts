@@ -96,7 +96,10 @@ export const isEcommerceFlow = ( flowName: string | null ) => {
 
 export const isNewSiteMigrationFlow = ( flowName: string | null ) => {
 	return Boolean(
-		flowName && [ SITE_MIGRATION_FLOW, STATIC_SITE_IMPORT_FLOW ].includes( flowName )
+		flowName &&
+		[ SITE_MIGRATION_FLOW, STATIC_SITE_IMPORT_FLOW, STATIC_SITE_IMPORT_PREVIEW_FLOW ].includes(
+			flowName
+		)
 	);
 };
 
