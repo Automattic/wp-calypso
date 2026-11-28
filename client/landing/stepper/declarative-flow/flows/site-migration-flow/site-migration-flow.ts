@@ -330,6 +330,11 @@ const siteMigration: FlowV2< typeof initialize > = {
 		const platformQueryParam = ( urlQueryParams.get( 'platform' ) ||
 			'unknown' ) as ImporterPlatform;
 		const hostQueryParam = urlQueryParams.get( 'host' ) || undefined;
+		// Checkout applies a coupon only from its own URL.
+		const couponQueryParam = urlQueryParams.get( 'coupon' );
+		const checkoutCoupon = couponQueryParam
+			? { extraQueryParams: { coupon: couponQueryParam } }
+			: {};
 		const { get, sessionId, queryKey } = useFlowState< typeof initialize >();
 		const queryClient = useQueryClient();
 		const userHasOtherWPComSites = siteCount && siteCount > 1;
@@ -411,6 +416,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 						siteSlug: destinationSlug,
 						destination,
 						plan,
+						...checkoutCoupon,
 						cancelDestination: addQueryArgs(
 							{
 								...Object.fromEntries( urlQueryParams ),
@@ -1065,6 +1071,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 						from: fromQueryParam ?? undefined,
 						plan: providedDependencies.plan as string,
 						historyBack: true,
+						...checkoutCoupon,
 					} );
 				}
 
