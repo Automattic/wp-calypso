@@ -79,7 +79,7 @@
 		"typescript": "^5.9.3",
 		"vite": "^8.3.8",
 		"vite-plugin-lib-inject-css": "^2.2.2",
-		"vitest": "^5.1.0"
+		"vitest": "^5.1.2"
 	},
 	"dependencies": {
 		"@automattic/charts": "^4.15.2",
