@@ -7125,48 +7125,48 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@php-wasm/logger@npm:3.1.64":
-  version: 3.1.64
-  resolution: "@php-wasm/logger@npm:3.1.64"
-  checksum: 10c0/3c8ac59d50350d6a450ffc5b02645c4f52af12e904bf1fa0c9fe39b8843f2dc01aad101199c842e3ff105f39c5b49e75fb00e1b13b0fb536985b8e43c86cb1cf
+"@php-wasm/logger@npm:3.1.66":
+  version: 3.1.66
+  resolution: "@php-wasm/logger@npm:3.1.66"
+  checksum: 10c0/ad927c8281b636baa181876ade7679b68d60b0c35e7aae0924c7591ae224eff4919495d57b1ec201a1826d8217f5a52da6a0cff95237fed33ebc45a0f2694a05
   languageName: node
   linkType: hard
 
-"@php-wasm/progress@npm:3.1.64":
-  version: 3.1.64
-  resolution: "@php-wasm/progress@npm:3.1.64"
+"@php-wasm/progress@npm:3.1.66":
+  version: 3.1.66
+  resolution: "@php-wasm/progress@npm:3.1.66"
   dependencies:
-    "@php-wasm/logger": "npm:3.1.64"
-  checksum: 10c0/36576b074ef8b0fa0b5826685eff92b9ae25b596723c5b0a018f7abb1f0d75cb2799005dc99b39a036dbedfb1a2bcb3f1151ef16760a23363a0c3728e35afe68
+    "@php-wasm/logger": "npm:3.1.66"
+  checksum: 10c0/b67b930ede32035d536f3d2ffe6d34624b843209a5a5b631eb63ac212c29878fb545dd3458ee89e9342b6d3f2baa30285c9ca840422ed0c4630b39b793ec577a
   languageName: node
   linkType: hard
 
-"@php-wasm/stream-compression@npm:3.1.64":
-  version: 3.1.64
-  resolution: "@php-wasm/stream-compression@npm:3.1.64"
+"@php-wasm/stream-compression@npm:3.1.66":
+  version: 3.1.66
+  resolution: "@php-wasm/stream-compression@npm:3.1.66"
   dependencies:
-    "@php-wasm/util": "npm:3.1.64"
-  checksum: 10c0/e2742611052504a3ea4bea8c27ddcf6953846d9aaf9916721aefb3e8ff7564255204f676cf6c5c80883a636fab270f68a415a05d40d8a22f6399d3ab03f0f761
+    "@php-wasm/util": "npm:3.1.66"
+  checksum: 10c0/90caec6668038955a658e8985e8408dc7ee19228e105d95581575594bdb84925ba934aad4e1cd5b984b5a6943af80ec1628e736c37accadf10f68f0846f21442
   languageName: node
   linkType: hard
 
-"@php-wasm/universal@npm:3.1.64":
-  version: 3.1.64
-  resolution: "@php-wasm/universal@npm:3.1.64"
+"@php-wasm/universal@npm:3.1.66":
+  version: 3.1.66
+  resolution: "@php-wasm/universal@npm:3.1.66"
   dependencies:
-    "@php-wasm/logger": "npm:3.1.64"
-    "@php-wasm/progress": "npm:3.1.64"
-    "@php-wasm/stream-compression": "npm:3.1.64"
-    "@php-wasm/util": "npm:3.1.64"
+    "@php-wasm/logger": "npm:3.1.66"
+    "@php-wasm/progress": "npm:3.1.66"
+    "@php-wasm/stream-compression": "npm:3.1.66"
+    "@php-wasm/util": "npm:3.1.66"
     ini: "npm:4.1.2"
-  checksum: 10c0/1c51eaf5e8515ef70e3110d55c5e7a7b4782f5469494d960aea9b248874f3f37cf5e3dc904ecdc33df52cfbc775f11d9cd481982a92f84b2a56bb82587b0f598
+  checksum: 10c0/05052d771c0d70a695c1d2508829fd543038b8a3b6ce719eba7d5c1eca8ba4a0d1fdc424cefd8d0a2ce6f344046965417de3298156b07df5540097090f837d84
   languageName: node
   linkType: hard
 
-"@php-wasm/util@npm:3.1.64":
-  version: 3.1.64
-  resolution: "@php-wasm/util@npm:3.1.64"
-  checksum: 10c0/17e40f0af68236749c8a4a406bdca2300b45c84b509b4c6b4f6a56e486eac18d1bfc3562d6680ebefc75c9b9ef8aba0e5dbd0db8785138cf6ef6ea197016d079
+"@php-wasm/util@npm:3.1.66":
+  version: 3.1.66
+  resolution: "@php-wasm/util@npm:3.1.66"
+  checksum: 10c0/f1d192b2cf3aabd202e661b189657c7cd223d6112bf7a944182c68f15b79e307a6c39fdfeee75f9822bf721ad6fdae41e5be2b77d71798187445a801654736a8
   languageName: node
   linkType: hard
 
@@ -12849,27 +12849,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wp-playground/mcp@npm:3.1.64":
-  version: 3.1.64
-  resolution: "@wp-playground/mcp@npm:3.1.64"
+"@wp-playground/mcp@npm:3.1.66":
+  version: 3.1.66
+  resolution: "@wp-playground/mcp@npm:3.1.66"
   dependencies:
     "@modelcontextprotocol/sdk": "npm:^1.27.0"
-    "@php-wasm/logger": "npm:3.1.64"
-    "@php-wasm/universal": "npm:3.1.64"
-    "@wp-playground/remote": "npm:3.1.64"
+    "@php-wasm/logger": "npm:3.1.66"
+    "@php-wasm/universal": "npm:3.1.66"
+    "@wp-playground/remote": "npm:3.1.66"
     postal-mime: "npm:2.7.5"
     ws: "npm:8.21.0"
     zod: "npm:^4.3"
   bin:
     wp-playground-mcp: index.js
-  checksum: 10c0/68eec7496ed7bd69d51feba2ff5b40efbf655038b2bc56ce0e907df40b64ab1681ceb67394d5d141e1e2b42ae76e148ded7c8d7b41077697b57a307294be2375
+  checksum: 10c0/30e6ba263e0b9b8fb4a476a98960368a4cc3745a87fa4ab80a3d7f13c3fd97af34efc3dfbbf00bf487fc68684c74d2ea622bb53d8cf8538943ae8d9e77f1f3ba
   languageName: node
   linkType: hard
 
-"@wp-playground/remote@npm:3.1.64":
-  version: 3.1.64
-  resolution: "@wp-playground/remote@npm:3.1.64"
-  checksum: 10c0/fa842573f6f4d2d37a9490a2621f1b4c5a48619f911b43773525a8b23a069c569792ddda0a522b6e18e6a71457854a98dc3a5cc7cd15a25d290082a8155e6810
+"@wp-playground/remote@npm:3.1.66":
+  version: 3.1.66
+  resolution: "@wp-playground/remote@npm:3.1.66"
+  checksum: 10c0/8d2bd0ac524b2a0a6fbfbab6c58a56093f3ddc35f041ac652d5a972ec5b69680bf1c693a43dfc89ec30622ab30fef41e5c0325d94c991e1b7b6ba8fdad519d83
   languageName: node
   linkType: hard
 
@@ -14293,7 +14293,7 @@ __metadata:
     "@wordpress/ui": "npm:^0.27.0"
     "@wordpress/url": "npm:^5.2.0"
     "@wordpress/warning": "npm:^4.2.0"
-    "@wp-playground/mcp": "npm:3.1.64"
+    "@wp-playground/mcp": "npm:3.1.66"
     "@zip.js/zip.js": "npm:2.8.17"
     animate.css: "npm:^4.1.1"
     autoprefixer: "npm:^10.4.21"
@@ -30292,7 +30292,7 @@ __metadata:
     "@wordpress/rich-text": "npm:^8.2.0"
     "@wordpress/stylelint-config": "npm:^27.2.0"
     "@wordpress/url": "npm:^5.2.0"
-    "@wp-playground/mcp": "npm:3.1.64"
+    "@wp-playground/mcp": "npm:3.1.66"
     "@zip.js/zip.js": "npm:2.8.17"
     animate.css: "npm:^4.1.1"
     babel-loader: "npm:^10.1.1"

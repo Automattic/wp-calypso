@@ -129,7 +129,7 @@
 		"@wordpress/ui": "^0.27.0",
 		"@wordpress/url": "^5.2.0",
 		"@wordpress/warning": "^4.2.0",
-		"@wp-playground/mcp": "3.1.64",
+		"@wp-playground/mcp": "3.1.66",
 		"@zip.js/zip.js": "2.8.17",
 		"animate.css": "^4.1.1",
 		"autosize": "^4.0.4",
