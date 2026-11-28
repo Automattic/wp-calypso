@@ -21,6 +21,28 @@ describe( '<McpSetupInstructions />', () => {
 		expect( screen.getByText( 'Click “Connect” and follow the prompts.' ) ).toBeVisible();
 	} );
 
+	test( 'offers Claude no manual config, since Claude Desktop rejects a url-only server', () => {
+		render( <McpSetupInstructions /> );
+
+		expect(
+			screen.queryByRole( 'textbox', { name: 'MCP configuration' } )
+		).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'link', { name: /documentation/i } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'still offers Claude Code the manual config', async () => {
+		render( <McpSetupInstructions /> );
+
+		await chooseAgent( 'Claude Code' );
+
+		expect(
+			JSON.parse(
+				( screen.getByRole( 'textbox', { name: 'MCP configuration' } ) as HTMLTextAreaElement )
+					.value
+			)
+		).toEqual( { mcpServers: { [ MCP_SERVER_NAME ]: { type: 'http', url: MCP_SERVER_URL } } } );
+	} );
+
 	test( 'links ChatGPT straight to the WordPress plugin, with no config to copy', async () => {
 		render( <McpSetupInstructions /> );
 
@@ -69,6 +91,7 @@ describe( '<McpSetupInstructions />', () => {
 		Object.defineProperty( navigator, 'clipboard', { value: { writeText }, configurable: true } );
 		render( <McpSetupInstructions /> );
 
+		await chooseAgent( 'Cursor' );
 		await userEvent.click(
 			screen.getByRole( 'button', { name: 'Copy configuration to clipboard' } )
 		);
