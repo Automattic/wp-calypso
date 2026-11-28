@@ -1,16 +1,14 @@
 import { archiveAmplifyReportMutation, retryAmplifyReportMutation } from '@automattic/api-queries';
 import { useIsMutating, useMutation } from '@tanstack/react-query';
-import {
-	Button,
-	ExternalLink,
-	Modal,
-	__experimentalHStack as HStack,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { Button, ExternalLink, Modal, __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
-import { box as archiveBoxIcon } from '@wordpress/icons';
+import {
+	box as archiveBoxIcon,
+	download as downloadIcon,
+	update as retryIcon,
+} from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { Badge } from '@wordpress/ui';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -24,6 +22,7 @@ import SiteScreenshot from '../components/site-screenshot';
 import { useDownloadReportPdf } from './use-download-report-pdf';
 import type { AmplifyReport } from '@automattic/api-core';
 import type { Action, Field, SupportedLayouts, View } from '@wordpress/dataviews';
+import type { ComponentProps } from 'react';
 
 import './reports.scss';
 
@@ -31,7 +30,7 @@ const REPORT_LAYOUTS: SupportedLayouts = {
 	table: {
 		layout: {
 			density: 'balanced',
-			styles: { actions: { align: 'end' } },
+			styles: { status: { align: 'end' } },
 		},
 		showMedia: true,
 		mediaField: 'icon',
@@ -48,10 +47,20 @@ const DEFAULT_VIEW: View = {
 	mediaField: 'icon',
 	titleField: 'site',
 	descriptionField: 'url',
-	layout: { density: 'balanced', styles: { actions: { align: 'end' } } },
-	fields: [ 'humanScore', 'aiScore', 'actions' ],
+	layout: { density: 'balanced', styles: { status: { align: 'end' } } },
+	fields: [ 'humanScore', 'aiScore', 'status' ],
 	filters: [],
 	sort: { field: 'created', direction: 'desc' },
+};
+
+const STATUS_BADGE_INTENTS: Record<
+	AmplifyReport[ 'status' ],
+	ComponentProps< typeof Badge >[ 'intent' ]
+> = {
+	pending: 'draft',
+	in_progress: 'informational',
+	completed: 'stable',
+	failed: 'high',
 };
 
 function getStatusLabels(): Record< AmplifyReport[ 'status' ], string > {
@@ -295,8 +304,12 @@ export default function AmplifyReportsList( {
 					label,
 				} ) ),
 				filterBy: { operators: [ 'isAny' ] },
-				// The actions column shows the status, so this field is only a filter.
-				enableHiding: false,
+				render: ( { item } ) => (
+					<Badge intent={ STATUS_BADGE_INTENTS[ item.status ] }>
+						{ getStatusLabels()[ item.status ] }
+					</Badge>
+				),
+				enableSorting: false,
 			},
 			{
 				id: 'mode',
@@ -358,62 +371,30 @@ export default function AmplifyReportsList( {
 					),
 				filterBy: false,
 			},
-			{
-				id: 'actions',
-				label: __( 'Status' ),
-				render: ( { item } ) => (
-					<HStack spacing={ 2 } justify="flex-end" expanded={ false }>
-						{ item.status === 'completed' && (
-							<Button
-								__next40pxDefaultSize
-								variant="secondary"
-								size="compact"
-								isBusy={ downloadingId === item.id }
-								disabled={ ! item.has_pdf || downloadingId === item.id }
-								accessibleWhenDisabled
-								aria-label={ sprintf(
-									/* translators: %s: name or address of the site the report is for */
-									__( 'Download PDF for %s' ),
-									titleFor( item )
-								) }
-								onClick={ () => onDownload( item ) }
-							>
-								{ __( 'Download PDF' ) }
-							</Button>
-						) }
-						{ item.status === 'failed' && (
-							<Button
-								__next40pxDefaultSize
-								variant="secondary"
-								size="compact"
-								isBusy={ retryingId === item.id }
-								disabled={ !! retryingId }
-								accessibleWhenDisabled
-								aria-label={ sprintf(
-									/* translators: %s: name or address of the site the report is for */
-									__( 'Retry report for %s' ),
-									titleFor( item )
-								) }
-								onClick={ () => onRetry( item ) }
-							>
-								{ __( 'Retry' ) }
-							</Button>
-						) }
-						{ ( item.status === 'pending' || item.status === 'in_progress' ) && (
-							<Text variant="muted">{ getStatusLabels()[ item.status ] }</Text>
-						) }
-					</HStack>
-				),
-				enableSorting: false,
-				enableHiding: false,
-				filterBy: false,
-			},
 		],
-		[ downloadingId, locale, onDownload, onRetry, retryingId ]
+		[ locale ]
 	);
 
 	const actions = useMemo< Action< AmplifyReport >[] >(
 		() => [
+			{
+				id: 'download-pdf',
+				label: __( 'Download PDF' ),
+				icon: downloadIcon,
+				isPrimary: true,
+				disabled: downloadingId !== null,
+				isEligible: ( item ) => item.status === 'completed' && item.has_pdf,
+				callback: ( [ item ] ) => onDownload( item ),
+			},
+			{
+				id: 'retry',
+				label: __( 'Retry' ),
+				icon: retryIcon,
+				isPrimary: true,
+				disabled: retryingId !== null,
+				isEligible: ( item ) => item.status === 'failed',
+				callback: ( [ item ] ) => onRetry( item ),
+			},
 			{
 				id: 'archive',
 				label: __( 'Archive' ),
@@ -427,7 +408,7 @@ export default function AmplifyReportsList( {
 				},
 			},
 		],
-		[ recordTracksEvent ]
+		[ downloadingId, onDownload, onRetry, recordTracksEvent, retryingId ]
 	);
 
 	const { data: visibleReports, paginationInfo } = filterSortAndPaginate( reports, view, fields );
