@@ -1,3 +1,4 @@
+import { invokeSurvicateEvent } from '@automattic/survicate';
 import nock from 'nock';
 import { vi } from 'vitest';
 import {
@@ -65,6 +66,10 @@ import {
 	inApiV1_2Format,
 } from './fixtures/plugins';
 
+jest.mock( '@automattic/survicate', () => ( {
+	invokeSurvicateEvent: jest.fn(),
+} ) );
+
 describe( 'actions', () => {
 	const spy = vi.fn();
 
@@ -94,6 +99,7 @@ describe( 'actions', () => {
 
 	afterEach( () => {
 		spy.mockClear();
+		invokeSurvicateEvent.mockClear();
 	} );
 
 	describe( '#fetchAllPlugins()', () => {
@@ -326,6 +332,32 @@ describe( 'actions', () => {
 			expect( statBumps( 'calypso_plugin_activated', 'succeeded' ) ).toHaveLength( 0 );
 		} );
 
+		test( 'should fire the pluginActivated Survicate event when the request completes', async () => {
+			await activatePlugin( 2916284, {
+				...akismetWithSites,
+				sites: { [ 2916284 ]: { active: false } },
+			} )( spy, getState );
+
+			expect( invokeSurvicateEvent ).toHaveBeenCalledTimes( 1 );
+			expect( invokeSurvicateEvent ).toHaveBeenCalledWith( 'pluginActivated' );
+		} );
+
+		test( 'should not fire the pluginActivated Survicate event when the request fails', async () => {
+			await activatePlugin( 2916284, {
+				slug: 'fake',
+				id: 'fake/fake',
+				sites: { [ 2916284 ]: { active: false } },
+			} )( spy, getState );
+
+			expect( invokeSurvicateEvent ).not.toHaveBeenCalled();
+		} );
+
+		test( 'should not fire the pluginActivated Survicate event when Calypso already sees it active', async () => {
+			await activatePlugin( 2916284, akismetWithSites )( spy, getState );
+
+			expect( invokeSurvicateEvent ).not.toHaveBeenCalled();
+		} );
+
 		test( 'should record one success with the plugin marked active when it is already active', async () => {
 			await activatePlugin( 2916284, alreadyActive )( spy, getState );
 
@@ -437,6 +469,22 @@ describe( 'actions', () => {
 			expect( statBumps( 'calypso_plugin_deactivated', 'succeeded' ) ).toHaveLength( 0 );
 		} );
 
+		test( 'should fire the pluginDeactivated Survicate event when the request completes', async () => {
+			await deactivatePlugin( 2916284, akismetWithSites )( spy, getState );
+
+			expect( invokeSurvicateEvent ).toHaveBeenCalledTimes( 1 );
+			expect( invokeSurvicateEvent ).toHaveBeenCalledWith( 'pluginDeactivated' );
+		} );
+
+		test( 'should not fire the pluginDeactivated Survicate event when the request fails', async () => {
+			await deactivatePlugin( 2916284, { slug: 'fake', id: 'fake/fake', active: true } )(
+				spy,
+				getState
+			);
+
+			expect( invokeSurvicateEvent ).not.toHaveBeenCalled();
+		} );
+
 		test( 'should record one success with the plugin marked inactive when it is already inactive', async () => {
 			await deactivatePlugin( 2916284, alreadyInactive )( spy, getState );
 
@@ -533,6 +581,19 @@ describe( 'actions', () => {
 					error: expect.objectContaining( { message: 'Plugin file does not exist.' } ),
 				} );
 			} );
+		} );
+
+		test( 'should fire the pluginUpdated Survicate event when the request completes', async () => {
+			await updatePlugin( site.ID, jetpackWithSites )( spy, getState );
+
+			expect( invokeSurvicateEvent ).toHaveBeenCalledTimes( 1 );
+			expect( invokeSurvicateEvent ).toHaveBeenCalledWith( 'pluginUpdated' );
+		} );
+
+		test( 'should not fire the pluginUpdated Survicate event when the request fails', async () => {
+			await updatePlugin( site.ID, { slug: 'fake', id: 'fake/fake', update: {} } )( spy, getState );
+
+			expect( invokeSurvicateEvent ).not.toHaveBeenCalled();
 		} );
 
 		test( 'should dispatch site update actions when plugin already up-to-date', async () => {
