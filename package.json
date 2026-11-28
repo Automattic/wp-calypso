@@ -164,7 +164,7 @@
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/languages": "workspace:^",
 		"@automattic/launchpad": "workspace:^",
-		"@automattic/number-formatters": "^1.3.0",
+		"@automattic/number-formatters": "^1.3.2",
 		"@automattic/omnibar": "workspace:^",
 		"@automattic/plans-grid-next": "workspace:^",
 		"@automattic/privacy-toolset": "workspace:^",
