@@ -15,7 +15,9 @@ export function logError( error: unknown, extra?: Record< string, unknown > ) {
 	const message =
 		error instanceof Error
 			? error.message
-			: ( isObject && String( ( error as { message?: unknown } ).message ?? '' ) ) || '';
+			: ( typeof error === 'string' && error ) ||
+				( isObject && String( ( error as { message?: unknown } ).message ?? '' ) ) ||
+				'';
 	const stack = error instanceof Error ? error.stack : undefined;
 
 	try {
