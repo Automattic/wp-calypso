@@ -8,6 +8,7 @@ import { select } from '@wordpress/data';
 import { ImageStudioEntryPoint, store as imageStudioStore } from '../store';
 import { store as videoStudioStore } from '../stores/video-studio';
 import { getDefaultAspectRatio } from './default-aspect-ratio';
+import { getRevisionHistory } from './revision-history';
 import type { BlockEditorSelectors, CoreDataSelectors, WPBlock } from '../types/wordpress.d';
 
 const POST_TITLE_MAX_LENGTH = 200;
@@ -30,6 +31,15 @@ export interface ImageStudioData {
 	metadata: ImageStudioMetadata;
 	entryPoint: ImageStudioEntryPoint | null;
 	blockType: string | null;
+	revisions: ImageStudioRevisions;
+}
+
+export interface ImageStudioRevisions {
+	/** 1-based index of the canvas image in the revision history, or 0 when it isn't in it. */
+	index: number;
+	count: number;
+	canGoBack: boolean;
+	canGoForward: boolean;
 }
 
 export interface VideoStudioData {
@@ -301,12 +311,29 @@ function detectImageEntity(): DetectedEntity | null {
 			return { videoStudio, isOpen, isVideo: true };
 		}
 
+		const revisionHistory = getRevisionHistory(
+			{
+				originalAttachmentId: storeSelect.getOriginalAttachmentId?.() ?? null,
+				currentAttachmentId: imageAttachmentId ?? null,
+				draftIds: storeSelect.getDraftIds?.() ?? [],
+				savedAttachmentIds: storeSelect.getSavedAttachmentIds?.() ?? [],
+				annotatedIds: storeSelect.getAnnotatedAttachmentIds?.() ?? [],
+			},
+			( id ) => coreSelect.getEntityRecord?.( 'postType', 'attachment', id )
+		);
+
 		const imageStudio: ImageStudioData = {
 			isOpen,
 			id: attachmentId,
 			entryPoint, // 'editor_block' | 'media_library' | etc.
 			blockType, // 'core/image' | etc.
 			metadata,
+			revisions: {
+				index: revisionHistory.currentIndex + 1,
+				count: revisionHistory.revisions.length,
+				canGoBack: revisionHistory.canGoBack,
+				canGoForward: revisionHistory.canGoForward,
+			},
 		};
 
 		if ( imageSelectedStyle && imageSelectedStyle !== 'none' ) {
