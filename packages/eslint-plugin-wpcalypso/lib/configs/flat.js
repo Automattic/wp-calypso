@@ -29,7 +29,7 @@ const withGetSourceCode = ( plugin ) => ( {
 const recommended = ( plugin ) => {
 	const jsdoc = load( 'eslint-plugin-jsdoc' );
 	return [
-		{ name: 'eslint/recommended', ...load( '@eslint/js' ).configs.recommended },
+		load( '@eslint/js' ).configs.recommended,
 		jsdoc.configs[ 'flat/recommended' ],
 		{
 			name: 'wpcalypso/recommended',
