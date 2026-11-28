@@ -22,6 +22,13 @@ const APP_CONFIG = {
 	'happy-blocks': {
 		artifactDir: path.resolve( appRoot, 'happy-blocks/release-files' ),
 	},
+	// `installSlug` is the app's name in install-plugin.sh when it isn't the folder name.
+	'help-center': {
+		installSlug: 'hc',
+	},
+	'agents-manager': {
+		installSlug: 'am',
+	},
 };
 
 // STEP 0: Create a list of app information based on the app directories.
@@ -112,7 +119,13 @@ async function addGitHubComment( _changedApps ) {
 	const header = '**This PR modifies the release build for the following Calypso Apps:**';
 	const docsMsg = '_For info about this notification, see here: PCYsg-OT6-p2_';
 	const changedAppsMsg = notifyApps.map( ( { slug } ) => `* ${ slug }` ).join( '\n' );
-	const testMsg = `To test WordPress.com changes, run \`install-plugin.sh $pluginSlug ${ process.env.git_branch }\` on your sandbox.`;
+	const testMsg = [
+		'To test WordPress.com changes, run on your sandbox:',
+		...notifyApps.map(
+			( { slug, installSlug = slug } ) =>
+				`\`install-plugin.sh ${ installSlug } ${ process.env.git_branch }\``
+		),
+	].join( '\n\n' );
 
 	const appMsg = `${ header }\n\n${ docsMsg }\n\n${ changedAppsMsg }\n\n${ testMsg }`;
 

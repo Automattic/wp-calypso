@@ -189,12 +189,4 @@ yarn build --output-path=/path-to-folder
 
 ### Automatic
 
-The `build-wpcom-block-editor` CircleCI job automatically generates a build on every Calypso PR.
-
-<img alt="CircleCI job" width="700" src="https://cldup.com/hpfqhRKU0i-1200x1200.png" />
-
-The build files are stored as artifacts of the job.
-
-<img alt="Artifacts" width="700" src="https://cldup.com/W1yGG6MCsM-1200x1200.png" />
-
-_You must be logged in to CircleCI for the Artifacts tab to be displayed._
+TeamCity's "Build Calypso Apps" builds `wpcom-block-editor.zip` automatically for `trunk` commits, and for a PR branch when someone runs it for that branch. `install-plugin.sh wpcom-block-editor <branch>` installs a branch build on a sandbox.

@@ -39,6 +39,8 @@ CRITICAL: This is a **public repository**. Never put an internal link or hostnam
 - **Help Center** (`apps/help-center`) — build/deploy layer that bundles `packages/help-center` into webpack entry points served from `widgets.wp.com`.
 - **Survicate** (`apps/survicate`) — build/deploy layer that bundles `packages/survicate` into the single script wp-admin loads from `widgets.wp.com`. No logic of its own.
 
+Apps that ship to WordPress.com build automatically in TeamCity only for `trunk` commits. To try a branch on a sandbox, see [apps/README.md](apps/README.md#building).
+
 ## Development
 
 > **Note**: The Calypso dev server listens on the `PORT` set in the environment or the repo-root `.env`. Without one it uses `3000` in the main checkout and, in a linked git worktree, a port derived from the worktree's path (`client/server/config/default-port.js`), which it prints when it starts. The dev server and the verify skill's scripts read `.env` themselves, so you don't need to open it. Do not create or modify `.env` unless explicitly asked.
