@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import AuthorSelector from 'calypso/blocks/author-selector';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -21,6 +22,7 @@ import useRemoveExternalContributorMutation from 'calypso/data/external-contribu
 import accept from 'calypso/lib/accept';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getRawPurchases } from 'calypso/state/purchases/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSite } from 'calypso/state/sites/selectors';
 import withDeleteUser from './with-delete-user';
@@ -122,6 +124,37 @@ class DeleteUser extends Component {
 	setReassignLabel = ( label ) => ( this.reassignLabel = label );
 
 	onSelectAuthor = ( author ) => this.setState( { reassignUser: author } );
+
+	getPurchasesWarning = () => {
+		const { purchases, siteId, translate, user } = this.props;
+		const wpcomUserId = user.linked_user_ID ?? user.ID;
+		const productNames = purchases
+			.filter( ( purchase ) => purchase.blog_id === siteId && purchase.user_id === wpcomUserId )
+			.map( ( purchase ) => purchase.product_name );
+
+		if ( ! productNames.length ) {
+			return null;
+		}
+
+		return (
+			<p>
+				{ translate(
+					'@%(username)s owns the following product on this site: {{strong}}%(productNames)s{{/strong}}. After removal they may not be able to manage it from this site. Consider cancelling it or transferring it to another user first.',
+					'@%(username)s owns the following products on this site: {{strong}}%(productNames)s{{/strong}}. After removal they may not be able to manage them from this site. Consider cancelling them or transferring them to another user first.',
+					{
+						count: productNames.length,
+						args: {
+							username: user.login,
+							productNames: productNames.join( ', ' ),
+						},
+						components: {
+							strong: <strong />,
+						},
+					}
+				) }
+			</p>
+		);
+	};
 
 	removeUser = () => {
 		const { contributorType, siteId, translate, user } = this.props;
@@ -246,6 +279,8 @@ class DeleteUser extends Component {
 								) }
 					</p>
 
+					{ this.getPurchasesWarning() }
+
 					<FormFieldset>
 						<FormLabel ref={ this.setReassignLabel }>
 							<FormRadio
@@ -348,7 +383,12 @@ class DeleteUser extends Component {
 			);
 		}
 
-		return isMultisite ? this.renderMultisite() : this.renderSingleSite();
+		return (
+			<>
+				<QuerySitePurchases siteId={ this.props.siteId } />
+				{ isMultisite ? this.renderMultisite() : this.renderSingleSite() }
+			</>
+		);
 	}
 }
 
@@ -388,6 +428,7 @@ export default localize(
 
 			return {
 				siteOwner: site?.site_owner,
+				purchases: getRawPurchases( state ),
 				currentUser: getCurrentUser( state ),
 				isAtomic: isSiteAutomatedTransfer( state, siteId ),
 			};
