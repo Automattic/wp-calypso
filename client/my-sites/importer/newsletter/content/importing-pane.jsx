@@ -10,6 +10,7 @@ import { navigate } from 'calypso/lib/navigate';
 import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
 import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-buttons/close-button';
 import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
+import { getImportTargetAuthor } from 'calypso/my-sites/importer/importing-pane';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { mapAuthor, resetImport, startImporting } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
@@ -164,7 +165,11 @@ export class ImportingPane extends PureComponent {
 	};
 
 	handleOnMap = ( source, target ) =>
-		this.props.mapAuthor( this.props.importerStatus.importerId, source, target );
+		this.props.mapAuthor(
+			this.props.importerStatus.importerId,
+			source,
+			getImportTargetAuthor( this.props.site, target )
+		);
 
 	onClickSubstackDone = ( action ) => {
 		this.props.recordTracksEvent( 'calypso_importer_main_done_clicked', {
