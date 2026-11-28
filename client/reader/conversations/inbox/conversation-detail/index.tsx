@@ -412,6 +412,7 @@ export function ConversationDetail( {
 								key={ startingComment.key }
 								loadingPlaceholder={ <ConversationCommentsPlaceholder /> }
 								useBlockEditor
+								expandedCommentForm
 								showNestingReplyArrow
 								post={ post }
 								initialSize={ commentCount || 10 }

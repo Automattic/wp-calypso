@@ -127,9 +127,14 @@ $toolbar-fold:
 		color: var(--color-text-subtle);
 
 		&:hover,
-		&.is-pressed,
 		&[aria-expanded="true"] {
 			color: var(--color-text);
+		}
+
+		// Matches the pressed pill the editor draws behind the icon.
+		&.is-pressed,
+		&.is-pressed:hover {
+			color: var(--wp-components-color-background);
 		}
 
 		// The pressed and focused pill, sized for the shorter button.

@@ -13,6 +13,7 @@ const PostCommentFormRoot = ( {
 	commentsTree,
 	onUpdateCommentText = noop,
 	isInlineComment,
+	expanded,
 } ) => {
 	// Are we displaying the comment form elsewhere? If so, don't render the root form.
 	if (
@@ -31,6 +32,7 @@ const PostCommentFormRoot = ( {
 			commentText={ commentText }
 			onUpdateCommentText={ onUpdateCommentText }
 			isInlineComment={ isInlineComment }
+			expanded={ expanded }
 		/>
 	);
 };
@@ -42,6 +44,7 @@ PostCommentFormRoot.propTypes = {
 	commentsTree: PropTypes.object,
 	onUpdateCommentText: PropTypes.func,
 	isInlineComment: PropTypes.bool,
+	expanded: PropTypes.bool,
 };
 
 export default PostCommentFormRoot;
