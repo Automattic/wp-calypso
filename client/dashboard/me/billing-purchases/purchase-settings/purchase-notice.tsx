@@ -10,10 +10,8 @@ import {
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Link, useRouter } from '@tanstack/react-router';
-import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { differenceInCalendarDays } from 'date-fns';
 import { useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
@@ -21,6 +19,7 @@ import { useAuth } from '../../../app/auth';
 import { useConsumeSearchParams } from '../../../app/hooks/use-consume-search-params';
 import { useLocale } from '../../../app/locale';
 import { changePaymentMethodRoute, purchaseSettingsRoute } from '../../../app/router/me';
+import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import Notice, {
 	NoticeActionButton,
 	RouterNoticeActionLinkButton,
@@ -110,9 +109,13 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	const [ showPlanChangedNotice, setShowPlanChangedNotice ] = useState(
 		plan_changed === 'true' && delayed_downgrade_scheduled !== 'true'
 	);
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { mutate: cancelDelayedDowngrade, isPending: isCancellingDelayedDowngrade } = useMutation(
-		setDelayedDowngradeMutation()
+		withSnackbar( setDelayedDowngradeMutation(), {
+			success: __( 'Your scheduled downgrade has been cancelled.' ),
+			error: __(
+				'There was a problem cancelling your scheduled downgrade. Please try again later or contact support.'
+			),
+		} )
 	);
 	const { data: purchaseAttachedTo } = useQuery( {
 		...purchaseQuery( purchase.attached_to_purchase_id ?? 0 ),
@@ -216,22 +219,7 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 								recordTracksEvent( 'calypso_purchases_cancel_delayed_downgrade_click', {
 									purchase_id: purchase.ID,
 								} );
-								cancelDelayedDowngrade(
-									{ purchaseId: purchase.ID, enabled: false },
-									{
-										onSuccess: () =>
-											createSuccessNotice( __( 'Your scheduled downgrade has been cancelled.' ), {
-												type: 'snackbar',
-											} ),
-										onError: () =>
-											createErrorNotice(
-												__(
-													'There was a problem cancelling your scheduled downgrade. Please try again later or contact support.'
-												),
-												{ type: 'snackbar' }
-											),
-									}
-								);
+								cancelDelayedDowngrade( { purchaseId: purchase.ID, enabled: false } );
 							} }
 							disabled={ isCancellingDelayedDowngrade }
 							loading={ isCancellingDelayedDowngrade }

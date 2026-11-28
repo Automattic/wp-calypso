@@ -1,9 +1,8 @@
 import { removePurchaseMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState, useCallback } from 'react';
+import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import DomainRemovalConfirmationStep from './domain-removal-confirmation-step';
 import DomainRemovalWarningStep from './domain-removal-warning-step';
 import { usePostRemovalNavigation } from './use-post-removal-navigation';
@@ -20,10 +19,18 @@ type RemovalStep = 'warning' | 'confirmation';
 
 export default function DomainRemovalFlow( { purchase, onCancel }: DomainRemovalFlowProps ) {
 	const [ currentStep, setCurrentStep ] = useState< RemovalStep >( 'warning' );
-	const { createErrorNotice } = useDispatch( noticesStore );
 	const { navigateAfterRemoval, invalidateSiteAfterRemoval } = usePostRemovalNavigation( purchase );
-	const { mutate: removePurchase, isPending: isRemovingPurchase } =
-		useMutation( removePurchaseMutation() );
+	const { mutate: removePurchase, isPending: isRemovingPurchase } = useMutation(
+		withSnackbar( removePurchaseMutation(), {
+			error: sprintf(
+				/* translators: %(domainName)s is the name of the domain. */
+				__(
+					'There was a problem removing %(domainName)s. Please try again later or contact support.'
+				),
+				{ domainName: purchase.meta || purchase.product_name }
+			),
+		} )
+	);
 
 	const handleContinue = useCallback( () => {
 		setCurrentStep( 'confirmation' );
@@ -44,27 +51,8 @@ export default function DomainRemovalFlow( { purchase, onCancel }: DomainRemoval
 					)
 				);
 			},
-			onError: () => {
-				const domainName = purchase.meta || purchase.product_name;
-				createErrorNotice(
-					sprintf(
-						/* translators: %(domainName)s is the name of the domain. */
-						__(
-							'There was a problem removing %(domainName)s. Please try again later or contact support.'
-						),
-						{ domainName }
-					),
-					{ type: 'snackbar' }
-				);
-			},
 		} );
-	}, [
-		purchase,
-		removePurchase,
-		createErrorNotice,
-		navigateAfterRemoval,
-		invalidateSiteAfterRemoval,
-	] );
+	}, [ purchase, removePurchase, navigateAfterRemoval, invalidateSiteAfterRemoval ] );
 
 	return (
 		<div>

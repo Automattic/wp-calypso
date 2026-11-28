@@ -22,6 +22,7 @@ import { calendar, currencyDollar, rotateRight, siteLogo } from '@wordpress/icon
 import { store as noticesStore } from '@wordpress/notices';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { monetizeSubscriptionRoute, monetizeSubscriptionsRoute } from '../../app/router/me';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import ActionList from '../../components/action-list';
 import { Card, CardBody } from '../../components/card';
 import { useFormattedTime } from '../../components/formatted-time';
@@ -210,7 +211,6 @@ function CancelOrRemoveButton( {
 
 		stopSubscription( null, {
 			onSuccess: () => {
-				createSuccessNotice( __( 'This item has been removed.' ), { type: 'snackbar' } );
 				navigate( { to: monetizeSubscriptionsRoute.fullPath } );
 			},
 			onError: () => {
@@ -258,7 +258,9 @@ export default function MonetizeSubscriptionDetails() {
 	const { data: subscription } = useQuery( monetizeSubscriptionQuery( subscriptionId ) );
 
 	const { mutate: stopSubscription, isPending: isStoppingSubscription } = useMutation(
-		monetizeSubscriptionStop( subscriptionId )
+		withSnackbar( monetizeSubscriptionStop( subscriptionId ), {
+			success: __( 'This item has been removed.' ),
+		} )
 	);
 
 	const { mutate: disableAutoRenew, isPending: isDisablingAutoRenew } = useMutation(

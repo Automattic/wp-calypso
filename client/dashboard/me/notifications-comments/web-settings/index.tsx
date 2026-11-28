@@ -14,12 +14,13 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useMemo } from 'react';
 import { SettingsPanel, type SettingsOption } from '../../../../components/settings-panel';
 import { useAnalytics } from '../../../app/analytics';
+import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import { Card, CardBody } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
 
 export const WebSettings = () => {
 	const { recordTracksEvent } = useAnalytics();
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { createSuccessNotice } = useDispatch( noticesStore );
 
 	const { data } = useSuspenseQuery( {
 		...userNotificationsSettingsQuery(),
@@ -29,7 +30,11 @@ export const WebSettings = () => {
 	} );
 
 	const settings = data?.other.timeline;
-	const { mutate: updateSettings } = useMutation( userNotificationsSettingsMutation() );
+	const { mutate: updateSettings } = useMutation(
+		withSnackbar( userNotificationsSettingsMutation(), {
+			error: __( 'There was a problem saving your changes. Please, try again.' ),
+		} )
+	);
 
 	const isMutating =
 		useIsMutating( {
@@ -62,11 +67,6 @@ export const WebSettings = () => {
 							type: 'snackbar',
 						}
 					);
-				},
-				onError: () => {
-					createErrorNotice( __( 'There was a problem saving your changes. Please, try again.' ), {
-						type: 'snackbar',
-					} );
 				},
 			}
 		);

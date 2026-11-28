@@ -13,12 +13,11 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { __, _x, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { purchaseSettingsRoute } from '../../../app/router/me';
+import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../../components/button-stack';
 import { Card, CardBody } from '../../../components/card';
 import Notice, { NoticeActionButton } from '../../../components/notice';
@@ -125,7 +124,6 @@ export function SiteTransferReview( {
 }: SiteTransferReviewProps ) {
 	const navigate = useNavigate();
 	const { recordTracksEvent } = useAnalytics();
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const {
 		data: preview,
 		error: previewError,
@@ -133,13 +131,33 @@ export function SiteTransferReview( {
 		isFetching: isPreviewFetching,
 		refetch: refetchPreview,
 	} = useQuery( purchaseSiteTransferPreviewQuery( purchase.ID, targetSite.ID ) );
+	const productTitle = getTitleForDisplay( purchase );
 	const { mutate: transfer, isPending: isTransferring } = useMutation(
-		purchaseSiteTransferMutation( purchase.ID )
+		withSnackbar( purchaseSiteTransferMutation( purchase.ID ), {
+			success: sprintf(
+				// translators: %1$s is a product name, e.g. "Business plan"; %2$s is a site name.
+				__( '%1$s moved to %2$s.' ),
+				productTitle,
+				targetSite.name
+			),
+			error: ( error ) => {
+				if ( getErrorCode( error ) === 'site_transfer_stale_preview' ) {
+					// translators: Error shown when a subscription or site changed while the user was reviewing moving a subscription to another site.
+					return __( 'Something changed since you started. Review the move again, then confirm.' );
+				}
+				return (
+					error.message ||
+					sprintf(
+						// translators: %s is a product name, e.g. "Business plan".
+						__( 'Failed to move %s. Try again.' ),
+						productTitle
+					)
+				);
+			},
+		} )
 	);
 	// Null until the user changes it, so the default can follow the preview.
 	const [ chosenSelection, setChosenSelection ] = useState< Set< number > | null >( null );
-
-	const productTitle = getTitleForDisplay( purchase );
 
 	if ( isPreviewLoading ) {
 		return (
@@ -230,15 +248,6 @@ export function SiteTransferReview( {
 			{
 				onSuccess: () => {
 					recordTracksEvent( 'calypso_purchases_site_transfer_success', trackingProps );
-					createSuccessNotice(
-						sprintf(
-							// translators: %1$s is a product name, e.g. "Business plan"; %2$s is a site name.
-							__( '%1$s moved to %2$s.' ),
-							productTitle,
-							targetSite.name
-						),
-						{ type: 'snackbar' }
-					);
 					navigate( {
 						to: purchaseSettingsRoute.fullPath,
 						// The site-level purchase pages carry the site in the URL, and it has changed.
@@ -260,25 +269,7 @@ export function SiteTransferReview( {
 
 					if ( code === 'site_transfer_stale_preview' ) {
 						refetchPreview();
-						createErrorNotice(
-							// translators: Error shown when a subscription or site changed while the user was reviewing moving a subscription to another site.
-							__( 'Something changed since you started. Review the move again, then confirm.' ),
-							{ type: 'snackbar' }
-						);
-						return;
 					}
-
-					createErrorNotice(
-						error.message ||
-							sprintf(
-								// translators: %s is a product name, e.g. "Business plan".
-								__( 'Failed to move %s. Try again.' ),
-								productTitle
-							),
-						{
-							type: 'snackbar',
-						}
-					);
 				},
 			}
 		);
