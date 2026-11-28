@@ -54,7 +54,7 @@
 		"copy-webpack-plugin": "^14.0.0",
 		"lodash": "^4.18.1",
 		"postcss": "^8.5.32",
-		"postcss-loader": "^8.2.1",
+		"postcss-loader": "^8.2.2",
 		"postcss-prefix-selector": "^1.16.1",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
@@ -62,7 +62,7 @@
 		"sass": "1.77.8",
 		"vite": "^8.3.8",
 		"vitest": "^5.1.2",
-		"webpack": "^5.111.1"
+		"webpack": "^5.113.0"
 	},
 	"private": true
 }

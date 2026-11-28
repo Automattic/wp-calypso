@@ -37,7 +37,7 @@
 		"react-dom": "^18.2.0",
 		"vite": "^8.3.8",
 		"vitest": "^5.1.2",
-		"webpack": "^5.111.1"
+		"webpack": "^5.113.0"
 	},
 	"private": true
 }

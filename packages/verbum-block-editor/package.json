@@ -79,7 +79,7 @@
 		"typescript": "^6.0.3",
 		"vite": "^8.3.8",
 		"vitest": "^5.1.2",
-		"webpack": "^5.111.1"
+		"webpack": "^5.113.0"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^11.2.0",

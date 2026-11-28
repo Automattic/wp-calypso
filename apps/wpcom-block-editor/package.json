@@ -59,7 +59,7 @@
 		"@automattic/data-stores": "workspace:^",
 		"@wordpress/dependency-extraction-webpack-plugin": "^7.2.0",
 		"postcss": "^8.5.32",
-		"webpack": "^5.111.1",
-		"webpack-bundle-analyzer": "^5.4.0"
+		"webpack": "^5.113.0",
+		"webpack-bundle-analyzer": "^5.4.3"
 	}
 }
