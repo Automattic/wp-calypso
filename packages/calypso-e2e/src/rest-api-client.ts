@@ -206,7 +206,7 @@ export class RestAPIClient {
 			return JSON.parse( responseBody.trim() );
 		} catch ( error ) {
 			console.error( 'Error parsing JSON:', error );
-			throw new Error( `Failed to parse JSON: ${ responseBody }` );
+			throw new Error( `Failed to parse JSON: ${ responseBody }`, { cause: error } );
 		}
 	}
 

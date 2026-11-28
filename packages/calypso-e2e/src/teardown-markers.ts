@@ -494,7 +494,6 @@ export async function closeAccountAndRecordLeak(
 	let attempts = 0;
 	let sawAtomicSite = false;
 	for (;;) {
-		closeError = undefined;
 		attempts += 1;
 		try {
 			const response: AccountClosureResponse = await client.closeAccount( accountDetails );

@@ -113,7 +113,7 @@ const useSubscriberRemoveMutation = (
 					} catch ( e ) {
 						// Only throw if they don't have an email subscription ID to try next
 						if ( ( e as ApiResponseError )?.error === 'not_found' && ! emailSubscriptionId ) {
-							throw new Error( ( e as ApiResponseError )?.message );
+							throw new Error( ( e as ApiResponseError )?.message, { cause: e } );
 						}
 					}
 				}
@@ -132,7 +132,7 @@ const useSubscriberRemoveMutation = (
 							emailRemoved = true;
 						} else if ( ! wpcomRemoved ) {
 							// Only throw if we haven't successfully removed them through any other method
-							throw new Error( ( e as ApiResponseError )?.message );
+							throw new Error( ( e as ApiResponseError )?.message, { cause: e } );
 						}
 					}
 				}

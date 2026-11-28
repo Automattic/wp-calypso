@@ -131,7 +131,7 @@ export async function createAccount( {
 		const errorMessage = ( error as Error )?.message
 			? getErrorMessage( error as Error )
 			: ( error as string );
-		throw new Error( errorMessage );
+		throw new Error( errorMessage, { cause: error } );
 	}
 }
 

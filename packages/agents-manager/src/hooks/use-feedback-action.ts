@@ -113,7 +113,9 @@ export async function submitFeedback(
 		}
 	} catch ( error ) {
 		const message = error instanceof Error ? error.message : 'Unknown error';
-		throw new Error( `[useFeedbackAction] Feedback submission failed: ${ message }` );
+		throw new Error( `[useFeedbackAction] Feedback submission failed: ${ message }`, {
+			cause: error,
+		} );
 	}
 }
 

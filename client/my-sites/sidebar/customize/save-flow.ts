@@ -64,7 +64,7 @@ export async function saveLayout(
 			err && typeof err === 'object' && 'message' in err && typeof err.message === 'string'
 				? err.message
 				: ( translate( 'Save failed.' ) as string );
-		throw new Error( message );
+		throw new Error( message, { cause: err } );
 	}
 
 	if ( ! saved || typeof saved !== 'object' || ! Array.isArray( saved.overrides ) ) {

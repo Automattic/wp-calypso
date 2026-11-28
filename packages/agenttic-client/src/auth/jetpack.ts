@@ -112,7 +112,7 @@ export async function requestJetpackToken(
 		}
 	} catch ( error ) {
 		logger( 'Failed to fetch Jetpack token: %O', error );
-		throw new Error( errorHandler( error as JetpackApiError ) );
+		throw new Error( errorHandler( error as JetpackApiError ), { cause: error } );
 	}
 
 	if ( ! data?.token ) {

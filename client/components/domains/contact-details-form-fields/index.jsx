@@ -267,7 +267,8 @@ export class ContactDetailsFormFields extends Component {
 			);
 			this.props.errorNotice( noticeMessage );
 			throw new Error(
-				`Cannot focus() on invalid form element in domain details checkout form with name: '${ firstErrorName }'`
+				`Cannot focus() on invalid form element in domain details checkout form with name: '${ firstErrorName }'`,
+				{ cause: err }
 			);
 		}
 	}
