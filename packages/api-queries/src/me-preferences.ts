@@ -97,6 +97,7 @@ const dynamicPreferenceStatPrefixes: Record< string, string > = {
 	'hosting-dashboard-wp-beta-notice-dismissed': 'wpbeta',
 	'hosting-dashboard-domain-dns-default-a-records-notice-dismissed': 'dnsarec',
 	'hosting-dashboard-domain-dns-default-cname-notice-dismissed': 'dnscnam',
+	'cancel-flow-start': 'cncstrt',
 	'cancel-purchase-survey-completed': 'cncsvy',
 	'cancellation-offer-accepted-notice-dismissed': 'cncofr',
 	'site-migration-completed-notice-dismissed': 'migdone',

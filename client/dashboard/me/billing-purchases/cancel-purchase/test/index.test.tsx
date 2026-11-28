@@ -17,6 +17,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { vi } from 'vitest';
+import Snackbars from '../../../../app/snackbars';
 import { render } from '../../../../test-utils';
 import CancelPurchase from '../index';
 import KeepSubscriptionButton from '../keep-subscription-button';
@@ -49,11 +50,11 @@ const purchase = {
 	expiry_date: '2027-04-06T00:00:00+00:00',
 } as Purchase;
 
-function mockSiteRequests() {
+function mockSiteRequests( sitePurchases: Purchase[] ) {
 	nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.2/upgrades' )
 		.query( { site: purchase.blog_id } )
-		.reply( 200, [] )
+		.reply( 200, sitePurchases )
 		.get( `/rest/v1.1/sites/${ purchase.blog_id }/features` )
 		.query( true )
 		.reply( 200, { active: [], available: {} } )
@@ -80,7 +81,14 @@ function mockHasExtended( status: number, body: object ) {
 function renderRemoveFlow( {
 	purchase: testPurchase = purchase,
 	seedHasExtended = true,
-}: { purchase?: Purchase; seedHasExtended?: boolean } = {} ) {
+	sitePurchases = [],
+	withSnackbars = false,
+}: {
+	purchase?: Purchase;
+	seedHasExtended?: boolean;
+	sitePurchases?: Purchase[];
+	withSnackbars?: boolean;
+} = {} ) {
 	const queryClient = new QueryClient( {
 		defaultOptions: { queries: { retry: false, staleTime: Infinity } },
 	} );
@@ -97,9 +105,15 @@ function renderRemoveFlow( {
 	if ( seedHasExtended ) {
 		queryClient.setQueryData( hasPurchaseBeenExtendedQuery( purchase.ID ).queryKey, false );
 	}
-	mockSiteRequests();
+	mockSiteRequests( sitePurchases );
 
-	return render( <CancelPurchase />, { queryClient } );
+	return render(
+		<>
+			<CancelPurchase />
+			{ withSnackbars && <Snackbars /> }
+		</>,
+		{ queryClient }
+	);
 }
 
 // The offer is decided when the reason is chosen, so let the check finish first.
@@ -110,9 +124,12 @@ async function waitForCheck( check: nock.Scope, queryClient: QueryClient ) {
 	} );
 }
 
-async function startSurvey( user: ReturnType< typeof userEvent.setup > ) {
+async function startSurvey(
+	user: ReturnType< typeof userEvent.setup >,
+	buttonName = 'Continue removal'
+) {
 	await user.click( await screen.findByRole( 'checkbox' ) );
-	await user.click( screen.getByRole( 'button', { name: 'Continue removal' } ) );
+	await user.click( screen.getByRole( 'button', { name: buttonName } ) );
 }
 
 async function pickFoundBetterValue( user: ReturnType< typeof userEvent.setup > ) {
@@ -238,6 +255,128 @@ describe( '<CancelPurchase />', () => {
 			await waitFor( () =>
 				expect( router.state.location.pathname ).toBe( '/me/billing/purchases' )
 			);
+		} );
+	} );
+
+	describe( 'saving the cancel flow start', () => {
+		const start = new Date( '2026-11-23T12:00:00.600Z' );
+		const savedStart = {
+			calypso_preferences: { 'cancel-flow-start-456': { time: 1795435200, purchase_id: 123 } },
+		};
+
+		beforeEach( () => {
+			vi.useFakeTimers( { toFake: [ 'Date' ], now: start } );
+		} );
+
+		afterEach( () => {
+			vi.useRealTimers();
+		} );
+
+		function captureSaves() {
+			const saves: nock.Body[] = [];
+			nock( 'https://public-api.wordpress.com' )
+				.persist()
+				.post( '/rest/v1.1/me/preferences' )
+				.reply( 200, ( _uri, body ) => {
+					saves.push( body );
+					return body;
+				} );
+			return saves;
+		}
+
+		test( 'saves the start once when the flow starts', async () => {
+			const user = userEvent.setup();
+			const saves = captureSaves();
+			const { queryClient } = renderRemoveFlow();
+
+			await startSurvey( user );
+
+			expect( await screen.findByRole( 'radio', { name: 'Too expensive' } ) ).toBeVisible();
+			await waitFor( () => expect( queryClient.isMutating() ).toBe( 0 ) );
+			expect( saves ).toEqual( [ savedStart ] );
+		} );
+
+		test( 'saves the start once, after the included domain question', async () => {
+			const user = userEvent.setup();
+			const saves = captureSaves();
+			const { queryClient } = renderRemoveFlow( {
+				purchase: {
+					...purchase,
+					included_domain: 'example.blog',
+					is_refundable: true,
+					refund_amount: 96,
+				} as Purchase,
+				sitePurchases: [
+					{
+						ID: 124,
+						blog_id: 456,
+						meta: 'example.blog',
+						product_slug: 'dotblog_domain',
+						is_domain: true,
+						is_domain_registration: true,
+						is_within_initial_refund_window: true,
+						cost_to_unbundle_display: '$22',
+					} as Purchase,
+				],
+			} );
+
+			await startSurvey( user, 'Continue with cancellation' );
+			expect(
+				await screen.findByRole( 'radio', { name: 'Cancel the plan, but keep "example.blog"' } )
+			).toBeVisible();
+			expect( queryClient.isMutating() ).toBe( 0 );
+			expect( saves ).toEqual( [] );
+			await user.click( screen.getByRole( 'button', { name: 'Continue with cancellation' } ) );
+
+			expect( await screen.findByRole( 'radio', { name: 'Too expensive' } ) ).toBeVisible();
+			await waitFor( () => expect( queryClient.isMutating() ).toBe( 0 ) );
+			expect( saves ).toEqual( [ savedStart ] );
+		} );
+
+		test.each( [
+			[ 'a Jetpack plan', { is_jetpack_plan_or_product: true } ],
+			[ 'a plan on a holding site', { is_attached_to_holding_site: true } ],
+		] )( 'saves nothing for %s', async ( _name, overrides ) => {
+			const user = userEvent.setup();
+			const saves = captureSaves();
+			const { queryClient, recordTracksEvent } = renderRemoveFlow( {
+				purchase: { ...purchase, ...overrides } as Purchase,
+			} );
+
+			await startSurvey( user );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_purchases_cancel_form_start',
+				expect.anything()
+			);
+			expect( queryClient.isMutating() ).toBe( 0 );
+			expect( saves ).toEqual( [] );
+		} );
+
+		test( 'keeps showing the survey when the save fails', async () => {
+			const user = userEvent.setup();
+			let failSave = () => {};
+			const savePending = new Promise< void >( ( resolve ) => {
+				failSave = resolve;
+			} );
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/me/preferences' )
+				.reply( async () => {
+					await savePending;
+					return [ 500, { error: 'internal_error', message: 'Save failed' } ];
+				} );
+			const { queryClient } = renderRemoveFlow( { withSnackbars: true } );
+
+			await startSurvey( user );
+
+			expect( await screen.findByRole( 'radio', { name: 'Too expensive' } ) ).toBeVisible();
+			expect( queryClient.isMutating() ).toBe( 1 );
+			failSave();
+			await waitFor( () => expect( queryClient.isMutating() ).toBe( 0 ) );
+			expect( screen.getByRole( 'radio', { name: 'Too expensive' } ) ).toBeVisible();
+			expect(
+				screen.queryByRole( 'button', { name: 'Dismiss this notice' } )
+			).not.toBeInTheDocument();
 		} );
 	} );
 

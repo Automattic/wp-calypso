@@ -63,6 +63,10 @@ describe( 'user preference mutation meta', () => {
 		expect(
 			getPreferenceMutationStatId( 'cancellation-offer-accepted-notice-dismissed-123' )
 		).toBe( 'user-pref-update.cncofr' );
+
+		expect( getPreferenceMutationStatId( 'cancel-flow-start-123' ) ).toBe(
+			'user-pref-update.cncstrt'
+		);
 	} );
 
 	it( 'uses short codes for wordpress labs preferences', () => {
@@ -91,6 +95,7 @@ describe( 'user preference mutation meta', () => {
 			'hosting-dashboard-overview-storage-notice-dismissed-123',
 			'hosting-dashboard-time-mismatch-warning-dismissed-123',
 			'cancellation-offer-accepted-notice-dismissed-123',
+			'cancel-flow-start-123',
 			'wordpress-labs-opt-in',
 			'wordpress-labs-excluded-sites',
 			'experimental-preference' as keyof UserPreferences,

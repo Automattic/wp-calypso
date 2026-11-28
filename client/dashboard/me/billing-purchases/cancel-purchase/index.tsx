@@ -61,6 +61,7 @@ import {
 	isRemoved,
 	isManageableByUser,
 	isAkismetProduct,
+	isDotcomPlan,
 	isOneTimePurchase,
 } from '../../../utils/purchase';
 import {
@@ -322,6 +323,9 @@ function CancelPurchaseInner() {
 	const surveyCompletedMutator = useMutation(
 		userPreferenceMutation( getCancelPurchaseSurveyCompletedPreferenceKey( purchase.ID ) )
 	);
+	const cancelFlowStartMutator = useMutation(
+		userPreferenceMutation( `cancel-flow-start-${ purchase.blog_id }` )
+	);
 	const {
 		mutateAsync: applyCancellationOffer,
 		isPending: isApplyingOffer,
@@ -368,6 +372,15 @@ function CancelPurchaseInner() {
 	}, [ productSlug, recordTracksEvent ] );
 	const cancelPurchaseSurveyCompleted = () => {
 		surveyCompletedMutator.mutate( 'true' );
+	};
+	const saveCancelFlowStart = () => {
+		if ( ! isDotcomPlan( purchase ) || ! purchaseHasQueryableSite ) {
+			return;
+		}
+		cancelFlowStartMutator.mutate( {
+			time: Math.floor( Date.now() / 1000 ),
+			purchase_id: purchase.ID,
+		} );
 	};
 	const flowType = getPurchaseCancellationFlowType( purchase );
 	// Intent is set when the user clicks either Cancel or Remove on Purchase
@@ -740,6 +753,7 @@ function CancelPurchaseInner() {
 			is_atomic: site?.is_wpcom_atomic ?? false,
 			user_lang: locale,
 		} );
+		saveCancelFlowStart();
 		const effectiveFlowType = computeEffectiveFlowType( state.cancelIntent );
 		// Cancel intent fires the mutation now and only advances to the survey
 		// after it resolves — see fireMutationFromConfirm. Remove (and any non-
@@ -786,6 +800,7 @@ function CancelPurchaseInner() {
 				is_atomic: site?.is_wpcom_atomic ?? false,
 				user_lang: locale,
 			} );
+			saveCancelFlowStart();
 			const effectiveFlowType = computeEffectiveFlowType( cancelIntent );
 			// See onCancellationComplete for the rationale on why the cancel
 			// intent path defers surveyShown until the mutation resolves.
