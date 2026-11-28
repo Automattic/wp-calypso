@@ -30,7 +30,7 @@
 		"mini-css-extract-plugin": "^2.10.2",
 		"vite": "^8.3.8",
 		"vitest": "^5.1.2",
-		"webpack": "^5.111.1"
+		"webpack": "^5.113.0"
 	},
 	"peerDependencies": {
 		"webpack": "^5.99.8"
