@@ -7,9 +7,9 @@ export interface SiteFeaturesResponse {
 	active: string[];
 
 	/**
-	 * Map of available features to the product slug required to unlock them
+	 * Map of available features to the plans that would unlock them, the site's current plan excluded
 	 * Key: feature slug
-	 * Value: product slug needed to enable this feature
+	 * Value: product slugs of those plans
 	 */
-	available: Record< string, string >;
+	available: Record< string, string[] >;
 }

@@ -49,7 +49,7 @@ export type UseFreeTrialPlanSlugs = ( {
 	[ Type in PlanType ]?: PlanSlug;
 };
 
-const isGridPlanVisible = ( {
+export const isGridPlanVisible = ( {
 	hiddenPlans: {
 		hideFreePlan,
 		hidePersonalPlan,
@@ -62,6 +62,7 @@ const isGridPlanVisible = ( {
 	planSlugsForIntent,
 	selectedPlan,
 	selectedFeature,
+	plansWithSelectedFeature,
 	currentPlanSlug,
 }: {
 	hiddenPlans?: HiddenPlans;
@@ -70,6 +71,7 @@ const isGridPlanVisible = ( {
 	planSlugsForIntent: PlanSlug[];
 	selectedPlan?: PlanSlug;
 	selectedFeature?: string | null;
+	plansWithSelectedFeature?: string[];
 	currentPlanSlug?: PlanSlug;
 } ): boolean => {
 	let isVisible = planSlugsForIntent.includes( gridPlanSlug );
@@ -78,7 +80,11 @@ const isGridPlanVisible = ( {
 		// Feature-based filtering: Show the plan being evaluated if it includes the selected feature,
 		// or if it's the user's current plan (ignoring billing term length)
 		if ( selectedFeature && ! selectedPlan ) {
-			const hasFeature = planHasFeature( gridPlanSlug, selectedFeature );
+			const hasFeature = plansWithSelectedFeature
+				? plansWithSelectedFeature.some(
+						( planSlug ) => getPlanClass( planSlug ) === getPlanClass( gridPlanSlug )
+					)
+				: planHasFeature( gridPlanSlug, selectedFeature );
 			const isCurrentPlan =
 				currentPlanSlug && getPlanClass( currentPlanSlug ) === getPlanClass( gridPlanSlug );
 			isVisible = isVisible && ( isCurrentPlan || hasFeature );
@@ -320,6 +326,7 @@ const useGridPlans: UseGridPlansType = ( {
 	intent,
 	selectedPlan,
 	selectedFeature,
+	plansWithSelectedFeature,
 	hiddenPlans,
 	isInSignup,
 	eligibleForFreeHostingTrial,
@@ -572,6 +579,7 @@ const useGridPlans: UseGridPlansType = ( {
 			planSlugsForIntent,
 			selectedPlan,
 			selectedFeature,
+			plansWithSelectedFeature,
 			currentPlanSlug: sitePlanSlug,
 			hiddenPlans,
 			isDisplayingPlansNeededForFeature,

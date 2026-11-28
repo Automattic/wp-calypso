@@ -4,6 +4,7 @@ import {
 	purchaseCancelFeaturesQuery,
 	purchaseQuery,
 	setDelayedDowngradeMutation,
+	siteFeaturesQuery,
 	sitePlanChangeFeaturesQuery,
 	userPurchasesQuery,
 } from '@automattic/api-queries';
@@ -792,6 +793,19 @@ const PlansFeaturesMain = ( {
 				! isPersonalPlan( selectedPlan ) &&
 				( 'interval' === planTypeSelector || ! previousRoute.startsWith( '/plans/' ) ) ) );
 
+	// The server knows which plans include features the plan definitions here don't list.
+	const isFilteringByFeature = isDisplayingPlansNeededForFeature && ! selectedPlan && !! siteId;
+	const { data: siteFeatures, isLoading: isSiteFeaturesLoading } = useQuery( {
+		...siteFeaturesQuery( siteId ?? 0 ),
+		enabled: isFilteringByFeature,
+		// The grid waits for this, and falls back to the plan definitions without it.
+		retry: 1,
+	} );
+	const plansWithSelectedFeature =
+		isFilteringByFeature && selectedFeature
+			? siteFeatures?.available?.[ selectedFeature ]
+			: undefined;
+
 	const showEscapeHatch =
 		intentFromSiteMeta.intent &&
 		! isInSignup &&
@@ -1090,6 +1104,7 @@ const PlansFeaturesMain = ( {
 		isDisplayingPlansNeededForFeature,
 		isSubdomainNotGenerated: ! resolvedSubdomainName.result,
 		selectedFeature,
+		plansWithSelectedFeature,
 		selectedPlan,
 		showLegacyStorageFeature,
 		siteId,
@@ -1127,6 +1142,7 @@ const PlansFeaturesMain = ( {
 		isInSignup,
 		isSubdomainNotGenerated: ! resolvedSubdomainName.result,
 		selectedFeature,
+		plansWithSelectedFeature,
 		selectedPlan,
 		showLegacyStorageFeature,
 		siteId,
@@ -1441,7 +1457,8 @@ const PlansFeaturesMain = ( {
 		! resolvedSubdomainName.isLoading &&
 		! isRenewalPricingExperimentLoading &&
 		! isPlansGridRedesignExperimentLoading &&
-		! isPlanDifferentiatorsExperimentLoading;
+		! isPlanDifferentiatorsExperimentLoading &&
+		! isSiteFeaturesLoading;
 
 	useEffect( () => {
 		if ( isPlansGridReady ) {
