@@ -3,16 +3,29 @@ import { useMemo } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import * as ProductsList from '../../products-list';
 import * as Site from '../../site';
-import { getAddOnsList } from '../add-ons-list';
+import { getAddOnsList, getPluginAddOnsList } from '../add-ons-list';
 import useAddOnCheckoutLink from './use-add-on-checkout-link';
 import { createAddOnPriceKey, useAddOnPrices } from './use-add-on-prices';
-import type { AddOnMeta } from '../types';
+import type { AddOnMeta, AnyAddOnMeta } from '../types';
 
 interface Props {
 	selectedSiteId?: number | null | undefined;
 }
 
-const useAddOns = ( { selectedSiteId }: Props = {} ): ( AddOnMeta | null )[] => {
+interface PropsWithPluginAddOns extends Props {
+	/**
+	 * Also return the plugin add-ons that the site's plan includes. Opt-in, so that callers that
+	 * read `productSlug` (the storage hooks, the plans grid) keep getting product add-ons only.
+	 */
+	includePluginAddOns: true;
+}
+
+function useAddOns( props: PropsWithPluginAddOns ): ( AnyAddOnMeta | null )[];
+function useAddOns( props?: Props & { includePluginAddOns?: false } ): ( AddOnMeta | null )[];
+function useAddOns( {
+	selectedSiteId,
+	includePluginAddOns = false,
+}: Props & { includePluginAddOns?: boolean } = {} ): ( AnyAddOnMeta | null )[] {
 	const translate = useTranslate();
 	const checkoutLink = useAddOnCheckoutLink();
 	const addOns = getAddOnsList();
@@ -20,8 +33,12 @@ const useAddOns = ( { selectedSiteId }: Props = {} ): ( AddOnMeta | null )[] => 
 	const productSlugs = addOns.map( ( item ) => item.productSlug );
 	const productsList = ProductsList.useProducts( productSlugs );
 	const mediaStorage = Site.useSiteMediaStorage( { siteIdOrSlug: selectedSiteId } );
+	const siteFeatures = Site.useSiteFeatures( {
+		siteIdOrSlug: includePluginAddOns ? selectedSiteId : null,
+	} );
+	const activeFeatures = siteFeatures.data?.active;
 
-	return useMemo(
+	const productAddOns = useMemo(
 		() =>
 			addOns.map( ( addOnMeta ) => {
 				const { productSlug, quantity } = addOnMeta;
@@ -72,6 +89,18 @@ const useAddOns = ( { selectedSiteId }: Props = {} ): ( AddOnMeta | null )[] => 
 			} ),
 		[ addOnPrices, productsList.data, productsList.isLoading, checkoutLink, selectedSiteId ]
 	);
-};
+
+	return useMemo( () => {
+		if ( ! includePluginAddOns || ! activeFeatures ) {
+			return productAddOns;
+		}
+
+		const pluginAddOns = getPluginAddOnsList().filter( ( addOn ) =>
+			addOn.featureSlugs?.some( ( slug ) => activeFeatures.includes( slug ) )
+		);
+
+		return pluginAddOns.length ? [ ...productAddOns, ...pluginAddOns ] : productAddOns;
+	}, [ productAddOns, includePluginAddOns, activeFeatures ] );
+}
 
 export default useAddOns;
