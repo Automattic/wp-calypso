@@ -68,13 +68,10 @@ test.describe(
 			await test.step( 'Select a Personal theme and start signup', async () => {
 				const loggedOutThemesPage = new LoggedOutThemesPage( page );
 				await loggedOutThemesPage.filterBy( 'Personal' );
-				// Whichever theme the showcase lists first changes as it's reordered, and some
-				// (e.g. `cyberpop`) make checkout skip the thank-you page's theme section that
-				// a later step waits for. Searching for the `full-site-editing` feature tag keeps
-				// the pick among block themes that carry it. The search also returns community
-				// themes, which the Personal plan can't install, hence the `personal` type.
-				await loggedOutThemesPage.search( 'full-site-editing' );
-				themeSlug = await loggedOutThemesPage.startWithFirstTheme( 'personal' );
+				// The Personal plan includes premium-tier themes, and signup sends those to the
+				// marketplace thank-you page that a later step checks. Personal-tier themes, also
+				// listed here, go straight to design setup instead (see `getWithThemeDestination`).
+				themeSlug = await loggedOutThemesPage.startWithFirstTheme( 'premium' );
 			} );
 
 			await test.step( 'Sign up as new user', async () => {
