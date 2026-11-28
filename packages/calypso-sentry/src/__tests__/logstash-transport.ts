@@ -25,11 +25,15 @@ const exceptionEvent: SentryApi.Event = {
 	),
 	exception: {
 		values: [
-			{ type: 'Error', value: 'the cause' },
+			{
+				type: 'Error',
+				value: 'the cause',
+				mechanism: { type: 'react.onUncaughtError', handled: false },
+			},
 			{
 				type: 'TypeError',
 				value: 'x is undefined',
-				mechanism: { type: 'react.onUncaughtError', handled: false },
+				mechanism: { type: 'auto.core.linked_errors', handled: true },
 				stacktrace: {
 					frames: [
 						{ function: 'outer', filename: 'app.js', lineno: 1, colno: 10 },

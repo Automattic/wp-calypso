@@ -179,6 +179,8 @@ function serializeExtra( event: SentryApi.Event ) {
 export function eventToLogstashPayload( event: SentryApi.Event ): LogstashPayload {
 	// The primary exception is the last one; earlier entries are its causes.
 	const exception = event.exception?.values?.at( -1 );
+	// Sentry writes the capture's mechanism to the first entry, the root cause.
+	const mechanism = event.exception?.values?.[ 0 ]?.mechanism;
 	const frames = exception?.stacktrace?.frames;
 	const message = exception
 		? [ exception.type, exception.value ].filter( Boolean ).join( ': ' )
@@ -199,8 +201,8 @@ export function eventToLogstashPayload( event: SentryApi.Event ): LogstashPayloa
 			release: event.release,
 			url: redactIfString( event.request?.url ),
 			exception_type: exception?.type,
-			handled: exception?.mechanism?.handled,
-			mechanism: exception?.mechanism?.type,
+			handled: mechanism?.handled,
+			mechanism: mechanism?.type,
 			fingerprint: event.fingerprint?.join( ',' ),
 			calypso_section: calypsoSection,
 			blog_id: toTagValue( event.tags?.blog_id ),

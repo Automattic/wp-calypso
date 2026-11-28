@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- For errors with a cause, including those React's error boundaries catch, the `handled` and `mechanism` properties sent to Logstash now describe how the error was caught, instead of Sentry's linked-errors step.
+
 ## 2.0.0
 
 - Update `@sentry/react` from 7 to 10, which accepts React 19.
