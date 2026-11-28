@@ -1,6 +1,6 @@
 import getIsJetpackApp from 'calypso/state/selectors/get-is-jetpack-app';
 
-const buildState = ( { clientId, redirectTo, initialRedirectTo } ) => ( {
+const buildState = ( { clientId, redirectTo, oauth2Redirect, initialRedirectTo } ) => ( {
 	oauth2Clients: {
 		ui: { currentClientId: clientId ?? null },
 		clients: clientId ? { [ clientId ]: { id: clientId } } : {},
@@ -10,6 +10,7 @@ const buildState = ( { clientId, redirectTo, initialRedirectTo } ) => ( {
 			current: {
 				...( clientId ? { client_id: String( clientId ) } : {} ),
 				...( redirectTo ? { redirect_to: redirectTo } : {} ),
+				...( oauth2Redirect ? { oauth2_redirect: oauth2Redirect } : {} ),
 			},
 			...( initialRedirectTo
 				? { initial: { client_id: String( clientId ), redirect_to: initialRedirectTo } }
@@ -78,6 +79,29 @@ describe( 'getIsJetpackApp', () => {
 			} ),
 		} );
 		expect( getIsJetpackApp( state ) ).toBe( true );
+	} );
+
+	test( 'is true on the signup page, where the redirect_uri is nested inside oauth2_redirect', () => {
+		// getSignupUrl sends OAuth2 clients to /start/wpcc?oauth2_client_id=…&oauth2_redirect=<login redirect_to>.
+		const state = buildState( {
+			clientId: 11,
+			oauth2Redirect: authorizeUrl( {
+				clientId: 11,
+				redirectUri: 'jetpack%3A%2F%2Foauth2-callback',
+			} ),
+		} );
+		expect( getIsJetpackApp( state ) ).toBe( true );
+	} );
+
+	test( 'is false on the signup page for the WordPress app', () => {
+		const state = buildState( {
+			clientId: 2697,
+			oauth2Redirect: authorizeUrl( {
+				clientId: 2697,
+				redirectUri: 'wordpress%3A%2F%2Foauth2-callback',
+			} ),
+		} );
+		expect( getIsJetpackApp( state ) ).toBe( false );
 	} );
 
 	test( 'is false when there is no current OAuth2 client', () => {
