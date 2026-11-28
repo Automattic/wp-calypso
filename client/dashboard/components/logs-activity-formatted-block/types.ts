@@ -15,6 +15,7 @@ export interface ActivityBlockNode {
 	commentId?: number | string;
 	name?: string;
 	siteSlug?: string;
+	rewindId?: string;
 	pluginSlug?: string;
 	themeUri?: string;
 	themeSlug?: string;
