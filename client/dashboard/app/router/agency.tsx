@@ -97,6 +97,7 @@ import {
 	canTransferSite,
 	canViewHundredYearPlanSettings,
 } from '../../sites/features';
+import { ensureHostedDataCenter } from '../../sites/primary-data-center/hosted-data-center';
 import { validateDateRangeSearch } from '../../utils/date-range-search';
 import { a4aLink } from '../../utils/link';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
@@ -2223,20 +2224,15 @@ const agencySiteSettingsPrimaryDataCenterRoute = createRoute( {
 		}
 
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( hasHostingFeature( site, HostingFeatures.PRIMARY_DATA_CENTER ) ) {
-			const primaryDataCenter = await queryClient.ensureQueryData(
-				sitePrimaryDataCenterQuery( site.ID )
-			);
-			if ( primaryDataCenter ) {
-				return;
-			}
+		if ( await ensureHostedDataCenter( site ) ) {
+			return;
 		}
 
 		throw redirectAsNotAllowed( { to: agencySiteSettingsRoute.fullPath, params: { siteSlug } } );
 	},
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		await queryClient.ensureQueryData( sitePrimaryDataCenterQuery( site.ID ) );
+		await ensureHostedDataCenter( site );
 	},
 } ).lazy( () =>
 	import( '../../app-dotcom/routes/sites/site/settings/primary-data-center' ).then( ( d ) =>

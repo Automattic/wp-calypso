@@ -1,5 +1,10 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { DataCenterOption, WordPressPrerelease, WordPressTrackVersions } from './types';
+import type {
+	DataCenterOption,
+	SiteDataCenter,
+	WordPressPrerelease,
+	WordPressTrackVersions,
+} from './types';
 
 export async function fetchWordPressVersion( siteId: number ): Promise< string > {
 	return wpcom.req.get( {
@@ -49,6 +54,13 @@ export async function fetchPhpMyAdminToken( siteId: number ): Promise< string > 
 export async function fetchPrimaryDataCenter( siteId: number ): Promise< DataCenterOption | null > {
 	return wpcom.req.get( {
 		path: `/sites/${ siteId }/hosting/geo-affinity`,
+		apiNamespace: 'wpcom/v2',
+	} );
+}
+
+export async function fetchSiteDataCenter( siteId: number ): Promise< SiteDataCenter > {
+	return wpcom.req.get( {
+		path: `/sites/${ siteId }/hosting/data-center`,
 		apiNamespace: 'wpcom/v2',
 	} );
 }

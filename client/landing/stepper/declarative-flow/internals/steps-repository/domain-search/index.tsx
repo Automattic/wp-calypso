@@ -58,6 +58,7 @@ import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-conta
 import { OnboardingProgress } from '../components/onboarding-progress';
 import { useShowOnboardingProgress } from '../components/onboarding-progress/use-show-onboarding-progress';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
+import CopySiteDataCenterChoice from './copy-site-data-center-choice';
 import { getSkipSuggestionCopy } from './get-skip-suggestion-copy';
 import { useDomainSearchResultsExperiment } from './results-experiment';
 import type { Step as StepType } from '../../types';
@@ -781,7 +782,16 @@ const DomainSearchStep: StepType< {
 			formattedHeader={
 				<FormattedHeader headerText={ headerText } subHeaderText={ subHeaderText } />
 			}
-			stepContent={ domainSearchElement }
+			stepContent={
+				isCopySiteFlow( flow ) ? (
+					<>
+						<CopySiteDataCenterChoice />
+						{ domainSearchElement }
+					</>
+				) : (
+					domainSearchElement
+				)
+			}
 			recordTracksEvent={ recordTracksEvent }
 			{ ...getBackButton() }
 			customizedActionButtons={ getSkipButton() }

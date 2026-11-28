@@ -1,12 +1,10 @@
-import { getDataCenterOptions, HostingFeatures } from '@automattic/api-core';
-import { sitePrimaryDataCenterQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
+import { getDataCenterOptions } from '@automattic/api-core';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { cloud } from '@wordpress/icons';
 import RouterLinkSummaryButton from '../../../../components/router-link-summary-button';
-import { hasHostingFeature } from '../../../../utils/site-features';
-import type { DataCenterOption, Site } from '@automattic/api-core';
+import { useHostedDataCenter } from '../../hosted-data-center';
+import type { Site } from '@automattic/api-core';
 import type { Density } from '@automattic/components/src/summary-button/types';
 
 export default function SettingsPrimaryDataCenterSummary( {
@@ -16,17 +14,9 @@ export default function SettingsPrimaryDataCenterSummary( {
 	site: Site;
 	density?: Density;
 } ) {
-	const { data: primaryDataCenter } = useQuery( {
-		...sitePrimaryDataCenterQuery( site.ID ),
-		enabled: hasHostingFeature( site, HostingFeatures.PRIMARY_DATA_CENTER ),
-	} );
+	const { current } = useHostedDataCenter( site );
 
-	const dataCenterOptions = getDataCenterOptions();
-	const primaryDataCenterName = primaryDataCenter
-		? dataCenterOptions[ primaryDataCenter as DataCenterOption ]
-		: null;
-
-	if ( ! primaryDataCenterName ) {
+	if ( ! current ) {
 		return null;
 	}
 
@@ -36,7 +26,7 @@ export default function SettingsPrimaryDataCenterSummary( {
 			title={ __( 'Primary data center' ) }
 			density={ density }
 			decoration={ <Icon icon={ cloud } /> }
-			badges={ [ { text: primaryDataCenterName } ] }
+			badges={ [ { text: getDataCenterOptions()[ current ] } ] }
 		/>
 	);
 }
