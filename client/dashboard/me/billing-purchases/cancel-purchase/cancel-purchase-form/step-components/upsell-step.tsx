@@ -4,7 +4,6 @@ import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import * as React from 'react';
-import { useAnalytics } from '../../../../../app/analytics';
 import { useHelpCenter } from '../../../../../app/help-center';
 import { ButtonStack } from '../../../../../components/button-stack';
 import { SectionHeader } from '../../../../../components/section-header';
@@ -97,6 +96,7 @@ type UpsellStepProps = {
 	onDeclineUpsell?: () => void;
 	plans: PlanProduct[];
 	purchase: Purchase;
+	recordEvent?: ( name: string, properties?: Record< string, unknown > ) => void;
 	refundAmount?: number;
 	upsell: string;
 };
@@ -123,8 +123,6 @@ export default function UpsellStep( {
 	const thePlan = plans?.find( ( plan ) => purchase.product_slug === plan.product_slug );
 	const planName = thePlan?.product_name ?? '';
 
-	const { recordTracksEvent } = useAnalytics();
-
 	switch ( upsell ) {
 		case 'live-chat:plans':
 		case 'live-chat:plugins':
@@ -143,7 +141,7 @@ export default function UpsellStep( {
 							: __( 'Let’s have a chat' )
 					}
 					onAccept={ () => {
-						recordTracksEvent( 'calypso_cancellation_upsell_step_live_chat_click', {
+						props.recordEvent?.( 'calypso_cancellation_upsell_step_live_chat_click', {
 							type: upsell,
 						} );
 						window.location.href = getLiveChatUrl( upsell, purchase );
@@ -190,7 +188,7 @@ export default function UpsellStep( {
 					title={ __( 'Let us build your site for you' ) }
 					acceptButtonText={ __( 'Get help building my site' ) }
 					onAccept={ () => {
-						recordTracksEvent( 'calypso_cancellation_upsell_step_buily_by_click' );
+						props.recordEvent?.( 'calypso_cancellation_upsell_step_buily_by_click' );
 						window.location.replace( builtByURL );
 					} }
 					intent={ props.intent }
@@ -224,7 +222,7 @@ export default function UpsellStep( {
 						} ).replace( '/cancel', '' ) }`
 					) }
 					onAccept={ () => {
-						recordTracksEvent( 'calypso_cancellation_upgrade_at_step_upgrade_click' );
+						props.recordEvent?.( 'calypso_cancellation_upgrade_at_step_upgrade_click' );
 					} }
 					intent={ props.intent }
 					declineButtonText={ props.declineButtonText }

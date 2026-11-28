@@ -462,4 +462,39 @@ describe( '<CancelPurchaseForm />', () => {
 			).not.toBeInTheDocument();
 		} );
 	} );
+
+	test.each( [
+		{
+			upsell: 'built-by',
+			accept: { role: 'button', name: 'Get help building my site' },
+			event: [ 'calypso_cancellation_upsell_step_buily_by_click' ],
+		},
+		{
+			upsell: 'upgrade-atomic',
+			accept: { role: 'link', name: /I want the/ },
+			event: [ 'calypso_cancellation_upgrade_at_step_upgrade_click' ],
+		},
+		{
+			upsell: 'live-chat:plans',
+			accept: { role: 'button', name: 'Connect with a Happiness Engineer' },
+			event: [ 'calypso_cancellation_upsell_step_live_chat_click', { type: 'live-chat:plans' } ],
+		},
+	] as const )( 'records the $upsell offer click', async ( { upsell, accept, event } ) => {
+		const user = userEvent.setup();
+		const recordEvent = vi.fn();
+		render(
+			<CancelPurchaseForm
+				{ ...defaultProps }
+				surveyStep={ UPSELL_STEP }
+				allSteps={ [ UPSELL_STEP ] }
+				purchase={ makePurchase() }
+				upsell={ upsell }
+				recordEvent={ recordEvent }
+			/>
+		);
+
+		await user.click( screen.getByRole( accept.role, { name: accept.name } ) );
+
+		expect( recordEvent ).toHaveBeenCalledWith( ...event );
+	} );
 } );
