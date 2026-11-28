@@ -1,12 +1,6 @@
-@import '@wordpress/base-styles/breakpoints';
-
 .domain-transfer-select-site {
-	.dataviews-wrapper {
-		max-height: 430px;
-		overflow: auto;
-
-		@media ( max-width: $break-small ) {
-			max-height: 330px;
-		}
+	// Let the address shrink below its text width, so it can end in an ellipsis.
+	.dataviews-view-list__field {
+		min-width: 0;
 	}
 }
