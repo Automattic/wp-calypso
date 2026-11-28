@@ -233,6 +233,9 @@ export default function MapPlans( {
 					product={ productToAdd }
 					annualProduct={ productToAdd.annualProduct }
 					isOnlyTier
+					nameHelp={ __(
+						'Use a name that fits both the monthly and annual plans. Subscribers will see this name on their receipts.'
+					) }
 					siteId={ selectedSite.ID }
 					hideWelcomeEmailInput
 					hideAdvancedSettings
