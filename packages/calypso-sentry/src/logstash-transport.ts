@@ -179,8 +179,10 @@ function serializeExtra( event: SentryApi.Event ) {
 export function eventToLogstashPayload( event: SentryApi.Event ): LogstashPayload {
 	// The primary exception is the last one; earlier entries are its causes.
 	const exception = event.exception?.values?.at( -1 );
-	// Sentry writes the capture's mechanism to the first entry, the root cause.
-	const mechanism = event.exception?.values?.[ 0 ]?.mechanism;
+	// Sentry writes the capture's mechanism to the first entry, the root cause. Without one,
+	// that entry keeps Sentry's `chained` link marker and the thrown error holds the default.
+	const rootMechanism = event.exception?.values?.[ 0 ]?.mechanism;
+	const mechanism = rootMechanism?.type === 'chained' ? exception?.mechanism : rootMechanism;
 	const frames = exception?.stacktrace?.frames;
 	const message = exception
 		? [ exception.type, exception.value ].filter( Boolean ).join( ': ' )

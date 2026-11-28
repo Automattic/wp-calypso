@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- For errors with a cause, including those React's error boundaries catch, the `handled` and `mechanism` properties sent to Logstash now describe how the error was caught, instead of Sentry's linked-errors step.
+- For errors with a cause that are caught as uncaught errors or unhandled rejections, or captured with a mechanism such as `onUncaughtError`, the `handled` and `mechanism` properties sent to Logstash now describe how the error was caught.
 
 ## 2.0.0
 
