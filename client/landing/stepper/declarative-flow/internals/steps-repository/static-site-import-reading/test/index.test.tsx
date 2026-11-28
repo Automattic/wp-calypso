@@ -163,6 +163,35 @@ describe( 'StaticSiteImportReading', () => {
 		expect( postedBody ).toEqual( { source_url: 'http://busybearscleaning.com' } );
 	} );
 
+	it( 'asks for a copy of a WordPress source for a preview', async () => {
+		jest.mocked( startWowFunnelSite ).mockResolvedValue( {
+			funnelSlug: 'preview',
+			funnelKey: 'preview',
+			blogId: 456,
+			siteSlug: 'preview.wpcomstaging.com',
+		} );
+		let postedBody: Record< string, unknown > = {};
+		mockApi()
+			.post( '/wpcom/v2/static-site-import-session', ( body ) => {
+				postedBody = body;
+				return true;
+			} )
+			.query( true )
+			.reply( 200, sessionResponse );
+
+		const submit = render( 'from=busybearscleaning.com&platform=wordpress', {
+			afterCheckout: false,
+			siteId: '',
+			props: { buildPreview: true },
+		} );
+
+		await waitFor( () => expect( submit ).toHaveBeenCalled() );
+		expect( postedBody ).toEqual( {
+			source_url: 'https://busybearscleaning.com',
+			copy_wordpress: true,
+		} );
+	} );
+
 	it( 'records the signup and applies the flow’s site settings to a site checkout created', async () => {
 		setSignupIsNewUser( 7 );
 		const expectedSettings = { blogname: 'My Site', blog_public: 0, wpcom_public_coming_soon: 1 };
