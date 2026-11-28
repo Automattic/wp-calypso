@@ -1,5 +1,3 @@
-import './notify-me-of-new-posts-toggle.scss';
-
 import { JetpackLogo } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -26,13 +24,11 @@ const NotifyMeOfNewPostsToggle = ( {
 		<div className={ className }>
 			<ToggleControl
 				label={ translate( 'Notify me of new posts' ) }
+				help={ translate( 'Receive web and mobile notifications for new posts from this site.' ) }
 				onChange={ () => onChange( ! value ) }
 				checked={ value }
 				disabled={ isDisabled }
 			/>
-			<p className="notify-new-posts-toggle__hint">
-				{ translate( 'Receive web and mobile notifications for new posts from this site.' ) }
-			</p>
 			{ showJetpackAppHint && value && (
 				<div className="setting-item__app-hint">
 					<JetpackLogo size={ 20 } />

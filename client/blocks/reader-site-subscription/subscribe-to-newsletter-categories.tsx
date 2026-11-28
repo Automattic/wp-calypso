@@ -72,6 +72,7 @@ const SubscribeToNewsletterCategories = ( { siteId }: SubscribeToNewsletterCateg
 					</dl>
 				) }
 			</div>
+			<hr className="subscriptions__separator" />
 		</>
 	);
 };
