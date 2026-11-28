@@ -1,3 +1,5 @@
+import { isGeneratedPluginIcon } from '@automattic/api-core';
+import { useWpOrgPluginIcons } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import { Plugin } from 'calypso/data/marketplace/types';
@@ -128,6 +130,17 @@ const usePlugins = ( {
 
 			break;
 	}
+
+	// The search index only has a generated pattern for wp.org plugins (SEARCH-333).
+	const wpOrgIcons = useWpOrgPluginIcons(
+		plugins
+			.filter( ( plugin: Plugin ) => isGeneratedPluginIcon( plugin.icon ) )
+			.map( ( plugin: Plugin ) => plugin.slug )
+	);
+
+	plugins = plugins.map( ( plugin: Plugin ) =>
+		wpOrgIcons[ plugin.slug ] ? { ...plugin, icon: wpOrgIcons[ plugin.slug ] } : plugin
+	);
 
 	function fetchNextPageAndStop() {
 		if ( ! infinite || ! hasNextPage ) {
