@@ -35,7 +35,7 @@ export interface SiteCommentLikeMutationParams extends CoreSiteCommentLikeMutati
 
 type SiteCommentsInfiniteQueryParams = Pick<
 	SitePostRepliesQueryParams,
-	'siteId' | 'postId' | 'status' | 'number'
+	'siteId' | 'postId' | 'status' | 'number' | 'order'
 >;
 
 export type SiteCommentsPageParam =
@@ -51,17 +51,9 @@ export const siteCommentsInfiniteQueryKey = (
 	siteId: number,
 	postId: number,
 	status: string = DEFAULT_STATUS,
-	number: number = DEFAULT_NUMBER
-) =>
-	[
-		'site',
-		'comments',
-		'infinite',
-		siteId,
-		postId,
-		status,
-		{ number, order: DEFAULT_ORDER },
-	] as const;
+	number: number = DEFAULT_NUMBER,
+	order: 'ASC' | 'DESC' = DEFAULT_ORDER
+) => [ 'site', 'comments', 'infinite', siteId, postId, status, { number, order } ] as const;
 
 export const siteCommentsInfiniteQueryPrefix = ( siteId: number, postId: number ) =>
 	[ 'site', 'comments', 'infinite', siteId, postId ] as const;
@@ -90,23 +82,27 @@ const commentCountAtDate = ( comments: SiteComment[] = [], date?: Date ): number
 		return 0;
 	}
 
+	// A comment can sit in two cached pages, so count each one once.
 	const timestampSeconds = date.getTime() / 1000;
-	return comments.filter( ( comment ) => {
-		if ( ! comment.date ) {
-			return false;
-		}
-		return Date.parse( comment.date ) / 1000 === timestampSeconds;
-	} ).length;
+	return new Set(
+		comments
+			.filter(
+				( comment ) => comment.date && Date.parse( comment.date ) / 1000 === timestampSeconds
+			)
+			.map( ( comment ) => comment.ID )
+	).size;
 };
 
-const uniqueCommentsCount = ( pages: SitePostRepliesResponse[] ) =>
-	new Set( pages.flatMap( ( page ) => page.comments.map( ( comment ) => comment.ID ) ) ).size;
-
+/**
+ * Pages through a post's comments newest first by default, with `before` cursors for earlier pages
+ * and `after` cursors for newer ones. Oldest first pages forward with `after` cursors.
+ */
 export const siteCommentsInfiniteQuery = ( {
 	siteId,
 	postId,
 	status,
 	number,
+	order = DEFAULT_ORDER,
 }: SiteCommentsInfiniteQueryParams ) =>
 	infiniteQueryOptions<
 		SitePostRepliesResponse,
@@ -115,14 +111,14 @@ export const siteCommentsInfiniteQuery = ( {
 		ReturnType< typeof siteCommentsInfiniteQueryKey >,
 		SiteCommentsPageParam
 	>( {
-		queryKey: siteCommentsInfiniteQueryKey( siteId, postId, status, number ),
+		queryKey: siteCommentsInfiniteQueryKey( siteId, postId, status, number, order ),
 		queryFn: ( { pageParam } ) =>
 			fetchSitePostReplies( {
 				siteId,
 				postId,
 				status,
 				number,
-				order: pageParam?.direction === 'after' ? 'ASC' : 'DESC',
+				order: order === 'ASC' || pageParam?.direction === 'after' ? 'ASC' : 'DESC',
 				before: pageParam?.before,
 				after: pageParam?.after,
 				offset: pageParam?.offset,
@@ -131,13 +127,32 @@ export const siteCommentsInfiniteQuery = ( {
 		// Most threads poll for newer comments, so a refocus or reopen doesn't refetch every loaded page.
 		staleTime: 60 * 1000,
 		refetchOnWindowFocus: false,
-		getNextPageParam: ( lastPage, allPages ) => {
+		getNextPageParam: ( lastPage, allPages, lastPageParam ) => {
+			// Mutations add and remove comments in cached pages, so stop on what the server reported.
+			// `found` counts every comment matching the page's cursor, including those its offset skipped.
 			const pageSize = number ?? DEFAULT_NUMBER;
-			if (
-				lastPage.comments.length < pageSize ||
-				( lastPage.found && uniqueCommentsCount( allPages ) >= lastPage.found )
-			) {
+			const isLastPage =
+				lastPage.found === undefined
+					? lastPage.comments.length < pageSize
+					: lastPage.found - ( lastPageParam?.offset ?? 0 ) <= pageSize;
+			if ( isLastPage ) {
 				return undefined;
+			}
+
+			if ( order === 'ASC' ) {
+				// Cache writes go to the front of a page, so the last comment is the newest one fetched.
+				const lastComment = lastPage.comments.at( -1 );
+				const [ after ] = validDates( lastComment ? [ lastComment ] : [] );
+				return after
+					? {
+							direction: 'after' as const,
+							after: after.toISOString(),
+							offset: commentCountAtDate(
+								allPages.flatMap( ( page ) => page.comments ),
+								after
+							),
+						}
+					: undefined;
 			}
 
 			const oldest = oldestDate( lastPage.comments );
@@ -149,7 +164,7 @@ export const siteCommentsInfiniteQuery = ( {
 				: undefined;
 		},
 		getPreviousPageParam: ( firstPage, allPages ) => {
-			const newest = newestDate( firstPage.comments );
+			const newest = order === 'DESC' ? newestDate( firstPage.comments ) : undefined;
 			return newest
 				? {
 						direction: 'after' as const,

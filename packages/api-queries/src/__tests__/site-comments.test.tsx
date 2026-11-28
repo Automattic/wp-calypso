@@ -24,26 +24,6 @@ describe( 'site comments queries', () => {
 		expect( query.meta ).toEqual( { persist: false } );
 	} );
 
-	it( 'keeps the infinite comments key tied to the fixed newest-first order', () => {
-		const params = {
-			siteId: 123,
-			postId: 456,
-			status: 'approved',
-			order: 'ASC',
-		};
-		const query = siteCommentsInfiniteQuery( params );
-
-		expect( query.queryKey ).toEqual( [
-			'site',
-			'comments',
-			'infinite',
-			123,
-			456,
-			'approved',
-			{ number: 50, order: 'DESC' },
-		] );
-	} );
-
 	it( 'uses before cursor from the oldest comment for earlier pages', () => {
 		const query = siteCommentsInfiniteQuery( {
 			siteId: 123,
@@ -96,7 +76,37 @@ describe( 'site comments queries', () => {
 		} );
 	} );
 
-	it( 'stops earlier pagination when the loaded unique comments reach the found count', () => {
+	it( 'keeps paging earlier while a cursor page has more comments before it', () => {
+		const query = siteCommentsInfiniteQuery( {
+			siteId: 123,
+			postId: 456,
+			status: 'approved',
+			number: 2,
+		} );
+		const firstPage = {
+			comments: [
+				{ ID: 5, content: 'five', date: '2026-05-05T00:00:00.000Z' },
+				{ ID: 4, content: 'four', date: '2026-05-04T00:00:00.000Z' },
+			],
+			found: 5,
+		};
+		const cursorPage = {
+			comments: [
+				{ ID: 3, content: 'three', date: '2026-05-03T00:00:00.000Z' },
+				{ ID: 2, content: 'two', date: '2026-05-02T00:00:00.000Z' },
+			],
+			found: 3,
+		};
+
+		expect(
+			query.getNextPageParam?.( cursorPage, [ firstPage, cursorPage ], undefined, [
+				undefined,
+				{ direction: 'before', before: '2026-05-04T00:00:00.000Z' },
+			] )
+		).toEqual( { direction: 'before', before: '2026-05-02T00:00:00.000Z' } );
+	} );
+
+	it( 'stops earlier pagination when a page holds every comment its cursor matches', () => {
 		const query = siteCommentsInfiniteQuery( {
 			siteId: 123,
 			postId: 456,
@@ -112,6 +122,43 @@ describe( 'site comments queries', () => {
 		};
 
 		expect( query.getNextPageParam?.( page, [ page ], undefined, [ undefined ] ) ).toBeUndefined();
+	} );
+} );
+
+describe( 'oldest-first site comments query', () => {
+	it( 'pages forward after the newest comment fetched until the server has no more', () => {
+		const query = siteCommentsInfiniteQuery( {
+			siteId: 123,
+			postId: 456,
+			status: 'approved',
+			number: 2,
+			order: 'ASC',
+		} );
+		const comment = ( ID: number, day: number ) => ( {
+			ID,
+			content: `${ ID }`,
+			date: `2026-05-0${ day }T00:00:00.000Z`,
+		} );
+		// A comment posted from this view is cached at the front of the page.
+		const firstPage = { comments: [ comment( 9, 9 ), comment( 1, 1 ), comment( 2, 2 ) ], found: 5 };
+		const lastPage = { comments: [ comment( 3, 3 ), comment( 4, 4 ) ], found: 3 };
+		const afterSecond = {
+			direction: 'after' as const,
+			after: '2026-05-02T00:00:00.000Z',
+			offset: 1,
+		};
+
+		// Comment 2 is cached twice, which must not count as two comments sharing its timestamp.
+		const repeat = { comments: [ comment( 2, 2 ) ], found: 5 };
+		expect(
+			query.getNextPageParam?.( firstPage, [ repeat, firstPage ], undefined, [ undefined ] )
+		).toEqual( afterSecond );
+		expect(
+			query.getNextPageParam?.( lastPage, [ firstPage, lastPage ], afterSecond, [
+				undefined,
+				afterSecond,
+			] )
+		).toBeUndefined();
 	} );
 } );
 

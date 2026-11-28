@@ -10,7 +10,10 @@ type UseCommentsParams = {
 	authorId?: number;
 	number?: number;
 	commentTotal?: number;
+	oldestFirst?: boolean;
 };
+
+const noop = async () => {};
 
 /**
  * Loads and derives the paginated comment list for a Reader post.
@@ -28,15 +31,32 @@ export const useComments = (
 		authorId,
 		number,
 		commentTotal,
+		oldestFirst = false,
 	}: UseCommentsParams,
 	options: UseCommentsOptions = {}
 ) => {
 	const query = usePostCommentsQuery( { siteId, postId, status, number }, options );
 
-	const comments = useMemo(
+	const newestFirstComments = useMemo(
 		() => mergeComments( query.data?.pages.map( ( page ) => page.comments ) ?? [] ),
 		[ query.data?.pages ]
 	);
+
+	// A thread that's all loaded sorts in place. A longer one loads its start in one request instead
+	// of paging back through every newer comment.
+	const needsOldestQuery = oldestFirst && Boolean( query.hasNextPage );
+	const oldestQuery = usePostCommentsQuery(
+		{ siteId, postId, status, number, order: 'ASC' },
+		{ ...options, enabled: needsOldestQuery && ( options.enabled ?? true ) }
+	);
+	const oldestFirstComments = useMemo(
+		() =>
+			needsOldestQuery && oldestQuery.data
+				? mergeComments( oldestQuery.data.pages.map( ( page ) => page.comments ) )
+				: null,
+		[ needsOldestQuery, oldestQuery.data ]
+	);
+	const comments = oldestFirstComments ?? newestFirstComments;
 	const displayedComments = useMemo(
 		() => filterComments( comments, displayStatus, authorId ),
 		[ authorId, comments, displayStatus ]
@@ -45,9 +65,11 @@ export const useComments = (
 		() => buildCommentsTree( displayedComments ),
 		[ displayedComments ]
 	);
-	const found = query.data?.pages[ 0 ]?.found ?? commentTotal ?? 0;
-	const hasMoreComments = found > comments.length;
 	const pageParams = query.data?.pageParams ?? [];
+	// Cursor pages count only the comments past their cursor, so only the first page has the total.
+	const firstPage = query.data?.pages[ pageParams.findIndex( ( pageParam ) => ! pageParam ) ];
+	const found = firstPage?.found ?? commentTotal ?? 0;
+	const hasMoreComments = found > newestFirstComments.length;
 	const hasReceivedBefore = pageParams.some(
 		( pageParam ) => ! pageParam || pageParam.direction === 'before'
 	);
@@ -59,14 +81,20 @@ export const useComments = (
 		commentsTree,
 		commentsFetchingStatus: {
 			haveEarlierCommentsToFetch:
-				query.hasNextPage && hasMoreComments && ! query.isFetchingNextPage,
-			haveLaterCommentsToFetch:
-				query.hasPreviousPage && hasMoreComments && ! query.isFetchingPreviousPage,
+				! oldestFirstComments && query.hasNextPage && hasMoreComments && ! query.isFetchingNextPage,
+			haveLaterCommentsToFetch: oldestFirstComments
+				? oldestQuery.hasNextPage && ! oldestQuery.isFetchingNextPage
+				: query.hasPreviousPage && hasMoreComments && ! query.isFetchingPreviousPage,
 			hasReceivedBefore,
 			hasReceivedAfter,
 		},
 		found,
-		fetchEarlierComments: query.fetchNextPage,
-		fetchLaterComments: query.fetchPreviousPage,
+		// Until the first comments arrive, the list keeps its order rather than flash the wrong window.
+		isOldestFirst: oldestFirst && ( ! needsOldestQuery || Boolean( oldestFirstComments ) ),
+		// Only a failed first page resets the sort; a failed Load more keeps the reader's place.
+		isOldestFirstError: needsOldestQuery && oldestQuery.isLoadingError,
+		fetchEarlierComments: oldestFirstComments ? noop : query.fetchNextPage,
+		fetchLaterComments: oldestFirstComments ? oldestQuery.fetchNextPage : query.fetchPreviousPage,
+		fetchNewestComments: query.fetchPreviousPage,
 	};
 };

@@ -12,6 +12,10 @@ import PostComments from '..';
 
 vi.mock( '../form-root', () => ( { default: () => <textarea aria-label="Add a comment" /> } ) );
 
+vi.mock( 'calypso/state/reader/analytics/actions', () => ( {
+	recordReaderTracksEvent: () => ( { type: 'READER_TRACKS_EVENT_MOCK' } ),
+} ) );
+
 vi.mock( '../post-comment', () => ( {
 	default: ( props ) => <li data-testid="post-comment">{ props.commentId }</li>,
 } ) );
@@ -259,6 +263,127 @@ describe( 'PostComments', () => {
 				expect.arrayContaining( [ '789' ] )
 			);
 		} );
+	} );
+
+	const descQuery = {
+		number: '50',
+		status: 'approved',
+		order: 'DESC',
+		author_wpcom_data: 'true',
+		force: 'wpcom',
+	};
+
+	const makeComment = ( ID, date ) => ( {
+		ID,
+		content: `Comment ${ ID }`,
+		date,
+		parent: false,
+		author: { ID: 10, name: 'Author' },
+		status: 'approved',
+	} );
+
+	const renderedIds = () =>
+		screen.getAllByTestId( 'post-comment' ).map( ( item ) => item.textContent );
+
+	it( 'sorts a fully loaded thread oldest first without another request', async () => {
+		const user = userEvent.setup();
+		nock( BASE )
+			.get( '/rest/v1.1/sites/123/posts/456/replies' )
+			.query( descQuery )
+			.reply( 200, {
+				comments: [
+					makeComment( 2, '2026-05-02T00:00:00.000Z' ),
+					makeComment( 1, '2026-05-01T00:00:00.000Z' ),
+				],
+				found: 2,
+			} );
+
+		const oldestRequest = nock( BASE )
+			.get( '/rest/v1.1/sites/123/posts/456/replies' )
+			.query( { ...descQuery, order: 'ASC' } )
+			.reply( 200, { comments: [], found: 2 } );
+
+		renderComments();
+
+		await waitFor( () => expect( renderedIds() ).toEqual( [ '2', '1' ] ) );
+		await user.selectOptions( screen.getByRole( 'combobox', { name: 'Sort by' } ), 'oldest' );
+
+		expect( renderedIds() ).toEqual( [ '1', '2' ] );
+		expect( oldestRequest.isDone() ).toBe( false );
+	} );
+
+	// 50 newest comments (IDs 100-149) load first; the oldest 50 (IDs 1-50) come from the ASC request.
+	const mockLongerThread = () => {
+		nock( BASE )
+			.get( '/rest/v1.1/sites/123/posts/456/replies' )
+			.query( descQuery )
+			.reply( 200, {
+				comments: Array.from( { length: 50 }, ( _, index ) =>
+					makeComment( index + 100, new Date( Date.UTC( 2026, 5, index + 1 ) ).toISOString() )
+				),
+				found: 120,
+			} );
+		return nock( BASE )
+			.get( '/rest/v1.1/sites/123/posts/456/replies' )
+			.query( { ...descQuery, order: 'ASC' } )
+			.reply( 200, {
+				comments: Array.from( { length: 50 }, ( _, index ) =>
+					makeComment( index + 1, new Date( Date.UTC( 2026, 0, index + 1 ) ).toISOString() )
+				),
+				found: 120,
+			} );
+	};
+
+	it( 'loads the first comments of a longer thread in one oldest-first request', async () => {
+		const user = userEvent.setup();
+		const oldestRequest = mockLongerThread();
+
+		renderComments( { initialSize: 3, commentCount: 120 } );
+
+		await waitFor( () => expect( renderedIds() ).toEqual( [ '149', '148', '147' ] ) );
+		await user.selectOptions( screen.getByRole( 'combobox', { name: 'Sort by' } ), 'oldest' );
+
+		await waitFor( () => expect( renderedIds() ).toEqual( [ '1', '2', '3' ] ) );
+		expect( oldestRequest.isDone() ).toBe( true );
+	} );
+
+	it( 'stays on Oldest when loading more of the oldest comments fails', async () => {
+		const user = userEvent.setup();
+		mockLongerThread();
+		const failedLoadMore = nock( BASE )
+			.get( '/rest/v1.1/sites/123/posts/456/replies' )
+			.query( ( query ) => query.order === 'ASC' && !! query.after )
+			.reply( 500, { error: 'unknown' } );
+		renderComments( { initialSize: 3, pageSize: 50, commentCount: 120 } );
+		await waitFor( () => expect( renderedIds() ).toHaveLength( 3 ) );
+		const sortBy = screen.getByRole( 'combobox', { name: 'Sort by' } );
+		await user.selectOptions( sortBy, 'oldest' );
+		await waitFor( () => expect( renderedIds()[ 0 ] ).toBe( '1' ) );
+
+		await user.click( screen.getByRole( 'button', { name: /Load more comments/ } ) );
+
+		await waitFor( () => expect( failedLoadMore.isDone() ).toBe( true ) );
+		await act( () => new Promise( ( resolve ) => setTimeout( resolve, 0 ) ) );
+		expect( sortBy ).toHaveValue( 'oldest' );
+		expect( renderedIds()[ 0 ] ).toBe( '1' );
+	} );
+
+	it( 'starts an anchored thread at its first comment with one Load more below', async () => {
+		const user = userEvent.setup();
+		mockLongerThread();
+		nock( BASE )
+			.get( '/rest/v1.1/sites/123/comments/999' )
+			.query( true )
+			.reply( 200, makeComment( 999, '2026-07-01T00:00:00.000Z' ) );
+
+		renderComments( { startingCommentId: 999, commentCount: 120 } );
+
+		await waitFor( () => expect( renderedIds() ).toContain( '999' ) );
+		await user.selectOptions( screen.getByRole( 'combobox', { name: 'Sort by' } ), 'oldest' );
+
+		await waitFor( () => expect( renderedIds()[ 0 ] ).toBe( '1' ) );
+		expect( renderedIds() ).not.toContain( '999' );
+		expect( screen.getAllByRole( 'button', { name: /Load more comments/ } ) ).toHaveLength( 1 );
 	} );
 
 	it( 'does not paginate while waiting for a starting comment outside the initial comments page', async () => {

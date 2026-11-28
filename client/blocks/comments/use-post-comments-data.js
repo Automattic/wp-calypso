@@ -51,6 +51,7 @@ export const usePostCommentsData = ( props ) => {
 	const [ activeReplyCommentId, setActiveReplyCommentId ] = useState( null );
 	const [ isExpanded, setIsExpanded ] = useState( false );
 	const [ pendingCommentIds, setPendingCommentIds ] = useState( [] );
+	const [ sortOrder, setSortOrder ] = useState( 'newest' );
 	const currentUserId = useSelector( getCurrentUserId );
 	const siteId = props.post?.site_ID;
 	const postId = props.post?.ID;
@@ -66,6 +67,7 @@ export const usePostCommentsData = ( props ) => {
 		setActiveReplyCommentId( null );
 		setIsExpanded( false );
 		setPendingCommentIds( [] );
+		setSortOrder( 'newest' );
 	}, [ siteId, postId, props.streamKey ] );
 
 	const {
@@ -73,8 +75,11 @@ export const usePostCommentsData = ( props ) => {
 		isLoading,
 		isFetched,
 		commentsFetchingStatus,
+		isOldestFirst,
+		isOldestFirstError,
 		fetchEarlierComments,
 		fetchLaterComments,
+		fetchNewestComments,
 		data,
 	} = useComments( {
 		siteId,
@@ -83,16 +88,26 @@ export const usePostCommentsData = ( props ) => {
 		displayStatus: props.commentsFilterDisplay ?? props.commentsFilter,
 		commentTotal: props.commentCount,
 		authorId: currentUserId,
+		oldestFirst: sortOrder === 'oldest',
 	} );
 	const { deferNewComments } = props;
 
+	useEffect( () => {
+		if ( isOldestFirstError ) {
+			setSortOrder( 'newest' );
+		}
+	}, [ isOldestFirstError ] );
+
 	const pollForNewComments = useCallback( async () => {
 		if ( ! deferNewComments ) {
-			return fetchLaterComments();
+			return fetchNewestComments();
 		}
 
-		const knownIds = new Set( loadedComments.map( ( comment ) => comment.ID ) );
-		const { data: polled } = await fetchLaterComments();
+		// Compare against the pages polling refetches, which differ from the list shown in Oldest mode.
+		const knownIds = new Set(
+			( data?.pages ?? [] ).flatMap( ( page ) => page.comments.map( ( comment ) => comment.ID ) )
+		);
+		const { data: polled } = await fetchNewestComments();
 		const newIds = ( polled?.pages ?? [] )
 			.flatMap( ( page ) => page.comments )
 			.filter(
@@ -104,7 +119,7 @@ export const usePostCommentsData = ( props ) => {
 			.map( ( comment ) => comment.ID );
 
 		setPendingCommentIds( ( current ) => [ ...new Set( [ ...current, ...newIds ] ) ] );
-	}, [ currentUserId, deferNewComments, fetchLaterComments, loadedComments ] );
+	}, [ currentUserId, data, deferNewComments, fetchNewestComments ] );
 
 	const initialCommentFromList = props.startingCommentId
 		? loadedComments.find(
@@ -130,8 +145,9 @@ export const usePostCommentsData = ( props ) => {
 		[ postId, startingComment.data ]
 	);
 	const commentsForDisplay = useMemo(
-		() => mergeCommentLists( loadedComments, additionalComments ),
-		[ additionalComments, loadedComments ]
+		// Oldest first shows the thread from its start, so a comment fetched on its own can't be placed.
+		() => mergeCommentLists( loadedComments, isOldestFirst ? [] : additionalComments ),
+		[ additionalComments, isOldestFirst, loadedComments ]
 	);
 	const commentsTree = useMemo(
 		() =>
@@ -190,6 +206,9 @@ export const usePostCommentsData = ( props ) => {
 		fetchEarlierComments,
 		fetchLaterComments,
 		pollForNewComments,
+		sortOrder,
+		isOldestFirst,
+		setSortOrder,
 		pendingCommentIds: reachablePendingIds,
 		revealPendingComments: () => setPendingCommentIds( [] ),
 		setActiveReply: ( { commentId } ) => setActiveReplyCommentId( commentId ),
