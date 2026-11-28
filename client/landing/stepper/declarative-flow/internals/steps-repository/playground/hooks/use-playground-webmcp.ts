@@ -1,3 +1,4 @@
+import { loadScript } from '@automattic/load-script';
 import { useEffect, useRef } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import type { PlaygroundClient } from '../lib/types';
@@ -15,7 +16,7 @@ export function usePlaygroundWebMcp( {
 	launchRef.current = launch;
 
 	useEffect( () => {
-		if ( ! client || ! slug || ! document.modelContext?.registerTool ) {
+		if ( ! client || ! slug ) {
 			return;
 		}
 
@@ -24,6 +25,13 @@ export function usePlaygroundWebMcp( {
 		let unregisterTools: ( () => void ) | undefined;
 
 		void ( async () => {
+			if ( ! document.modelContext?.registerTool ) {
+				await loadScript( 'https://s0.wp.com/wp-content/js/webmcp-origin-trial.js' );
+			}
+			if ( ! document.modelContext?.registerTool ) {
+				return;
+			}
+
 			const { registerWebMCPTools, unregisterWebMCPTools, startWebMCPSiteToolProxy } = await import(
 				/* webpackChunkName: "playground-webmcp" */ '@wp-playground/mcp/client'
 			);
