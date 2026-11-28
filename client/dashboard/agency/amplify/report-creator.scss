@@ -30,8 +30,16 @@
 		url( ./paper-grain.svg ),
 		linear-gradient(
 			135deg,
-			color-mix( in srgb, var( --color-primary ) 14%, var( --color-surface ) ),
-			color-mix( in srgb, var( --color-primary ) 5%, var( --color-surface ) )
+			color-mix(
+				in srgb,
+				var( --wpds-color-background-interactive-brand-strong ) 14%,
+				var( --wpds-color-background-surface-neutral-strong )
+			),
+			color-mix(
+				in srgb,
+				var( --wpds-color-background-interactive-brand-strong ) 5%,
+				var( --wpds-color-background-surface-neutral-strong )
+			)
 		);
 	background-position:
 		0 0,
@@ -55,9 +63,17 @@
 	z-index: 2;
 	inset: auto 0 0;
 	height: 150px;
-	background: linear-gradient( to bottom, transparent, var( --color-surface ) 84% );
+	background: linear-gradient(
+		to bottom,
+		transparent,
+		var( --wpds-color-background-surface-neutral-strong ) 84%
+	);
 	backdrop-filter: blur( 12px );
-	mask-image: linear-gradient( to bottom, transparent, var( --color-text ) 70% );
+	mask-image: linear-gradient(
+		to bottom,
+		transparent,
+		var( --wpds-color-foreground-content-neutral ) 70%
+	);
 	content: '';
 	pointer-events: none;
 }
@@ -92,11 +108,11 @@
 }
 
 .dashboard-amplify-overview__mode-card[aria-checked='true'] {
-	box-shadow: inset 0 0 0 2px var( --color-primary );
+	box-shadow: inset 0 0 0 2px var( --wpds-color-stroke-focus );
 }
 
 .dashboard-amplify-overview__mode-card:focus-visible {
-	outline: 2px solid var( --color-primary );
+	outline: 2px solid var( --wpds-color-stroke-focus );
 	outline-offset: 2px;
 }
 
@@ -115,7 +131,7 @@
 .dashboard-amplify-overview__modal-summary {
 	width: min( 100%, 680px );
 	margin: 0 0 8px;
-	color: var( --color-text );
+	color: var( --wpds-color-foreground-content-neutral );
 	font-size: 15px;
 	line-height: 1.5;
 }

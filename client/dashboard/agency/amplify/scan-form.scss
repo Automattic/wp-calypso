@@ -15,10 +15,10 @@
 	max-height: 304px;
 	padding: 4px;
 	overflow-y: auto;
-	background: var( --color-surface );
-	border: 1px solid var( --color-border-subtle );
+	background: var( --wpds-color-background-surface-neutral-strong );
+	border: 1px solid var( --wpds-color-stroke-surface-neutral );
 	border-radius: 4px;
-	box-shadow: 0 8px 24px var( --color-border-subtle );
+	box-shadow: 0 8px 24px var( --wpds-color-stroke-surface-neutral );
 }
 
 .dashboard-amplify-scan-form__suggestions.is-portaled {
@@ -39,7 +39,7 @@
 	width: 100%;
 	padding: 8px 10px;
 	border-radius: 3px;
-	color: var( --color-text );
+	color: var( --wpds-color-foreground-content-neutral );
 	cursor: pointer;
 }
 
@@ -49,7 +49,7 @@
 	width: 64px;
 	height: 40px;
 	overflow: hidden;
-	border: 1px solid var( --color-border-subtle );
+	border: 1px solid var( --wpds-color-stroke-surface-neutral );
 	border-radius: 4px;
 }
 
@@ -61,7 +61,7 @@
 .dashboard-amplify-scan-form__suggestion:hover,
 .dashboard-amplify-scan-form__suggestion:focus-visible,
 .dashboard-amplify-scan-form__suggestion[data-active='true'] {
-	background: var( --color-neutral-5 );
+	background: var( --wpds-color-background-surface-neutral-weak );
 }
 
 .dashboard-amplify-url {
