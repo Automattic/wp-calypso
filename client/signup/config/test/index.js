@@ -203,4 +203,17 @@ describe( 'index', () => {
 
 		expect( flowsWithMandatoryIntervalType ).toEqual( [] );
 	} );
+
+	test( 'with-theme sends a paid Personal theme signup to the theme thank-you page', () => {
+		const { destination } = flows.getFlow( 'with-theme', false );
+
+		expect(
+			destination( {
+				siteSlug: 'example.wordpress.com',
+				themeParameter: 'example-theme',
+				themeType: 'personal',
+				cartItems: [ { product_slug: 'personal-bundle' } ],
+			} )
+		).toBe( '/marketplace/thank-you/example.wordpress.com?onboarding=&themes=example-theme' );
+	} );
 } );
