@@ -203,7 +203,9 @@ function ProductsList() {
 				<Card className="memberships__products-card">
 					<div className="memberships__products-card-content">
 						<div className="memberships__products-card-title">
-							{ translate( 'Set up a one-time offer or recurring payments plan.' ) }
+							{ translate(
+								"Set up a paid newsletter tier, recurring payment plan, or one-time sale. Only paid newsletter tiers unlock paid posts; donations, one-time sales, and other recurring plans don't."
+							) }
 						</div>
 					</div>
 				</Card>

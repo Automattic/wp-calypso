@@ -437,4 +437,70 @@ describe( 'ProductsList', () => {
 
 		expect( screen.getByText( 'Hidden from subscribers' ) ).toBeInTheDocument();
 	} );
+
+	test( 'explains that only paid newsletter tiers unlock paid posts in the empty list and new-plan dialog', async () => {
+		const user = userEvent.setup();
+		renderProductsList( [] );
+
+		expect(
+			screen.getByText(
+				"Set up a paid newsletter tier, recurring payment plan, or one-time sale. Only paid newsletter tiers unlock paid posts; donations, one-time sales, and other recurring plans don't."
+			)
+		).toBeVisible();
+
+		await user.click( screen.getByRole( 'button', { name: 'Add a new payment plan' } ) );
+
+		expect(
+			within( await screen.findByRole( 'dialog' ) ).getByText(
+				"Turn this on to unlock paid posts for subscribers. One-time sales and other recurring plans don't unlock paid posts."
+			)
+		).toBeVisible();
+	} );
+
+	test( 'explains how to unlock paid posts when editing a non-tier plan, and omits the note when editing a tier', async () => {
+		const user = userEvent.setup();
+		const recurringPlan = {
+			...productData,
+			ID: 13,
+			price: 8,
+			title: 'Monthly Membership',
+			type: 'product',
+			interval: '1 month',
+			renewal_schedule: '1 month',
+		};
+		renderProductsList( [ recurringPlan, tierWithoutDescription ] );
+
+		const recurringCard = within( screen.getByText( 'Monthly Membership' ).closest( '.card' ) );
+		await user.click( recurringCard.getByTitle( 'Toggle menu' ) );
+		await user.click( screen.getByText( 'Edit' ) );
+
+		const editRecurringDialog = within( await screen.findByRole( 'dialog' ) );
+		expect(
+			editRecurringDialog.getByText(
+				'Only paid newsletter tiers unlock paid posts. To unlock them, add a new payment plan with Paid newsletter tier turned on.'
+			)
+		).toBeVisible();
+		expect(
+			editRecurringDialog.queryByText(
+				"Turn this on to unlock paid posts for subscribers. One-time sales and other recurring plans don't unlock paid posts."
+			)
+		).not.toBeInTheDocument();
+		await user.click( editRecurringDialog.getByRole( 'button', { name: 'Cancel' } ) );
+
+		const tierCard = within( screen.getByText( 'Basic Tier' ).closest( '.card' ) );
+		await user.click( tierCard.getByTitle( 'Toggle menu' ) );
+		await user.click( screen.getByText( 'Edit' ) );
+
+		const editTierDialog = within( await screen.findByRole( 'dialog' ) );
+		expect(
+			editTierDialog.queryByText(
+				"Turn this on to unlock paid posts for subscribers. One-time sales and other recurring plans don't unlock paid posts."
+			)
+		).not.toBeInTheDocument();
+		expect(
+			editTierDialog.queryByText(
+				'Only paid newsletter tiers unlock paid posts. To unlock them, add a new payment plan with Paid newsletter tier turned on.'
+			)
+		).not.toBeInTheDocument();
+	} );
 } );
