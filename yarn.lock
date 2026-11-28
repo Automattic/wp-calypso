@@ -582,7 +582,7 @@ __metadata:
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.0"
   peerDependencies:
-    "@babel/core": ^7.29.13
+    "@babel/core": ^8.1.3
   languageName: unknown
   linkType: soft
 
