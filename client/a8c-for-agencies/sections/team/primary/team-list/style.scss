@@ -11,10 +11,14 @@
 
 .team-list {
 	// Align the DataViews inset (toolbar and table columns) with the A4A page gutter.
+	/* stylelint-disable plugin-wpds/no-setting-wpds-custom-properties -- TODO: Migrate away from overriding design system tokens. */
 	--wpds-dimension-padding-2xl: 16px;
+	/* stylelint-enable plugin-wpds/no-setting-wpds-custom-properties */
 
 	@include breakpoint-deprecated( ">660px" ) {
+		/* stylelint-disable plugin-wpds/no-setting-wpds-custom-properties -- TODO: Migrate away from overriding design system tokens. */
 		--wpds-dimension-padding-2xl: 64px;
+		/* stylelint-enable plugin-wpds/no-setting-wpds-custom-properties */
 	}
 
 	// Components 45 pads the card body with the same token; keep components 44's medium padding.

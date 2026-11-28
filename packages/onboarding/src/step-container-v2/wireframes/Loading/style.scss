@@ -20,7 +20,9 @@
 		--wp-components-color-foreground: var( --color-accent, #3858e9 );
 		// Progress paints its indicator and track with these tokens; mix them from the
 		// foreground color, as ProgressBar did before.
+		/* stylelint-disable plugin-wpds/no-setting-wpds-custom-properties -- TODO: Migrate away from overriding design system tokens. */
 		--wpds-color-background-indicator-neutral: color-mix(in srgb, var(--wp-components-color-foreground) 90%, transparent);
 		--wpds-color-background-track-neutral: color-mix(in srgb, var(--wp-components-color-foreground) 10%, transparent);
+		/* stylelint-enable plugin-wpds/no-setting-wpds-custom-properties */
 	}
 }

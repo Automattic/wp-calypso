@@ -28,12 +28,16 @@
 
 	--wp-components-color-accent: color-mix( in oklab, #{$accent} 55%, #fff );
 	--wp-components-color-accent-darker-20: color-mix( in oklab, #{$accent} 40%, #fff );
+	/* stylelint-disable plugin-wpds/no-setting-wpds-custom-properties -- TODO: Migrate away from overriding design system tokens. */
 	--wpds-color-stroke-focus: color-mix( in oklab, #{$accent} 70%, #fff );
+	/* stylelint-enable plugin-wpds/no-setting-wpds-custom-properties */
 
 	@supports ( color: oklch( from red max( l, 0.5 ) c h ) ) {
 		--wp-components-color-accent: oklch( from #{$accent} max( l, 0.66 ) c h );
 		--wp-components-color-accent-darker-20: oklch( from #{$accent} max( l, 0.74 ) c h );
+		/* stylelint-disable plugin-wpds/no-setting-wpds-custom-properties -- TODO: Migrate away from overriding design system tokens. */
 		--wpds-color-stroke-focus: oklch( from #{$accent} max( l, 0.62 ) c h );
+		/* stylelint-enable plugin-wpds/no-setting-wpds-custom-properties */
 	}
 
 	&.is-busy {

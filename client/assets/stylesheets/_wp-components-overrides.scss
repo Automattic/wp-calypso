@@ -1,5 +1,7 @@
 @import "@wordpress/base-styles/colors";
 
+/* stylelint-disable plugin-wpds/no-setting-wpds-custom-properties -- TODO: Migrate away from overriding design system tokens. */
+
 /* @wordpress/components Menu workaround ---------------------------------------------- *
  * The `Menu.Popover` refactor in @wordpress/components 33.0.0 (Gutenberg #77460) split
  * the popover into `MenuMotionRoot` (motion styles) > `MenuSurface` (panel chrome) and

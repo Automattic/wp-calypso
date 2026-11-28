@@ -14,7 +14,9 @@
 }
 
 .playground-iframe__progress-bar {
+	/* stylelint-disable plugin-wpds/no-setting-wpds-custom-properties -- TODO: Migrate away from overriding design system tokens. */
 	--wpds-color-background-indicator-neutral: var(--color-accent);
+	/* stylelint-enable plugin-wpds/no-setting-wpds-custom-properties */
 }
 
 .playground-iframe iframe {
