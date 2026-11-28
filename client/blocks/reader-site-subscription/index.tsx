@@ -62,16 +62,16 @@ const ReaderSiteSubscription = ( { transition }: ReaderSiteSubscriptionProps ) =
 
 	return (
 		<div className="site-subscription-page">
-			<Button
-				className="site-subscription-page__back-button"
-				onClick={ () => navigate( Path.ManageAllSubscriptions ) }
-				icon={ <Gridicon icon="chevron-left" size={ 12 } /> }
-			>
-				{ translate( 'Back' ) }
-			</Button>
-
 			<div className="site-subscription-page__centered-content">
 				<div className="site-subscription-page__main-content">
+					<Button
+						className="site-subscription-page__back-button"
+						onClick={ () => navigate( Path.ManageAllSubscriptions ) }
+						icon={ <Gridicon icon="chevron-left" size={ 12 } /> }
+					>
+						{ translate( 'Back' ) }
+					</Button>
+
 					{ error || ! data || Reader.isErrorResponse( data ) ? (
 						<Notice
 							className="site-subscription-page__fetch-details-error"
