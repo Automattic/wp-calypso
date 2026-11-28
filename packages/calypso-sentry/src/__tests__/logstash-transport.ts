@@ -25,11 +25,15 @@ const exceptionEvent: SentryApi.Event = {
 	),
 	exception: {
 		values: [
-			{ type: 'Error', value: 'the cause' },
+			{
+				type: 'Error',
+				value: 'the cause',
+				mechanism: { type: 'react.onUncaughtError', handled: false },
+			},
 			{
 				type: 'TypeError',
 				value: 'x is undefined',
-				mechanism: { type: 'react.onUncaughtError', handled: false },
+				mechanism: { type: 'generic', handled: true },
 				stacktrace: {
 					frames: [
 						{ function: 'outer', filename: 'app.js', lineno: 1, colno: 10 },
@@ -81,6 +85,19 @@ describe( 'eventToLogstashPayload', () => {
 		} );
 		expect( payload.properties ).not.toHaveProperty( 'tag_calypso_section' );
 		expect( payload.properties ).not.toHaveProperty( 'tag_blog_id' );
+	} );
+
+	it( "reports the thrown error's mechanism when the capture passed none", () => {
+		const payload = eventToLogstashPayload( {
+			exception: {
+				values: [
+					{ type: 'Error', value: 'the cause', mechanism: { type: 'chained', handled: true } },
+					{ type: 'Error', value: 'wrapped', mechanism: { type: 'generic', handled: true } },
+				],
+			},
+		} );
+
+		expect( payload.properties ).toMatchObject( { handled: true, mechanism: 'generic' } );
 	} );
 
 	it( 'gives the same stack_hash only to identical stacks', () => {
