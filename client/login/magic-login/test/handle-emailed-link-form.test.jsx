@@ -1,6 +1,8 @@
 /** @vitest-environment jsdom */
 import page from '@automattic/calypso-router';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { translate } from 'i18n-calypso';
 import { vi } from 'vitest';
 import { HandleEmailedLinkForm } from '../handle-emailed-link-form';
 
@@ -220,5 +222,77 @@ describe( 'HandleEmailedLinkForm view tracking', () => {
 		);
 
 		expect( recordTracksEvent ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'HandleEmailedLinkForm confirm-subscription account mismatch', () => {
+	const redirectTo =
+		'https://subscribe.wordpress.com/?key=test&email=bob%40example.com&activate=abc123';
+
+	const mismatchProps = {
+		clientId: '39911',
+		emailAddress: 'bob@example.com',
+		token: 'a-token',
+		redirectTo,
+		redirectToOriginal: '',
+		transition: true,
+		activate: 'abc123',
+		currentUser: { email: 'alice@example.com', username: 'alice' },
+		oauth2Client: {},
+		initialQuery: {},
+		translate,
+		fetchMagicLoginAuthenticate: vi.fn(),
+		showMagicLoginLinkExpiredPage: vi.fn(),
+		rebootAfterLogin: vi.fn(),
+		recordTracksEvent: vi.fn(),
+	};
+
+	beforeEach( () => {
+		vi.clearAllMocks();
+	} );
+
+	it( 'renders the mismatch warning without auto-submitting and authenticates on confirmation', async () => {
+		const user = userEvent.setup();
+
+		render( <HandleEmailedLinkForm { ...mismatchProps } /> );
+
+		expect( mismatchProps.fetchMagicLoginAuthenticate ).not.toHaveBeenCalled();
+		expect(
+			screen.getByRole( 'heading', { name: 'You’re signed in to a different account' } )
+		).toBeVisible();
+		expect( screen.getByText( /This link confirms the subscription for/ ) ).toHaveTextContent(
+			'bob@example.com'
+		);
+		expect( screen.getByText( /This link confirms the subscription for/ ) ).toHaveTextContent(
+			'alice@example.com'
+		);
+		expect( screen.getByRole( 'link', { name: 'Cancel' } ) ).toHaveAttribute( 'href', '/home' );
+
+		const switchButton = screen.getByRole( 'button', { name: 'Switch accounts and confirm' } );
+		await user.click( switchButton );
+
+		expect( mismatchProps.fetchMagicLoginAuthenticate ).toHaveBeenCalledWith(
+			'a-token',
+			redirectTo,
+			null
+		);
+	} );
+
+	it( 'auto-submits when the signed-in email matches the subscription link email', () => {
+		render(
+			<HandleEmailedLinkForm
+				{ ...mismatchProps }
+				currentUser={ { email: 'Bob@Example.com', username: 'bob' } }
+			/>
+		);
+
+		expect( mismatchProps.fetchMagicLoginAuthenticate ).toHaveBeenCalledWith(
+			'a-token',
+			redirectTo,
+			null
+		);
+		expect(
+			screen.queryByRole( 'heading', { name: 'You’re signed in to a different account' } )
+		).not.toBeInTheDocument();
 	} );
 } );

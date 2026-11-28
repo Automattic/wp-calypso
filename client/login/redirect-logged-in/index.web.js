@@ -1,4 +1,5 @@
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getCurrentUserEmail, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { isConfirmSubscriptionRedirect, isDifferentEmail } from './confirm-subscription';
 
 /**
  * For this context, we consider external URLs that are NOT:
@@ -48,9 +49,20 @@ function isUnsafeInternalUrl( url ) {
 }
 
 export default function redirectLoggedIn( context, next ) {
-	const userLoggedIn = isUserLoggedIn( context.store.getState() );
+	const state = context.store.getState();
+	const userLoggedIn = isUserLoggedIn( state );
 
 	if ( userLoggedIn ) {
+		const params = context?.querystring ? context.query : context?.state || context?.query || {};
+
+		if (
+			isConfirmSubscriptionRedirect( params.redirect_to ) &&
+			isDifferentEmail( getCurrentUserEmail( state ), params.email )
+		) {
+			next();
+			return;
+		}
+
 		// force full page reload to avoid SSR hydration issues.
 		// Redirect parameters should have higher priority.
 		let url = context?.query?.redirect_to;
