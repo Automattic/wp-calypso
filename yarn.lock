@@ -725,14 +725,14 @@ __metadata:
   resolution: "@automattic/calypso-babel-config@workspace:packages/calypso-babel-config"
   dependencies:
     "@automattic/babel-plugin-preserve-i18n": "workspace:^"
-    "@babel/core": "npm:^8.1.0"
-    "@babel/helpers": "npm:^8.1.0"
+    "@babel/core": "npm:^8.1.3"
+    "@babel/helpers": "npm:^8.1.3"
     "@babel/plugin-transform-react-pure-annotations": "npm:^8.0.1"
-    "@babel/plugin-transform-runtime": "npm:^8.0.6"
+    "@babel/plugin-transform-runtime": "npm:^8.1.2"
     "@babel/preset-env": "npm:^8.0.7"
     "@babel/preset-react": "npm:^8.0.1"
     "@babel/preset-typescript": "npm:^8.0.7"
-    "@babel/runtime": "npm:^8.1.0"
+    "@babel/runtime": "npm:^8.1.3"
     babel-plugin-transform-react-remove-prop-types: "npm:^0.4.24"
   languageName: unknown
   linkType: soft
@@ -747,8 +747,8 @@ __metadata:
     "@automattic/languages": "workspace:^"
     "@automattic/webpack-rtl-plugin": "workspace:^"
     "@babel/cli": "npm:^8.1.0"
-    "@babel/compat-data": "npm:^8.0.5"
-    "@babel/core": "npm:^8.1.0"
+    "@babel/compat-data": "npm:^8.1.2"
+    "@babel/core": "npm:^8.1.3"
     "@swc/core": "npm:^1.11.24"
     "@types/webpack-env": "npm:^1.18.8"
     "@wordpress/browserslist-config": "npm:^7.2.0"
@@ -1822,7 +1822,7 @@ __metadata:
   resolution: "@automattic/interpolate-components@workspace:packages/interpolate-components"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@babel/runtime": "npm:^8.1.0"
+    "@babel/runtime": "npm:^8.1.3"
     react: "npm:>=16.2.0"
     react-dom: "npm:^18.3.1"
     vite: "npm:^8.3.8"
@@ -2018,7 +2018,7 @@ __metadata:
   resolution: "@automattic/load-script@workspace:packages/load-script"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@babel/runtime": "npm:^8.1.0"
+    "@babel/runtime": "npm:^8.1.3"
     debug: "npm:^4.4.3"
     jsdom: "npm:^20.0.3"
     vite: "npm:^8.3.8"
@@ -2174,7 +2174,7 @@ __metadata:
   resolution: "@automattic/oauth-token@workspace:packages/oauth-token"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@babel/runtime": "npm:^8.1.0"
+    "@babel/runtime": "npm:^8.1.3"
     cookie: "npm:^0.7.2"
     store: "npm:^2.0.12"
   languageName: unknown
@@ -2480,7 +2480,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/popup-monitor": "workspace:^"
-    "@babel/runtime": "npm:^8.1.0"
+    "@babel/runtime": "npm:^8.1.3"
     debug: "npm:^4.4.3"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.0"
@@ -2978,7 +2978,7 @@ __metadata:
     "@automattic/calypso-url": "workspace:^"
     "@automattic/data-stores": "workspace:^"
     "@automattic/typography": "workspace:^"
-    "@babel/runtime": "npm:^8.1.0"
+    "@babel/runtime": "npm:^8.1.3"
     "@tanstack/react-query": "npm:^5.83.0"
     "@wordpress/api-fetch": "npm:^8.2.0"
     "@wordpress/base-styles": "npm:^15.1.0"
@@ -3176,10 +3176,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/compat-data@npm:^8.0.5":
-  version: 8.0.5
-  resolution: "@babel/compat-data@npm:8.0.5"
-  checksum: 10c0/53931a4e15538655b2e720098afcc18405abfbc6b8f8df7d85320f3a6193145a3e5b1c87c61218f58fc4bd6c51cea6fa78092ee723e3fb12e089d89802a8a05a
+"@babel/compat-data@npm:^8.0.5, @babel/compat-data@npm:^8.1.2":
+  version: 8.1.2
+  resolution: "@babel/compat-data@npm:8.1.2"
+  checksum: 10c0/9f9547f8d38a5bae4c2a4d5b196502797239d3edd3a111cbbd95f9ccda0ae987e8566491d1153f8cad9993cebc415b233372cd31b9361240a8e769b0ccc904ba
   languageName: node
   linkType: hard
 
@@ -3206,18 +3206,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:^8.1.0":
-  version: 8.1.2
-  resolution: "@babel/core@npm:8.1.2"
+"@babel/core@npm:^8.1.3":
+  version: 8.1.3
+  resolution: "@babel/core@npm:8.1.3"
   dependencies:
     "@babel/code-frame": "npm:^8.0.6"
-    "@babel/generator": "npm:^8.1.2"
+    "@babel/generator": "npm:^8.1.3"
     "@babel/helper-compilation-targets": "npm:^8.0.7"
-    "@babel/helpers": "npm:^8.1.2"
-    "@babel/parser": "npm:^8.1.2"
+    "@babel/helpers": "npm:^8.1.3"
+    "@babel/parser": "npm:^8.1.3"
     "@babel/template": "npm:^8.1.2"
-    "@babel/traverse": "npm:^8.1.2"
-    "@babel/types": "npm:^8.1.2"
+    "@babel/traverse": "npm:^8.1.3"
+    "@babel/types": "npm:^8.1.3"
+    "@types/convert-source-map": "npm:^2.0.0"
     "@types/gensync": "npm:^1.0.5"
     convert-source-map: "npm:^2.0.0"
     empathic: "npm:^2.0.1"
@@ -3226,7 +3227,7 @@ __metadata:
     json5: "npm:^2.2.3"
     obug: "npm:^3.0.0"
     verkit: "npm:^0.5.0"
-  checksum: 10c0/f1f3394f77c7ae5e3fb887e4c977ceeb432215862f2ec8dea74555e85c54afafc642f5d840e52fed1c8026d36adcface3448b67f24822ee1b7de943c85535329
+  checksum: 10c0/189efe3a7eb9cdec3e02a6559a0ee49c3dd8909ed3130ad3f84ff54eaee60eabd54e98a3f6c463b3cbddc7375b4537c8512e0af017bb5234676d66ac43d3f477
   languageName: node
   linkType: hard
 
@@ -3243,17 +3244,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/generator@npm:^8.1.0, @babel/generator@npm:^8.1.2":
-  version: 8.1.2
-  resolution: "@babel/generator@npm:8.1.2"
+"@babel/generator@npm:^8.1.3":
+  version: 8.1.3
+  resolution: "@babel/generator@npm:8.1.3"
   dependencies:
-    "@babel/parser": "npm:^8.1.2"
-    "@babel/types": "npm:^8.1.2"
+    "@babel/parser": "npm:^8.1.3"
+    "@babel/types": "npm:^8.1.3"
     "@jridgewell/gen-mapping": "npm:0.4.0-beta.0"
     "@jridgewell/trace-mapping": "npm:^0.3.31"
     "@types/jsesc": "npm:^2.5.0"
     jsesc: "npm:^3.0.2"
-  checksum: 10c0/03ad4c128f65ec8a2cea52ef18f48ad68711ce2bae28b5ad52bfdefe4f67ac2a97248073e1ffbaa3b307dc4393dc40148045ce342cc2e330cadd40874ed65a7c
+  checksum: 10c0/29a325e31f43ea37d8df98566fa23aa4cb5f278c215216fd3473d38250a12597b8384cf9b737bba0f3196a0081583f6f84fa023603e9eeb6819f59e198345d6c
   languageName: node
   linkType: hard
 
@@ -3466,10 +3467,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/helper-string-parser@npm:^8.1.2":
-  version: 8.1.2
-  resolution: "@babel/helper-string-parser@npm:8.1.2"
-  checksum: 10c0/1daf91e756cc08a5a12047259a6ac0a9d1c20c649d26b79302b8a3517cb59195f6246876a639037ca6b5f3521b974800070f598464d6a47663e9abd921337e56
+"@babel/helper-string-parser@npm:^8.1.3":
+  version: 8.1.3
+  resolution: "@babel/helper-string-parser@npm:8.1.3"
+  checksum: 10c0/65f76583e868fdcba08aa93b3ccaf0c63ec9b72b0a3d33844ae25a4bb76282d0c954686386e999b27446297e2371e0cbc20ef7472d8fcc36dc0992d3230f12d5
   languageName: node
   linkType: hard
 
@@ -3522,13 +3523,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/helpers@npm:^8.1.0, @babel/helpers@npm:^8.1.2":
-  version: 8.1.2
-  resolution: "@babel/helpers@npm:8.1.2"
+"@babel/helpers@npm:^8.1.3":
+  version: 8.1.3
+  resolution: "@babel/helpers@npm:8.1.3"
   dependencies:
     "@babel/template": "npm:^8.1.2"
-    "@babel/types": "npm:^8.1.2"
-  checksum: 10c0/c9182bf52315ab119362134fac9a78276500439cac4c7dfff3a635c4f93e4a62a6b2bd6eef4e9687c3d261327bacb3d5c0589332837356f6fe0283d430b18802
+    "@babel/types": "npm:^8.1.3"
+  checksum: 10c0/17a5c7c248f51dcd8ac72d27821e1ee98d11764a433030229afe00a5885f2fe6e22d6c3a7831b34d1cf32bc0be6fe1b623e90bb66c9359a5d854f0e286a930d4
   languageName: node
   linkType: hard
 
@@ -3543,14 +3544,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/parser@npm:^8.1.0, @babel/parser@npm:^8.1.2":
-  version: 8.1.2
-  resolution: "@babel/parser@npm:8.1.2"
+"@babel/parser@npm:^8.1.2, @babel/parser@npm:^8.1.3":
+  version: 8.1.3
+  resolution: "@babel/parser@npm:8.1.3"
   dependencies:
-    "@babel/types": "npm:^8.1.2"
+    "@babel/types": "npm:^8.1.3"
   bin:
     parser: ./bin/babel-parser.js
-  checksum: 10c0/d8ad2796c0f24149a0e2a5f39726c047e9f85f5b367edfb738f055181757ea4a2aa77c9d4c929e714cd26d2015c7321a9df9220f992c68be53f7f46ea409690e
+  checksum: 10c0/025d49f54b5d67131eec95d72a9d7f253c161e4daf7f2633ea3da720b229b0cf9db7098d61007e83296ba8dedc1239d5713605165176190ef512e43f4a934eda
   languageName: node
   linkType: hard
 
@@ -4187,15 +4188,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-transform-runtime@npm:^8.0.6":
-  version: 8.0.6
-  resolution: "@babel/plugin-transform-runtime@npm:8.0.6"
+"@babel/plugin-transform-runtime@npm:^8.1.2":
+  version: 8.1.2
+  resolution: "@babel/plugin-transform-runtime@npm:8.1.2"
   dependencies:
     "@babel/helper-module-imports": "npm:^8.0.0"
     "@babel/helper-plugin-utils": "npm:^8.0.1"
   peerDependencies:
     "@babel/core": ^8.0.0
-  checksum: 10c0/c622277761119fc6012cd4c0d36f46706506ce286100ca5e005bfe917419dc7ab60a80bb69e1adab2155bb3d4d5ee10874c2c1c82f309323517a64e3d2c81fa2
+  checksum: 10c0/0da873fdf4c534650274ab526a0f77f2f7f007bbfb20514484ebdaf7897f4d427847fd1a48658a5441e6d3c429244d12d7735205278e7ed2b36c2f2d4988bdc2
   languageName: node
   linkType: hard
 
@@ -4444,10 +4445,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.29.7 || ^8.0.0, @babel/runtime@npm:^8.1.0":
-  version: 8.1.2
-  resolution: "@babel/runtime@npm:8.1.2"
-  checksum: 10c0/346f5e03c74273164040b296236c4c268c5342c7d308c2b961e2e9dc3e4c369a2ddba22703030e98783f2c4ce7add728e376f2e0eb119adb6e9bf08c86730d79
+"@babel/runtime@npm:^7.29.7 || ^8.0.0, @babel/runtime@npm:^8.1.3":
+  version: 8.1.3
+  resolution: "@babel/runtime@npm:8.1.3"
+  checksum: 10c0/ce3b8102b30b6bd6ff5eac77ab1fbae5e93ac364fb92df168791734814b5a3845edf2a1b2684d965efa56d6370845604d1f0b8da8ed41865b2e5c53259a2e4e1
   languageName: node
   linkType: hard
 
@@ -4488,18 +4489,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/traverse@npm:^8.0.0, @babel/traverse@npm:^8.0.5, @babel/traverse@npm:^8.0.6, @babel/traverse@npm:^8.0.7, @babel/traverse@npm:^8.1.0, @babel/traverse@npm:^8.1.2":
-  version: 8.1.2
-  resolution: "@babel/traverse@npm:8.1.2"
+"@babel/traverse@npm:^8.0.0, @babel/traverse@npm:^8.0.5, @babel/traverse@npm:^8.0.6, @babel/traverse@npm:^8.0.7, @babel/traverse@npm:^8.1.3":
+  version: 8.1.3
+  resolution: "@babel/traverse@npm:8.1.3"
   dependencies:
     "@babel/code-frame": "npm:^8.0.6"
-    "@babel/generator": "npm:^8.1.2"
+    "@babel/generator": "npm:^8.1.3"
     "@babel/helper-globals": "npm:^8.0.6"
-    "@babel/parser": "npm:^8.1.2"
+    "@babel/parser": "npm:^8.1.3"
     "@babel/template": "npm:^8.1.2"
-    "@babel/types": "npm:^8.1.2"
+    "@babel/types": "npm:^8.1.3"
     obug: "npm:^3.0.0"
-  checksum: 10c0/1cd97471d5a089be9c37af8e50c57bf1dc5eb83173624404c0e7dfe6086e39caff9ceaeb0fb277e2ca26565403c9d59ae427a9ba61fde7b9663ca7b368547ece
+  checksum: 10c0/82c7e563b4631c2d42189c0708a0d4c16086bf4472638f8727092e1fd0b0e9eefd7440f85fff699b7be0781fefc7291e6235c71c7cb27c04edc8c38e2d113daf
   languageName: node
   linkType: hard
 
@@ -4513,13 +4514,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/types@npm:^8.0.0, @babel/types@npm:^8.0.5, @babel/types@npm:^8.1.0, @babel/types@npm:^8.1.2":
-  version: 8.1.2
-  resolution: "@babel/types@npm:8.1.2"
+"@babel/types@npm:^8.0.0, @babel/types@npm:^8.0.5, @babel/types@npm:^8.1.2, @babel/types@npm:^8.1.3":
+  version: 8.1.3
+  resolution: "@babel/types@npm:8.1.3"
   dependencies:
-    "@babel/helper-string-parser": "npm:^8.1.2"
+    "@babel/helper-string-parser": "npm:^8.1.3"
     "@babel/helper-validator-identifier": "npm:^8.0.6"
-  checksum: 10c0/67e1bc97bfff2aa75cca07da2b58747caca7142b4d357c8c268bfe796ad2778fffb5f0016d466839adb43c86ed339c58226ef62b38e1edd7c705f8059e326472
+  checksum: 10c0/2473410675394e43c968183488d87f422d51024ec9e813fb2752b4e40cac5c4e70ef00ddc27e6a59e033d5e48cc87f24ff5c15bf94bfd940476814568bb18548
   languageName: node
   linkType: hard
 
@@ -9591,7 +9592,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/convert-source-map@npm:^2.0.3":
+"@types/convert-source-map@npm:^2.0.0, @types/convert-source-map@npm:^2.0.3":
   version: 2.0.3
   resolution: "@types/convert-source-map@npm:2.0.3"
   checksum: 10c0/43dd8ccad61489c245342220db74c1baf3b75586074f99609943fe1bdecf7d5dcff0acd038cb0063dd7533a90cc980101d5899afa70a638883752ad8d66de20b
@@ -14229,7 +14230,7 @@ __metadata:
     "@automattic/wpcom-checkout": "workspace:^"
     "@automattic/wpcom-template-parts": "workspace:^"
     "@automattic/zendesk-client": "workspace:^"
-    "@babel/core": "npm:^8.1.0"
+    "@babel/core": "npm:^8.1.3"
     "@date-fns/tz": "npm:^1.5.0"
     "@emotion/cache": "npm:^11.14.0"
     "@emotion/css": "npm:^11.11.2"
@@ -19600,7 +19601,7 @@ __metadata:
     "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/interpolate-components": "workspace:^"
-    "@babel/runtime": "npm:^8.1.0"
+    "@babel/runtime": "npm:^8.1.3"
     "@tannin/sprintf": "npm:^1.3.4"
     "@testing-library/dom": "npm:^10.4.2"
     "@testing-library/react": "npm:^16.3.3"
@@ -30226,15 +30227,15 @@ __metadata:
     "@automattic/wpcom-template-parts": "workspace:^"
     "@automattic/zendesk-client": "workspace:^"
     "@babel/code-frame": "npm:^8.0.6"
-    "@babel/core": "npm:^8.1.0"
-    "@babel/generator": "npm:^8.1.0"
+    "@babel/core": "npm:^8.1.3"
+    "@babel/generator": "npm:^8.1.3"
     "@babel/helper-module-imports": "npm:^8.0.0"
     "@babel/helper-plugin-utils": "npm:^8.0.1"
-    "@babel/parser": "npm:^8.1.0"
-    "@babel/runtime": "npm:^8.1.0"
-    "@babel/template": "npm:^8.0.0"
-    "@babel/traverse": "npm:^8.1.0"
-    "@babel/types": "npm:^8.1.0"
+    "@babel/parser": "npm:^8.1.3"
+    "@babel/runtime": "npm:^8.1.3"
+    "@babel/template": "npm:^8.1.2"
+    "@babel/traverse": "npm:^8.1.3"
+    "@babel/types": "npm:^8.1.3"
     "@eslint/compat": "npm:^2.1.1"
     "@eslint/markdown": "npm:^9.0.0"
     "@gravatar-com/quick-editor": "npm:^0.8.0"
@@ -30417,7 +30418,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@babel/runtime": "npm:^8.1.0"
+    "@babel/runtime": "npm:^8.1.3"
     debug: "npm:^4.4.3"
     jsdom: "npm:^20.0.3"
     postcss: "npm:^8.5.32"
@@ -30434,7 +30435,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@babel/runtime": "npm:^8.1.0"
+    "@babel/runtime": "npm:^8.1.3"
     debug: "npm:^4.4.3"
     postcss: "npm:^8.5.32"
     superagent: "npm:^10.2.3"
@@ -30450,7 +30451,7 @@ __metadata:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-eslint-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@babel/runtime": "npm:^8.1.0"
+    "@babel/runtime": "npm:^8.1.3"
     debug: "npm:^4.4.3"
     npm-run-all: "npm:^4.1.5"
     postcss: "npm:^8.5.32"
