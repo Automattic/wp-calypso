@@ -11,14 +11,13 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useMemo, useState, useEffect, useCallback } from 'react';
 import { useAnalytics } from '../../../../app/analytics';
 import { updateCurrentUser } from '../../../../app/auth';
+import { withSnackbar } from '../../../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../../../components/button-stack';
 import { Notice } from '../../../../components/notice';
 import type { Field } from '@wordpress/dataviews';
@@ -30,8 +29,6 @@ type TwoStepAuthAppFormData = {
 export default function DisableTwoStepDialog( { onClose }: { onClose: () => void } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const queryClient = useQueryClient();
-
-	const { createSuccessNotice } = useDispatch( noticesStore );
 
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 
@@ -48,7 +45,9 @@ export default function DisableTwoStepDialog( { onClose }: { onClose: () => void
 	} | null >( null );
 
 	const { mutate: validateTwoStepCode, isPending: isValidateTwoStepCodePending } = useMutation(
-		validateTwoStepAuthCodeMutation()
+		withSnackbar( validateTwoStepAuthCodeMutation(), {
+			success: __( 'Two-step authentication disabled.' ),
+		} )
 	);
 	const { mutate: resendSMSCode } = useMutation( resendTwoStepAuthSMSCodeMutation() );
 
@@ -104,9 +103,6 @@ export default function DisableTwoStepDialog( { onClose }: { onClose: () => void
 			{
 				onSuccess: () => {
 					updateCurrentUser( queryClient, { two_step_enabled: false } );
-					createSuccessNotice( __( 'Two-step authentication disabled.' ), {
-						type: 'snackbar',
-					} );
 					onClose();
 				},
 				onError: ( e: Error ) => {

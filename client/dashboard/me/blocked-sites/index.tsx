@@ -2,14 +2,13 @@ import { blockedSitesInfiniteQuery, unblockSiteMutation } from '@automattic/api-
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useMutation, useInfiniteQuery } from '@tanstack/react-query';
 import { ExternalLink, Icon } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { closeSmall } from '@wordpress/icons';
-import { store as noticesStore } from '@wordpress/notices';
 import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { DataViewsCard } from '../../components/dataviews';
 import EmptyState from '../../components/empty-state';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -61,8 +60,6 @@ export default function BlockedSites() {
 	const rafIdRef = useRef< number | null >( null );
 	const ref = useRef< HTMLDivElement >( null );
 	const dataviewsRef = useRef< HTMLDivElement | null >( null );
-	const unblockSite = useMutation( unblockSiteMutation() );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
 	const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery(
@@ -70,6 +67,23 @@ export default function BlockedSites() {
 	);
 
 	const sites = ( data?.pages || [] ).flat();
+	const siteName = ( siteId: number ) => sites.find( ( { ID } ) => ID === siteId )?.name ?? '';
+	const unblockSite = useMutation(
+		withSnackbar( unblockSiteMutation(), {
+			success: ( _data, siteId ) =>
+				sprintf(
+					/* translators: %s - the name of the unblocked site */
+					__( '%s was unblocked.' ),
+					siteName( siteId )
+				),
+			error: ( _error, siteId ) =>
+				sprintf(
+					/* translators: %s - the name of the unblocked site */
+					__( 'Failed to unblock %s.' ),
+					siteName( siteId )
+				),
+		} )
+	);
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( sites, view, fields );
 
 	// `filterSortAndPaginate` reports `totalItems` as the number of rows loaded
@@ -188,32 +202,7 @@ export default function BlockedSites() {
 								disabled: unblockSite.isPending,
 								callback: ( items: BlockedSite[] ) => {
 									const item = items[ 0 ];
-									unblockSite.mutate( item.ID, {
-										onSuccess: () => {
-											createSuccessNotice(
-												sprintf(
-													/* translators: %s - the name of the unblocked site */
-													__( '%s was unblocked.' ),
-													item.name
-												),
-												{
-													type: 'snackbar',
-												}
-											);
-										},
-										onError: () => {
-											createErrorNotice(
-												sprintf(
-													/* translators: %s - the name of the unblocked site */
-													__( 'Failed to unblock %s.' ),
-													item.name
-												),
-												{
-													type: 'snackbar',
-												}
-											);
-										},
-									} );
+									unblockSite.mutate( item.ID );
 								},
 							},
 						] }

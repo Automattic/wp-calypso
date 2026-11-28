@@ -15,10 +15,8 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { useDispatch } from '@wordpress/data';
 import { DataForm, Field, Form, useFormValidity } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState, useMemo, useCallback } from 'react';
 import { isValidUrl } from '../../../lib/importer/url-validation';
 import { useAuth } from '../../app/auth';
@@ -122,7 +120,6 @@ export default function PersonalDetailsSection() {
 
 	const [ edits, setEdits ] = useState< Partial< UserSettings > >( {} );
 	const [ isEmailValid, setIsEmailValid ] = useState< boolean >( true );
-	const { createErrorNotice } = useDispatch( noticesStore );
 	const queryClient = useQueryClient();
 
 	const success = __( 'Settings saved.' );
@@ -130,9 +127,17 @@ export default function PersonalDetailsSection() {
 		withSnackbar( userSettingsMutation(), { success, error: { source: 'server' } } )
 	);
 	// Two instances rather than one whose options change with the payload, which a save already
-	// in flight would pick up. This one reports its own errors, since those that concern the email
-	// address are shown on the field instead of in a snackbar.
-	const emailMutation = useMutation( withSnackbar( userEmailSettingsMutation(), { success } ) );
+	// in flight would pick up. Errors that concern the email address are shown on the field
+	// instead of in a snackbar.
+	const emailMutation = useMutation(
+		withSnackbar( userEmailSettingsMutation(), {
+			success,
+			error: ( error ) =>
+				isEmailFieldError( error )
+					? undefined
+					: error.message || __( 'Something went wrong. Please try again.' ),
+		} )
+	);
 
 	const data = useMemo( () => ( { ...userSettings, ...edits } ), [ userSettings, edits ] );
 	const { validity, isValid } = useFormValidity( data, fields, allFieldsForm );
@@ -172,8 +177,6 @@ export default function PersonalDetailsSection() {
 					if ( isEmailFieldError( error ) ) {
 						// Rejecting the address also cancels any email change that was pending.
 						queryClient.invalidateQueries( userSettingsQuery() );
-					} else {
-						createErrorNotice( error.message, { type: 'snackbar' } );
 					}
 				},
 			} );

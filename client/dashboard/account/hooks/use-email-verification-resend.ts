@@ -3,9 +3,7 @@ import {
 	sendEmailVerificationMutation,
 } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useEffect, useRef } from 'react';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import {
@@ -38,8 +36,6 @@ export function useEmailVerificationResend( {
 	isEmailChangePending,
 	errorMessage,
 }: Options ) {
-	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
-
 	// One wait per path: the server rate limits the dedicated endpoint, and re-saving a pending
 	// address is limited only by us.
 	const originalCooldown = useResendCooldown();
@@ -64,38 +60,39 @@ export function useEmailVerificationResend( {
 	const { mutate: sendToOriginal, isPending: isSendPending } = useMutation( {
 		...withSnackbar( sendEmailVerificationMutation(), {
 			success: sentToEmail( originalEmail ),
+			error: ( error ) => {
+				if ( resendThrottleRetryAfter( error ) === null ) {
+					return errorMessage;
+				}
+				return isThrottledPathActiveRef.current
+					? __( 'Too many attempts. Please wait before trying again.' )
+					: undefined;
+			},
 		} ),
 		onSuccess: ( data ) => originalCooldown.hold( resendAcceptedRetryAfter( data ) ),
 		onError: ( error ) => {
 			const retryAfter = resendThrottleRetryAfter( error );
 			if ( retryAfter !== null ) {
 				originalCooldown.hold( retryAfter );
-				if ( isThrottledPathActiveRef.current ) {
-					createErrorNotice( __( 'Too many attempts. Please wait before trying again.' ), {
-						type: 'snackbar',
-					} );
-				}
-				return;
 			}
-			createErrorNotice( errorMessage, { type: 'snackbar' } );
 		},
 	} );
 
 	// The address is a mutation variable, so a response that lands late is still reported against
 	// the address it was sent to rather than whichever one is on screen by then.
 	const { mutate: resendToPending, isPending: isPendingResendPending } = useMutation( {
-		...resendEmailVerificationMutation(),
-		// Deliberately not passed to `mutate()`, where these would usually go: TanStack skips
-		// per-call callbacks once the observer loses its listeners, so a resend outliving the
-		// banner would report nothing at all.
+		...withSnackbar( resendEmailVerificationMutation(), {
+			success: ( _data, email ) => sentToEmail( email ),
+			error: errorMessage,
+		} ),
+		// Deliberately not passed to `mutate()`, where it would usually go: TanStack skips
+		// per-call callbacks once the observer loses its listeners.
 		onSuccess: ( _data, email ) => {
-			createSuccessNotice( sentToEmail( email ), { type: 'snackbar' } );
 			// A wait is meaningless once the address has moved on.
 			if ( email === pendingEmailRef.current ) {
 				pendingCooldown.hold( RESEND_MIN_INTERVAL_SECONDS );
 			}
 		},
-		onError: () => createErrorNotice( errorMessage, { type: 'snackbar' } ),
 	} );
 
 	const resend = () =>

@@ -1,13 +1,12 @@
 import { addLegacyContactMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button, TextareaControl } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataForm, useFormValidity } from '@wordpress/dataviews';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import clsx from 'clsx';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { SectionHeader } from '../../components/section-header';
 import type { Field } from '@wordpress/dataviews';
@@ -82,8 +81,12 @@ const form = {
 
 export default function LegacyContactForm() {
 	const { recordTracksEvent } = useAnalytics();
-	const { mutate: addContact, isPending } = useMutation( addLegacyContactMutation() );
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { mutate: addContact, isPending } = useMutation(
+		withSnackbar( addLegacyContactMutation(), {
+			success: __( 'Legacy contact saved.' ),
+			error: { source: 'server' },
+		} )
+	);
 
 	const [ formData, setFormData ] = useState< LegacyContactFormData >( { email: '', notes: '' } );
 
@@ -95,19 +98,7 @@ export default function LegacyContactForm() {
 			return;
 		}
 		recordTracksEvent( 'calypso_dashboard_security_legacy_contact_add_click' );
-		addContact(
-			{ email: formData.email, notes: formData.notes.trim() || undefined },
-			{
-				onSuccess: () => {
-					createSuccessNotice( __( 'Legacy contact saved.' ), { type: 'snackbar' } );
-				},
-				onError: ( error: Error ) => {
-					createErrorNotice( error.message || __( 'Failed to save legacy contact.' ), {
-						type: 'snackbar',
-					} );
-				},
-			}
-		);
+		addContact( { email: formData.email, notes: formData.notes.trim() || undefined } );
 	};
 
 	return (

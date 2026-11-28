@@ -1,9 +1,7 @@
 import { sitesQuery, userPreferenceQuery, userPreferenceMutation } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Button, ToggleControl, __experimentalVStack as VStack } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
@@ -22,7 +20,6 @@ import PreferencesLoginSiteDropdown from '../preferences-defaults/site-dropdown'
 import type { Site } from '@automattic/api-core';
 
 export default function WordPressLabs() {
-	const { createErrorNotice } = useDispatch( noticesStore );
 	const { recordTracksEvent } = useAnalytics();
 
 	const { data: optIn } = useSuspenseQuery( userPreferenceQuery( 'wordpress-labs-opt-in' ) );
@@ -31,7 +28,12 @@ export default function WordPressLabs() {
 	);
 
 	const { mutate: saveOptInPreference, isPending: isSavingOptIn } = useMutation(
-		userPreferenceMutation( 'wordpress-labs-opt-in' )
+		withSnackbar( userPreferenceMutation( 'wordpress-labs-opt-in' ), {
+			error: ( _error, optInPreference ) =>
+				optInPreference?.value === 'opt-in'
+					? __( 'Failed to enable WordPress Labs.' )
+					: __( 'Failed to disable WordPress Labs.' ),
+		} )
 	);
 	const { mutate: saveExcludedSites, isPending: isSavingExceptions } = useMutation(
 		withSnackbar( userPreferenceMutation( 'wordpress-labs-excluded-sites' ), {
@@ -65,22 +67,10 @@ export default function WordPressLabs() {
 			enabled,
 		} );
 
-		saveOptInPreference(
-			{
-				value: enabled ? 'opt-in' : 'opt-out',
-				updated_at: new Date().toISOString(),
-			},
-			{
-				onError() {
-					createErrorNotice(
-						enabled
-							? __( 'Failed to enable WordPress Labs.' )
-							: __( 'Failed to disable WordPress Labs.' ),
-						{ type: 'snackbar' }
-					);
-				},
-			}
-		);
+		saveOptInPreference( {
+			value: enabled ? 'opt-in' : 'opt-out',
+			updated_at: new Date().toISOString(),
+		} );
 	};
 
 	const handleSiteExclude = ( siteId: number ) => {

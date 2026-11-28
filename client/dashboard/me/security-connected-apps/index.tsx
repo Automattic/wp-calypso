@@ -5,16 +5,15 @@ import {
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { DataViews } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { trash } from '@wordpress/icons';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { useIntlCollator } from '../../app/locale';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import ConfirmModal from '../../components/confirm-modal';
 import { DataViewsCard } from '../../components/dataviews';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -25,7 +24,6 @@ import type { ConnectedApplication } from '@automattic/api-core';
 
 export default function SecurityConnectedApps() {
 	const { recordTracksEvent } = useAnalytics();
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const { data: connectedApplications, isLoading } = useSuspenseQuery(
 		connectedApplicationsQuery()
@@ -39,29 +37,27 @@ export default function SecurityConnectedApps() {
 		useState< ConnectedApplication | null >( null );
 
 	const { mutate: deleteConnectedApplication, isPending: isDeletingConnectedApplication } =
-		useMutation( deleteConnectedApplicationMutation() );
+		useMutation(
+			withSnackbar( deleteConnectedApplicationMutation(), {
+				success: ( _data, applicationId ) => {
+					const application = connectedApplications.find( ( { ID } ) => ID === applicationId );
+					return (
+						application &&
+						sprintf(
+							/* translators: %s is the name of the application */
+							__( 'The application %s no longer has access to your WordPress.com account.' ),
+							application.title
+						)
+					);
+				},
+				error: __( 'Failed to disconnect application.' ),
+			} )
+		);
 
 	const handleDisconnect = () => {
 		if ( selectedApplicationToRemove ) {
 			recordTracksEvent( 'calypso_dashboard_security_connected_apps_remove_click' );
 			deleteConnectedApplication( selectedApplicationToRemove.ID, {
-				onSuccess: () => {
-					createSuccessNotice(
-						sprintf(
-							/* translators: %s is the name of the application */
-							__( 'The application %s no longer has access to your WordPress.com account.' ),
-							selectedApplicationToRemove.title
-						),
-						{
-							type: 'snackbar',
-						}
-					);
-				},
-				onError: () => {
-					createErrorNotice( __( 'Failed to disconnect application.' ), {
-						type: 'snackbar',
-					} );
-				},
 				onSettled: () => {
 					setSelectedApplicationToRemove( null );
 				},
