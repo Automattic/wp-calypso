@@ -24,17 +24,10 @@
 	}
 
 	&__back-button.components-button.has-icon.has-text {
-		position: fixed;
-		top: calc(var(--masterbar-height) + 30px);
-		left: calc(var(--sidebar-width-max) + 20px);
 		color: var(--studio-gray-100);
 		font-size: $font-body-small;
 		font-weight: 500;
-		padding: 0 0 0 0;
-
-		@media screen and (max-width: $break-medium) {
-			left: 48px;
-		}
+		padding: 0;
 
 		svg {
 			margin-right: 0;
@@ -180,6 +173,8 @@
 		padding-bottom: $back-button-height;
 
 		&__back-button.components-button.has-icon.has-text {
+			position: fixed;
+			top: calc(var(--masterbar-height) + 30px);
 			height: $back-button-height;
 			bottom: 0;
 			left: 0;
