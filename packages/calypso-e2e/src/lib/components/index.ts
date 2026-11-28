@@ -21,7 +21,6 @@ export * from './editor-toolbar-component';
 export * from './editor-gutenberg-component';
 export * from './editor-block-list-view-component';
 export * from './editor-sidebar-block-inserter-component';
-export * from './editor-welcome-tour-component';
 export * from './editor-welcome-guide-component';
 export * from './editor-popover-menu-component';
 export * from './editor-site-styles-component';
