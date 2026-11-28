@@ -37,11 +37,9 @@ export function buildStudioCheckoutReturnUrl( {
 /**
  * Hands off to Studio.
  *
- * Unlike the site-creation round trip in
- * `calypso/my-sites/customer-home/components/home-content/studio-deeplink`, this does not retry the
- * legacy `wpcom-local-dev://` scheme. Any Studio build old enough to need that scheme predates the
- * `checkout-return` handler, so the retry could never succeed — it would only cost a second browser
- * dialog for users without Studio installed.
+ * This does not retry the legacy `wpcom-local-dev://` scheme. Any Studio build old enough to need
+ * that scheme predates the `checkout-return` handler, so the retry could never succeed — it would
+ * only cost a second browser dialog for users without Studio installed.
  */
 export function openStudioCheckoutReturn( params: StudioCheckoutReturnParams ): void {
 	window.location.href = buildStudioCheckoutReturnUrl( params );

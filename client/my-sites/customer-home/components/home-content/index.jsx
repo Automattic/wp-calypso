@@ -21,7 +21,6 @@ import { usePurchasePlanNotification } from 'calypso/landing/stepper/declarative
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { setDomainNotice } from 'calypso/lib/domains/set-domain-notice';
 import { preventWidows } from 'calypso/lib/formatting';
-import { getQueryArgs } from 'calypso/lib/query-args';
 import { FEATURE_SUPPORT } from 'calypso/my-sites/customer-home/cards/constants';
 import Primary from 'calypso/my-sites/customer-home/locations/primary';
 import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
@@ -47,7 +46,6 @@ import { isSiteOnWooExpressEcommerceTrial } from 'calypso/state/sites/plans/sele
 import { canCurrentUserUseCustomerHome, getSiteOption } from 'calypso/state/sites/selectors';
 import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import openSyncUrlInStudio from './studio-deeplink';
 
 import './style.scss';
 
@@ -66,7 +64,6 @@ const HomeContent = ( {
 	site,
 	siteId,
 	trackViewSiteAction,
-	trackStudioSyncConnectSite,
 	isSiteWooExpressEcommerceTrial,
 	ssoModuleActive,
 	fetchingJetpackModules,
@@ -122,22 +119,6 @@ const HomeContent = ( {
 			setDismissedEmailDnsDiagnostics( true );
 		}
 	}, [ emailDnsDiagnostics ] );
-
-	useEffect( () => {
-		const queryArgs = getQueryArgs();
-		const studioSiteId = queryArgs.studioSiteId;
-		const autoOpenPush = queryArgs.autoOpenPush === 'true';
-
-		if ( ! studioSiteId ) {
-			return;
-		}
-		trackStudioSyncConnectSite( {
-			click: false,
-			blogId: siteId,
-			studioSiteId,
-		} );
-		openSyncUrlInStudio( studioSiteId, siteId, autoOpenPush );
-	}, [ siteId, trackStudioSyncConnectSite ] );
 
 	const isFirstSecondaryCardInPrimaryLocation =
 		Array.isArray( layout?.primary ) &&
@@ -292,38 +273,6 @@ const HomeContent = ( {
 		);
 	};
 
-	const renderStudioSyncNotice = () => {
-		const studioSiteId = getQueryArgs().studioSiteId;
-		const autoOpenPush = getQueryArgs().autoOpenPush === 'true';
-		if ( ! studioSiteId ) {
-			return null;
-		}
-
-		return (
-			<Notice
-				className="customer-home__studio-sync-notice"
-				text={ translate( 'Open your Studio site to start syncing.' ) }
-				icon="sync"
-				showDismiss={ false }
-				status="is-info"
-			>
-				<NoticeAction
-					onClick={ () => {
-						trackStudioSyncConnectSite( {
-							click: true,
-							blogId: siteId,
-							studioSiteId,
-						} );
-						openSyncUrlInStudio( studioSiteId, siteId, autoOpenPush );
-					} }
-					external
-				>
-					{ translate( 'Open Studio' ) }
-				</NoticeAction>
-			</Notice>
-		);
-	};
-
 	return (
 		<div className="customer-home__main">
 			{ siteId && <QuerySiteDomains siteId={ siteId } /> }
@@ -341,7 +290,6 @@ const HomeContent = ( {
 				/>
 			) : null }
 
-			{ renderStudioSyncNotice() }
 			{ renderUnverifiedEmailNotice() }
 			{ renderDnsSettingsDiagnosticNotice() }
 
@@ -398,16 +346,8 @@ const trackViewSiteAction = ( isStaticHomePage ) =>
 		bumpStat( 'calypso_customer_home', 'my_site_view_site' )
 	);
 
-const trackStudioSyncConnectSite = ( { click = false, blogId, studioSiteId } ) =>
-	recordTracksEvent( 'calypso_studio_sync_connect_site', {
-		click,
-		blog_id: blogId,
-		studio_site_id: studioSiteId,
-	} );
-
 const mapDispatchToProps = {
 	trackViewSiteAction,
-	trackStudioSyncConnectSite,
 	verifyIcannEmail,
 };
 
@@ -417,7 +357,6 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 		...ownProps,
 		...stateProps,
 		trackViewSiteAction: () => dispatchProps.trackViewSiteAction( isStaticHomePage ),
-		trackStudioSyncConnectSite: dispatchProps.trackStudioSyncConnectSite,
 		handleVerifyIcannEmail: dispatchProps.verifyIcannEmail,
 	};
 };
