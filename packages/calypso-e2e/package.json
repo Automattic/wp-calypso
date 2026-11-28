@@ -42,7 +42,7 @@
 		"@automattic/zendesk-client": "workspace:^",
 		"@types/node": "^24.19.2",
 		"@types/react": "^19.3.0",
-		"nock": "^14.0.17",
+		"nock": "^15.0.6",
 		"typescript": "^6.0.3",
 		"vite": "^8.3.8",
 		"vitest": "^5.1.0"
