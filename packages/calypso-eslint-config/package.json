@@ -36,6 +36,6 @@
 		"eslint-plugin-wpcalypso": "workspace:^",
 		"globals": "^14.0.0",
 		"prettier": "npm:wp-prettier@3.9.6",
-		"typescript": "^6.0.3"
+		"typescript": "^7.0.2"
 	}
 }
