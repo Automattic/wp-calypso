@@ -179,3 +179,24 @@ describe( 'getOptionInfo() Connect card for a domain already connected to the si
 		expect( connect.onSelect ).toBeUndefined();
 	} );
 } );
+
+describe( 'getOptionInfo() for a domain the registry is deleting', () => {
+	test( 'disables both Transfer and Connect even though the domain is mappable', () => {
+		const [ transfer, connect ] = getOptionInfo( {
+			availability: {
+				status: domainAvailability.PENDING_DELETE_NOT_TRANSFERRABLE,
+				mappable: domainAvailability.MAPPABLE,
+			},
+			domain: DOMAIN,
+			onConnect: vi.fn(),
+			onAlreadyConnected,
+			onTransfer: vi.fn(),
+		} );
+
+		expect( transfer.onSelect ).toBeUndefined();
+		expect( renderTopText( transfer ) ).toHaveTextContent(
+			`${ DOMAIN } is being deleted by its registry, so it can't be transferred or connected.`
+		);
+		expect( connect.onSelect ).toBeUndefined();
+	} );
+} );

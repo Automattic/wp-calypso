@@ -66,6 +66,15 @@ function fromAvailability( verdict: NamePulseAvailabilityVerdict ): NamePulseNot
 		};
 	}
 
+	if ( verdict.status === DomainAvailabilityStatus.PENDING_DELETE_NOT_TRANSFERRABLE ) {
+		return {
+			status: 'error',
+			message: __(
+				'This domain is being deleted by its registry. It can be registered again once the registry releases it.'
+			),
+		};
+	}
+
 	if ( verdict.status === DomainAvailabilityStatus.RESTRICTED ) {
 		return {
 			status: 'error',

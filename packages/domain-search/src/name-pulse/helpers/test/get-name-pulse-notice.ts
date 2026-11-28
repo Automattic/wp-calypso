@@ -89,6 +89,19 @@ describe( 'getNamePulseNotice', () => {
 		} );
 	} );
 
+	it( 'offers no transfer for a domain the registry is deleting', () => {
+		expect(
+			getNamePulseNotice(
+				layoutFor( 'icecream.com' ),
+				verdict( DomainAvailabilityStatus.PENDING_DELETE_NOT_TRANSFERRABLE )
+			)
+		).toEqual( {
+			status: 'error',
+			message:
+				'This domain is being deleted by its registry. It can be registered again once the registry releases it.',
+		} );
+	} );
+
 	it( 'leaves a plainly unavailable domain to the row that shows it', () => {
 		expect(
 			getNamePulseNotice(

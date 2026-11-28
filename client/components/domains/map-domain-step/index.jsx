@@ -234,8 +234,15 @@ class MapDomainStep extends Component {
 			( error, result ) => {
 				const mappableStatus = result?.mappable ?? error;
 				const status = result?.status ?? error;
-				const { AVAILABLE, AVAILABILITY_CHECK_ERROR, MAPPABLE, MAPPED, NOT_REGISTRABLE, UNKNOWN } =
-					domainAvailability;
+				const {
+					AVAILABLE,
+					AVAILABILITY_CHECK_ERROR,
+					MAPPABLE,
+					MAPPED,
+					NOT_REGISTRABLE,
+					PENDING_DELETE_NOT_TRANSFERRABLE,
+					UNKNOWN,
+				} = domainAvailability;
 
 				if ( status === AVAILABLE ) {
 					this.setState( { suggestion: result, isPendingSubmit: false } );
@@ -243,7 +250,11 @@ class MapDomainStep extends Component {
 				}
 
 				if (
-					! [ AVAILABILITY_CHECK_ERROR, NOT_REGISTRABLE ].includes( status ) &&
+					! [
+						AVAILABILITY_CHECK_ERROR,
+						NOT_REGISTRABLE,
+						PENDING_DELETE_NOT_TRANSFERRABLE,
+					].includes( status ) &&
 					[ MAPPABLE, UNKNOWN ].includes( mappableStatus )
 				) {
 					this.props.onMapDomain( domain );

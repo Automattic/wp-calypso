@@ -1,6 +1,7 @@
 export { getBundlePrimaryDomain } from './get-bundle-primary-domain';
 export { getRootDomain } from './get-root-domain';
 export { getTld } from './get-tld';
+export { isConnectableDomain } from './is-connectable-domain';
 export { isFqdnQuery } from './is-fqdn-query';
 export { isSubdomain } from './is-subdomain';
 export { isSubdomainWithUnavailableRootDomain } from './is-subdomain-with-unavailable-root-domain';

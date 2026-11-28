@@ -1,5 +1,5 @@
-import { DomainAvailabilityStatus } from '@automattic/api-core';
 import { domainAvailabilityQuery } from '@automattic/api-queries';
+import { isConnectableDomain } from '@automattic/domain-search';
 import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
@@ -30,7 +30,7 @@ export function Login( {
 
 	useEffect( () => {
 		if ( ! isLoadingAvailability && availability ) {
-			setIsConnectSupported( availability.mappable === DomainAvailabilityStatus.MAPPABLE );
+			setIsConnectSupported( isConnectableDomain( availability ) );
 			setRootDomainProvider( availability.root_domain_provider );
 		}
 	}, [ isLoadingAvailability, availability ] );

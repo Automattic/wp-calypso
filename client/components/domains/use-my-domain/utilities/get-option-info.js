@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { getTld } from '@automattic/domain-search';
+import { getTld, isConnectableDomain } from '@automattic/domain-search';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { domainAvailability } from 'calypso/lib/domains/constants';
@@ -218,7 +218,7 @@ export function getOptionInfo( {
 	}
 
 	let connectContent;
-	if ( domainAvailability.MAPPABLE === availability.mappable ) {
+	if ( isConnectableDomain( availability ) ) {
 		connectContent = {
 			...optionInfo.connectSupported,
 			topText: getConnectSupportedTopText( domainInboundTransferStatusInfo?.losingRegistrar ),

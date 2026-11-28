@@ -444,6 +444,31 @@ describe( 'SearchNotice', () => {
 			);
 		} );
 
+		it( 'renders an error notice if the availability status is pending_delete_not_transferrable', async () => {
+			mockNoSuggestionsAndAvailability(
+				'test-pending-delete.com',
+				buildAvailability( {
+					domain_name: 'test-pending-delete.com',
+					tld: 'com',
+					status: DomainAvailabilityStatus.PENDING_DELETE_NOT_TRANSFERRABLE,
+				} )
+			);
+
+			render(
+				<TestDomainSearchWithSuggestions query="test-pending-delete.com">
+					<SearchNotice />
+				</TestDomainSearchWithSuggestions>
+			);
+
+			expect( await screen.findByText( 'Error notice' ) ).toBeInTheDocument();
+
+			const [ notice ] = screen.getAllByText(
+				"test-pending-delete.com is being deleted by its registry, so it can't be transferred or connected. It can be registered again once the registry releases it."
+			);
+
+			expect( notice ).toBeInTheDocument();
+		} );
+
 		it( 'renders an error notice if the availability status is conflicting_cname_exists', async () => {
 			mockNoSuggestionsAndAvailability(
 				'test-conflicting-cname-exists.com',

@@ -1,4 +1,5 @@
 import { Button } from '@automattic/components';
+import { isConnectableDomain } from '@automattic/domain-search';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -6,7 +7,6 @@ import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
 import { useEffect, useState, useRef } from 'react';
 import Notice from 'calypso/components/notice';
-import { domainAvailability } from 'calypso/lib/domains/constants';
 import wpcom from 'calypso/lib/wp';
 import ConnectDomainStepWrapper from './connect-domain-step-wrapper';
 import { modeType, stepsHeading, stepSlug } from './constants';
@@ -61,7 +61,7 @@ export default function ConnectDomainStepLogin( {
 					.domain( domain )
 					.isAvailable( { apiVersion: '1.3', is_cart_pre_check: false } );
 
-				if ( domainAvailability.MAPPABLE !== availability.mappable ) {
+				if ( ! isConnectableDomain( availability ) ) {
 					setIsConnectSupported( false );
 				}
 				setRootDomainProvider( availability.root_domain_provider );

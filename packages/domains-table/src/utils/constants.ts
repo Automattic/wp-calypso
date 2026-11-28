@@ -55,6 +55,7 @@ export const domainAvailability = {
 	MAPPED_SAME_SITE_TRANSFERRABLE: 'mapped_to_same_site_transferrable',
 	NOT_AVAILABLE: 'not_available',
 	NOT_REGISTRABLE: 'available_but_not_registrable',
+	PENDING_DELETE_NOT_TRANSFERRABLE: 'pending_delete_not_transferrable',
 	PURCHASES_DISABLED: 'domain_registration_unavailable',
 	RECENT_REGISTRATION_LOCK_NOT_TRANSFERRABLE: 'recent_registration_lock_not_transferrable',
 	RECENTLY_UNMAPPED: 'recently_mapped',

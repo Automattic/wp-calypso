@@ -1,3 +1,4 @@
+import { isConnectableDomain } from '@automattic/domain-search';
 import { createElement, createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { domainAvailability } from 'calypso/lib/domains/constants';
@@ -40,7 +41,7 @@ export function getAvailabilityErrorMessage( {
 		return __( "This domain isn't registered. Try again." );
 	}
 
-	const isMappable = domainAvailability.MAPPABLE === mappable;
+	const isMappable = isConnectableDomain( availabilityData );
 	const isTransferable = [
 		domainAvailability.TRANSFERRABLE,
 		domainAvailability.MAPPED_SAME_SITE_TRANSFERRABLE,
@@ -54,13 +55,14 @@ export function getAvailabilityErrorMessage( {
 		return null;
 	}
 
-	let availabilityStatus = [
-		domainAvailability.MAPPABLE,
-		domainAvailability.MAPPED,
-		domainAvailability.TRANSFER_PENDING,
-	].includes( mappable )
-		? status
-		: mappable;
+	let availabilityStatus =
+		[
+			domainAvailability.MAPPABLE,
+			domainAvailability.MAPPED,
+			domainAvailability.TRANSFER_PENDING,
+		].includes( mappable ) || domainAvailability.PENDING_DELETE_NOT_TRANSFERRABLE === status
+			? status
+			: mappable;
 
 	if ( domainAvailability.MAPPED === mappable && domainAvailability.MAPPABLE === status ) {
 		availabilityStatus = mappable;
