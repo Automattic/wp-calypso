@@ -104,3 +104,33 @@ button.purchase-payment-method__update {
 .paypal-fields {
 	padding: 0 12px 12px 12px;
 }
+
+.purchases-list__wrapper .dataviews-view-table {
+	// A table can't be narrower than its content, and DataViews keeps the product name on
+	// one line. Take the name out of the Product column's width, so the column gets the
+	// space the others leave and a name that doesn't fit ends in an ellipsis.
+	.dataviews-view-table__primary-column-content {
+		flex: 1 1 0;
+		width: 0;
+		// Room for a readable product name.
+		min-width: 240px;
+
+		// Matches the medium breakpoint from Core. Keeps the column clear of the sticky Actions column.
+		@media ( max-width: 782px ) {
+			min-width: 160px;
+		}
+
+		// The description wraps. A site address has no spaces, so let it break anywhere.
+		overflow-wrap: anywhere;
+
+		> * {
+			max-width: 100%;
+		}
+	}
+
+	.dataviews-title-field a {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+}

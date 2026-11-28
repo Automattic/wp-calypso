@@ -87,7 +87,7 @@ export function useDnsFields( domainName: string ): Field< DnsRecord >[] {
 				return data;
 			},
 			render: ( { field, item } ) => (
-				<div style={ { whiteSpace: 'pre-wrap', wordBreak: 'break-word' } }>
+				<div style={ { whiteSpace: 'pre-wrap', wordBreak: 'break-word', minWidth: '200px' } }>
 					{ field.getValue( { item } ) }
 				</div>
 			),
