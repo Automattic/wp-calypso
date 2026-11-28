@@ -362,16 +362,6 @@ export function generateSteps( {
 			delayApiRequestUntilComplete: true,
 		},
 
-		'creds-confirm': {
-			stepName: 'creds-confirm',
-			providesDependencies: [ 'rewindconfig' ],
-		},
-
-		'creds-permission': {
-			stepName: 'creds-permission',
-			providesDependencies: [ 'rewindconfig' ],
-		},
-
 		'rewind-were-backing': {
 			stepName: 'rewind-were-backing',
 			providesDependencies: [],

@@ -143,15 +143,6 @@ export function generateFlows( {
 			forceLogin: true,
 		},
 		{
-			name: 'rewind-auto-config',
-			steps: [ 'creds-permission', 'creds-confirm', 'rewind-were-backing' ],
-			destination: '/activity-log',
-			description:
-				'Allow users of sites that can auto-config to grant permission to server credentials',
-			lastModified: '2018-02-13',
-			disallowResume: true,
-		},
-		{
 			name: 'wpcc',
 			steps: [ 'oauth2-user' ],
 			destination: getRedirectDestination,

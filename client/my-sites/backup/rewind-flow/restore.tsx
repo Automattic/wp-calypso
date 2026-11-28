@@ -478,11 +478,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 							components: {
 								linkCredentials: (
 									<a
-										href={
-											rewindState.canAutoconfigure
-												? `/start/rewind-auto-config/?blogid=${ siteId }&siteSlug=${ siteSlug }`
-												: `${ settingsPath( siteSlug ) }#credentials`
-										}
+										href={ `${ settingsPath( siteSlug ) }#credentials` }
 										onClick={ onAddingCredentialsClick }
 									/>
 								),
