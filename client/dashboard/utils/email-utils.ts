@@ -3,6 +3,7 @@ import { dashboardLink } from './link';
 
 export type EmailWarningType =
 	| 'domain_not_connected'
+	| 'mx_records_missing'
 	| 'google_pending_tos_acceptance'
 	| 'unverified_forwards'
 	| 'unused_mailboxes';

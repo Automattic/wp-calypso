@@ -52,6 +52,7 @@ export type WarningType = 'action_required' | string;
 
 export type WarningSlug =
 	| 'domain_not_connected'
+	| 'mx_records_missing'
 	| 'google_pending_tos_acceptance'
 	| 'unverified_forwards'
 	| 'unused_mailboxes'

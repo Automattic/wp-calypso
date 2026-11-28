@@ -33,7 +33,10 @@ export const mapMailboxToEmail = ( box: EmailBox, emailAccount: EmailAccount ): 
 		status = 'deletion_refused';
 	} else if ( box.warnings.length > 0 || emailAccount.warnings.length > 0 ) {
 		status = 'pending';
-		if ( accountHasWarningWithSlug( 'domain_not_connected', emailAccount ) ) {
+		// The API also sends 'domain_not_connected' with this warning, so check it first.
+		if ( accountHasWarningWithSlug( 'mx_records_missing', emailAccount ) ) {
+			status = 'mx_records_missing';
+		} else if ( accountHasWarningWithSlug( 'domain_not_connected', emailAccount ) ) {
 			status = 'domain_not_connected';
 		} else if ( accountHasWarningWithSlug( 'google_pending_tos_acceptance', emailAccount ) ) {
 			status = 'google_pending_tos_acceptance';
