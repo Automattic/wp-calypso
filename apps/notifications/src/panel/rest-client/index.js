@@ -1046,6 +1046,11 @@ function setVisibility( { isShowing, isVisible } ) {
 	}
 
 	if ( isVisible && isShowing ) {
+		// main() sleeps while live updates are connected, so a note whose push never
+		// arrived would stay missing until the panel asks for the list.
+		if ( this.subscribed && this.listLoaded ) {
+			this.getNotesList();
+		}
 		refreshLocalUnreads.call( this );
 	}
 
