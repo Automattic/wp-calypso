@@ -19,7 +19,9 @@ const getPlanTaskSubtitle = (
 		return task.subtitle;
 	}
 
-	const removeCustomStyles = translate( 'Or, {{a}}remove your premium styles{{/a}}.', {
+	const removeCustomStyles = translate( 'Or, {{a}}reset your site styles{{/a}}.', {
+		comment:
+			'Links to the support doc that explains how to reset site styles. Site styles are the sitewide changes made in the Styles panel (Global Styles). Visitors only see them on a paid plan.',
 		components: {
 			a: (
 				<ExternalLink

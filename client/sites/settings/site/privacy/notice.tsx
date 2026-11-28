@@ -48,11 +48,13 @@ export const SiteSettingPrivacyPremiumStylesNotice = ( {
 			notice={
 				<span>
 					{ translate(
-						'Your site contains premium styles that will only be visible once you upgrade to a %(planName)s plan.',
+						'Your sitewide styles will only be visible to visitors once you upgrade to a %(planName)s plan.',
 						{
 							args: {
 								planName: getPlan( upgradeToPlan )?.getTitle() ?? '',
 							},
+							comment:
+								'%(planName)s is the name of the plan that unlocks site styles. Site styles are the sitewide changes made in the Styles panel (Global Styles). Visitors only see them on a paid plan.',
 						}
 					) }
 				</span>

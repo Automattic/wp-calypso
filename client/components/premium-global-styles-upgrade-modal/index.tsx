@@ -29,13 +29,12 @@ export default function PremiumGlobalStylesUpgradeModal( {
 	closeModal,
 	isOpen,
 	tryStyle = undefined,
-	numOfSelectedGlobalStyles = 1,
 }: PremiumGlobalStylesUpgradeModalProps ) {
 	const translate = useTranslate();
 	const upgradeToPlan = PLAN_PERSONAL;
 	const premiumPlanProduct = useSelector( ( state ) => getProductBySlug( state, upgradeToPlan ) );
 	const selectedSiteId = useSelector( getSelectedSiteId );
-	const translations = useGlobalStylesUpgradeTranslations( { numOfSelectedGlobalStyles } );
+	const translations = useGlobalStylesUpgradeTranslations();
 	const isPremiumPlanProductLoaded = !! premiumPlanProduct;
 	const pricingMeta = Plans.usePricingMetaForGridPlans( {
 		coupon: undefined,
@@ -78,7 +77,12 @@ export default function PremiumGlobalStylesUpgradeModal( {
 				{ isLoaded ? (
 					<>
 						<div className="upgrade-modal__col">
-							<h1 className="upgrade-modal__heading">{ translate( 'Unlock premium styles' ) }</h1>
+							<h1 className="upgrade-modal__heading">
+								{ translate( 'Unlock site styles', {
+									comment:
+										'Upgrade modal heading. Site styles are the sitewide changes made in the Styles panel (Global Styles). Visitors only see them on a paid plan.',
+								} ) }
+							</h1>
 							{ description ?? (
 								<>
 									<p>{ translations.description }</p>
