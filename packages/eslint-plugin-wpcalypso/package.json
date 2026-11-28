@@ -47,7 +47,7 @@
 		"@typescript-eslint/parser": "^8.74.0",
 		"eslint": "^10.15.0",
 		"espree": "^11.2.0",
-		"typescript": "^6.0.3",
+		"typescript": "^7.0.2",
 		"vite": "^8.3.8",
 		"vitest": "^5.1.2"
 	}

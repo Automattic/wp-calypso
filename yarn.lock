@@ -276,7 +276,7 @@ __metadata:
   resolution: "@automattic/accessible-focus@workspace:packages/accessible-focus"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
   languageName: unknown
@@ -371,7 +371,7 @@ __metadata:
     react-router-dom: "npm:7.18.4"
     resize-observer-polyfill: "npm:^1.5.1"
     smooch: "npm:^5.7.20"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
     wpcom-proxy-request: "workspace:^"
@@ -394,7 +394,7 @@ __metadata:
     postcss: "npm:^8.5.32"
     react: "npm:^18.0.0"
     react-dom: "npm:^18.0.0"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^7.0.2"
     unified: "npm:^11.0.5"
     vite: "npm:^8.3.8"
     vite-plugin-lib-inject-css: "npm:^2.2.2"
@@ -425,7 +425,7 @@ __metadata:
     "@vitejs/plugin-react": "npm:^6.3.0"
     react: "npm:^18.0.0"
     react-dom: "npm:^18.0.0"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
   languageName: unknown
@@ -464,7 +464,7 @@ __metadata:
     react-textarea-autosize: "npm:^8.5.9"
     remark-gfm: "npm:^4.0.1"
     storybook: "npm:^10.6.8"
-    typescript: "npm:^5.9.3"
+    typescript: "npm:^7.0.2"
     unified: "npm:^11.0.5"
     use-debounce: "npm:^10.0.6"
     vite: "npm:^8.3.8"
@@ -502,7 +502,7 @@ __metadata:
     react-dom: "npm:^18.3.1 || ^19.0.0"
     resize-observer-polyfill: "npm:^1.5.1"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
     zod: "npm:^3.25.76"
@@ -533,7 +533,7 @@ __metadata:
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
   languageName: unknown
@@ -563,7 +563,7 @@ __metadata:
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
   peerDependencies:
@@ -664,7 +664,7 @@ __metadata:
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     utility-types: "npm:^3.10.0"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
@@ -682,7 +682,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     wpcom-proxy-request: "workspace:^"
   languageName: unknown
   linkType: soft
@@ -697,7 +697,7 @@ __metadata:
     debug: "npm:^4.4.3"
     hash.js: "npm:^1.1.7"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
   languageName: unknown
@@ -770,7 +770,7 @@ __metadata:
     semver: "npm:^7.8.6"
     terser-webpack-plugin: "npm:^5.6.1"
     thread-loader: "npm:^4.0.4"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
     webpack: "npm:^5.101.0"
@@ -817,7 +817,7 @@ __metadata:
     "@types/node": "npm:^24.19.2"
     cookie: "npm:^0.7.2"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
   languageName: unknown
@@ -858,7 +858,7 @@ __metadata:
     playwright: "npm:1.57.0"
     totp-generator: "npm:^0.0.14"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
   languageName: unknown
@@ -889,7 +889,7 @@ __metadata:
     eslint-plugin-wpcalypso: "workspace:^"
     globals: "npm:^14.0.0"
     prettier: "npm:wp-prettier@3.9.6"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
   languageName: unknown
   linkType: soft
 
@@ -912,7 +912,7 @@ __metadata:
     "@wordpress/react-i18n": "npm:^5.2.0"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
   peerDependencies:
     react: ^18.3.1 || ^19.0.0
     react-dom: ^18.3.1 || ^19.0.0
@@ -936,7 +936,7 @@ __metadata:
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
   peerDependencies:
@@ -967,7 +967,7 @@ __metadata:
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
   peerDependencies:
@@ -992,7 +992,7 @@ __metadata:
     react-dom: "npm:^18.3.1"
     sass-loader: "npm:^16.0.8"
     storybook: "npm:^10.6.8"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     webpack: "npm:^5.111.1"
   peerDependencies:
     react: ^18.3.1 || ^19.0.0
@@ -1011,7 +1011,7 @@ __metadata:
     debug: "npm:^4.4.3"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
   peerDependencies:
     react: ^18.3.1 || ^19.0.0
     react-dom: ^18.3.1 || ^19.0.0
@@ -1025,7 +1025,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     debug: "npm:^4.4.3"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
   languageName: unknown
@@ -1044,7 +1044,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     jsdom: "npm:^20.0.3"
     photon: "workspace:^"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
   languageName: unknown
@@ -1161,7 +1161,7 @@ __metadata:
     resize-observer-polyfill: "npm:^1.5.1"
     storybook: "npm:^10.6.8"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     utility-types: "npm:^3.10.0"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
@@ -1196,7 +1196,7 @@ __metadata:
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     storybook: "npm:^10.6.8"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
   peerDependencies:
@@ -1212,7 +1212,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     cookie: "npm:^0.7.2"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
   languageName: unknown
@@ -1255,7 +1255,7 @@ __metadata:
     react-dom: "npm:^18.3.1"
     redux: "npm:^5.0.1"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     utility-types: "npm:^3.10.0"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
@@ -1308,7 +1308,7 @@ __metadata:
     redux: "npm:^5.0.1"
     storybook: "npm:^10.6.8"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     utility-types: "npm:^3.10.0"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
@@ -1350,7 +1350,7 @@ __metadata:
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
   peerDependencies:
     "@wordpress/data": ^11.2.0
     "@wordpress/element": ^10.2.0
@@ -1367,7 +1367,7 @@ __metadata:
   resolution: "@automattic/design-types@workspace:packages/design-types"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
   languageName: unknown
   linkType: soft
 
@@ -1413,7 +1413,7 @@ __metadata:
     react-dom: "npm:^18.3.1"
     resize-observer-polyfill: "npm:^1.5.1"
     storybook: "npm:^10.6.8"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
   peerDependencies:
@@ -1464,7 +1464,7 @@ __metadata:
     react-intersection-observer: "npm:^9.4.3"
     resize-observer-polyfill: "npm:^1.5.1"
     storybook: "npm:^10.6.8"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     use-debounce: "npm:^10.0.6"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
@@ -1505,7 +1505,7 @@ __metadata:
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     tslib: "npm:>=2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
   peerDependencies:
@@ -1519,7 +1519,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
   languageName: unknown
@@ -1531,7 +1531,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
   languageName: unknown
@@ -1542,7 +1542,7 @@ __metadata:
   resolution: "@automattic/generate-password@workspace:packages/generate-password"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
   languageName: unknown
@@ -1580,7 +1580,7 @@ __metadata:
     react-dom: "npm:^18.3.1"
     react-intersection-observer: "npm:^9.4.3"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     wpcom-proxy-request: "workspace:^"
   peerDependencies:
     "@wordpress/data": ^11.2.0
@@ -1612,7 +1612,7 @@ __metadata:
     react-dom: "npm:^18.0.0 || ^19.0.0"
     storybook: "npm:^10.6.8"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
     webpack: "npm:^5.111.1"
@@ -1660,7 +1660,7 @@ __metadata:
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     redux: "npm:^5.0.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
     webpack: "npm:^5.111.1"
@@ -1724,7 +1724,7 @@ __metadata:
     smooch: "npm:^5.7.20"
     storybook: "npm:^10.6.8"
     striptags: "npm:^3.2.0"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     use-debounce: "npm:^10.0.6"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
@@ -1758,7 +1758,7 @@ __metadata:
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
   peerDependencies:
@@ -1805,7 +1805,7 @@ __metadata:
     react-dom: "npm:^18.3.1 || ^19.0.0"
     resize-observer-polyfill: "npm:^1.5.1"
     social-logos: "npm:^3.4.3"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
     wpcom-proxy-request: "workspace:^"
@@ -1862,7 +1862,7 @@ __metadata:
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
     webpack: "npm:^5.111.1"
@@ -1900,7 +1900,7 @@ __metadata:
     "@wordpress/icons": "npm:^21.0.0"
     react: "npm:^18.3.1 || ^19.0.0"
     react-dom: "npm:^18.3.1 || ^19.0.0"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
   peerDependencies:
@@ -1917,7 +1917,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
   languageName: unknown
@@ -1938,7 +1938,7 @@ __metadata:
     react: "npm:^18.3.1 || ^19.0.0"
     react-dom: "npm:^18.3.1 || ^19.0.0"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
   peerDependencies:
     "@wordpress/data": ^11.2.0
     react: ^18.3.1 || ^19.0.0
@@ -1958,7 +1958,7 @@ __metadata:
     react-dom: "npm:^18.3.1"
     redux: "npm:^5.0.1"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
     webpack: "npm:^5.111.1"
@@ -2001,7 +2001,7 @@ __metadata:
     social-logos: "npm:^3.4.3"
     storybook: "npm:^10.6.8"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
     webpack: "npm:^5.111.1"
@@ -2057,7 +2057,7 @@ __metadata:
     jsdom: "npm:^20.0.3"
     react: "npm:^18.3.1 || ^19.0.0"
     react-dom: "npm:^18.3.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
   peerDependencies:
@@ -2071,7 +2071,7 @@ __metadata:
   resolution: "@automattic/newsletter-urls@workspace:packages/newsletter-urls"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
   languageName: unknown
@@ -2220,7 +2220,7 @@ __metadata:
     react-router-dom: "npm:7.18.4"
     smooch: "npm:^5.7.20"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
     wpcom-proxy-request: "npm:^7.0.5"
@@ -2308,7 +2308,7 @@ __metadata:
     "@wordpress/ui": "npm:^0.27.0"
     react: "npm:^18.3.1 || ^19.0.0"
     react-dom: "npm:^18.3.1 || ^19.0.0"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
   peerDependencies:
     "@wordpress/data": ^11.2.0
     react: ^18.3.1 || ^19.0.0
@@ -2362,7 +2362,7 @@ __metadata:
     sass-loader: "npm:^16.0.8"
     storybook: "npm:^10.6.8"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
     webpack: "npm:^5.111.1"
@@ -2419,7 +2419,7 @@ __metadata:
     resize-observer-polyfill: "npm:^1.5.1"
     storybook: "npm:^10.6.8"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
     webpack: "npm:^5.111.1"
@@ -2464,7 +2464,7 @@ __metadata:
     react-modal: "npm:^3.16.3"
     storybook: "npm:^10.6.8"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
     webpack: "npm:^5.111.1"
@@ -2517,7 +2517,7 @@ __metadata:
     redux: "npm:^5.0.1"
     storybook: "npm:^10.6.8"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
     webpack: "npm:^5.111.1"
@@ -2539,7 +2539,7 @@ __metadata:
     jsdom: "npm:^20.0.3"
     react: "npm:^18.3.1 || ^19.0.0"
     react-dom: "npm:^18.3.1 || ^19.0.0"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
   peerDependencies:
@@ -2572,7 +2572,7 @@ __metadata:
     react-dom: "npm:^18.3.1"
     storybook: "npm:^10.6.8"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
     webpack: "npm:^5.111.1"
@@ -2600,7 +2600,7 @@ __metadata:
     jsdom: "npm:^20.0.3"
     react: "npm:^18.3.1 || ^19.0.0"
     react-dom: "npm:^18.3.1 || ^19.0.0"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
   peerDependencies:
@@ -2637,7 +2637,7 @@ __metadata:
     redux: "npm:^5.0.1"
     redux-thunk: "npm:^3.1.0"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
   languageName: unknown
@@ -2672,7 +2672,7 @@ __metadata:
     email-validator: "npm:^2.0.4"
     react: "npm:^18.3.1 || ^19.0.0"
     react-dom: "npm:^18.3.1 || ^19.0.0"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
   peerDependencies:
     "@wordpress/data": ^11.2.0
     react: ^18.3.1 || ^19.0.0
@@ -2751,7 +2751,7 @@ __metadata:
     debug: "npm:^4.4.3"
     jsdom: "npm:^20.0.3"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
   peerDependencies:
@@ -2765,7 +2765,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
   languageName: unknown
@@ -2813,7 +2813,7 @@ __metadata:
     stylelint: "npm:^17.16.0"
     stylelint-plugin-logical-css: "npm:^2.1.1"
     tsup: "npm:^9.0.0"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
   peerDependencies:
@@ -2827,7 +2827,7 @@ __metadata:
   resolution: "@automattic/urls@workspace:packages/urls"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
   languageName: unknown
   linkType: soft
 
@@ -2866,7 +2866,7 @@ __metadata:
     sass-loader: "npm:^16.0.8"
     stylelint: "npm:^17.16.0"
     stylelint-scss: "npm:^7.5.0"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
     webpack: "npm:^5.111.1"
@@ -2912,7 +2912,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     react: "npm:^18.3.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
   peerDependencies:
@@ -3048,7 +3048,7 @@ __metadata:
     prop-types: "npm:^15.8.1"
     react: "npm:^18.3.1 || ^19.0.0"
     react-dom: "npm:^18.3.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
     webpack: "npm:^5.111.1"
@@ -3080,7 +3080,7 @@ __metadata:
     jsdom: "npm:^20.0.3"
     react: "npm:^18.3.1 || ^19.0.0"
     react-dom: "npm:^18.3.1 || ^19.0.0"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
   peerDependencies:
@@ -3120,7 +3120,7 @@ __metadata:
     react-router-dom: "npm:7.18.4"
     smooch: "npm:^5.7.20"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
     wpcom-proxy-request: "workspace:^"
@@ -10414,6 +10414,146 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@typescript/typescript-aix-ppc64@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-aix-ppc64@npm:7.0.2"
+  conditions: os=aix & cpu=ppc64
+  languageName: node
+  linkType: hard
+
+"@typescript/typescript-darwin-arm64@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-darwin-arm64@npm:7.0.2"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@typescript/typescript-darwin-x64@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-darwin-x64@npm:7.0.2"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@typescript/typescript-freebsd-arm64@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-freebsd-arm64@npm:7.0.2"
+  conditions: os=freebsd & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@typescript/typescript-freebsd-x64@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-freebsd-x64@npm:7.0.2"
+  conditions: os=freebsd & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@typescript/typescript-linux-arm64@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-linux-arm64@npm:7.0.2"
+  conditions: os=linux & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@typescript/typescript-linux-arm@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-linux-arm@npm:7.0.2"
+  conditions: os=linux & cpu=arm
+  languageName: node
+  linkType: hard
+
+"@typescript/typescript-linux-loong64@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-linux-loong64@npm:7.0.2"
+  conditions: os=linux & cpu=loong64
+  languageName: node
+  linkType: hard
+
+"@typescript/typescript-linux-mips64el@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-linux-mips64el@npm:7.0.2"
+  conditions: os=linux & cpu=mips64el
+  languageName: node
+  linkType: hard
+
+"@typescript/typescript-linux-ppc64@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-linux-ppc64@npm:7.0.2"
+  conditions: os=linux & cpu=ppc64
+  languageName: node
+  linkType: hard
+
+"@typescript/typescript-linux-riscv64@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-linux-riscv64@npm:7.0.2"
+  conditions: os=linux & cpu=riscv64
+  languageName: node
+  linkType: hard
+
+"@typescript/typescript-linux-s390x@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-linux-s390x@npm:7.0.2"
+  conditions: os=linux & cpu=s390x
+  languageName: node
+  linkType: hard
+
+"@typescript/typescript-linux-x64@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-linux-x64@npm:7.0.2"
+  conditions: os=linux & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@typescript/typescript-netbsd-arm64@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-netbsd-arm64@npm:7.0.2"
+  conditions: os=netbsd & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@typescript/typescript-netbsd-x64@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-netbsd-x64@npm:7.0.2"
+  conditions: os=netbsd & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@typescript/typescript-openbsd-arm64@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-openbsd-arm64@npm:7.0.2"
+  conditions: os=openbsd & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@typescript/typescript-openbsd-x64@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-openbsd-x64@npm:7.0.2"
+  conditions: os=openbsd & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@typescript/typescript-sunos-x64@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-sunos-x64@npm:7.0.2"
+  conditions: os=sunos & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@typescript/typescript-win32-arm64@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-win32-arm64@npm:7.0.2"
+  conditions: os=win32 & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@typescript/typescript-win32-x64@npm:7.0.2":
+  version: 7.0.2
+  resolution: "@typescript/typescript-win32-x64@npm:7.0.2"
+  conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
 "@ungap/structured-clone@npm:^1.0.0, @ungap/structured-clone@npm:^1.3.0":
   version: 1.4.0
   resolution: "@ungap/structured-clone@npm:1.4.0"
@@ -14393,7 +14533,7 @@ __metadata:
     to-title-case: "npm:^1.0.0"
     tracekit: "npm:^0.4.5"
     tus-js-client: "npm:2.3.2"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     ua-parser-js: "npm:^0.7.22"
     uplot: "npm:^1.6.32"
     uplot-react: "npm:^1.1.4"
@@ -17541,7 +17681,7 @@ __metadata:
     "@typescript-eslint/parser": "npm:^8.74.0"
     eslint: "npm:^10.15.0"
     espree: "npm:^11.2.0"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
   peerDependencies:
@@ -19625,7 +19765,7 @@ __metadata:
     react-dom: "npm:^18.3.1"
     tannin: "npm:^1.2.0"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
   peerDependencies:
@@ -24012,7 +24152,7 @@ __metadata:
     debug: "npm:^4.4.3"
     seed-random: "npm:^2.2.0"
     tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
+    typescript: "npm:^7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
   languageName: unknown
@@ -28898,7 +29038,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:5.9.3, typescript@npm:^5.9.3":
+"typescript@npm:5.9.3":
   version: 5.9.3
   resolution: "typescript@npm:5.9.3"
   bin:
@@ -28908,17 +29048,78 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:6.0.3, typescript@npm:^6.0.3":
-  version: 6.0.3
-  resolution: "typescript@npm:6.0.3"
+"typescript@npm:7.0.2, typescript@npm:^7.0.2":
+  version: 7.0.2
+  resolution: "typescript@npm:7.0.2"
+  dependencies:
+    "@typescript/typescript-aix-ppc64": "npm:7.0.2"
+    "@typescript/typescript-darwin-arm64": "npm:7.0.2"
+    "@typescript/typescript-darwin-x64": "npm:7.0.2"
+    "@typescript/typescript-freebsd-arm64": "npm:7.0.2"
+    "@typescript/typescript-freebsd-x64": "npm:7.0.2"
+    "@typescript/typescript-linux-arm": "npm:7.0.2"
+    "@typescript/typescript-linux-arm64": "npm:7.0.2"
+    "@typescript/typescript-linux-loong64": "npm:7.0.2"
+    "@typescript/typescript-linux-mips64el": "npm:7.0.2"
+    "@typescript/typescript-linux-ppc64": "npm:7.0.2"
+    "@typescript/typescript-linux-riscv64": "npm:7.0.2"
+    "@typescript/typescript-linux-s390x": "npm:7.0.2"
+    "@typescript/typescript-linux-x64": "npm:7.0.2"
+    "@typescript/typescript-netbsd-arm64": "npm:7.0.2"
+    "@typescript/typescript-netbsd-x64": "npm:7.0.2"
+    "@typescript/typescript-openbsd-arm64": "npm:7.0.2"
+    "@typescript/typescript-openbsd-x64": "npm:7.0.2"
+    "@typescript/typescript-sunos-x64": "npm:7.0.2"
+    "@typescript/typescript-win32-arm64": "npm:7.0.2"
+    "@typescript/typescript-win32-x64": "npm:7.0.2"
+  dependenciesMeta:
+    "@typescript/typescript-aix-ppc64":
+      optional: true
+    "@typescript/typescript-darwin-arm64":
+      optional: true
+    "@typescript/typescript-darwin-x64":
+      optional: true
+    "@typescript/typescript-freebsd-arm64":
+      optional: true
+    "@typescript/typescript-freebsd-x64":
+      optional: true
+    "@typescript/typescript-linux-arm":
+      optional: true
+    "@typescript/typescript-linux-arm64":
+      optional: true
+    "@typescript/typescript-linux-loong64":
+      optional: true
+    "@typescript/typescript-linux-mips64el":
+      optional: true
+    "@typescript/typescript-linux-ppc64":
+      optional: true
+    "@typescript/typescript-linux-riscv64":
+      optional: true
+    "@typescript/typescript-linux-s390x":
+      optional: true
+    "@typescript/typescript-linux-x64":
+      optional: true
+    "@typescript/typescript-netbsd-arm64":
+      optional: true
+    "@typescript/typescript-netbsd-x64":
+      optional: true
+    "@typescript/typescript-openbsd-arm64":
+      optional: true
+    "@typescript/typescript-openbsd-x64":
+      optional: true
+    "@typescript/typescript-sunos-x64":
+      optional: true
+    "@typescript/typescript-win32-arm64":
+      optional: true
+    "@typescript/typescript-win32-x64":
+      optional: true
   bin:
     tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 10c0/4a25ff5045b984370f48f196b3a0120779b1b343d40b9a68d114ea5e5fff099809b2bb777576991a63a5cd59cf7bffd96ff6fe10afcefbcb8bd6fb96ad4b6606
+  checksum: 10c0/3dcee51ec8c332492325bcdbf7df48b66668751f127e622ae7d41b6c716eb19184424a45e14f7750f50f340232388b69e6287859155f06a5ce2df76f12cb31cf
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^5.9.3#optional!builtin<compat/typescript>":
+"typescript@patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>":
   version: 5.9.3
   resolution: "typescript@patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>::version=5.9.3&hash=5786d5"
   bin:
@@ -28928,13 +29129,74 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A6.0.3#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^6.0.3#optional!builtin<compat/typescript>":
-  version: 6.0.3
-  resolution: "typescript@patch:typescript@npm%3A6.0.3#optional!builtin<compat/typescript>::version=6.0.3&hash=5786d5"
+"typescript@patch:typescript@npm%3A7.0.2#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^7.0.2#optional!builtin<compat/typescript>":
+  version: 7.0.2
+  resolution: "typescript@patch:typescript@npm%3A7.0.2#optional!builtin<compat/typescript>::version=7.0.2&hash=3bafbf"
+  dependencies:
+    "@typescript/typescript-aix-ppc64": "npm:7.0.2"
+    "@typescript/typescript-darwin-arm64": "npm:7.0.2"
+    "@typescript/typescript-darwin-x64": "npm:7.0.2"
+    "@typescript/typescript-freebsd-arm64": "npm:7.0.2"
+    "@typescript/typescript-freebsd-x64": "npm:7.0.2"
+    "@typescript/typescript-linux-arm": "npm:7.0.2"
+    "@typescript/typescript-linux-arm64": "npm:7.0.2"
+    "@typescript/typescript-linux-loong64": "npm:7.0.2"
+    "@typescript/typescript-linux-mips64el": "npm:7.0.2"
+    "@typescript/typescript-linux-ppc64": "npm:7.0.2"
+    "@typescript/typescript-linux-riscv64": "npm:7.0.2"
+    "@typescript/typescript-linux-s390x": "npm:7.0.2"
+    "@typescript/typescript-linux-x64": "npm:7.0.2"
+    "@typescript/typescript-netbsd-arm64": "npm:7.0.2"
+    "@typescript/typescript-netbsd-x64": "npm:7.0.2"
+    "@typescript/typescript-openbsd-arm64": "npm:7.0.2"
+    "@typescript/typescript-openbsd-x64": "npm:7.0.2"
+    "@typescript/typescript-sunos-x64": "npm:7.0.2"
+    "@typescript/typescript-win32-arm64": "npm:7.0.2"
+    "@typescript/typescript-win32-x64": "npm:7.0.2"
+  dependenciesMeta:
+    "@typescript/typescript-aix-ppc64":
+      optional: true
+    "@typescript/typescript-darwin-arm64":
+      optional: true
+    "@typescript/typescript-darwin-x64":
+      optional: true
+    "@typescript/typescript-freebsd-arm64":
+      optional: true
+    "@typescript/typescript-freebsd-x64":
+      optional: true
+    "@typescript/typescript-linux-arm":
+      optional: true
+    "@typescript/typescript-linux-arm64":
+      optional: true
+    "@typescript/typescript-linux-loong64":
+      optional: true
+    "@typescript/typescript-linux-mips64el":
+      optional: true
+    "@typescript/typescript-linux-ppc64":
+      optional: true
+    "@typescript/typescript-linux-riscv64":
+      optional: true
+    "@typescript/typescript-linux-s390x":
+      optional: true
+    "@typescript/typescript-linux-x64":
+      optional: true
+    "@typescript/typescript-netbsd-arm64":
+      optional: true
+    "@typescript/typescript-netbsd-x64":
+      optional: true
+    "@typescript/typescript-openbsd-arm64":
+      optional: true
+    "@typescript/typescript-openbsd-x64":
+      optional: true
+    "@typescript/typescript-sunos-x64":
+      optional: true
+    "@typescript/typescript-win32-arm64":
+      optional: true
+    "@typescript/typescript-win32-x64":
+      optional: true
   bin:
     tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 10c0/2f25c74e65663c248fa1ade2b8459d9ce5372ff9dad07067310f132966ebec1d93f6c42f0baf77a6b6a7a91460463f708e6887013aaade22111037457c6b25df
+  checksum: 10c0/6b3cdc369cd829d46e00734ea64233ee84419c2825ad8fe408915adde77abced4b7a2401f7eed517d54a7a4f5d1c1869753cb99018df1c2159c761d9f33483a6
   languageName: node
   linkType: hard
 
@@ -30357,7 +30619,7 @@ __metadata:
     stylelint-scss: "npm:^7.5.0"
     swiper: "npm:^12.2.0"
     tslib: "npm:^2.8.1"
-    typescript: "npm:6.0.3"
+    typescript: "npm:7.0.2"
     vite: "npm:^8.3.8"
     vitest: "npm:^5.1.2"
     vitest-canvas-mock: "npm:^1.2.0"
