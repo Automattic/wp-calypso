@@ -32,6 +32,20 @@ export type AbilityCompletedDetail = {
 };
 
 /**
+ * A server tool's result arrived in the stream, so whatever it wrote has landed.
+ * Server tools write without passing through the browser, so this is the only
+ * word a page gets that data it renders may be stale.
+ */
+export const TOOL_RESULT_EVENT = 'agents-manager-tool-result';
+
+/** What `TOOL_RESULT_EVENT` carries in `detail`. */
+export type ToolResultDetail = {
+	toolCallId: string;
+	/** The tool's id, e.g. `wpcom__site_settings_update`, when the stream carries it. */
+	toolId?: string;
+};
+
+/**
  * Broadcast one of the turn events.
  * @param eventName Which one.
  */
@@ -47,4 +61,12 @@ export function broadcastTurnEvent(
  */
 export function broadcastAbilityCompleted( detail: AbilityCompletedDetail ): void {
 	window.dispatchEvent( new CustomEvent( ABILITY_COMPLETED_EVENT, { detail } ) );
+}
+
+/**
+ * Broadcast that a server tool's result arrived.
+ * @param detail Which tool call.
+ */
+export function broadcastToolResult( detail: ToolResultDetail ): void {
+	window.dispatchEvent( new CustomEvent( TOOL_RESULT_EVENT, { detail } ) );
 }
