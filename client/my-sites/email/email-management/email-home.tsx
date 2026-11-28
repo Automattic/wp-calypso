@@ -113,6 +113,7 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 		data: allDomains = [],
 		isLoading: isSiteDomainLoading,
 		isFetching: isSiteDomainFetching,
+		isSuccess: hasSiteDomainsLoaded,
 	} = useGetDomainsQuery( selectedSite?.ID ?? null, {
 		refetchOnMount: ! addEmailForwardMutationActive,
 		retry: false,
@@ -130,11 +131,13 @@ const EmailHome = ( props: EmailManagementHomeProps ) => {
 	// The domains query is persisted to localStorage for up to a week, so the
 	// first render can run on stale data. Waiting for the refetch to settle
 	// avoids sending someone who already bought email off to a purchase page,
-	// which a cross-origin navigation would make unrecoverable.
+	// which a cross-origin navigation would make unrecoverable. A disabled or
+	// failed query is neither loading nor fetching and falls back to no domains,
+	// so also require a successful load.
 	const canRedirectToDashboard =
 		isEnabled( 'emails/titan-tiers' ) &&
 		! selectedDomainName &&
-		! isSiteDomainLoading &&
+		hasSiteDomainsLoaded &&
 		! isSiteDomainFetching;
 
 	let dashboardRedirectPath: string | undefined;
