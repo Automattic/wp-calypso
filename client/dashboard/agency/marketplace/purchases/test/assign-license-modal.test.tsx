@@ -81,4 +81,24 @@ describe( '<AssignLicenseModal>', () => {
 		expect( notice ).toBeVisible();
 		expect( screen.queryByText( 'WooCommerce isn’t installed' ) ).not.toBeInTheDocument();
 	} );
+
+	test( 'offers to try again when the sites fail to load', async () => {
+		nock( API )
+			.get( '/wpcom/v2/jetpack-agency/sites' )
+			.query( true )
+			.reply( 500, { message: 'Nope' } );
+		mockAgencyAndSites();
+
+		render(
+			<AssignLicenseModal
+				licenseKey={ LICENSE_KEY }
+				productName="Gift Cards"
+				issuedAt="2026-01-01 00:00:00"
+				closeModal={ vi.fn() }
+			/>
+		);
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Try again' } ) );
+
+		expect( await screen.findByRole( 'radio', { name: 'store.example.com' } ) ).toBeVisible();
+	} );
 } );

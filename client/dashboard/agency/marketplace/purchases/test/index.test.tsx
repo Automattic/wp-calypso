@@ -376,6 +376,23 @@ describe( '<MarketplacePurchases>', () => {
 		expect( screen.queryByText( /owns this/ ) ).not.toBeInTheDocument();
 	} );
 
+	test( 'offers to try again when the licenses fail to load, rather than showing none', async () => {
+		mockAgency();
+		mockPreferences();
+		mockPendingSites( 'pending' );
+		nock( API )
+			.get( '/wpcom/v2/jetpack-licensing/licenses' )
+			.query( true )
+			.reply( 500, { message: 'Nope' } );
+		mockLicenses();
+
+		render( <MarketplacePurchases /> );
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Try again' } ) );
+
+		expect( await screen.findByText( 'Not assigned' ) ).toBeVisible();
+		expect( screen.queryByText( 'No licenses yet' ) ).not.toBeInTheDocument();
+	} );
+
 	test( 'does not ask a partner who already answered', async () => {
 		mockAgency();
 		mockPreferences( { 'purchase-completed': { lastSubmittedAt: 1757000000000 } } );

@@ -11,7 +11,12 @@ import { usePersistentView } from '../../../app/hooks/use-persistent-view';
 import { useLocale } from '../../../app/locale';
 import { PerformanceTrackerStop } from '../../../app/performance-tracking';
 import { hasAnyCapability, marketplacePurchasesRoute } from '../../../app/router/agency';
-import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../../../components/dataviews';
+import {
+	DataViews,
+	DataViewsCard,
+	DataViewsEmptyStateLayout,
+	DataViewsErrorState,
+} from '../../../components/dataviews';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import RouterLinkButton from '../../../components/router-link-button';
@@ -62,7 +67,7 @@ export default function MarketplacePurchases() {
 
 	const tableView = useMemo( () => withLicenseColumnStyles( view ), [ view ] );
 
-	const { data, isLoading } = useQuery( {
+	const { data, isLoading, isError, isFetching, refetch } = useQuery( {
 		...paginatedJetpackAgencyLicensesQuery( agencyId, toFetchOptions( view ) ),
 		enabled: agencyId > 0,
 	} );
@@ -125,6 +130,20 @@ export default function MarketplacePurchases() {
 
 	const isFiltered = Boolean( view.search ) || ( view.filters?.length ?? 0 ) > 0;
 
+	const emptyState = isFiltered ? (
+		<DataViewsEmptyStateLayout
+			isBorderless
+			title={ __( 'No licenses match your search' ) }
+			description={ __( 'Try a different search term or filter.' ) }
+		/>
+	) : (
+		<DataViewsEmptyStateLayout
+			isBorderless
+			title={ __( 'No licenses yet' ) }
+			description={ __( 'Licenses you purchase from the Marketplace will appear here.' ) }
+		/>
+	);
+
 	return (
 		<PageLayout
 			header={
@@ -178,18 +197,15 @@ export default function MarketplacePurchases() {
 					defaultLayouts={ { table: {} } }
 					config={ DEFAULT_CONFIG }
 					empty={
-						isFiltered ? (
-							<DataViewsEmptyStateLayout
+						isError ? (
+							<DataViewsErrorState
 								isBorderless
-								title={ __( 'No licenses match your search' ) }
-								description={ __( 'Try a different search term or filter.' ) }
+								title={ __( 'We couldn’t load your licenses' ) }
+								onRetry={ refetch }
+								isRetrying={ isFetching }
 							/>
 						) : (
-							<DataViewsEmptyStateLayout
-								isBorderless
-								title={ __( 'No licenses yet' ) }
-								description={ __( 'Licenses you purchase from the Marketplace will appear here.' ) }
-							/>
+							emptyState
 						)
 					}
 				/>
