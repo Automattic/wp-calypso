@@ -68,7 +68,10 @@ test.describe(
 			await test.step( 'Select a Personal theme and start signup', async () => {
 				const loggedOutThemesPage = new LoggedOutThemesPage( page );
 				await loggedOutThemesPage.filterBy( 'Personal' );
-				themeSlug = await loggedOutThemesPage.startWithFirstTheme();
+				// The Personal plan includes premium-tier themes, and signup sends those to the
+				// marketplace thank-you page that a later step checks. Personal-tier themes, also
+				// listed here, go straight to design setup instead (see `getWithThemeDestination`).
+				themeSlug = await loggedOutThemesPage.startWithFirstTheme( 'premium' );
 			} );
 
 			await test.step( 'Sign up as new user', async () => {

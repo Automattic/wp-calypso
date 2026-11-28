@@ -78,19 +78,23 @@ export class LoggedOutThemesPage {
 	/**
 	 * Starts signup with the first theme on the page.
 	 *
+	 * @param {string} [themeType] Only consider themes whose Get started link has this `theme_type`, e.g. `premium`.
 	 * @returns {Promise<string>} The slug of the selected theme.
 	 */
-	async startWithFirstTheme(): Promise< string > {
-		const getStartedRoute = await waitForLocatorAttribute(
-			this.firstThemeGetStartedLink,
-			'href',
-			/theme=/,
-			{
-				timeout: THEME_ACTION_TIMEOUT_MS,
-				description: 'First theme Get started link',
-				state: 'visible',
-			}
-		);
+	async startWithFirstTheme( themeType?: string ): Promise< string > {
+		const getStartedLink = themeType
+			? this.page
+					.locator( '[data-e2e-theme]' )
+					.filter( { has: this.page.locator( `a[href*="theme_type=${ themeType }"]` ) } )
+					.first()
+					.getByRole( 'link', { name: 'Get started' } )
+					.first()
+			: this.firstThemeGetStartedLink;
+		const getStartedRoute = await waitForLocatorAttribute( getStartedLink, 'href', /theme=/, {
+			timeout: THEME_ACTION_TIMEOUT_MS,
+			description: 'First theme Get started link',
+			state: 'visible',
+		} );
 
 		const { themeSlug, url: getStartedUrl } = getCalypsoGetStartedUrlFromHref(
 			getStartedRoute,
