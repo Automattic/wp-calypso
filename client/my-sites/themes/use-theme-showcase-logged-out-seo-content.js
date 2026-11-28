@@ -4,6 +4,7 @@ import {
 	PLAN_PERSONAL,
 	getPlan,
 } from '@automattic/calypso-products';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useIsThemeShowcaseModernEnabled } from './hooks/use-is-theme-showcase-modern-enabled';
@@ -18,6 +19,7 @@ function findParsedFilter( filter, content ) {
 export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 	const translate = useTranslate();
 	const isThemeShowcaseModern = useIsThemeShowcaseModernEnabled();
+	const localizeUrl = useLocalizeUrl();
 
 	/**
 	 * SEO content:
@@ -25,9 +27,14 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 	 * - header: the page's main heading.
 	 * - description: the page's sub-heading and <meta> description.
 	 * - metaDescription: optional <meta> description override, when it should differ from the sub-heading.
+	 *   Required when the sub-heading contains markup (e.g. a link), since the <meta> needs plain text.
 	 */
-	const THEME_SHOWCASE_LOGGED_OUT_SEO_CONTENT = useMemo(
-		() => ( {
+	const THEME_SHOWCASE_LOGGED_OUT_SEO_CONTENT = useMemo( () => {
+		const localizedLink = ( url ) => (
+			<a href={ localizeUrl( url, undefined, false ) } rel="external" />
+		);
+
+		return {
 			recommended: {
 				all: {
 					title: translate( 'Free WordPress Themes — 1,000+ designs' ),
@@ -46,10 +53,14 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 							),
 				},
 				free: {
-					title: translate( 'Free WordPress Themes' ),
-					header: translate( 'Find the perfect free WordPress theme for your blog or website.' ),
-					description: translate(
+					title: translate( 'Free WordPress themes and templates' ),
+					header: translate( 'Free WordPress themes and templates' ),
+					metaDescription: translate(
 						'Browse all free themes for WordPress.com. Try one or try them all. Risk-free.'
+					),
+					description: translate(
+						'Browse all free themes for WordPress.com. Try one or {{link}}try them all{{/link}}. Risk-free.',
+						{ components: { link: localizedLink( 'https://wordpress.com/themes/' ) } }
 					),
 				},
 				premium: {
@@ -78,10 +89,14 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 			},
 			blog: {
 				all: {
-					title: translate( 'Blog WordPress Themes' ),
-					header: translate( 'Find the perfect theme for your blog.' ),
-					description: translate(
+					title: translate( 'Blog templates and themes' ),
+					header: translate( 'Blog templates and themes' ),
+					metaDescription: translate(
 						"Start your blog with the perfect theme. Browse high-quality, professionally-designed options. Then, activate the one that's right for you."
+					),
+					description: translate(
+						"{{link}}Start your blog{{/link}} with the perfect theme. Browse high-quality, professionally-designed options. Then, activate the one that's right for you.",
+						{ components: { link: localizedLink( 'https://wordpress.com/create-blog/' ) } }
 					),
 				},
 				free: {
@@ -117,10 +132,14 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 			},
 			business: {
 				all: {
-					title: translate( 'Business WordPress Themes' ),
-					header: translate( 'Find the perfect theme for your business website.' ),
-					description: translate(
+					title: translate( 'Business website templates' ),
+					header: translate( 'Business website templates' ),
+					metaDescription: translate(
 						"Start your business website with the perfect theme. Browse high-quality, professionally-designed options. Then, activate the one that's right for you."
+					),
+					description: translate(
+						"Start your {{link}}business website{{/link}} with the perfect theme. Browse high-quality, professionally-designed options. Then, activate the one that's right for you.",
+						{ components: { link: localizedLink( 'https://wordpress.com/business/' ) } }
 					),
 				},
 				free: {
@@ -909,9 +928,8 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 					),
 				},
 			},
-		} ),
-		[ isThemeShowcaseModern, translate ]
-	);
+		};
+	}, [ isThemeShowcaseModern, localizeUrl, translate ] );
 
 	const parsedFilter =
 		findParsedFilter( filter, THEME_SHOWCASE_LOGGED_OUT_SEO_CONTENT ) || 'recommended';
