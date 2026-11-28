@@ -84,7 +84,7 @@ describe( 'HeaderPrice', () => {
 		vi.clearAllMocks();
 		mockUseHeaderPriceContext.mockReturnValue( {
 			isAnyPlanPriceDiscounted: false,
-			setIsAnyPlanPriceDiscounted: vi.fn(),
+			setIsPlanPriceDiscounted: vi.fn(),
 		} );
 		( Plans.usePricingMetaForGridPlans as Mock ).mockReturnValue( {} );
 	} );
@@ -230,7 +230,7 @@ describe( 'HeaderPrice', () => {
 
 		mockUseHeaderPriceContext.mockReturnValue( {
 			isAnyPlanPriceDiscounted: true,
-			setIsAnyPlanPriceDiscounted: vi.fn(),
+			setIsPlanPriceDiscounted: vi.fn(),
 		} );
 		( Plans.usePricingMetaForGridPlans as Mock ).mockReturnValue( {
 			[ PLAN_PERSONAL_MONTHLY ]: {
@@ -273,7 +273,7 @@ describe( 'HeaderPrice', () => {
 
 			mockUseHeaderPriceContext.mockReturnValue( {
 				isAnyPlanPriceDiscounted: true,
-				setIsAnyPlanPriceDiscounted: vi.fn(),
+				setIsPlanPriceDiscounted: vi.fn(),
 			} );
 			( Plans.usePricingMetaForGridPlans as Mock ).mockReturnValue( {
 				[ PLAN_PERSONAL_MONTHLY ]: {
@@ -332,7 +332,7 @@ describe( 'HeaderPrice', () => {
 
 		mockUseHeaderPriceContext.mockReturnValue( {
 			isAnyPlanPriceDiscounted: true,
-			setIsAnyPlanPriceDiscounted: vi.fn(),
+			setIsPlanPriceDiscounted: vi.fn(),
 		} );
 		( Plans.usePricingMetaForGridPlans as Mock ).mockReturnValue( {
 			[ PLAN_PERSONAL_MONTHLY ]: {
@@ -411,7 +411,7 @@ describe( 'HeaderPrice', () => {
 
 		mockUseHeaderPriceContext.mockReturnValue( {
 			isAnyPlanPriceDiscounted: true,
-			setIsAnyPlanPriceDiscounted: vi.fn(),
+			setIsPlanPriceDiscounted: vi.fn(),
 		} );
 		( Plans.usePricingMetaForGridPlans as Mock ).mockReturnValue( {
 			[ PLAN_PERSONAL_MONTHLY ]: {
@@ -450,7 +450,7 @@ describe( 'HeaderPrice', () => {
 
 		mockUseHeaderPriceContext.mockReturnValue( {
 			isAnyPlanPriceDiscounted: true,
-			setIsAnyPlanPriceDiscounted: vi.fn(),
+			setIsPlanPriceDiscounted: vi.fn(),
 		} );
 		( Plans.usePricingMetaForGridPlans as Mock ).mockReturnValue( {
 			[ PLAN_PERSONAL_MONTHLY ]: {
@@ -488,7 +488,7 @@ describe( 'HeaderPrice', () => {
 
 		mockUseHeaderPriceContext.mockReturnValue( {
 			isAnyPlanPriceDiscounted: true,
-			setIsAnyPlanPriceDiscounted: vi.fn(),
+			setIsPlanPriceDiscounted: vi.fn(),
 		} );
 		( Plans.usePricingMetaForGridPlans as Mock ).mockReturnValue( {
 			[ PLAN_PERSONAL_MONTHLY ]: {
@@ -524,7 +524,7 @@ describe( 'HeaderPrice', () => {
 
 		mockUseHeaderPriceContext.mockReturnValue( {
 			isAnyPlanPriceDiscounted: true,
-			setIsAnyPlanPriceDiscounted: vi.fn(),
+			setIsPlanPriceDiscounted: vi.fn(),
 		} );
 		( Plans.usePricingMetaForGridPlans as Mock ).mockReturnValue( {
 			[ PLAN_PERSONAL_MONTHLY ]: {
@@ -567,7 +567,7 @@ describe( 'HeaderPrice', () => {
 
 		mockUseHeaderPriceContext.mockReturnValue( {
 			isAnyPlanPriceDiscounted: true,
-			setIsAnyPlanPriceDiscounted: vi.fn(),
+			setIsPlanPriceDiscounted: vi.fn(),
 		} );
 		( Plans.usePricingMetaForGridPlans as Mock ).mockReturnValue( {
 			[ PLAN_PERSONAL_MONTHLY ]: {
@@ -607,7 +607,7 @@ describe( 'HeaderPrice', () => {
 
 		mockUseHeaderPriceContext.mockReturnValue( {
 			isAnyPlanPriceDiscounted: true,
-			setIsAnyPlanPriceDiscounted: vi.fn(),
+			setIsPlanPriceDiscounted: vi.fn(),
 		} );
 		( Plans.usePricingMetaForGridPlans as Mock ).mockReturnValue( {
 			[ PLAN_PERSONAL_MONTHLY ]: {
@@ -704,7 +704,7 @@ describe( 'HeaderPrice', () => {
 
 		mockUseHeaderPriceContext.mockReturnValue( {
 			isAnyPlanPriceDiscounted: true,
-			setIsAnyPlanPriceDiscounted: vi.fn(),
+			setIsPlanPriceDiscounted: vi.fn(),
 		} );
 		( Plans.usePricingMetaForGridPlans as Mock ).mockReturnValue( {
 			[ PLAN_PERSONAL_MONTHLY ]: {
