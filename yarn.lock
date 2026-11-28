@@ -9328,16 +9328,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/react-store@npm:0.11.2":
-  version: 0.11.2
-  resolution: "@tanstack/react-store@npm:0.11.2"
+"@tanstack/react-store@npm:0.11.4":
+  version: 0.11.4
+  resolution: "@tanstack/react-store@npm:0.11.4"
   dependencies:
-    "@tanstack/store": "npm:0.11.2"
+    "@tanstack/store": "npm:0.11.3"
     use-sync-external-store: "npm:^1.6.0"
   peerDependencies:
+    "@types/react": "*"
     react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
     react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: 10c0/a755aa369c13824709ca5b29355ab7a72ba913d3561786f993412c8c375f36c54b20c0366bd406cf21b363b12e516a251a774ee7140479571b628e895448a93d
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 10c0/d2fc2abae241625b78d61ea778894ad045088fe15362fbff0af75be7e13cbb677b05229e21f83c321ed1e32ac0cce9bbfcce8e28f957bda5e46c3bc76e6f8f7e
   languageName: node
   linkType: hard
 
@@ -9365,10 +9369,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/store@npm:0.11.2":
-  version: 0.11.2
-  resolution: "@tanstack/store@npm:0.11.2"
-  checksum: 10c0/5422149c853c16e642a0ddfb51c2b4a867a11516069d3b9647659212e9762b86d609144de6ac6ec099b0360c3b198d1243f613148d69c1028dee56382f0430cd
+"@tanstack/store@npm:0.11.3":
+  version: 0.11.3
+  resolution: "@tanstack/store@npm:0.11.3"
+  checksum: 10c0/4a3ca3c4e3b4eb93b9683cb154ac8f51fbd18cef5a8e30b1f246bbf8e3a44d8f2918f7e844d5e62a6c814b0a2ef9d4e97abff232f55445a41c618aca371984db
   languageName: node
   linkType: hard
 
