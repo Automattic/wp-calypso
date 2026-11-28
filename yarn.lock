@@ -73,9 +73,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ariakit/react-components@npm:0.7.2":
-  version: 0.7.2
-  resolution: "@ariakit/react-components@npm:0.7.2"
+"@ariakit/react-components@npm:0.7.3":
+  version: 0.7.3
+  resolution: "@ariakit/react-components@npm:0.7.3"
   dependencies:
     "@ariakit/components": "npm:0.1.16"
     "@ariakit/react-store": "npm:0.1.14"
@@ -86,7 +86,7 @@ __metadata:
   peerDependencies:
     react: ^17.0.0 || ^18.0.0 || ^19.0.0
     react-dom: ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: 10c0/dcf53144c1b0dff3be21d3ae6eb9e771f75ff9a11fbce1708753bb13527cf05c33923a256b8f0d107fc1fb12ace9fc4b76f44ffdd99a2ee1a366b2d2d29d6556
+  checksum: 10c0/d1e7a0a617f9749a62e01c2850473ad4b32820753adeec1b444f1ca4bd1906a91631f6547df9b5b790d02d76898c693f3985d16f7b310213b3bcbad855da0a59
   languageName: node
   linkType: hard
 
@@ -116,15 +116,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ariakit/react@npm:^0.4.43":
-  version: 0.4.43
-  resolution: "@ariakit/react@npm:0.4.43"
+"@ariakit/react@npm:^0.4.43, @ariakit/react@npm:^0.4.44":
+  version: 0.4.44
+  resolution: "@ariakit/react@npm:0.4.44"
   dependencies:
-    "@ariakit/react-components": "npm:0.7.2"
+    "@ariakit/react-components": "npm:0.7.3"
   peerDependencies:
     react: ^17.0.0 || ^18.0.0 || ^19.0.0
     react-dom: ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: 10c0/ca2dda740f6fa402254539cc373c2643f3f26df8a2d78919a433f7877a2038eaa1c73836f02ff569eee25cd032a939d51c2e9532c803a4d884e90ace5548b51e
+  checksum: 10c0/79fab1a2d6ff77c15642ebc126f145f292422eeb9d4dda74fbb9e1520d78b8b98331ef35b20f3ba3313aa13549cf9f685a9558d62459d20152b76115fe3f1be2
   languageName: node
   linkType: hard
 
@@ -1103,7 +1103,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/components@workspace:packages/components"
   dependencies:
-    "@ariakit/react": "npm:^0.4.43"
+    "@ariakit/react": "npm:^0.4.44"
     "@ariakit/test": "npm:0.4.15"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
