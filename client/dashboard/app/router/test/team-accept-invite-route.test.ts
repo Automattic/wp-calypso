@@ -10,6 +10,7 @@ import {
 import { MutationObserver } from '@tanstack/react-query';
 import { createRouter } from '@tanstack/react-router';
 import nock from 'nock';
+import { a4aLink } from '../../../utils/link';
 import { agencyTeamAcceptInviteRoute, createAgencyRoutes } from '../agency';
 import { rootRoute } from '../root';
 
@@ -93,7 +94,9 @@ describe( 'agencyTeamAcceptInviteRoute', () => {
 
 		const redirect = await runRootGuard( '/overview' ).catch( ( error ) => error );
 
-		expect( redirect ).toMatchObject( { options: { href: '/signup' } } );
+		expect( redirect ).toMatchObject( {
+			options: { href: a4aLink( '/signup' ), reloadDocument: true },
+		} );
 	} );
 
 	test( 'lets a new member into the dashboard even when a "no agency" answer was cached', async () => {

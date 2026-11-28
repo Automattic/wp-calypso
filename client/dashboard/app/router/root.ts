@@ -1,6 +1,7 @@
 import { agencyQuery, jetpackSiteUrlsQuery, queryClient } from '@automattic/api-queries';
 import { createRootRouteWithContext } from '@tanstack/react-router';
 import { TEAM_ACCEPT_INVITE_ROUTE } from '../../agency/team/paths';
+import { a4aLink } from '../../utils/link';
 import Root from '../root';
 import NotFoundRoot from '../root/error';
 import { dashboardRedirect } from './redirect';
@@ -34,7 +35,11 @@ export const rootRoute = createRootRouteWithContext< RootRouterContext >()( {
 			if ( ! isSignupPath && ! isTeamInvitePath ) {
 				const agency = await queryClient.ensureQueryData( agencyQuery() );
 				if ( ! agency.isClientUser && ! agency.hasAgency ) {
-					throw dashboardRedirect( { href: '/signup', replace: true } );
+					throw dashboardRedirect( {
+						href: a4aLink( '/signup' ),
+						reloadDocument: true,
+						replace: true,
+					} );
 				}
 			}
 		}
