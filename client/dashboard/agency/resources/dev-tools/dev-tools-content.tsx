@@ -29,11 +29,11 @@ export default function DevToolsContent( { recordTracksEvent }: DevToolsContentP
 					__( 'Pull live sites to test changes safely' ),
 					__( 'Push changes directly to production' ),
 					__( 'Share demo sites with clients instantly' ),
-					__( 'Works on macOS and Windows' ),
+					__( 'Works on macOS, Windows and Linux' ),
 				] }
 				cta={ {
 					label: __( 'Start building locally' ),
-					href: 'https://developer.wordpress.com/studio/',
+					href: 'https://wordpress.studio/',
 					onClick: () => recordTracksEvent( 'calypso_a4a_dev_tools_download_studio_click' ),
 				} }
 				image={ studioImage }
