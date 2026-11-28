@@ -8,5 +8,5 @@
 	},
 	"include": [ "src", "src/*.json" ],
 	"exclude": [ "**/__tests__/*", "**/__mocks__/*" ],
-	"references": [ { "path": "../global-styles" } ]
+	"references": [ { "path": "../global-styles" }, { "path": "../i18n-utils" } ]
 }

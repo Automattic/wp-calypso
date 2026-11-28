@@ -7,5 +7,10 @@
 		"rootDir": "src"
 	},
 	"files": [ "./global.d.ts" ],
-	"references": [ { "path": "../calypso-analytics" }, { "path": "../data-stores" } ]
+	"references": [
+		{ "path": "../calypso-analytics" },
+		{ "path": "../data-stores" },
+		{ "path": "../i18n-utils" },
+		{ "path": "../languages" }
+	]
 }

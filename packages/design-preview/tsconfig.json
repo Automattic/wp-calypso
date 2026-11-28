@@ -11,6 +11,7 @@
 	"references": [
 		{ "path": "../components" },
 		{ "path": "../design-picker" },
-		{ "path": "../global-styles" }
+		{ "path": "../global-styles" },
+		{ "path": "../onboarding" }
 	]
 }

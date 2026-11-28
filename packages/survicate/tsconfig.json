@@ -7,5 +7,5 @@
 	},
 	"include": [ "src" ],
 	"exclude": [ "**/test/*" ],
-	"references": [ { "path": "../calypso-support-session" } ]
+	"references": [ { "path": "../calypso-support-session" }, { "path": "../calypso-analytics" } ]
 }

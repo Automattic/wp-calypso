@@ -8,5 +8,14 @@
 	},
 	"include": [ "src" ],
 	"exclude": [ "**/test/*" ],
-	"references": [ { "path": "../zendesk-client" }, { "path": "../odie-client" } ]
+	"references": [
+		{ "path": "../zendesk-client" },
+		{ "path": "../odie-client" },
+		{ "path": "../calypso-analytics" },
+		{ "path": "../calypso-url" },
+		{ "path": "../components" },
+		{ "path": "../data-stores" },
+		{ "path": "../i18n-utils" },
+		{ "path": "../urls" }
+	]
 }

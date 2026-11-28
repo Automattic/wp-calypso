@@ -8,5 +8,9 @@
 	},
 	"include": [ "src", "src/*.json" ],
 	"exclude": [ "**/__tests__/*", "**/__mocks__/*" ],
-	"references": [ { "path": "../api-core" }, { "path": "../calypso-support-session" } ]
+	"references": [
+		{ "path": "../api-core" },
+		{ "path": "../calypso-support-session" },
+		{ "path": "../calypso-config" }
+	]
 }

@@ -15,6 +15,12 @@
 		{ "path": "../agenttic-ui" },
 		{ "path": "../ai-ui-renderer" },
 		{ "path": "../viewport" },
-		{ "path": "../support-articles" }
+		{ "path": "../support-articles" },
+		{ "path": "../calypso-analytics" },
+		{ "path": "../components" },
+		{ "path": "../data-stores" },
+		{ "path": "../i18n-utils" },
+		{ "path": "../urls" },
+		{ "path": "../zendesk-client" }
 	]
 }

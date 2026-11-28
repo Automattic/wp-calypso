@@ -8,5 +8,11 @@
 		"rootDir": "src"
 	},
 	"include": [ "src", "src/*.json", "types" ],
-	"exclude": [ "**/test/*", "**/*.test.ts", "**/*.test.tsx", "**/*.test.js", "**/__mocks__/**" ]
+	"exclude": [ "**/test/*", "**/*.test.ts", "**/*.test.tsx", "**/*.test.js", "**/__mocks__/**" ],
+	"references": [
+		{ "path": "../agents-manager" },
+		{ "path": "../agenttic-client" },
+		{ "path": "../agenttic-ui" },
+		{ "path": "../calypso-analytics" }
+	]
 }

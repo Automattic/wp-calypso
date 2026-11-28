@@ -10,6 +10,12 @@
 	"references": [
 		{ "path": "../calypso-products" },
 		{ "path": "../shopping-cart" },
-		{ "path": "../components" }
+		{ "path": "../components" },
+		{ "path": "../api-core" },
+		{ "path": "../calypso-config" },
+		{ "path": "../calypso-stripe" },
+		{ "path": "../composite-checkout" },
+		{ "path": "../i18n-utils" },
+		{ "path": "../js-utils" }
 	]
 }

@@ -6,5 +6,11 @@
 		"rootDir": "src"
 	},
 	"include": [ "src", "src/*.json" ],
-	"exclude": [ "**/__tests__/*", "**/__mocks__/*" ]
+	"exclude": [ "**/__tests__/*", "**/__mocks__/*" ],
+	"references": [
+		{ "path": "../calypso-analytics" },
+		{ "path": "../i18n-utils" },
+		{ "path": "../languages" },
+		{ "path": "../shopping-cart" }
+	]
 }

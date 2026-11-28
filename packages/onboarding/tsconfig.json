@@ -11,6 +11,11 @@
 		{ "path": "../components" },
 		{ "path": "../data-stores" },
 		{ "path": "../domain-search" },
-		{ "path": "../calypso-config" }
+		{ "path": "../calypso-config" },
+		{ "path": "../api-core" },
+		{ "path": "../calypso-analytics" },
+		{ "path": "../calypso-url" },
+		{ "path": "../i18n-utils" },
+		{ "path": "../shopping-cart" }
 	]
 }

@@ -30335,6 +30335,7 @@ __metadata:
     ncp: "npm:^2.0.0"
     nock: "npm:^14.0.17"
     npm-run-all: "npm:^4.1.5"
+    oxc-parser: "npm:^0.152.0"
     photon: "workspace:^"
     postcss: "npm:^8.5.32"
     postcss-cli: "npm:^9.0.1"

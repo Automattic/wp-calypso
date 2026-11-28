@@ -11,6 +11,10 @@
 	"references": [
 		{ "path": "../agenttic-ui" },
 		{ "path": "../components" },
-		{ "path": "../zendesk-client" }
+		{ "path": "../zendesk-client" },
+		{ "path": "../calypso-analytics" },
+		{ "path": "../data-stores" },
+		{ "path": "../i18n-utils" },
+		{ "path": "../urls" }
 	]
 }

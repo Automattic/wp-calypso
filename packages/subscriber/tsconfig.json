@@ -11,6 +11,9 @@
 		{ "path": "../onboarding" },
 		{ "path": "../data-stores" },
 		{ "path": "../newsletter-urls" },
-		{ "path": "../viewport" }
+		{ "path": "../viewport" },
+		{ "path": "../calypso-analytics" },
+		{ "path": "../components" },
+		{ "path": "../i18n-utils" }
 	]
 }

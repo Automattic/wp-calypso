@@ -13,6 +13,7 @@
 		{ "path": "../calypso-products" },
 		{ "path": "../components" },
 		{ "path": "../design-types" },
-		{ "path": "../i18n-utils" }
+		{ "path": "../i18n-utils" },
+		{ "path": "../calypso-config" }
 	]
 }
