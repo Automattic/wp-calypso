@@ -9346,15 +9346,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/react-virtual@npm:^3.13.0":
-  version: 3.14.2
-  resolution: "@tanstack/react-virtual@npm:3.14.2"
+"@tanstack/react-virtual@npm:^3.14.28":
+  version: 3.14.28
+  resolution: "@tanstack/react-virtual@npm:3.14.28"
   dependencies:
-    "@tanstack/virtual-core": "npm:3.17.0"
+    "@tanstack/virtual-core": "npm:3.19.13"
   peerDependencies:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
     react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: 10c0/6d42161f17fc037663270d68d14340e8d2561bd1b8ea17c295477adf99fa6d5ba4e4cde2ee050047c673217f7f71db92749159d25885530de1c78ca18ef6536d
+  checksum: 10c0/82c4667e17476769ac87f0e5c6deb6180dbbd364cf4a8dce3c1a58ec9699bbb40ef51cf18232d322c53dd001e4bff090ba1b7981c7723e49aa8e3bc6a27562b7
   languageName: node
   linkType: hard
 
@@ -9377,10 +9377,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/virtual-core@npm:3.17.0":
-  version: 3.17.0
-  resolution: "@tanstack/virtual-core@npm:3.17.0"
-  checksum: 10c0/313c5762343ad93ec0569b528c111a43f9615acc572293a71efc6dcf94ff9d791c97f1ada32b7dfbda79ed7d472834b14315ebe54d74b0221224732e501def6f
+"@tanstack/virtual-core@npm:3.19.13":
+  version: 3.19.13
+  resolution: "@tanstack/virtual-core@npm:3.19.13"
+  checksum: 10c0/c28d58fa76035e9fe78f8c1b69e859d37baca86a111775c9f2e041d703950f67e5bde05c67dcf5664e4d5ba7a550623020a80005cb7d96193f3566af49bc1f3f
   languageName: node
   linkType: hard
 
@@ -14254,7 +14254,7 @@ __metadata:
     "@tanstack/react-query-devtools": "npm:^5.83.0"
     "@tanstack/react-query-persist-client": "npm:^5.83.0"
     "@tanstack/react-router": "npm:^1.170.46"
-    "@tanstack/react-virtual": "npm:^3.13.0"
+    "@tanstack/react-virtual": "npm:^3.14.28"
     "@testing-library/dom": "npm:^10.4.2"
     "@testing-library/jest-dom": "npm:^7.0.1"
     "@testing-library/react": "npm:^16.3.3"
@@ -30255,7 +30255,7 @@ __metadata:
     "@signal-noise/stylelint-scales": "npm:^2.0.3"
     "@storybook/react": "npm:^10.6.8"
     "@tanstack/eslint-plugin-query": "npm:^5.100.0"
-    "@tanstack/react-virtual": "npm:^3.13.0"
+    "@tanstack/react-virtual": "npm:^3.14.28"
     "@testing-library/dom": "npm:^10.4.2"
     "@testing-library/jest-dom": "npm:^7.0.1"
     "@types/chroma-js": "npm:^2.4.5"

@@ -99,7 +99,7 @@
 		"@tanstack/react-query-devtools": "^5.83.0",
 		"@tanstack/react-query-persist-client": "^5.83.0",
 		"@tanstack/react-router": "^1.170.46",
-		"@tanstack/react-virtual": "^3.13.0",
+		"@tanstack/react-virtual": "^3.14.28",
 		"@vgs/collect-js": "^0.7.2",
 		"@vgs/collect-js-react": "^2.1.1",
 		"@visx/glyph": "^4.0.0",
