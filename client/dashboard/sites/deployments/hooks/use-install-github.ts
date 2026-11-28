@@ -127,6 +127,7 @@ export const useInstallGithub = () => {
 							{
 								id: NOTICE_ID,
 								isDismissible: true,
+								type: 'snackbar',
 							}
 						);
 						return;

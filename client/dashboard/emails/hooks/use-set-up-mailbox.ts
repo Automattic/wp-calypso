@@ -7,16 +7,21 @@ import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../app/analytics';
 import { mailboxesReadyRoute } from '../../app/router/emails';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { FIELD_MAILBOX, FIELD_PASSWORD, FIELD_PASSWORD_RESET_EMAIL } from '../entities/constants';
 import { MailboxOperations } from '../entities/mailbox-operations';
 import { useDomainFromUrlParam } from './use-domain-from-url-param';
 
 export const useSetUpMailbox = () => {
 	const { recordTracksEvent } = useAnalytics();
-	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
+	const { createErrorNotice } = useDispatch( noticesStore );
 	const router = useRouter();
 	const { domainName } = useDomainFromUrlParam();
-	const { mutateAsync: createTitanMailbox } = useMutation( createTitanMailboxMutation() );
+	const { mutateAsync: createTitanMailbox } = useMutation(
+		withSnackbar( createTitanMailboxMutation(), {
+			success: __( 'The mailbox has been successfully set up.' ),
+		} )
+	);
 
 	const setUpMailbox = async ( {
 		mailboxOperations,
@@ -40,10 +45,6 @@ export const useSetUpMailbox = () => {
 
 			recordTracksEvent( 'calypso_dashboard_emails_setup_mailbox_success', {
 				domainName,
-			} );
-
-			createSuccessNotice( __( 'The mailbox has been successfully set up.' ), {
-				type: 'snackbar',
 			} );
 
 			router.navigate( {

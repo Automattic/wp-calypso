@@ -1,11 +1,10 @@
 import { domainDnsImportBindMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { DropdownMenu, FormFileUpload, MenuGroup, MenuItem } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { moreVertical } from '@wordpress/icons';
-import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../app/analytics';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import type { DnsRecord } from '@automattic/api-core';
 
 interface DnsActionsMenuProps {
@@ -29,8 +28,11 @@ const DnsActionsMenu = ( {
 	onRestoreDefaultCnameRecord,
 	onRestoreDefaultEmailRecords,
 }: DnsActionsMenuProps ) => {
-	const { createErrorNotice } = useDispatch( noticesStore );
-	const importDnsBindMutation = useMutation( domainDnsImportBindMutation( domainName ) );
+	const importDnsBindMutation = useMutation(
+		withSnackbar( domainDnsImportBindMutation( domainName ), {
+			error: __( 'Failed to import DNS records.' ),
+		} )
+	);
 	const { recordTracksEvent } = useAnalytics();
 
 	const handleFileChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
@@ -54,9 +56,6 @@ const DnsActionsMenu = ( {
 				recordTracksEvent( 'calypso_dashboard_domain_dns_import_bind_file_failure', {
 					domain: domainName,
 					error_message: error.message,
-				} );
-				createErrorNotice( __( 'Failed to import DNS records.' ), {
-					type: 'snackbar',
 				} );
 			},
 		} );

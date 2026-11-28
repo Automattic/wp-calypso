@@ -9,6 +9,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../../../app/analytics';
+import { withSnackbar } from '../../../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../../../components/button-stack';
 import ClipboardInputControl from '../../../../components/clipboard-input-control';
 import { Text } from '../../../../components/text';
@@ -20,19 +21,18 @@ import { closeWooDownload, useWooDownloadRequest, type WooDownloadRequest } from
  */
 function WooDownloadStep( { licenseKey, productName, siteUrl }: WooDownloadRequest ) {
 	const { recordTracksEvent } = useAnalytics();
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { createSuccessNotice } = useDispatch( noticesStore );
 	const { data: agency } = useQuery( activeAgencyQuery() );
-	const download = useMutation( jetpackAgencyLicenseDownloadUrlMutation( agency?.id ) );
+	const download = useMutation(
+		withSnackbar( jetpackAgencyLicenseDownloadUrlMutation( agency?.id ), {
+			error: { source: 'server' },
+		} )
+	);
 
 	const handleDownload = () => {
 		recordTracksEvent( 'calypso_a4a_license_assign_download_click' );
 		download.mutate( licenseKey, {
 			onSuccess: ( { download_url } ) => window.location.assign( download_url ),
-			onError: ( error ) =>
-				createErrorNotice(
-					error.message || __( 'Failed to download the product. Please try again.' ),
-					{ type: 'snackbar' }
-				),
 		} );
 	};
 

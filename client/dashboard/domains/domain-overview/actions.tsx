@@ -7,13 +7,12 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalConfirmDialog as ConfirmDialog,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useCallback, useState } from 'react';
 import { domainRoute, domainTransferRoute } from '../../app/router/domains';
 import { cancelPurchaseRoute } from '../../app/router/me';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ActionList } from '../../components/action-list';
 import InlineSupportLink from '../../components/inline-support-link';
 import RouterLinkButton from '../../components/router-link-button';
@@ -48,27 +47,21 @@ export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 		enabled: !! domain.subscription_id,
 	} );
 	const { mutate: disconnectDomain, isPending: isDisconnecting } = useMutation(
-		disconnectDomainMutation( domainName )
+		withSnackbar( disconnectDomainMutation( domainName ), {
+			success: __( 'The domain will be detached from this site in a few minutes.' ),
+			error: { source: 'server' },
+		} )
 	);
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const [ isDisconnectDialogOpen, setIsDisconnectDialogOpen ] = useState( false );
 
 	const onDisconnectConfirm = useCallback(
 		() =>
 			disconnectDomain( undefined, {
-				onSuccess: () =>
-					createSuccessNotice(
-						__( 'The domain will be detached from this site in a few minutes.' ),
-						{
-							type: 'snackbar',
-						}
-					),
-				onError: ( e: Error ) => createErrorNotice( e.message, { type: 'snackbar' } ),
 				onSettled: () => {
 					setIsDisconnectDialogOpen( false );
 				},
 			} ),
-		[ disconnectDomain, createSuccessNotice, createErrorNotice ]
+		[ disconnectDomain ]
 	);
 
 	const availableActions = {

@@ -11,11 +11,10 @@ import {
 	ToggleControl,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { Notice, NoticeActionLinkButton } from '../../components/notice';
@@ -33,10 +32,19 @@ import DashboardFeedbackCard from './feedback-card';
  * and switching back asks first, since it moves everyone on the team.
  */
 export default function AgencyDashboardOptIn() {
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { recordTracksEvent } = useAnalytics();
 	const { data: agency } = useSuspenseQuery( activeAgencyQuery() );
-	const { mutate, isPending } = useMutation( agencyDashboardOptInMutation( agency?.id ) );
+	const { mutate, isPending } = useMutation(
+		withSnackbar( agencyDashboardOptInMutation( agency?.id ), {
+			// Switching back leaves for the classic dashboard, so only turning it on confirms.
+			success: ( _data, choice ) =>
+				choice === 'opt-in' ? __( 'New dashboard turned on.' ) : undefined,
+			error: ( _error, choice ) =>
+				choice === 'opt-in'
+					? __( 'Failed to turn on the new dashboard.' )
+					: __( 'Failed to switch to the classic dashboard.' ),
+		} )
+	);
 	const [ isConfirmOpen, setIsConfirmOpen ] = useState( false );
 	const [ reason, setReason ] = useState( '' );
 	const { mutate: fileSurvey, isPending: isFilingSurvey } = useMutation(
@@ -56,14 +64,7 @@ export default function AgencyDashboardOptIn() {
 			return;
 		}
 
-		mutate( 'opt-in', {
-			onSuccess: () => {
-				createSuccessNotice( __( 'New dashboard turned on.' ), { type: 'snackbar' } );
-			},
-			onError: () => {
-				createErrorNotice( __( 'Failed to turn on the new dashboard.' ), { type: 'snackbar' } );
-			},
-		} );
+		mutate( 'opt-in' );
 	};
 
 	const handleCancelSwitchBack = () => {
@@ -94,11 +95,6 @@ export default function AgencyDashboardOptIn() {
 					},
 					{ onSettled: goToPreviousDashboard }
 				);
-			},
-			onError: () => {
-				createErrorNotice( __( 'Failed to switch to the classic dashboard.' ), {
-					type: 'snackbar',
-				} );
 			},
 		} );
 	};
