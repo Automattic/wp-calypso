@@ -78,6 +78,14 @@ function AddEmailForwarder() {
 		domain: '',
 		forwardingAddresses: [],
 	} );
+
+	// Preselect the domain from the URL once it's known to be eligible.
+	const { domainName } = emailsRoute.useSearch();
+	const [ hasPrefilledDomain, setHasPrefilledDomain ] = useState( false );
+	if ( ! hasPrefilledDomain && domainName && eligibleDomains.includes( domainName ) ) {
+		setHasPrefilledDomain( true );
+		setFormData( ( data ) => ( { ...data, domain: domainName } ) );
+	}
 	const mailbox = `${ formData.localPart }@${ formData.domain }`;
 	const [ untokenizedInput, setUntokenizedInput ] = useState< string >( '' );
 	const isUntokenizedInputValidEmail = emailValidator.validate( untokenizedInput );

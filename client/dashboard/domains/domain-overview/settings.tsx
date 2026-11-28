@@ -14,6 +14,7 @@ import { getCurrentDashboard } from '../../app/routing';
 import { SectionHeader } from '../../components/section-header';
 import SummaryButton from '../../components/summary-button';
 import { SummaryButtonList } from '../../components/summary-button-list';
+import { hasEmailForwards, hasGSuiteWithUs, hasTitanMailWithUs } from '../../utils/domain';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import DomainConnectionSetupSummary from '../domain-connection-setup/summary';
 import DomainDiagnosticsSettingsSummary from '../domain-diagnostics/summary';
@@ -23,6 +24,7 @@ import DomainGlueRecordsSettingsSummary from '../domain-glue-records/summary';
 import DomainSecuritySettingsSummary from '../domain-security/summary';
 import NameServersSettingsSummary from '../name-servers/summary';
 import { shouldShowTransferInAction } from './actions.utils';
+import DomainEmailForwardingSettingsSummary from './email-forwarding-summary';
 import DomainEmailsSettingsSummary from './emails-summary';
 import DomainSiteSettingsSummary from './site-summary';
 import { useTrackOverviewItem } from './use-track-overview-item';
@@ -93,6 +95,21 @@ export default function DomainOverviewSettings( {
 		/>,
 	];
 	const advancedButtonListItems = [];
+
+	// Forwarding would conflict with the MX records of a paid mailbox, but keep the row
+	// while the domain still has forwarders so they stay reachable.
+	if (
+		( ! hasTitanMailWithUs( domain ) && ! hasGSuiteWithUs( domain ) ) ||
+		hasEmailForwards( domain )
+	) {
+		buttonListItems.push(
+			<DomainEmailForwardingSettingsSummary
+				key="email-forwarding"
+				domain={ domain }
+				onClick={ () => trackItem( 'email-forwarding' ) }
+			/>
+		);
+	}
 
 	const isManageable =
 		( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ||

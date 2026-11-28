@@ -10,9 +10,17 @@ import DomainEmailsSettingsSummary from '../emails-summary';
 
 const blogId = 123;
 
-const mockAccount = ( domainName: string, mailboxes: string[] ) =>
+const mockAccount = (
+	domainName: string,
+	mailboxes: string[],
+	emailType: 'email' | 'email_forward' = 'email'
+) =>
 	( {
-		emails: mailboxes.map( ( mailbox ) => ( { mailbox, domain: domainName } ) ),
+		emails: mailboxes.map( ( mailbox ) => ( {
+			mailbox,
+			domain: domainName,
+			email_type: emailType,
+		} ) ),
 	} ) as unknown as EmailAccount;
 
 function renderSummary( domainName: string, status: number, accounts: EmailAccount[] = [] ) {
@@ -43,6 +51,17 @@ describe( 'DomainEmailsSettingsSummary', () => {
 
 		await waitFor( () =>
 			expect( getRow() ).toHaveAttribute( 'href', '/emails/choose-email-solution/b.com' )
+		);
+		expect( screen.queryByText( /mailbox/ ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'does not count email forwarders as mailboxes', async () => {
+		renderSummary( 'example.com', 200, [
+			mockAccount( 'example.com', [ 'me', 'info' ], 'email_forward' ),
+		] );
+
+		await waitFor( () =>
+			expect( getRow() ).toHaveAttribute( 'href', '/emails/choose-email-solution/example.com' )
 		);
 		expect( screen.queryByText( /mailbox/ ) ).not.toBeInTheDocument();
 	} );

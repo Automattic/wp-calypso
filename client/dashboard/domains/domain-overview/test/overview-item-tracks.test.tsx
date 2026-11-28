@@ -2,7 +2,12 @@
  * @vitest-environment jsdom
  */
 import { DomainSubtype, type Domain } from '@automattic/api-core';
-import { domainQuery, mailboxAccountsQuery, siteByIdQuery } from '@automattic/api-queries';
+import {
+	domainQuery,
+	emailForwardersQuery,
+	mailboxAccountsQuery,
+	siteByIdQuery,
+} from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -43,6 +48,12 @@ function renderSeeded( ui: React.ReactElement ) {
 		site_migration: {},
 	} as never );
 	queryClient.setQueryData( mailboxAccountsQuery( domain.blog_id, domain.domain ).queryKey, [] );
+	queryClient.setQueryData( emailForwardersQuery( domain.domain ).queryKey, {
+		type: 'forward',
+		forwards: [],
+		mx_servers: null,
+		max_forwards: null,
+	} );
 	return render( ui, { queryClient } );
 }
 
@@ -57,6 +68,7 @@ describe( 'domain overview item tracking', () => {
 
 	test.each( [
 		[ 'emails', settings, /Professional email/ ],
+		[ 'email-forwarding', settings, /Email forwarding/ ],
 		[ 'renew', registration, /Renewal & billing/ ],
 		[ 'contact-details', registration, /Contact details & privacy/ ],
 	] )( 'tracks a click on the %s row', async ( item, ui, name ) => {

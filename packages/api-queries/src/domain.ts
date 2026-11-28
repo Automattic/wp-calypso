@@ -44,8 +44,9 @@ export const deleteEmailForwardMutation = () => {
 		meta: { statId: 'email-fwd-delete' },
 		mutationFn: ( vars: { domainName: string; mailbox: string; destination: string } ) =>
 			deleteEmailForward( vars.domainName, vars.mailbox, vars.destination ),
-		onSuccess: () => {
+		onSuccess: ( _data, { domainName } ) => {
 			queryClient.invalidateQueries( userMailboxesQuery() );
+			queryClient.invalidateQueries( { queryKey: [ 'domains', domainName ] } );
 		},
 	} );
 };
