@@ -76,21 +76,49 @@ export class LoggedOutThemesPage {
 	}
 
 	/**
+	 * Searches the showcase, keeping the current filter.
+	 *
+	 * @param {string} keyword - The search term.
+	 */
+	async search( keyword: string ): Promise< void > {
+		// The mobile layout can briefly render a second, hidden search box.
+		const searchInput = this.page
+			.getByPlaceholder( /^Search themes/ )
+			.filter( { visible: true } )
+			.first();
+		await searchInput.fill( keyword, { timeout: THEME_ACTION_TIMEOUT_MS } );
+		await searchInput.press( 'Enter' );
+		await this.page.waitForURL( ( url ) => url.searchParams.get( 's' ) === keyword, {
+			timeout: THEME_NAVIGATION_TIMEOUT_MS,
+			waitUntil: 'domcontentloaded',
+		} );
+		await this.page
+			.locator( '.themes-list .is-placeholder' )
+			.first()
+			.waitFor( { state: 'detached', timeout: THEME_NAVIGATION_TIMEOUT_MS } );
+		await this.firstThemeCard.waitFor( { state: 'visible', timeout: THEME_ACTION_TIMEOUT_MS } );
+	}
+
+	/**
 	 * Starts signup with the first theme on the page.
 	 *
+	 * @param {string} [themeType] Only consider themes whose Get started link has this `theme_type`, e.g. `personal`.
 	 * @returns {Promise<string>} The slug of the selected theme.
 	 */
-	async startWithFirstTheme(): Promise< string > {
-		const getStartedRoute = await waitForLocatorAttribute(
-			this.firstThemeGetStartedLink,
-			'href',
-			/theme=/,
-			{
-				timeout: THEME_ACTION_TIMEOUT_MS,
-				description: 'First theme Get started link',
-				state: 'visible',
-			}
-		);
+	async startWithFirstTheme( themeType?: string ): Promise< string > {
+		const getStartedLink = themeType
+			? this.page
+					.locator( '[data-e2e-theme]' )
+					.filter( { has: this.page.locator( `a[href*="theme_type=${ themeType }"]` ) } )
+					.first()
+					.getByRole( 'link', { name: 'Get started' } )
+					.first()
+			: this.firstThemeGetStartedLink;
+		const getStartedRoute = await waitForLocatorAttribute( getStartedLink, 'href', /theme=/, {
+			timeout: THEME_ACTION_TIMEOUT_MS,
+			description: 'First theme Get started link',
+			state: 'visible',
+		} );
 
 		const { themeSlug, url: getStartedUrl } = getCalypsoGetStartedUrlFromHref(
 			getStartedRoute,
