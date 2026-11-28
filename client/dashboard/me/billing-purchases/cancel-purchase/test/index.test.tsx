@@ -49,11 +49,11 @@ const purchase = {
 	expiry_date: '2027-04-06T00:00:00+00:00',
 } as Purchase;
 
-function mockSiteRequests() {
+function mockSiteRequests( sitePurchases: object[] = [] ) {
 	nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.2/upgrades' )
 		.query( { site: purchase.blog_id } )
-		.reply( 200, [] )
+		.reply( 200, sitePurchases )
 		.get( `/rest/v1.1/sites/${ purchase.blog_id }/features` )
 		.query( true )
 		.reply( 200, { active: [], available: {} } )
@@ -80,7 +80,8 @@ function mockHasExtended( status: number, body: object ) {
 function renderRemoveFlow( {
 	purchase: testPurchase = purchase,
 	seedHasExtended = true,
-}: { purchase?: Purchase; seedHasExtended?: boolean } = {} ) {
+	sitePurchases,
+}: { purchase?: Purchase; seedHasExtended?: boolean; sitePurchases?: object[] } = {} ) {
 	const queryClient = new QueryClient( {
 		defaultOptions: { queries: { retry: false, staleTime: Infinity } },
 	} );
@@ -97,7 +98,7 @@ function renderRemoveFlow( {
 	if ( seedHasExtended ) {
 		queryClient.setQueryData( hasPurchaseBeenExtendedQuery( purchase.ID ).queryKey, false );
 	}
-	mockSiteRequests();
+	mockSiteRequests( sitePurchases );
 
 	return render( <CancelPurchase />, { queryClient } );
 }
@@ -115,13 +116,55 @@ async function startSurvey( user: ReturnType< typeof userEvent.setup > ) {
 	await user.click( screen.getByRole( 'button', { name: 'Continue removal' } ) );
 }
 
+async function pickReason( user: ReturnType< typeof userEvent.setup >, name: string ) {
+	await user.click( await screen.findByRole( 'radio', { name: 'Too expensive' } ) );
+	await user.click( screen.getByRole( 'radio', { name } ) );
+	await user.click( screen.getByRole( 'button', { name: 'Continue removal' } ) );
+}
+
 async function pickFoundBetterValue( user: ReturnType< typeof userEvent.setup > ) {
 	await startSurvey( user );
-	await user.click( await screen.findByRole( 'radio', { name: 'Too expensive' } ) );
-	await user.click(
-		screen.getByRole( 'radio', { name: 'I found a competitor with better pricing/value' } )
+	await pickReason( user, 'I found a competitor with better pricing/value' );
+}
+
+const lackOfCustomization = 'Lack of customization features (e.g., colors, fonts, themes)';
+
+const experimentName = 'calypso_cancel_options_cards_202611_v1';
+
+// Store a live control assignment so ExPlat returns it from localStorage.
+function assignControl() {
+	window.localStorage.setItem(
+		`explat-experiment--${ experimentName }`,
+		JSON.stringify( {
+			experimentName,
+			variationName: 'control',
+			retrievedTimestamp: Date.now(),
+			ttl: 3600,
+		} )
 	);
-	await user.click( screen.getByRole( 'button', { name: 'Continue removal' } ) );
+}
+
+// Drop the stored assignment so ExPlat asks for a new one.
+function mockAssignmentRequest() {
+	window.localStorage.clear();
+	return nock( 'https://public-api.wordpress.com' )
+		.get( '/wpcom/v2/experiments/0.1.0/assignments/calypso' )
+		.query( true );
+}
+
+// Hold the request for a new assignment until the test answers it.
+function holdAssignment() {
+	let answer!: ( variationName: string ) => void;
+	const variation = new Promise< string >( ( resolve ) => {
+		answer = resolve;
+	} );
+	const request = mockAssignmentRequest().reply( 200, () =>
+		variation.then( ( variationName ) => ( {
+			variations: { [ experimentName ]: variationName },
+			ttl: 3600,
+		} ) )
+	);
+	return { request, answer };
 }
 
 const optionsListName = 'Before canceling, you can consider these options:';
@@ -129,6 +172,14 @@ const optionsListName = 'Before canceling, you can consider these options:';
 describe( '<CancelPurchase />', () => {
 	beforeEach( () => {
 		window.history.replaceState( {}, '', '/?intent=remove' );
+		assignControl();
+		// A Tracks anonymous id lets ExPlat ask for an assignment straight away, skipping its 5 second wait.
+		document.cookie = 'tk_ai=test-anon-id; path=/';
+	} );
+
+	afterEach( () => {
+		window.localStorage.clear();
+		document.cookie = 'tk_ai=; path=/; max-age=-1';
 	} );
 
 	describe( 'with the cards flag on', () => {
@@ -162,6 +213,125 @@ describe( '<CancelPurchase />', () => {
 				'calypso_cancellation_solution_cards_view',
 				expect.anything()
 			);
+		} );
+	} );
+
+	describe( 'cancel options experiment', () => {
+		test( 'asks for the assignment at the survey and holds the reasons until it arrives', async () => {
+			const { request, answer } = holdAssignment();
+			const user = userEvent.setup();
+			renderRemoveFlow();
+
+			await user.click( await screen.findByRole( 'checkbox' ) );
+			expect( request.isDone() ).toBe( false );
+			await user.click( screen.getByRole( 'button', { name: 'Continue removal' } ) );
+
+			await waitFor( () => expect( request.isDone() ).toBe( true ) );
+			expect( await screen.findByRole( 'heading', { level: 1 } ) ).toBeVisible();
+			expect( screen.queryByRole( 'radio', { name: 'Too expensive' } ) ).not.toBeInTheDocument();
+
+			answer( 'new_flow' );
+			await pickReason( user, lackOfCustomization );
+
+			expect( await screen.findByRole( 'list', { name: optionsListName } ) ).toBeVisible();
+		} );
+
+		test( 'shows the control survey when the assignment request fails', async () => {
+			const request = mockAssignmentRequest().reply( 500, {} );
+			const user = userEvent.setup();
+			renderRemoveFlow();
+			await startSurvey( user );
+			await waitFor( () => expect( request.isDone() ).toBe( true ) );
+
+			await pickReason( user, lackOfCustomization );
+
+			expect(
+				await screen.findByRole( 'heading', { name: 'Let us build your site for you' } )
+			).toBeVisible();
+			expect( screen.queryByRole( 'list', { name: optionsListName } ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'asks for the assignment only after auto-renew is turned off', async () => {
+			window.history.replaceState( {}, '', '/?intent=auto-renew' );
+			const { request, answer } = holdAssignment();
+			let finishAutoRenew!: () => void;
+			const autoRenewDone = new Promise< void >( ( resolve ) => {
+				finishAutoRenew = resolve;
+			} );
+			const autoRenew = nock( 'https://public-api.wordpress.com' )
+				.post( `/rest/v1.1/upgrades/${ purchase.ID }/disable-auto-renew` )
+				.reply( 200, () =>
+					autoRenewDone.then( () => ( {
+						success: true,
+						upgrade: { ...purchase, is_auto_renew_enabled: false },
+					} ) )
+				);
+			const user = userEvent.setup();
+			renderRemoveFlow( { purchase: { ...purchase, is_auto_renew_enabled: true } } );
+
+			await user.click( await screen.findByRole( 'checkbox' ) );
+			await user.click( screen.getByRole( 'button', { name: 'Turn off auto-renew' } ) );
+			await waitFor( () => expect( autoRenew.isDone() ).toBe( true ) );
+			expect( request.isDone() ).toBe( false );
+
+			finishAutoRenew();
+
+			await waitFor( () => expect( request.isDone() ).toBe( true ) );
+			expect( await screen.findByRole( 'heading', { level: 1 } ) ).toBeVisible();
+			expect( screen.queryByRole( 'radio', { name: 'Too expensive' } ) ).not.toBeInTheDocument();
+			answer( 'control' );
+			expect( await screen.findByRole( 'radio', { name: 'Too expensive' } ) ).toBeVisible();
+		} );
+
+		test( 'holds the reasons for a removed plan until the assignment arrives', async () => {
+			window.history.replaceState( {}, '', '/' );
+			const { request, answer } = holdAssignment();
+			const user = userEvent.setup();
+			renderRemoveFlow( { purchase: { ...purchase, subscription_status: 'inactive' } } );
+
+			await waitFor( () => expect( request.isDone() ).toBe( true ) );
+			expect( await screen.findByRole( 'heading', { level: 1 } ) ).toBeVisible();
+			expect( screen.queryByRole( 'radio', { name: 'Too expensive' } ) ).not.toBeInTheDocument();
+
+			answer( 'control' );
+			const reason = await screen.findByRole( 'radio', { name: 'Too expensive' } );
+			await user.click( reason );
+
+			expect( reason ).toBeChecked();
+		} );
+
+		test( 'asks for the assignment only after the domain options step', async () => {
+			const { request, answer } = holdAssignment();
+			const user = userEvent.setup();
+			renderRemoveFlow( {
+				purchase: { ...purchase, is_refundable: true, included_domain: 'example.com' },
+				sitePurchases: [
+					{
+						ID: 789,
+						blog_id: purchase.blog_id,
+						product_slug: 'domain_reg',
+						meta: 'example.com',
+						is_domain: true,
+						is_domain_registration: true,
+						cost_to_unbundle_display: '$20',
+						is_within_initial_refund_window: true,
+					},
+				],
+			} );
+
+			await user.click( await screen.findByRole( 'checkbox' ) );
+			await user.click( screen.getByRole( 'button', { name: 'Continue with cancellation' } ) );
+			await user.click(
+				await screen.findByRole( 'radio', { name: /Cancel the plan, but keep "example.com"/ } )
+			);
+			expect( request.isDone() ).toBe( false );
+			await user.click( screen.getByRole( 'button', { name: 'Continue with cancellation' } ) );
+
+			await waitFor( () => expect( request.isDone() ).toBe( true ) );
+			expect( await screen.findByRole( 'heading', { level: 1 } ) ).toBeVisible();
+			expect( screen.queryByRole( 'radio', { name: 'Too expensive' } ) ).not.toBeInTheDocument();
+			answer( 'control' );
+			expect( await screen.findByRole( 'radio', { name: 'Too expensive' } ) ).toBeVisible();
 		} );
 	} );
 

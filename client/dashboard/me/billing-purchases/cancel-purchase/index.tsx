@@ -31,7 +31,7 @@ import {
 	type QueryCacheNotifyEvent,
 } from '@tanstack/react-query';
 import { useNavigate, useSearch } from '@tanstack/react-router';
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import { Spinner, __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { _n, sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
@@ -271,7 +271,12 @@ function CancelPurchaseInner() {
 	} );
 	const { data: plans } = useSuspenseQuery( plansQuery() );
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
-	const { showCards: showCancelOptionsCards } = useCancelOptionsExperiment();
+	// Under the split cancel/remove experiment the pre-survey confirmation screen
+	// gates the survey on `confirmationPassed`. Flag-off keeps the legacy
+	// `surveyShown` gate.
+	const atSurvey = Boolean( state.confirmationPassed || state.surveyShown );
+	const { isLoading: cancelOptionsIsLoading, showCards: showCancelOptionsCards } =
+		useCancelOptionsExperiment( purchase, atSurvey );
 	const { data: purchaseCancelFeatures } = useQuery(
 		purchaseCancelFeaturesQuery( parseInt( purchaseId, 10 ) )
 	);
@@ -1457,10 +1462,6 @@ function CancelPurchaseInner() {
 		state.surveyStep === UPSELL_STEP &&
 		showCancelOptionsCards &&
 		( getSolutionsForReason( state.questionOneText ?? '' )?.length ?? 0 ) > 0;
-	// Under the split cancel/remove experiment the pre-survey confirmation screen
-	// gates the survey on `confirmationPassed`. Flag-off keeps the legacy
-	// `surveyShown` gate.
-	const atSurvey = Boolean( state.confirmationPassed || state.surveyShown );
 	const form = (
 		<CancelPurchaseForm
 			atomicRevertCheckOne={ state.atomicRevertCheckOne }
@@ -1487,7 +1488,7 @@ function CancelPurchaseInner() {
 			isNextAdventureValid={ state.isNextAdventureValid }
 			isShowing={ state.isShowingMarketplaceSubscriptionsDialog }
 			isSubmitting={ state.isSubmitting }
-			isVisible={ atSurvey }
+			isVisible={ atSurvey && ! cancelOptionsIsLoading }
 			offerDiscountBasedFromPurchasePrice={ offerDiscountBasedFromPurchasePrice }
 			onClickAcceptForCancellationOffer={ onClickAcceptForCancellationOffer }
 			onGetCancellationOffer={ onGetCancellationOffer }
@@ -1552,6 +1553,7 @@ function CancelPurchaseInner() {
 					<CardBody>
 						<VStack spacing={ 6 }>
 							{ form }
+							{ atSurvey && cancelOptionsIsLoading && <Spinner /> }
 							{ ! atSurvey && (
 								<CancellationPreSurveyContent
 									purchase={ purchase }
