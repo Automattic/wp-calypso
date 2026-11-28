@@ -1930,7 +1930,9 @@ describe( 'ResultsPage', () => {
 			).toBeNull();
 		} );
 
-		it( 'renders the bundle card when the primary is the best-alternative suggestion and moves it to the top of the regular list', async () => {
+		// Without the swap, flowers.blog stays top-left beside a flowers.com bundle,
+		// which reads as a bundle for flowers.blog.
+		it( 'moves a best-alternative bundle primary to the top-left card and the recommended suggestion to the top of the regular list', async () => {
 			mockGetSuggestionsQuery( {
 				params: { query: 'flowers' },
 				suggestions: [
@@ -1951,7 +1953,7 @@ describe( 'ResultsPage', () => {
 			);
 
 			expect( await findBundleCta() ).toBeInTheDocument();
-			expect( screen.getByTitle( 'flowers.blog' ) ).toHaveTextContent( 'Recommended' );
+			expect( screen.getByTitle( 'flowers.com' ) ).toHaveTextContent( 'Recommended' );
 			expect( screen.queryByText( 'Best alternative' ) ).not.toBeInTheDocument();
 
 			// flowers.org is regular-only, so its role="list" ancestor is the regular list.
@@ -1959,8 +1961,9 @@ describe( 'ResultsPage', () => {
 			const regularTitles = Array.from(
 				regularList?.querySelectorAll( '[role="listitem"][title]' ) ?? []
 			).map( ( element ) => element.getAttribute( 'title' ) );
-			expect( regularTitles[ 0 ] ).toBe( 'flowers.com' );
+			expect( regularTitles[ 0 ] ).toBe( 'flowers.blog' );
 			expect( regularTitles ).toContain( 'flowers.org' );
+			expect( screen.getByTitle( 'flowers.blog' ) ).not.toHaveTextContent( 'Recommended' );
 		} );
 
 		it( 'does not offer an inline row for the displaced primary that the card already shows', async () => {
@@ -1993,6 +1996,56 @@ describe( 'ResultsPage', () => {
 
 			expect( await findBundleMember( 'flowers.net' ) ).toBeInTheDocument();
 			expect( container.querySelector( '.inline-bundle-row' ) ).toBeNull();
+			expect(
+				container.querySelector( '.domain-search--results__featured-inline-bundles' )
+			).toBeNull();
+		} );
+
+		// The displaced recommended suggestion is in the regular list, so a featured
+		// inline row for it would show its bundle twice.
+		it( 'offers the displaced recommended suggestion its inline row only in the regular list', async () => {
+			mockGetSuggestionsQuery( {
+				params: { query: 'flowers' },
+				suggestions: [
+					buildSuggestion( { domain_name: 'flowers.blog' } ),
+					buildSuggestion( { domain_name: 'flowers.com' } ),
+					buildSuggestion( { domain_name: 'flowers.org' } ),
+				],
+			} );
+			mockGetBundleMetadataQuery( {
+				params: { query: 'flowers' },
+				bundleSuggestion: flowersBundle,
+				bundleTriggers: [ 'com', 'blog' ],
+			} );
+			mockGetBundleForDomainQuery( {
+				fqdn: 'flowers.blog',
+				bundleSuggestion: {
+					...flowersBundle,
+					domains: [
+						{ ...flowersBundle.domains[ 0 ], domain: 'flowers.blog' },
+						{ ...flowersBundle.domains[ 1 ], domain: 'flowers.online' },
+					],
+					bundle_id: 'flowers-blog-bundle',
+					bundle_group_id: 'v1.flowers.blog',
+				},
+			} );
+
+			const { container } = render(
+				<TestDomainSearch
+					cart={ buildCart( {
+						items: [ buildCartItem( { domain: 'flowers', tld: 'blog' } ) ],
+					} ) }
+					config={ { showBundleSuggestions: true } }
+					query="flowers"
+				>
+					<ResultsPage />
+				</TestDomainSearch>
+			);
+
+			expect( await findBundleCta() ).toBeInTheDocument();
+			await waitFor( () => {
+				expect( container.querySelectorAll( '.inline-bundle-row' ) ).toHaveLength( 1 );
+			} );
 			expect(
 				container.querySelector( '.domain-search--results__featured-inline-bundles' )
 			).toBeNull();
