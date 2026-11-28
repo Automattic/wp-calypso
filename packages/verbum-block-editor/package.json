@@ -74,7 +74,7 @@
 		"react-dom": "^18.3.1 || ^19.0.0",
 		"sass-embedded": "^1.89.0",
 		"sass-loader": "^16.0.8",
-		"stylelint": "^17.16.0",
+		"stylelint": "^18.1.0",
 		"stylelint-scss": "^7.5.0",
 		"typescript": "^6.0.3",
 		"vite": "^8.3.8",
