@@ -101,7 +101,8 @@ export class SecretsManager {
 					'Have you decrypted the secrets file yet?\n' +
 					'Export the decryption key to E2E_SECRETS_KEY and run "yarn decrypt-secrets".\n' +
 					'Then, please build the package by running "yarn workspace @automattic/calypso-e2e build".\n' +
-					`Original error message: ${ error.message }`
+					`Original error message: ${ error.message }`,
+				{ cause: err }
 			);
 		}
 	}
